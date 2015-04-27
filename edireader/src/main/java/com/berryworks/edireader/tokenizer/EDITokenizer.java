@@ -25,6 +25,7 @@ import com.berryworks.edireader.EDISyntaxException;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.CharBuffer;
 
 /**
  * Interprets EDI input as a sequence of primitive syntactic tokens.
@@ -38,13 +39,12 @@ public class EDITokenizer extends AbstractTokenizer
 {
 
   public static final int BUFFER_SIZE = 1000;
-  private final char[] buffer = new char[BUFFER_SIZE];
-  private int bufferUsed;
-  private int bufferIndex;
+  private final CharBuffer charBuffer = CharBuffer.wrap(new char[BUFFER_SIZE]);
 
   public EDITokenizer(Reader source)
   {
     super(source);
+    charBuffer.flip();
     if (EDIReader.debug)
       trace("Constructed a new EDITokenizer");
   }
@@ -54,11 +54,13 @@ public class EDITokenizer extends AbstractTokenizer
     this(source);
     if (preRead == null || preRead.length == 0)
       return;
-    if (preRead.length > buffer.length)
+
+    if (preRead.length > charBuffer.capacity())
       throw new RuntimeException("Attempt to create EDITokenizer with " + preRead.length +
-        " pre-read chars, which is greater than the internal buffer size of " + buffer.length);
-    System.arraycopy(preRead, 0, buffer, 0, preRead.length);
-    bufferUsed = preRead.length;
+              " pre-read chars, which is greater than the internal buffer size of " + charBuffer.capacity());
+    charBuffer.clear();
+    charBuffer.put(preRead);
+    charBuffer.flip();
   }
 
   /**
@@ -76,14 +78,9 @@ public class EDITokenizer extends AbstractTokenizer
     result += " segTokenCount=" + segTokenCount;
     result += " segCharCount=" + segCharCount;
     result += " currentToken=" + currentToken;
-    result += " bufferUsed=" + bufferUsed;
-    result += " bufferIndex=" + bufferIndex;
+    result += " buffer.limit=" + charBuffer.limit();
+    result += " buffer.position=" + charBuffer.position();
     return result;
-  }
-
-  public char[] rawBuffer()
-  {
-    return buffer;
   }
 
   /**
@@ -118,19 +115,9 @@ public class EDITokenizer extends AbstractTokenizer
     if (recorderOn)
       recording.append(cChar);
 
-    if (bufferIndex >= bufferUsed)
+    if (charBuffer.remaining() == 0)
     {
-      // It's time to refill the buffer
-      while ((bufferUsed = inputReader.read(buffer)) == 0)
-      {
-        if (EDIReader.debug)
-          trace("read returned zero");
-      }
-      if (EDIReader.debug)
-        trace("read " + bufferUsed + " chars of input into buffer");
-      bufferIndex = 0;
-      if (bufferUsed < 0)
-        endOfFile = true;
+      readUntilBufferProvidesAtLeast(1);
     }
 
     if (endOfFile)
@@ -141,7 +128,7 @@ public class EDITokenizer extends AbstractTokenizer
     }
     else
     {
-      cChar = buffer[bufferIndex++];
+      cChar = charBuffer.get();
       if (cChar == delimiter)
         cClass = CharacterClass.DELIMITER;
       else if (cChar == subDelimiter)
@@ -161,14 +148,20 @@ public class EDITokenizer extends AbstractTokenizer
 
   public char[] getBuffered()
   {
-    int bufferIndexCopy = (unGot && bufferIndex > 0) ? bufferIndex - 1 : bufferIndex;
+    char[] result = new char[0];
 
-    if (bufferIndexCopy >= bufferUsed)
-      return new char[0];
+    if (endOfFile)
+      return result;
 
-    int n = bufferUsed - bufferIndexCopy;
-    char[] result = new char[n];
-    System.arraycopy(buffer, bufferIndexCopy, result, 0, n);
+    if (charBuffer.remaining() == 0 && !unGot) {
+      return result;
+    }
+
+    try {
+      result = lookahead(charBuffer.remaining() + (unGot ? 1 : 0));
+    } catch (Exception ignore) {
+    }
+
     return result;
   }
 
@@ -188,6 +181,7 @@ public class EDITokenizer extends AbstractTokenizer
       trace("EDITokenizer.lookahead(" + n + ")");
 
     char[] rval = new char[n];
+
     // The 1st char is grabbed using the tokenizer's built-in
     // getChar() / ungetChar() mechanism. This allows things to work
     // properly whether or not the next char has already been gotten.
@@ -196,74 +190,48 @@ public class EDITokenizer extends AbstractTokenizer
     ungetChar();
 
     // The minus 1 is because we have already filled the first char of the return value, so we only need n-1 more
-    if (bufferUsed < bufferIndex + n - 1)
+    if (charBuffer.remaining() < n - 1)
     {
-//            throw new EDISyntaxException("Internal Error: Too few buffered characters available for lookahead",
-//                    String.valueOf(n) + " or more", String.valueOf(bufferUsed - bufferIndex), this);
       if (EDIReader.debug)
-        trace("buffering more data to satisfy lookahead(" + n + ")");
-      shiftBuffer();
+        if (EDIReader.debug)
+          trace("buffering more data to satisfy lookahead(" + n + ")");
+      charBuffer.compact();
       readUntilBufferProvidesAtLeast(n - 1);
     }
 
     // Move chars from the buffer into the return value,
     // up to the length of the buffer
     int j = 1;
-    for (int i = bufferIndex; i < bufferIndex + n - 1; i++)
-      rval[j++] = buffer[i];
+    for (int i = charBuffer.position(); i < charBuffer.position() + n - 1; i++)
+      rval[j++] = charBuffer.get(i);
 
-    // If more lookahead chars were requested, fill
-    // them with '?'.
+    // If more lookahead chars were requested than were satisfied for any reason,
+    // then fill the return value with '?' to the requested length.
     for (; j < n;) rval[j++] = '?';
 
     return rval;
   }
 
-  private void shiftBuffer()
-  {
-    if (bufferIndex >= bufferUsed)
-    {
-      if (EDIReader.debug)
-        trace("buffer does not need shifting");
-      return;
-    }
-    else
-    {
-      if (EDIReader.debug)
-        trace("shifting " + bufferUsed + " chars in buffer " + bufferIndex + " chars to the left");
-    }
-
-    for (int i = 0; i < bufferUsed - bufferIndex; i++)
-    {
-      buffer[i] = buffer[i + bufferIndex];
-    }
-
-    bufferUsed -= bufferIndex;
-    if (EDIReader.debug) trace("after shifting, buffer contains " + bufferUsed + " chars of data");
-    bufferIndex = 0;
-  }
-
-  private void readUntilBufferProvidesAtLeast(int n) throws IOException
+  private void readUntilBufferProvidesAtLeast(int needed) throws IOException
   {
 
-    while (n > bufferUsed - bufferIndex)
+    while (charBuffer.remaining() < needed)
     {
-      int newChars;
-      while ((newChars = inputReader.read(buffer, bufferUsed, BUFFER_SIZE - bufferUsed)) == 0)
+      charBuffer.compact();
+      int n;
+      while ((n = inputReader.read(charBuffer)) == 0)
       {
         if (EDIReader.debug) trace("read returned zero in readUntil...");
       }
-      if (EDIReader.debug) trace("readUntil... got " + newChars + " chars of input into buffer");
-      if (newChars < 0)
+      if (EDIReader.debug) trace("readUntil... got " + n + " chars of input into buffer");
+      if (n < 0)
       {
         if (EDIReader.debug) trace("hit end of file in readUntil...");
         endOfFile = true;
-        return;
+        break;
       }
-      bufferUsed += newChars;
+      charBuffer.flip();
     }
-    if (EDIReader.debug)
-      trace("returning from readUntil... with buffer containing " + bufferUsed + " chars");
   }
 
 

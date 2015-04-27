@@ -21,7 +21,7 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.error.ErrorMessages;
-import com.berryworks.edireader.tokenizer.EDITokenizerNIO;
+import com.berryworks.edireader.tokenizer.EDITokenizer;
 import com.berryworks.edireader.tokenizer.Tokenizer;
 import org.xml.sax.InputSource;
 
@@ -106,8 +106,8 @@ public class EDIReaderFactory
     Reader inputReader = EDIAbstractReader.createReader(source);
     Tokenizer tokenizer =
       (preRead == null || preRead.length == 0) ?
-        new EDITokenizerNIO(inputReader) :
-        new EDITokenizerNIO(inputReader, preRead);
+              new EDITokenizer(inputReader) :
+              new EDITokenizer(inputReader, preRead);
 
     // Skip past any leading whitespace
     tokenizer.scanTerminatorSuffix();

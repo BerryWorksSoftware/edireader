@@ -21,7 +21,7 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.error.EDISyntaxExceptionHandler;
-import com.berryworks.edireader.tokenizer.EDITokenizerNIO;
+import com.berryworks.edireader.tokenizer.EDITokenizer;
 import com.berryworks.edireader.tokenizer.Tokenizer;
 import com.berryworks.edireader.util.BranchingWriter;
 import org.xml.sax.*;
@@ -367,7 +367,7 @@ public abstract class EDIAbstractReader implements XMLReader
 
     if (tokenizer == null)
     {
-      setTokenizer(new EDITokenizerNIO(inputReader));
+      setTokenizer(new EDITokenizer(inputReader));
       if (EDIReader.debug)
         trace("Constructed new tokenizer because this reader did not have one");
     }
