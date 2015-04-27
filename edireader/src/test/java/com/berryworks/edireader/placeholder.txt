@@ -1,1 +1,0 @@
-This is where a series of JUnit test cases will be placed.
