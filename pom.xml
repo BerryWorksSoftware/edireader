@@ -4,14 +4,13 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.berryworks</groupId>
-    <version>4.7.3</version>
+    <version>4.7.3.1</version>
     <name>EDIReader project</name>
     <artifactId>berryworks</artifactId>
     <packaging>pom</packaging>
 
     <scm>
-        <!--<developerConnection>${scm.developerConnection}</developerConnection>-->
-        <developerConnection>scm:git:git@github.com:complete-edi-development/edireader.git</developerConnection>
+        <developerConnection>https://github.com/BerryWorksSoftware/edireader.git</developerConnection>
     </scm>
 
     <properties>
