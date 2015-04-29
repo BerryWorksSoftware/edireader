@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.berryworks</groupId>
+    <artifactId>edireader</artifactId>
+    <version>4.7.3.1</version>
+
+    <packaging>pom</packaging>
+    <name>EDIReader Community Edition</name>
+    <description>
+        EDIReader is a Java package for parsing business documents structured according to EDI standards.
+        It supports the SAX and JAXP interfaces defined for XML, making it suitable for use in any XML-based system
+        that allows the configuration of a custom SAX parser.
+    </description>
+    <url>https://github.com/BerryWorksSoftware/edireader</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, Version 3</name>
+            <url>http://www.gnu.org/licenses/gpl.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Scott Mayberry</name>
+            <email>info@berryworkssoftware.net</email>
+            <organization>BerryWorks Software LLC</organization>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm://github.com/BerryWorksSoftware/edireader.git</connection>
+        <developerConnection>scm://github.com/BerryWorksSoftware/edireader.git</developerConnection>
+        <url>git@github.com/BerryWorksSoftware/edireader.git</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.berryworks</groupId>
+            <artifactId>jquantify</artifactId>
+            <version>4.1.3</version>
+        </dependency>
+    </dependencies>
+
+</project>
