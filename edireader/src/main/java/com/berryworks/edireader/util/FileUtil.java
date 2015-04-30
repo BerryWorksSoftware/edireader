@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -20,31 +20,45 @@
 
 package com.berryworks.edireader.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-public class FileUtil
-{
+public class FileUtil {
 
-  public static String fileToString(String filename) throws IOException
-  {
-    Reader reader = new FileReader(filename);
-    StringBuffer stringBuffer = new StringBuffer();
-
-    char[] buffer = new char[1000];
-    int n;
-    while ((n = reader.read(buffer)) > -1)
-    {
-      stringBuffer.append(buffer, 0, n);
+    public static String fileToString(String filename) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(filename));
+        return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(encoded)).toString();
     }
-    reader.close();
-    return stringBuffer.toString();
-  }
 
-  public static void stringToFile(String data, String filename) throws IOException
-  {
-    Writer writer = new FileWriter(filename);
-    writer.write(data);
-    writer.close();
-  }
+    public static void stringToFile(String data, String filename) throws IOException {
+        try (Writer writer = new FileWriter(filename)) {
+            writer.write(data);
+        }
+    }
+
+    public static byte[] fileToByteArray(File file) throws IOException {
+        return Files.readAllBytes(Paths.get(file.getPath()));
+    }
+
+    public static File locateDirectory(String directoryName) {
+
+        File directory = new File(directoryName);
+        if (directory.exists() && directory.isDirectory()) {
+            return directory;
+        }
+
+        directory = new File("../" + directoryName);
+        if (directory.exists() && directory.isDirectory()) {
+            return directory;
+        }
+
+        throw new RuntimeException("Cannot locate directory " + directoryName);
+    }
 
 }

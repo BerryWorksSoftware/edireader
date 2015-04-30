@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -28,61 +28,51 @@ import java.util.Date;
  * Represent the current date and time in the format used by
  * ANSI X12 and EDIFACT EDI standards.
  */
-public class DateTimeGenerator
-{
+public class DateTimeGenerator {
 
-  private static final ThreadLocal<DateFormat> yymmdd = new ThreadLocal<DateFormat>()
-  {
-    @Override
-    protected DateFormat initialValue()
-    {
-      return new SimpleDateFormat("yyMMdd");
-    }
-  };
-  private static final ThreadLocal<DateFormat> hhmm = new ThreadLocal<DateFormat>()
-  {
-    @Override
-    protected DateFormat initialValue()
-    {
-      return new SimpleDateFormat("HHmm");
-    }
-  };
+    private static final ThreadLocal<DateFormat> yymmdd = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat("yyMMdd");
+        }
+    };
+    private static final ThreadLocal<DateFormat> hhmm = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            return new SimpleDateFormat("HHmm");
+        }
+    };
 
-  private static String dateTestValue = null;
-  private static String timeTestValue = null;
+    private static String dateTestValue = null;
+    private static String timeTestValue = null;
 
-  /**
-   * Generate the date and time in an yyMMdd<delimiter>HHmm format.
-   *
-   * @param delimiter
-   * @return String representation of date and time
-   */
-  public static String generate(char delimiter)
-  {
-    if (dateTestValue == null || timeTestValue == null)
-    {
-      Date now = new Date();
-      return yymmdd.get().format(now) + delimiter + hhmm.get().format(now);
+    /**
+     * Generate the date and time in an yyMMdd<delimiter>HHmm format.
+     *
+     * @param delimiter char placed between day and time of day
+     * @return String representation of date and time
+     */
+    public static String generate(char delimiter) {
+        if (dateTestValue == null || timeTestValue == null) {
+            Date now = new Date();
+            return yymmdd.get().format(now) + delimiter + hhmm.get().format(now);
+        } else {
+            return dateTestValue + delimiter + timeTestValue;
+        }
     }
-    else
-    {
-      return dateTestValue + delimiter + timeTestValue;
-    }
-  }
 
-  /**
-   * Inject particular date and time values to use instead of
-   * the current date and time.
-   * <p/>
-   * This can be very useful in testing as a mean of allowing expected
-   * results that are full repeatable.
-   *
-   * @param date
-   * @param time
-   */
-  public static void setTestValues(String date, String time)
-  {
-    dateTestValue = date;
-    timeTestValue = time;
-  }
+    /**
+     * Inject particular date and time values to use instead of
+     * the current date and time.
+     * <p/>
+     * This can be very useful in testing as a mean of allowing expected
+     * results that are full repeatable.
+     *
+     * @param date specific value to use
+     * @param time specific value to use
+     */
+    public static void setTestValues(String date, String time) {
+        dateTestValue = date;
+        timeTestValue = time;
+    }
 }

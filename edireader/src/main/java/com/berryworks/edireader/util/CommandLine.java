@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -20,129 +20,113 @@
 
 package com.berryworks.edireader.util;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.berryworks.edireader.util.FixedLength.isPresent;
+
 /**
  * Utility class to simplify some of the tedious aspects of interpreting
  * command line arguments.
  */
-public class CommandLine
-{
+public class CommandLine {
 
-  private final Map<String, String> optionMap = new HashMap<String, String>();
-  private final List<String> positionalArgs = new ArrayList<String>();
+    private final Map<String, String> optionMap = new HashMap<>();
+    private final List<String> positionalArgs = new ArrayList<>();
+    private PrintStream errStream = System.err;
 
-  public CommandLine(String[] args)
-  {
+    public CommandLine(String[] args) {
 
-    for (int i = 0; i < args.length; i++)
-    {
-      String arg = args[i];
-      if (arg.startsWith("-"))
-      {
-        String option = arg.substring(1);
-        if (++i < args.length)
-        {
-          String value = args[i];
-          optionMap.put(option, value);
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.startsWith("-")) {
+                String option = arg.substring(1);
+                if (++i < args.length) {
+                    String value = args[i];
+                    optionMap.put(option, value);
+                } else
+                    badArgs("missing value for option " + option);
+            } else
+                positionalArgs.add(args[i]);
         }
-        else
-          badArgs("missing value for option " + option);
-      }
-      else
-        positionalArgs.add(args[i]);
+
     }
 
-  }
-
-  public void badArgs(String msg)
-  {
-    System.err.println("Invalid command line argument(s): " + msg);
-    System.err.println("");
-    System.err.println(usage());
-  }
-
-  public String usage()
-  {
-    return "";
-  }
-
-  public int size()
-  {
-    return optionMap.size() + positionalArgs.size();
-  }
-
-  public boolean isPresent(String arg)
-  {
-    return optionMap.get(arg) != null;
-  }
-
-  public String getOption(String arg)
-  {
-    return optionMap.get(arg);
-  }
-
-  public String getPosition(int i)
-  {
-    return positionalArgs.size() > i ? positionalArgs.get(i) : null;
-  }
-
-  public int getPositionAsInt(int i)
-  {
-    String value = getPosition(i);
-    if (value == null)
-      return -1;
-
-    try
-    {
-      return Integer.parseInt(value);
-    } catch (NumberFormatException e)
-    {
-      String msg = "Invalid integer argument at position " + i;
-      badArgs(msg);
-      throw new RuntimeException(msg);
+    public void setErrorOutputStream(PrintStream errStream) {
+        this.errStream = errStream;
     }
-  }
 
-  public String getPosition(int i, String defaultValue)
-  {
-    if (positionalArgs.size() > i)
-    {
-      String value = positionalArgs.get(i);
-      return (value == null || value.length() == 0) ? defaultValue : value;
+    public void badArgs(String msg) {
+        if (errStream != null) {
+            errStream.println("Invalid command line argument(s): " + msg);
+            errStream.println("");
+            errStream.println(usage());
+        }
     }
-    else
-    {
-      if (defaultValue == null)
-      {
-        String msg = "Required argument missing at position " + i;
-        badArgs(msg);
-        throw new RuntimeException(msg);
-      }
-      else
-      {
-        return defaultValue;
-      }
-    }
-  }
 
-  public int getAsInt(String option)
-  {
-    String value = getOption(option);
-    if (value == null)
-      return -1;
-
-    try
-    {
-      return Integer.parseInt(value);
-    } catch (NumberFormatException e)
-    {
-      String msg = "Invalid integer value for option " + value;
-      badArgs(msg);
-      throw new RuntimeException(msg);
+    public String usage() {
+        return "";
     }
-  }
+
+    public int size() {
+        return optionMap.size() + positionalArgs.size();
+    }
+
+    public boolean isOptionPresent(String arg) {
+        return optionMap.get(arg) != null;
+    }
+
+    public String getOption(String arg) {
+        return optionMap.get(arg);
+    }
+
+    public String getPosition(int i) {
+        return positionalArgs.size() > i ? positionalArgs.get(i) : null;
+    }
+
+    public int getPositionAsInt(int i) {
+        String value = getPosition(i);
+        if (value == null)
+            return -1;
+
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            String msg = "Invalid integer argument at position " + i;
+            badArgs(msg);
+            throw new RuntimeException(msg);
+        }
+    }
+
+    public String getPosition(int i, String defaultValue) {
+        if (positionalArgs.size() > i) {
+            String value = positionalArgs.get(i);
+            return (isPresent(value)) ? value : defaultValue;
+        } else {
+            if (defaultValue == null) {
+                String msg = "Required argument missing at position " + i;
+                badArgs(msg);
+                throw new RuntimeException(msg);
+            } else {
+                return defaultValue;
+            }
+        }
+    }
+
+    public int getAsInt(String option) {
+        String value = getOption(option);
+        if (value == null)
+            return -1;
+
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            String msg = "Invalid integer value for option " + value;
+            badArgs(msg);
+            throw new RuntimeException(msg);
+        }
+    }
 }
