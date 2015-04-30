@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -23,15 +23,34 @@ package com.berryworks.edireader.benchmark;
 import com.berryworks.jquantify.EventCounter;
 import com.berryworks.jquantify.SessionCounter;
 
-public interface BenchmarkUnitOfWork extends Runnable
-{
+public abstract class BenchmarkUnitOfWork implements Runnable {
+    private SessionCounter sessionCounter;
+    private EventCounter charCounter;
+    private int interchangeKCs;
 
-  void setSessionCounter(SessionCounter iterationCounter);
+    public SessionCounter getSessionCounter() {
+        return sessionCounter;
+    }
 
-  void setInterchangeKCs(int interchangeKCs);
+    public void setSessionCounter(SessionCounter sessionCounter) {
+        this.sessionCounter = sessionCounter;
+    }
 
-  int getCharCount();
+    public int getInterchangeKCs() {
+        return interchangeKCs;
+    }
 
-  void setCharCounter(EventCounter charCounter);
+    public void setInterchangeKCs(int kcs) {
+        interchangeKCs = kcs;
+    }
+
+    public EventCounter getCharCounter() {
+        return charCounter;
+    }
+
+    public void setCharCounter(EventCounter charCounter) {
+        this.charCounter = charCounter;
+    }
+
 
 }
