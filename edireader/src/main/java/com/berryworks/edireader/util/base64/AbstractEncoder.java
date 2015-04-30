@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -30,105 +30,89 @@ import java.nio.CharBuffer;
  * original data stream. Therefore there is an 3-to-4 expansion factor in the
  * expansion process.
  */
-public abstract class AbstractEncoder extends AbstractEncoderDecoder
-{
+public abstract class AbstractEncoder extends AbstractEncoderDecoder {
 
-  private final EncoderFrontEnd frontEnd;
-  private final EncoderBackEnd backEnd;
+    private final EncoderFrontEnd frontEnd;
+    private final EncoderBackEnd backEnd;
 
-  private static final int BUFFER_SIZE = 1000;
+    private static final int BUFFER_SIZE = 1000;
 
-  public AbstractEncoder()
-  {
-    frontEnd = new EncoderFrontEnd()
-    {
-      @Override
-      protected void emit(byte value)
-      {
-        backEnd.consume(value);
-      }
+    protected AbstractEncoder() {
+        frontEnd = new EncoderFrontEnd() {
+            @Override
+            protected void emit(byte value) {
+                backEnd.consume(value);
+            }
 
-      @Override
-      protected void endOfData()
-      {
-        backEnd.endOfData();
-      }
-    };
-    final AbstractEncoderDecoder thisEncoder = this;
-    backEnd = new EncoderBackEnd()
-    {
-      @Override
-      protected void emit(byte b)
-      {
-        thisEncoder.emit(b);
-      }
-    };
-  }
-
-  @Override
-  public void consume(byte b)
-  {
-    frontEnd.consume(b);
-  }
-
-  @Override
-  protected void endOfData()
-  {
-    frontEnd.endOfData();
-  }
-
-  /**
-   * Reads bytes from an input stream and directs their encoding
-   * into a sequence of bytes according to the base-64 encoding conventions.
-   *
-   * @param inputStream
-   * @throws IOException
-   */
-  public void encode(InputStream inputStream) throws IOException
-  {
-    reset();
-    byte buffer[] = new byte[BUFFER_SIZE];
-
-    while (true)
-    {
-      int n = inputStream.read(buffer);
-
-      if (n < 0)
-      {
-        endOfData();
-        break;
-      }
-      else if (n > 0)
-        for (int i = 0; i < n; i++)
-          consume(buffer[i]);
+            @Override
+            protected void endOfData() {
+                backEnd.endOfData();
+            }
+        };
+        final AbstractEncoderDecoder thisEncoder = this;
+        backEnd = new EncoderBackEnd() {
+            @Override
+            protected void emit(byte b) {
+                thisEncoder.emit(b);
+            }
+        };
     }
-  }
+
+    @Override
+    public void consume(byte b) {
+        frontEnd.consume(b);
+    }
+
+    @Override
+    protected void endOfData() {
+        frontEnd.endOfData();
+    }
+
+    /**
+     * Reads bytes from an input stream and directs their encoding
+     * into a sequence of bytes according to the base-64 encoding conventions.
+     *
+     * @param inputStream stream of chars to be encoded
+     * @throws IOException if an error occurs reading the inputStream
+     */
+    public void encode(InputStream inputStream) throws IOException {
+        reset();
+        byte buffer[] = new byte[BUFFER_SIZE];
+
+        while (true) {
+            int n = inputStream.read(buffer);
+
+            if (n < 0) {
+                endOfData();
+                break;
+            } else if (n > 0)
+                for (int i = 0; i < n; i++)
+                    consume(buffer[i]);
+        }
+    }
 
 
-  /**
-   * Directs the encoding of arbitrary 8-bit bytes
-   * into a sequence of bytes according to the base-64 encoding conventions.
-   *
-   * @param bytes
-   */
-  public void encode(byte[] bytes)
-  {
-    reset();
-    for (byte aByte : bytes) consume(aByte);
-    endOfData();
-  }
+    /**
+     * Directs the encoding of arbitrary 8-bit bytes
+     * into a sequence of bytes according to the base-64 encoding conventions.
+     *
+     * @param bytes to be encoded
+     */
+    public void encode(byte[] bytes) {
+        reset();
+        for (byte aByte : bytes) consume(aByte);
+        endOfData();
+    }
 
-  public void encode(String s)
-  {
-    CharBuffer charBuffer = CharBuffer.wrap(s);
-    encode(charset.encode(charBuffer).array());
-  }
+    public void encode(String s) {
+        CharBuffer charBuffer = CharBuffer.wrap(s);
+        encode(charset.encode(charBuffer).array());
+    }
 
-  @Override
-  protected void reset()
-  {
-    frontEnd.reset();
-    backEnd.reset();
-  }
+    @Override
+    protected void reset() {
+        frontEnd.reset();
+        backEnd.reset();
+    }
 
 }

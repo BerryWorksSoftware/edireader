@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -28,103 +28,87 @@ import java.nio.CharBuffer;
  * Decodes a sequence of base-64 encoded bytes into an
  * 8-bit byte sequence representing the original data.
  */
-public abstract class AbstractDecoder extends AbstractEncoderDecoder
-{
+public abstract class AbstractDecoder extends AbstractEncoderDecoder {
 
-  private final DecoderFrontEnd frontEnd;
-  private final DecoderBackEnd backEnd;
+    private final DecoderFrontEnd frontEnd;
+    private final DecoderBackEnd backEnd;
 
-  private static final int BUFFER_SIZE = 1000;
+    private static final int BUFFER_SIZE = 1000;
 
-  public AbstractDecoder()
-  {
-    frontEnd = new DecoderFrontEnd()
-    {
-      @Override
-      protected void emit(byte value)
-      {
-        backEnd.consume(value);
-      }
+    public AbstractDecoder() {
+        frontEnd = new DecoderFrontEnd() {
+            @Override
+            protected void emit(byte value) {
+                backEnd.consume(value);
+            }
 
-      @Override
-      protected void endOfData()
-      {
-        backEnd.endOfData();
-      }
-    };
-    final AbstractEncoderDecoder thisDecoder = this;
-    backEnd = new DecoderBackEnd()
-    {
-      @Override
-      protected void emit(byte b)
-      {
-        thisDecoder.emit(b);
-      }
-    };
-  }
-
-  @Override
-  public void consume(byte b)
-  {
-    frontEnd.consume(b);
-  }
-
-  @Override
-  protected void endOfData()
-  {
-    frontEnd.endOfData();
-  }
-
-  /**
-   * Reads base-64 encoded bytes from an input stream
-   * and directs their decoding.
-   *
-   * @param inputStream
-   * @throws IOException
-   */
-  public void decode(InputStream inputStream) throws IOException
-  {
-    reset();
-    byte buffer[] = new byte[BUFFER_SIZE];
-
-    while (true)
-    {
-      int n = inputStream.read(buffer);
-
-      if (n < 0)
-      {
-        endOfData();
-        break;
-      }
-      else if (n > 0)
-        for (int i = 0; i < n; i++)
-          consume(buffer[i]);
+            @Override
+            protected void endOfData() {
+                backEnd.endOfData();
+            }
+        };
+        final AbstractEncoderDecoder thisDecoder = this;
+        backEnd = new DecoderBackEnd() {
+            @Override
+            protected void emit(byte b) {
+                thisDecoder.emit(b);
+            }
+        };
     }
-  }
+
+    @Override
+    public void consume(byte b) {
+        frontEnd.consume(b);
+    }
+
+    @Override
+    protected void endOfData() {
+        frontEnd.endOfData();
+    }
+
+    /**
+     * Reads base-64 encoded bytes from an input stream
+     * and directs their decoding.
+     *
+     * @param inputStream stream of chars to be decoded
+     * @throws IOException if an error occurs reading the inputStream
+     */
+    public void decode(InputStream inputStream) throws IOException {
+        reset();
+        byte buffer[] = new byte[BUFFER_SIZE];
+
+        while (true) {
+            int n = inputStream.read(buffer);
+
+            if (n < 0) {
+                endOfData();
+                break;
+            } else if (n > 0)
+                for (int i = 0; i < n; i++)
+                    consume(buffer[i]);
+        }
+    }
 
 
-  /**
-   * Directs the decoding of base-64 encoded bytes provided in an array.
-   *
-   * @param bytes
-   */
-  public void decode(byte[] bytes)
-  {
-    reset();
-    for (byte aByte : bytes) consume(aByte);
-    endOfData();
-  }
+    /**
+     * Directs the decoding of base-64 encoded bytes provided in an array.
+     *
+     * @param bytes to be decoded
+     */
+    public void decode(byte[] bytes) {
+        reset();
+        for (byte aByte : bytes) consume(aByte);
+        endOfData();
+    }
 
-  public void decode(String s)
-  {
-    CharBuffer charBuffer = CharBuffer.wrap(s);
-    decode(charset.encode(charBuffer).array());
-  }
+    public void decode(String s) {
+        CharBuffer charBuffer = CharBuffer.wrap(s);
+        decode(charset.encode(charBuffer).array());
+    }
 
-  @Override
-  protected void reset()
-  {
-    frontEnd.reset();
-    backEnd.reset();
-  }
+    @Override
+    protected void reset() {
+        frontEnd.reset();
+        backEnd.reset();
+    }
 }
