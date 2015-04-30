@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -97,214 +97,271 @@ import java.util.List;
  * @see PluginController
  * @see com.berryworks.edireader.plugin.PluginPreparation
  */
-public abstract class Plugin
-{
+public abstract class Plugin {
 
-  public static final String ANY_CONTEXT = "*";
-  public static final String INITIAL_CONTEXT = "/";
-  public static final String CURRENT = ".";
-  protected static int pluginsLoaded;
+    public static final String ANY_CONTEXT = "*";
+    public static final String INITIAL_CONTEXT = "/";
+    public static final String CURRENT = ".";
+    protected static int pluginsLoaded;
 
-  /**
-   * LoopDescriptor[] is a table of state transfer information specific to a
-   * particular document type. The transition method uses this table to
-   * determine if a state transition occurred or not.
-   */
-  protected LoopDescriptor[] loops;
+    /**
+     * LoopDescriptor[] is a table of state transfer information specific to a
+     * particular document type. The transition method uses this table to
+     * determine if a state transition occurred or not.
+     */
+    protected LoopDescriptor[] loops;
 
-  protected boolean debug;
-  protected final String documentType;
-  protected final String documentName;
-  protected PluginPreparation optimizedForm;
-  private boolean validating;
+    protected boolean debug;
+    protected final String documentType;
+    protected final String documentName;
+    protected PluginPreparation optimizedForm;
+    private boolean validating;
 
-  public Plugin(String documentType, String documentName)
-  {
-    this.documentType = documentType;
-    this.documentName = documentName;
-    pluginsLoaded++;
-  }
-
-  protected Plugin(String documentType, String documentName, boolean validating)
-  {
-    this(documentType, documentName);
-    this.validating = validating;
-  }
-
-  /**
-   * Perform any initialization needed for the plugin before use with a new document.
-   * <p/>
-   * The only cases where this is needed is for plugins that have state. Most plugins are stateless and therefore
-   * an instance of a plugin can be reused for many documents. However, it is possible to develop a subclass of Plugin
-   * that maintains state. For example, a FilteringPlugin might need to make decisions based on what segment types
-   * have been seen previously in a given document. In such a case, you may override the init() method in order to
-   * reset the state before starting a new document. In developing such a state-bearing plugin, you must carefully
-   * consider thread safety issues for multi-threaded environments. The use of ThreadLocal is recommended in such
-   * cases.
-   */
-  public void init()
-  {
-  }
-
-  /**
-   * Get the document type (for example, "837")
-   *
-   * @return The documentType value
-   */
-  public String getDocumentType()
-  {
-    return documentType;
-  }
-
-  /**
-   * Get the readable name for the document (for example, "Health Care Claim")
-   *
-   * @return The documentName value
-   */
-  public String getDocumentName()
-  {
-    return documentName;
-  }
-
-  /**
-   * Query the plugin about a loop that starts with a designated segment type,
-   * given that you are already within a particular loop.
-   *
-   * @param segment          type of segment encountered
-   * @param currentLoopStack stack representing nested loops in current state
-   * @param currentLevel     nesting level of current state
-   * @return descriptor matching query parameters, or null if none
-   */
-  public LoopDescriptor query(String segment, String currentLoopStack,
-                              int currentLevel)
-  {
-    LoopDescriptor result = null;
-    if (debug) trace("plugin query for segment " + segment);
-
-    if (currentLoopStack == null)
-      currentLoopStack = "*";
-
-    if (loops == null)
-      return null;
-
-    if (optimizedForm == null)
-      throw new RuntimeException(
-        "Internal error: plugin not properly constructed");
-
-    List<LoopDescriptor> descriptorList = optimizedForm.getList(segment);
-    if (descriptorList == null)
-    {
-      if (debug) trace("No descriptors found");
-      return null;
+    public Plugin(String documentType, String documentName) {
+        this.documentType = documentType;
+        this.documentName = documentName;
+        pluginsLoaded++;
     }
-    if (debug) trace("Number of descriptors found: " + descriptorList.size());
 
-    for (LoopDescriptor descriptor : descriptorList)
-    {
-      if (descriptor.getFirstSegment().equals(segment))
-      {
-        int levelContext = descriptor.getLevelContext();
-        if (debug) trace("checking level context " + levelContext);
-        if (levelContext > -1)
-        {
-          if (levelContext == currentLevel)
-          {
-            result = descriptor;
-            break;
-          }
-          continue;
-        }
-        String candidateContext = descriptor.getLoopContext();
-        if (debug) trace("checking loop context " + candidateContext +
-          " with current loop stack " + currentLoopStack);
-        if ("*".equals(candidateContext))
-        {
-          result = descriptor;
-          break;
-        }
-        else if (candidateContext.startsWith("/")
-          && candidateContext.length() > 1
-          && currentLoopStack.startsWith(candidateContext))
-        {
-          if (debug) trace("startsWith satisfied");
-          result = descriptor;
-          break;
-        }
-        else if (currentLoopStack.endsWith(candidateContext))
-        {
-          result = descriptor;
-          break;
-        }
-      }
-      else
-      {
-        throw new RuntimeException(
-          "Internal error: optimized plugin structure invalid");
-      }
+    protected Plugin(String documentType, String documentName, boolean validating) {
+        this(documentType, documentName);
+        this.validating = validating;
     }
-    // A loop descriptor with a null loop name serves as a NOT rule.
-    // No further loop descriptors are considered, and query returns a null
-    // indicating that no transition should occur. This provides a way to
-    // express a specific context where the appearance of a segment does NOT
-    // mark the entry of a new loop.
-    if (result != null && result.getName() == null)
-      result = null;
-    return result;
-  }
 
-  private void trace(String s)
-  {
-    EDIReader.trace(s);
-  }
-
-  public void debug(boolean d)
-  {
-    this.debug = d;
-  }
-
-  public static int getCount()
-  {
-    return pluginsLoaded;
-  }
-
-  @Override
-  public String toString()
-  {
-    StringBuilder result = new StringBuilder();
-    result.append("Plugin ").append(getClass().getName());
-    result.append("\n  ").append(getDocumentName()).append(" (").append(getDocumentType()).append(')');
-    for (LoopDescriptor loop : loops)
-      result.append('\n').append(loop.toString());
-    return result.toString();
-  }
-
-  public void prepare()
-  {
-    optimizedForm = new PluginPreparation(loops);
-  }
-
-  public boolean isValidating()
-  {
-    return validating;
-  }
-
-  public PluginControllerImpl createController(String standard, Tokenizer tokenizer)
-  {
-    return new PluginControllerImpl(standard, tokenizer);
-  }
-
-  protected LoopDescriptor[] concatenate(LoopDescriptor[] descriptorsA, LoopDescriptor[] descriptorsB)
-  {
-    LoopDescriptor[] result = new LoopDescriptor[descriptorsA.length + descriptorsB.length];
-    int loopsIndex = 0;
-    for (LoopDescriptor d : descriptorsA)
-    {
-      result[loopsIndex++] = d;
+    /**
+     * Perform any initialization needed for the plugin before use with a new document.
+     * <p/>
+     * The only cases where this is needed is for plugins that have state. Most plugins are stateless and therefore
+     * an instance of a plugin can be reused for many documents. However, it is possible to develop a subclass of Plugin
+     * that maintains state. For example, a FilteringPlugin might need to make decisions based on what segment types
+     * have been seen previously in a given document. In such a case, you may override the init() method in order to
+     * reset the state before starting a new document. In developing such a state-bearing plugin, you must carefully
+     * consider thread safety issues for multi-threaded environments. The use of ThreadLocal is recommended in such
+     * cases.
+     */
+    public void init() {
     }
-    for (LoopDescriptor d : descriptorsB)
-    {
-      result[loopsIndex++] = d;
+
+    /**
+     * Get the document type (for example, "837")
+     *
+     * @return The documentType value
+     */
+    public String getDocumentType() {
+        return documentType;
     }
-    return result;
-  }
+
+    /**
+     * Get the readable name for the document (for example, "Health Care Claim")
+     *
+     * @return The documentName value
+     */
+    public String getDocumentName() {
+        return documentName;
+    }
+
+    /**
+     * Get the array of LoopDescriptors
+     *
+     * @return LoopDescriptors
+     */
+    public LoopDescriptor[] getLoopDescriptors() {
+        return loops;
+    }
+
+    /**
+     * Query the plugin about a loop that starts with a designated segment type,
+     * given that you are already within a particular loop.
+     *
+     * @param segment          type of segment encountered
+     * @param currentLoopStack stack representing nested loops in current state
+     * @param currentLevel     nesting level of current state
+     * @return descriptor matching query parameters, or null if none
+     */
+    public LoopDescriptor query(String segment, String currentLoopStack,
+                                int currentLevel) {
+        LoopDescriptor result = null;
+        if (debug) trace("plugin query for segment " + segment);
+
+        if (currentLoopStack == null)
+            currentLoopStack = "*";
+
+        if (loops == null)
+            return null;
+
+        if (optimizedForm == null)
+            throw new RuntimeException(
+                    "Internal error: plugin not properly constructed");
+
+        List<LoopDescriptor> descriptorList = optimizedForm.getList(segment);
+        if (descriptorList == null) {
+            if (debug) trace("No descriptors found");
+            return null;
+        }
+        if (debug) trace("Number of descriptors found: " + descriptorList.size());
+
+        for (LoopDescriptor descriptor : descriptorList) {
+            if (descriptor.getFirstSegment().equals(segment)) {
+                int levelContext = descriptor.getLevelContext();
+                if (debug) trace("checking level context " + levelContext);
+                if (levelContext > -1) {
+                    if (levelContext == currentLevel) {
+                        result = descriptor;
+                        break;
+                    }
+                    continue;
+                }
+                String candidateContext = descriptor.getLoopContext();
+                if (debug) trace("checking loop context " + candidateContext +
+                        " with current loop stack " + currentLoopStack);
+                if ("*".equals(candidateContext)) {
+                    result = descriptor;
+                    break;
+                } else if (candidateContext.startsWith("/")
+                        && candidateContext.length() > 1
+                        && currentLoopStack.startsWith(candidateContext)) {
+                    if (debug) trace("startsWith satisfied");
+                    result = descriptor;
+                    break;
+                } else if (currentLoopStack.endsWith(candidateContext)) {
+                    result = descriptor;
+                    break;
+                }
+            } else {
+                throw new RuntimeException(
+                        "Internal error: optimized plugin structure invalid");
+            }
+        }
+        // A loop descriptor with a null loop name serves as a NOT rule.
+        // No further loop descriptors are considered, and query returns a null
+        // indicating that no transition should occur. This provides a way to
+        // express a specific context where the appearance of a segment does NOT
+        // mark the entry of a new loop.
+        if (result != null && result.getName() == null)
+            result = null;
+        return result;
+    }
+
+    private void trace(String s) {
+        EDIReader.trace(s);
+    }
+
+    public void debug(boolean d) {
+        this.debug = d;
+    }
+
+    public static int getCount() {
+        return pluginsLoaded;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append("Plugin ").append(getClass().getName());
+        result.append("\n  ").append(getDocumentName()).append(" (").append(getDocumentType()).append(')');
+        for (LoopDescriptor loop : loops)
+            result.append('\n').append(loop.toString());
+        return result.toString();
+    }
+
+    public void prepare() {
+        optimizedForm = new PluginPreparation(loops);
+    }
+
+    public boolean isValidating() {
+        return validating;
+    }
+
+    public PluginControllerImpl createController(String standard, Tokenizer tokenizer) {
+        return new PluginControllerImpl(standard, tokenizer);
+    }
+
+    protected LoopDescriptor[] concatenate(LoopDescriptor[] descriptorsA, LoopDescriptor[] descriptorsB) {
+        LoopDescriptor[] result = new LoopDescriptor[descriptorsA.length + descriptorsB.length];
+        int loopsIndex = 0;
+        for (LoopDescriptor d : descriptorsA) {
+            result[loopsIndex++] = d;
+        }
+        for (LoopDescriptor d : descriptorsB) {
+            result[loopsIndex++] = d;
+        }
+        return result;
+    }
+
+    public String getDocumentVersion() {
+        // Try to derive the version from the name of the class
+        // based on the naming convention used by EDIReader.
+        String result = null;
+
+        final String simpleName = this.getClass().getSimpleName();
+        final String[] split = simpleName.split("_");
+        if (split.length == 4) {
+            result = split[3];
+        }
+
+        return result;
+    }
+
+    public PluginDiff compare(Plugin pluginB) {
+        final PluginDiff result = new PluginDiff(); // not match by default
+        if (pluginB == null) {
+            return result.mismatch("second plugin is null");
+        }
+
+        if (!this.getDocumentType().equals(pluginB.getDocumentType())) {
+            return result.mismatch("types differ");
+        }
+
+        if (!this.getDocumentName().equals(pluginB.getDocumentName())) {
+            return result.mismatch("names differ");
+        }
+
+        final LoopDescriptor[] loopsOfB = pluginB.loops;
+        if (loops == null) {
+            if (loopsOfB != null) {
+                return result.mismatch("second plugin has non-null loops while this plugin does not");
+            }
+        } else {
+            if (loopsOfB == null) {
+                return result.mismatch("second plugin has null loops while this plugin does not");
+            }
+            if (loops.length != loopsOfB.length) {
+                return result.mismatch("second plugin has a different number of loops than this plugin");
+            }
+
+//            TODO iterator through the loops and check for match
+        }
+
+        result.setMatch(true);
+
+        return result;
+    }
+
+    public static class PluginDiff {
+
+        private boolean match;
+        private String reason;
+
+        public boolean isMatch() {
+            return match;
+        }
+
+        public void setMatch(boolean match) {
+            this.match = match;
+        }
+
+        public String getReason() {
+            return isMatch() ? "matches" : reason;
+        }
+
+        public void setReason(String reason) {
+            this.reason = reason;
+        }
+
+        public PluginDiff mismatch(String s) {
+            setMatch(false);
+            setReason(s);
+            return this;
+        }
+    }
 }

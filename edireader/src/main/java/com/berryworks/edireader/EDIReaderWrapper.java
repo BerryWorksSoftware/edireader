@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -61,13 +61,13 @@ public class EDIReaderWrapper extends EDIReader {
     }
 
     @Override
-    public void setXMLTags(XMLTags tags) {
-        wrappedEDIReader.setXMLTags(tags);
+    public XMLTags getXMLTags() {
+        return wrappedEDIReader.getXMLTags();
     }
 
     @Override
-    public XMLTags getXMLTags() {
-        return wrappedEDIReader.getXMLTags();
+    public void setXMLTags(XMLTags tags) {
+        wrappedEDIReader.setXMLTags(tags);
     }
 
     @Override
@@ -76,8 +76,18 @@ public class EDIReaderWrapper extends EDIReader {
     }
 
     @Override
+    public void setTerminator(char terminator) {
+        wrappedEDIReader.setTerminator(terminator);
+    }
+
+    @Override
     public String getTerminatorSuffix() {
         return wrappedEDIReader.getTerminatorSuffix();
+    }
+
+    @Override
+    public void setTerminatorSuffix(String terminatorSuffix) {
+        wrappedEDIReader.setTerminatorSuffix(terminatorSuffix);
     }
 
     @Override
@@ -86,13 +96,38 @@ public class EDIReaderWrapper extends EDIReader {
     }
 
     @Override
+    public void setDelimiter(char delimiter) {
+        wrappedEDIReader.setDelimiter(delimiter);
+    }
+
+    @Override
     public char getSubDelimiter() {
         return wrappedEDIReader.getSubDelimiter();
     }
 
     @Override
+    public void setSubDelimiter(char subDelimiter) {
+        wrappedEDIReader.setSubDelimiter(subDelimiter);
+    }
+
+    @Override
+    public char getSubSubDelimiter() {
+        return wrappedEDIReader.getSubSubDelimiter();
+    }
+
+    @Override
+    public void setSubSubDelimiter(char subSubDelimiter) {
+        wrappedEDIReader.setSubSubDelimiter(subSubDelimiter);
+    }
+
+    @Override
     public int getRelease() {
         return wrappedEDIReader.getRelease();
+    }
+
+    @Override
+    public void setRelease(int release) {
+        wrappedEDIReader.setRelease(release);
     }
 
     @Override
@@ -111,13 +146,18 @@ public class EDIReaderWrapper extends EDIReader {
     }
 
     @Override
-    public char getSubSubDelimiter() {
-        return wrappedEDIReader.getSubSubDelimiter();
+    public void setDecimalMark(char decimalMark) {
+        wrappedEDIReader.setDecimalMark(decimalMark);
     }
 
     @Override
     public char getRepetitionSeparator() {
         return wrappedEDIReader.getRepetitionSeparator();
+    }
+
+    @Override
+    public void setRepetitionSeparator(char repetitionSeparator) {
+        wrappedEDIReader.setRepetitionSeparator(repetitionSeparator);
     }
 
     @Override
@@ -133,21 +173,6 @@ public class EDIReaderWrapper extends EDIReader {
     @Override
     public void setCopyWriter(Writer writer) {
         wrappedEDIReader.setCopyWriter(writer);
-    }
-
-    @Override
-    protected void parseSetup(InputSource source) throws EDISyntaxException, IOException {
-        wrappedEDIReader.parseSetup(source);
-    }
-
-    @Override
-    public void setAcknowledgment(Writer writer) {
-        wrappedEDIReader.setAcknowledgment(writer);
-    }
-
-    @Override
-    public void setAcknowledgment(Writer writer, SyntaxDescriptor syntaxDescriptor) {
-        wrappedEDIReader.setAcknowledgment(writer, syntaxDescriptor);
     }
 
     @Override
@@ -179,6 +204,65 @@ public class EDIReaderWrapper extends EDIReader {
     public void setSyntaxExceptionHandler(EDISyntaxExceptionHandler syntaxExceptionHandler) {
         wrappedEDIReader.setSyntaxExceptionHandler(syntaxExceptionHandler);
     }
+
+    @Override
+    public ContentHandler getContentHandler() {
+        return wrappedEDIReader.getContentHandler();
+    }
+
+    @Override
+    public void setContentHandler(ContentHandler handler) {
+        wrappedEDIReader.setContentHandler(handler);
+    }
+
+    @Override
+    public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+        return wrappedEDIReader.getFeature(name);
+    }
+
+    @Override
+    public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {
+        wrappedEDIReader.setFeature(name, value);
+    }
+
+    @Override
+    public Object getProperty(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
+        return wrappedEDIReader.getProperty(name);
+    }
+
+    @Override
+    public void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException {
+        wrappedEDIReader.setProperty(name, value);
+    }
+
+    @Override
+    public String getFirstSegment() {
+        return wrappedEDIReader.getFirstSegment();
+    }
+
+    @Override
+    public void setFirstSegment(String firstSegment) {
+        wrappedEDIReader.setFirstSegment(firstSegment);
+    }
+
+
+    //    ----------------------------------
+
+    @Override
+    protected void parseSetup(InputSource source) throws EDISyntaxException, IOException {
+        wrappedEDIReader.parseSetup(source);
+    }
+
+    @Override
+    public void setAcknowledgment(Writer writer) {
+        wrappedEDIReader.setAcknowledgment(writer);
+    }
+
+    @Override
+    public void setAcknowledgment(Writer writer, SyntaxDescriptor syntaxDescriptor) {
+        wrappedEDIReader.setAcknowledgment(writer, syntaxDescriptor);
+    }
+
 
     @Override
     public boolean isNamespaceEnabled() {
@@ -215,35 +299,6 @@ public class EDIReaderWrapper extends EDIReader {
         wrappedEDIReader.parse(systemId);
     }
 
-    @Override
-    public void setContentHandler(ContentHandler handler) {
-        wrappedEDIReader.setContentHandler(handler);
-    }
-
-    @Override
-    public ContentHandler getContentHandler() {
-        return wrappedEDIReader.getContentHandler();
-    }
-
-    @Override
-    public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {
-        wrappedEDIReader.setFeature(name, value);
-    }
-
-    @Override
-    public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
-        return wrappedEDIReader.getFeature(name);
-    }
-
-    @Override
-    public void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException {
-        wrappedEDIReader.setProperty(name, value);
-    }
-
-    @Override
-    public Object getProperty(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
-        return wrappedEDIReader.getProperty(name);
-    }
 
     @Override
     public ErrorHandler getErrorHandler() {
@@ -270,45 +325,6 @@ public class EDIReaderWrapper extends EDIReader {
         return wrappedEDIReader.getSegmentCharCount();
     }
 
-    @Override
-    public void setDelimiter(char delimiter) {
-        wrappedEDIReader.setDelimiter(delimiter);
-    }
-
-    @Override
-    public void setSubDelimiter(char subDelimiter) {
-        wrappedEDIReader.setSubDelimiter(subDelimiter);
-    }
-
-    @Override
-    public void setSubSubDelimiter(char subSubDelimiter) {
-        wrappedEDIReader.setSubSubDelimiter(subSubDelimiter);
-    }
-
-    @Override
-    public void setDecimalMark(char decimalMark) {
-        wrappedEDIReader.setDecimalMark(decimalMark);
-    }
-
-    @Override
-    public void setRepetitionSeparator(char repetitionSeparator) {
-        wrappedEDIReader.setRepetitionSeparator(repetitionSeparator);
-    }
-
-    @Override
-    public void setTerminator(char terminator) {
-        wrappedEDIReader.setTerminator(terminator);
-    }
-
-    @Override
-    public void setRelease(int release) {
-        wrappedEDIReader.setRelease(release);
-    }
-
-    @Override
-    public void setTerminatorSuffix(String terminatorSuffix) {
-        wrappedEDIReader.setTerminatorSuffix(terminatorSuffix);
-    }
 
     @Override
     public EDIAttributes getDocumentAttributes() {
@@ -343,16 +359,6 @@ public class EDIReaderWrapper extends EDIReader {
     @Override
     public void setPreviewed(boolean previewed) {
         wrappedEDIReader.setPreviewed(previewed);
-    }
-
-    @Override
-    public String getFirstSegment() {
-        return wrappedEDIReader.getFirstSegment();
-    }
-
-    @Override
-    public void setFirstSegment(String firstSegment) {
-        wrappedEDIReader.setFirstSegment(firstSegment);
     }
 
     @Override

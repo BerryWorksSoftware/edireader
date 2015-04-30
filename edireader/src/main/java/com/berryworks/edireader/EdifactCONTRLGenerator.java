@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -30,217 +30,230 @@ import java.io.Writer;
  * A delegate for generating an interchange containing control messages
  * acknowledging the transaction parsed by EdifactReader.
  */
-public class EdifactCONTRLGenerator extends ReplyGenerator
-{
+public class EdifactCONTRLGenerator extends ReplyGenerator {
 
-  private final Writer ackStream;
-  private char delimiter;
-  private String segmentTerminator;
-  private String syntaxIdentifier;
-  private String versionNumber;
-  private String interchangeControlNumber;
+    private final Writer ackStream;
+    private char delimiter;
+    private String segmentTerminator;
+    private String syntaxIdentifier;
+    private String versionNumber;
+    private String interchangeControlNumber;
+    private int segmentCount;
 
-  private String interchangeSender, interchangeSenderQualifier,
-    interchangeRecipient, interchangeRecipientQualifier;
+    private String interchangeSender, interchangeSenderQualifier,
+            interchangeRecipient, interchangeRecipientQualifier;
 
-  private String generatedInterchangeControlNumber;
+    private String generatedInterchangeControlNumber;
 
-  private int generatedMessageNumber;
+    private int generatedMessageNumber;
 
-  private boolean generated;
+    private boolean generated;
 
-  public EdifactCONTRLGenerator(StandardReader standardReader,
-                                Writer ackStream)
-  {
-    this.standardReader = standardReader;
-    this.ackStream = ackStream;
-  }
-
-  public void generateAcknowledgmentHeader(Attributes attributes)
-  {
-    if (ackStream == null)
-      return;
-
-    for (int i = 0; i < attributes.getLength(); i++)
-    {
-      String name = attributes.getLocalName(i);
-      String value = attributes.getValue(i);
-      if (standardReader.getXMLTags().getControl().equals(name))
-        interchangeControlNumber = value;
-      else if (standardReader.getXMLTags().getSyntaxIdentifier().equals(name))
-        syntaxIdentifier = value;
-      else if (standardReader.getXMLTags().getSyntaxVersion().equals(name))
-        versionNumber = value;
+    public EdifactCONTRLGenerator(StandardReader standardReader,
+                                  Writer ackStream) {
+        this.standardReader = standardReader;
+        this.ackStream = ackStream;
     }
-  }
 
-  public void setSender(Attributes attributes)
-  {
-    if (ackStream == null)
-      return;
-    for (int i = 0; i < attributes.getLength(); i++)
-    {
-      String name = attributes.getLocalName(i);
-      String value = attributes.getValue(i);
-      if (standardReader.getXMLTags().getIdAttribute().equals(name))
-        interchangeSender = value;
-      else if (standardReader.getXMLTags().getQualifierAttribute().equals(name))
-        interchangeSenderQualifier = value;
-    }
-  }
+    public void generateAcknowledgmentHeader(Attributes attributes) {
+        if (ackStream == null)
+            return;
 
-  public void setReceiver(Attributes attributes)
-  {
-    if (ackStream == null)
-    {
-      return;
-    }
-    for (int i = 0; i < attributes.getLength(); i++)
-    {
-      String name = attributes.getLocalName(i);
-      String value = attributes.getValue(i);
-      if (standardReader.getXMLTags().getIdAttribute().equals(name))
-        interchangeRecipient = value;
-      else if (standardReader.getXMLTags().getQualifierAttribute().equals(name))
-        interchangeRecipientQualifier = value;
-    }
-  }
-
-  @Override
-  public void generateAcknowledgmentHeader(String xsyntaxIdentifier,
-                                           String xversionNumber, String xsender, String xsenderQualifier,
-                                           String xrecipient, String xrecipientQualifier, String xcontrolNumber)
-  {
-  }
-
-  public void generateTransactionAcknowledgment(Attributes attributes)
-    throws IOException
-  {
-    String messageVersionNumber = "D";
-    String messageReleaseNumber = "97B";
-    String controllingAgency = "UN";
-
-    if (ackStream == null)
-    {
-      return;
-    }
-    if (!generated)
-    {
-      generated = true;
-
-      // This is where we should check to make sure to avoid
-      // generating a CONTRL message for a CONTRL message?
-
-      delimiter = standardReader.getDelimiter();
-      char subDelimiter = standardReader.getSubDelimiter();
-      char terminator = standardReader.getTerminator();
-      String terminatorSuffix = standardReader.getTerminatorSuffix();
-      segmentTerminator = terminator + terminatorSuffix;
-      char repetitionCharacter = standardReader.getRepetitionSeparator();
-      if (repetitionCharacter == '\000')
-        repetitionCharacter = ' ';
-
-      String dateAndTime;
-      if (controlDateAndTimeOverride == null)
-      {
-        dateAndTime = DateTimeGenerator.generate(subDelimiter);
-      }
-      else
-        dateAndTime = controlDateAndTimeOverride;
-
-      if (standardReader instanceof EdifactReaderWithCONTRL)
-      {
-        EdifactReaderWithCONTRL reader = (EdifactReaderWithCONTRL) standardReader;
-        if (reader.isUNA())
-        {
-          int ri = standardReader.getRelease();
-          char r = ri < 0 ? ' ' : (char) ri;
-          ackStream.write("UNA" + subDelimiter + delimiter
-            + reader.getDecimalMark() + r + repetitionCharacter + segmentTerminator);
+        for (int i = 0; i < attributes.getLength(); i++) {
+            String name = attributes.getLocalName(i);
+            String value = attributes.getValue(i);
+            if (standardReader.getXMLTags().getControl().equals(name))
+                interchangeControlNumber = value;
+            else if (standardReader.getXMLTags().getSyntaxIdentifier().equals(name))
+                syntaxIdentifier = value;
+            else if (standardReader.getXMLTags().getSyntaxVersion().equals(name))
+                versionNumber = value;
         }
-      }
-
-      generatedInterchangeControlNumber = interchangeControlNumber;
-
-      ackStream.write("UNB" + delimiter + syntaxIdentifier + subDelimiter
-        + versionNumber + delimiter + interchangeRecipient
-        + subDelimiter + interchangeRecipientQualifier + delimiter
-        + interchangeSender + subDelimiter
-        + interchangeSenderQualifier + delimiter + dateAndTime
-        + delimiter + generatedInterchangeControlNumber);
-      ackStream.write(segmentTerminator);
-      for (int i = 0; i < attributes.getLength(); i++)
-      {
-        String name = attributes.getLocalName(i);
-        String value = attributes.getValue(i);
-        if (standardReader.getXMLTags().getMessageVersion().equals(name))
-          messageVersionNumber = value;
-        else if (standardReader.getXMLTags().getMessageRelease().equals(name))
-          messageReleaseNumber = value;
-        else if (standardReader.getXMLTags().getAgency().equals(name))
-          controllingAgency = value;
-      }
-
-      // Generate the UNH for the CONTRL message
-      ackStream.write("UNH" + delimiter + (++generatedMessageNumber)
-        + delimiter + "CONTRL" + subDelimiter
-        + messageVersionNumber + subDelimiter
-        + messageReleaseNumber + subDelimiter + controllingAgency);
-      ackStream.write(segmentTerminator);
-
-      // Generate the UCI to acknowledge the interchange
-      ackStream.write("UCI" + delimiter + interchangeControlNumber
-        + delimiter + interchangeSender + subDelimiter
-        + interchangeSenderQualifier + delimiter
-        + interchangeRecipient + subDelimiter
-        + interchangeRecipientQualifier);
-      ackStream.write(segmentTerminator);
-    }
-  }
-
-  @Override
-  public void generateTransactionAcknowledgment(String transactionCode,
-                                                String controlNumber) throws IOException
-  {
-  }
-
-  @Override
-  public void generateGroupAcknowledgmentTrailer(int docCount)
-    throws IOException
-  {
-  }
-
-  @Override
-  public void generateNegativeACK()
-  {
-  }
-
-  @Override
-  public void generateAcknowledgementWrapup() throws IOException
-  {
-    if (ackStream == null)
-    {
-      return;
     }
 
-    // Generate the UNT to match the UNH
-    ackStream.write("UNT" + delimiter + "3" + delimiter
-      + generatedMessageNumber);
-    ackStream.write(segmentTerminator);
+    public void setSender(Attributes attributes) {
+        if (ackStream == null)
+            return;
+        for (int i = 0; i < attributes.getLength(); i++) {
+            String name = attributes.getLocalName(i);
+            String value = attributes.getValue(i);
+            if (standardReader.getXMLTags().getIdAttribute().equals(name))
+                interchangeSender = value;
+            else if (standardReader.getXMLTags().getQualifierAttribute().equals(name))
+                interchangeSenderQualifier = value;
+        }
+    }
 
-    // Finish with a UNZ corresponding to the UNB
-    ackStream.write("UNZ" + delimiter + "1" + delimiter
-      + generatedInterchangeControlNumber);
-    ackStream.write(segmentTerminator);
-    ackStream.close();
-  }
+    public void setReceiver(Attributes attributes) {
+        if (ackStream == null) {
+            return;
+        }
+        for (int i = 0; i < attributes.getLength(); i++) {
+            String name = attributes.getLocalName(i);
+            String value = attributes.getValue(i);
+            if (standardReader.getXMLTags().getIdAttribute().equals(name))
+                interchangeRecipient = value;
+            else if (standardReader.getXMLTags().getQualifierAttribute().equals(name))
+                interchangeRecipientQualifier = value;
+        }
+    }
 
-  @Override
-  public void generateAcknowledgmentHeader(String firstSegment,
-                                           String groupSender, String groupReceiver, int i,
-                                           String groupVersion, String groupFunctionCode,
-                                           String groupControlNumber) throws IOException
-  {
-  }
+    @Override
+    public void generateAcknowledgmentHeader(String xsyntaxIdentifier,
+                                             String xversionNumber, String xsender, String xsenderQualifier,
+                                             String xrecipient, String xrecipientQualifier, String xcontrolNumber) {
+    }
+
+    public void generateTransactionAcknowledgment(Attributes attributes)
+            throws IOException {
+        String messageVersionNumber = "D";
+        String messageReleaseNumber = "97B";
+        String controllingAgency = "UN";
+
+        if (ackStream == null) {
+            return;
+        }
+        if (!generated) {
+            generated = true;
+
+            // This is where we should check to make sure to avoid
+            // generating a CONTRL message for a CONTRL message?
+
+            delimiter = standardReader.getDelimiter();
+            char subDelimiter = standardReader.getSubDelimiter();
+            char terminator = standardReader.getTerminator();
+            String terminatorSuffix = standardReader.getTerminatorSuffix();
+            segmentTerminator = terminator + terminatorSuffix;
+            char repetitionCharacter = standardReader.getRepetitionSeparator();
+            if (repetitionCharacter == '\000')
+                repetitionCharacter = ' ';
+
+            String dateAndTime;
+            if (controlDateAndTimeOverride == null) {
+                dateAndTime = DateTimeGenerator.generate(subDelimiter);
+            } else
+                dateAndTime = controlDateAndTimeOverride;
+
+            if (standardReader instanceof EdifactReaderWithCONTRL) {
+                EdifactReaderWithCONTRL reader = (EdifactReaderWithCONTRL) standardReader;
+                if (reader.isUNA()) {
+                    int ri = standardReader.getRelease();
+                    char r = ri < 0 ? ' ' : (char) ri;
+                    ackStream.write("UNA" + subDelimiter + delimiter
+                            + reader.getDecimalMark() + r + repetitionCharacter + segmentTerminator);
+                }
+            }
+
+            generatedInterchangeControlNumber = interchangeControlNumber;
+
+            ackStream.write("UNB" + delimiter + syntaxIdentifier + subDelimiter
+                    + versionNumber + delimiter + interchangeRecipient
+                    + subDelimiter + interchangeRecipientQualifier + delimiter
+                    + interchangeSender + subDelimiter
+                    + interchangeSenderQualifier + delimiter + dateAndTime
+                    + delimiter + generatedInterchangeControlNumber);
+            ackStream.write(segmentTerminator);
+
+            for (int i = 0; i < attributes.getLength(); i++) {
+                String name = attributes.getLocalName(i);
+                String value = attributes.getValue(i);
+                if (standardReader.getXMLTags().getMessageVersion().equals(name))
+                    messageVersionNumber = value;
+                else if (standardReader.getXMLTags().getMessageRelease().equals(name))
+                    messageReleaseNumber = value;
+                else if (standardReader.getXMLTags().getAgency().equals(name))
+                    controllingAgency = value;
+            }
+
+            // Generate the UNH for the CONTRL message
+            ackStream.write("UNH" + delimiter + (++generatedMessageNumber)
+                    + delimiter + "CONTRL" + subDelimiter
+                    + messageVersionNumber + subDelimiter
+                    + messageReleaseNumber + subDelimiter + controllingAgency);
+            ackStream.write(segmentTerminator);
+            segmentCount++;
+
+            // Generate the UCI to acknowledge the interchange.
+            // 7 means This level acknowledged and all lower levels acknowledged if not explicitly rejected
+            ackStream.write("UCI" + delimiter + interchangeControlNumber
+                    + delimiter + interchangeSender + subDelimiter
+                    + interchangeSenderQualifier + delimiter
+                    + interchangeRecipient + subDelimiter
+                    + interchangeRecipientQualifier + delimiter
+                    + "7");
+            ackStream.write(segmentTerminator);
+            segmentCount++;
+
+            // Generate UCM to acknowledge each message.
+            // 7 means This level acknowledged and all lower levels acknowledged if not explicitly rejected
+            String messageReference, messageType, mvn, release, agency, association;
+            messageReference = attributes.getValue(standardReader.getXMLTags().getControl());
+            if (messageReference != null) {
+                ackStream.write("UCM" + delimiter + messageReference);
+                messageType = attributes.getValue(standardReader.getXMLTags().getDocumentType());
+                if (messageType != null) {
+                    ackStream.write(delimiter + messageType);
+                    mvn = attributes.getValue(standardReader.getXMLTags().getVersion());
+                    if (mvn != null) {
+                        ackStream.write(subDelimiter + mvn);
+                        release = attributes.getValue(standardReader.getXMLTags().getRelease());
+                        if (release != null) {
+                            ackStream.write(subDelimiter + release);
+                            agency = attributes.getValue(standardReader.getXMLTags().getAgency());
+                            if (agency != null) {
+                                ackStream.write(subDelimiter + agency);
+                                association = attributes.getValue(standardReader.getXMLTags().getAssociation());
+                                if (association != null) {
+                                    ackStream.write(subDelimiter + association);
+                                }
+                            }
+                        }
+                    }
+                }
+                ackStream.write(delimiter + "7" + segmentTerminator);
+                segmentCount++;
+            }
+        }
+    }
+
+    @Override
+    public void generateTransactionAcknowledgment(String transactionCode,
+                                                  String controlNumber) throws IOException {
+    }
+
+    @Override
+    public void generateGroupAcknowledgmentTrailer(int docCount)
+            throws IOException {
+    }
+
+    @Override
+    public void generateNegativeACK() {
+    }
+
+    @Override
+    public void generateAcknowledgementWrapup() throws IOException {
+        if (ackStream == null) {
+            return;
+        }
+
+        // Generate the UNT to match the UNH
+        segmentCount++;
+        ackStream.write("UNT" + delimiter + segmentCount + delimiter
+                + generatedMessageNumber);
+        ackStream.write(segmentTerminator);
+
+        // Finish with a UNZ corresponding to the UNB
+        ackStream.write("UNZ" + delimiter + "1" + delimiter
+                + generatedInterchangeControlNumber);
+        ackStream.write(segmentTerminator);
+        ackStream.close();
+    }
+
+    @Override
+    public void generateAcknowledgmentHeader(String firstSegment,
+                                             String groupSender, String groupReceiver, int i,
+                                             String groupVersion, String groupFunctionCode,
+                                             String groupControlNumber) throws IOException {
+    }
 
 }

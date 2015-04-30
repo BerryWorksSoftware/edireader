@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -24,72 +24,60 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 
-public class EdifactReaderWithCONTRL extends EdifactReader
-{
+public class EdifactReaderWithCONTRL extends EdifactReader {
 
-  @Override
-  protected void startInterchange(EDIAttributes attributes)
-    throws SAXException
-  {
-    startElement(getXMLTags().getInterchangeTag(), attributes);
-    getEdifactCONTRLGenerator().generateAcknowledgmentHeader(attributes);
-  }
-
-  @Override
-  protected void endInterchange() throws SAXException
-  {
-    endElement(getXMLTags().getInterchangeTag());
-    try
-    {
-      getAckGenerator().generateAcknowledgementWrapup();
-    } catch (IOException e)
-    {
-      throw new SAXException(e);
+    @Override
+    protected void startInterchange(EDIAttributes attributes)
+            throws SAXException {
+        super.startInterchange(attributes);
+        getEdifactCONTRLGenerator().generateAcknowledgmentHeader(attributes);
     }
-  }
 
-  @Override
-  protected void startSenderAddress(EDIAttributes attributes)
-    throws SAXException
-  {
-    startElement(getXMLTags().getAddressTag(), attributes);
-    getEdifactCONTRLGenerator().setSender(attributes);
-  }
-
-  @Override
-  protected void startReceiverAddress(EDIAttributes attributes)
-    throws SAXException
-  {
-    startElement(getXMLTags().getAddressTag(), attributes);
-    getEdifactCONTRLGenerator().setReceiver(attributes);
-  }
-
-  @Override
-  protected void startMessage(EDIAttributes attributes) throws SAXException
-  {
-    startElement(getXMLTags().getDocumentTag(), attributes);
-    try
-    {
-      getEdifactCONTRLGenerator().generateTransactionAcknowledgment(
-        attributes);
-    } catch (IOException e)
-    {
-      throw new SAXException(e);
+    @Override
+    protected void endInterchange() throws SAXException {
+        super.endInterchange();
+        try {
+            getAckGenerator().generateAcknowledgementWrapup();
+        } catch (IOException e) {
+            throw new SAXException(e);
+        }
     }
-  }
 
-  protected EdifactCONTRLGenerator getEdifactCONTRLGenerator()
-  {
-    return (EdifactCONTRLGenerator) getAckGenerator();
-  }
+    @Override
+    protected void startSenderAddress(EDIAttributes attributes)
+            throws SAXException {
+        super.startSenderAddress(attributes);
+        getEdifactCONTRLGenerator().setSender(attributes);
+    }
 
-  @Override
-  public ReplyGenerator getAckGenerator()
-  {
-    if (super.getAckGenerator() == null)
-      setAckGenerator(new EdifactCONTRLGenerator(this, getAckStream()));
+    @Override
+    protected void startReceiverAddress(EDIAttributes attributes)
+            throws SAXException {
+        super.startReceiverAddress(attributes);
+        getEdifactCONTRLGenerator().setReceiver(attributes);
+    }
 
-    return super.getAckGenerator();
-  }
+    @Override
+    protected void startMessage(EDIAttributes attributes) throws SAXException {
+        super.startMessage(attributes);
+        try {
+            getEdifactCONTRLGenerator().generateTransactionAcknowledgment(
+                    attributes);
+        } catch (IOException e) {
+            throw new SAXException(e);
+        }
+    }
+
+    protected EdifactCONTRLGenerator getEdifactCONTRLGenerator() {
+        return (EdifactCONTRLGenerator) getAckGenerator();
+    }
+
+    @Override
+    public ReplyGenerator getAckGenerator() {
+        if (super.getAckGenerator() == null)
+            setAckGenerator(new EdifactCONTRLGenerator(this, getAckStream()));
+
+        return super.getAckGenerator();
+    }
 
 }
