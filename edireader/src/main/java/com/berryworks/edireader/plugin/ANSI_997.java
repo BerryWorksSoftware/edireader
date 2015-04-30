@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -20,20 +20,5 @@
 
 package com.berryworks.edireader.plugin;
 
-import com.berryworks.edireader.Plugin;
-
-public class ANSI_997 extends Plugin
-{
-
-  public ANSI_997()
-  {
-    super("997", "Functional Acknowledgment");
-    loops = new LoopDescriptor[]{
-      new LoopDescriptor("AK2", "AK2", 1),
-      new LoopDescriptor("AK3", "AK3", 2, "/AK2"),
-      new LoopDescriptor(INITIAL_CONTEXT, "AK5", 1),
-      new LoopDescriptor(INITIAL_CONTEXT, "AK9", 0),
-
-    };
-  }
+public class ANSI_997 extends ANSI_997_X_004010 {
 }

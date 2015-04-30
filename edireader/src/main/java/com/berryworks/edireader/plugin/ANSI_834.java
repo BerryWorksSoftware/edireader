@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -26,23 +26,5 @@
 */
 package com.berryworks.edireader.plugin;
 
-import com.berryworks.edireader.Plugin;
-
-public class ANSI_834 extends Plugin
-{
-  public ANSI_834()
-  {
-    super("834", "Benefit Enrollment and Maintenance");
-    loops = new LoopDescriptor[]{
-      new LoopDescriptor("1100", "ACT", 2, "/1000"),
-      new LoopDescriptor("2320", "COB", 3, "/2000/2300"),
-      new LoopDescriptor("2200", "DSB", 2, "/2000"),
-      new LoopDescriptor("2300", "HD", 2, "/2000"),
-      new LoopDescriptor("2000", "INS", 1, ANY_CONTEXT),
-      new LoopDescriptor("2310", "LX", 3, "/2000/2300"),
-      new LoopDescriptor("1000", "N1", 1, ANY_CONTEXT),
-      new LoopDescriptor(CURRENT, "NM1", 3, "/2000/2300/2310"),
-      new LoopDescriptor("2100", "NM1", 2, "/2000"),
-    };
-  }
+public class ANSI_834 extends ANSI_834_X_005010 {
 }
