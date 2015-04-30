@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -31,73 +31,68 @@ import javax.xml.xpath.XPathFactory;
 import java.util.ListIterator;
 
 
-public class XPathElements extends AbstractElementList
-{
+public class XPathElements extends AbstractElementList {
 
-  protected final XPath xPath = XPathFactory.newInstance().newXPath();
-  private NodeList nodeList;
+    protected final XPath xPath = XPathFactory.newInstance().newXPath();
+    private NodeList nodeList;
 
-  public XPathElements(Node node, String path) throws XPathExpressionException
-  {
-    this.nodeList = (NodeList) xPath.evaluate(path, node, XPathConstants.NODESET);
-  }
-
-  @Override
-  public ListIterator<Element> listIterator(int index)
-  {
-    if (index != 0)
-    {
-      throw new RuntimeException("index was " + index + " instead of 0 as expected");
-    }
-    return new ElementListIterator(nodeList);
-  }
-
-  private class ElementListIterator extends AbstractElementListIterator
-  {
-
-    private final NodeList nodeList;
-    private Element next;
-    private int indexOfNext;
-
-    public ElementListIterator(NodeList nodeList)
-    {
-      this.nodeList = nodeList;
-      indexOfNext = -1;
-      next();
+    public XPathElements(Node node, String path) throws XPathExpressionException {
+        nodeList = (NodeList) xPath.evaluate(path, node, XPathConstants.NODESET);
     }
 
-    public boolean hasNext()
-    {
-      return next != null;
+    @Override
+    public boolean isEmpty() {
+        return nodeList == null || nodeList.getLength() == 0;
     }
 
-    public Element next()
-    {
-      Element result = next;
-
-      next = null;
-
-      if (nodeList != null)
-      {
-        for (int i = indexOfNext + 1; i < nodeList.getLength(); i++)
-        {
-          Node node = nodeList.item(i);
-          if (node instanceof Element)
-          {
-            next = (Element) node;
-            indexOfNext = i;
-            break;
-          }
+    @Override
+    public ListIterator<Element> listIterator(int index) {
+        if (index != 0) {
+            throw new RuntimeException("index was " + index + " instead of 0 as expected");
         }
-      }
-
-      if (next == null)
-      {
-        indexOfNext = -1;
-      }
-
-      return result;
+        return new ElementListIterator(nodeList);
     }
-  }
+
+    private class ElementListIterator extends AbstractElementListIterator {
+
+        private final NodeList nodeList;
+        private Element next;
+        private int indexOfNext;
+
+        public ElementListIterator(NodeList nodeList) {
+            this.nodeList = nodeList;
+            indexOfNext = -1;
+            next();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        @Override
+        public Element next() {
+            Element result = next;
+
+            next = null;
+
+            if (nodeList != null) {
+                for (int i = indexOfNext + 1; i < nodeList.getLength(); i++) {
+                    Node node = nodeList.item(i);
+                    if (node instanceof Element) {
+                        next = (Element) node;
+                        indexOfNext = i;
+                        break;
+                    }
+                }
+            }
+
+            if (next == null) {
+                indexOfNext = -1;
+            }
+
+            return result;
+        }
+    }
 
 }

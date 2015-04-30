@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -25,77 +25,71 @@ import org.w3c.dom.Node;
 
 import java.util.ListIterator;
 
-public class ChildElements extends AbstractElementList
-{
+public class ChildElements extends AbstractElementList {
 
-  private final Node parentNode;
-  private final String tag;
+    private final Node parentNode;
+    private final String tag;
 
-  public ChildElements(Node node)
-  {
-    this(node, null);
-  }
-
-  public ChildElements(Node node, String tag)
-  {
-    parentNode = node;
-    this.tag = tag;
-  }
-
-  @Override
-  public ListIterator<Element> listIterator(int index)
-  {
-
-    if (index != 0)
-    {
-      throw new RuntimeException("index was " + index + " instead of 0 as expected");
+    public ChildElements(Node node) {
+        this(node, null);
     }
-    return new ElementListIterator(parentNode);
-  }
 
-  private class ElementListIterator extends AbstractElementListIterator
-  {
-    private Element next;
+    public ChildElements(Node node, String tag) {
+        parentNode = node;
+        this.tag = tag;
+    }
 
-    public ElementListIterator(Node parentNode)
-    {
-      Node nextNode = parentNode.getFirstChild();
-      while (nextNode != null)
-      {
-        if (nextNode instanceof Element)
-        {
-          if (tag == null)
-          {
-            // If no tag to match, then this one qualifies
-            break;
-          }
-          else if (tag.equals(nextNode.getNodeName()))
-          {
-            // This one qualifies since the tag matches
-            break;
-          }
+    @Override
+    public ListIterator<Element> listIterator(int index) {
+
+        if (index != 0) {
+            throw new RuntimeException("index was " + index + " instead of 0 as expected");
         }
-        nextNode = nextNode.getNextSibling();
-      }
-      next = (Element) nextNode;
+        return new ElementListIterator(parentNode);
     }
 
-    public boolean hasNext()
-    {
-      return next != null;
-    }
+    private class ElementListIterator extends AbstractElementListIterator {
+        private Element next;
 
-    public Element next()
-    {
-      Element result = next;
+        public ElementListIterator(Node parentNode) {
+            Node nextNode = parentNode.getFirstChild();
+            while (nextNode != null) {
+                if (nextNode instanceof Element) {
+                    if (tag == null) {
+                        // If no tag to match, then this one qualifies
+                        break;
+                    } else if (tag.equals(nextNode.getNodeName())) {
+                        // This one qualifies since the tag matches
+                        break;
+                    }
+                }
+                nextNode = nextNode.getNextSibling();
+            }
+            next = (Element) nextNode;
+        }
 
-      Node nextNode = next.getNextSibling();
-      while (nextNode != null && !(nextNode instanceof Element))
-      {
-        nextNode = nextNode.getNextSibling();
-      }
-      next = (Element) nextNode;
-      return result;
+        public Element next() {
+            Element result = next;
+
+            Node nextNode = next.getNextSibling();
+            while (nextNode != null) {
+                if (nextNode instanceof Element) {
+                    if (tag == null) {
+                        // If no tag to match, then this one qualifies
+                        break;
+                    } else if (tag.equals(nextNode.getNodeName())) {
+                        // This one qualifies since the tag matches
+                        break;
+                    }
+                }
+                nextNode = nextNode.getNextSibling();
+            }
+            next = (Element) nextNode;
+            return result;
+        }
+
+        public boolean hasNext() {
+            return next != null;
+        }
     }
-  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -32,66 +32,56 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class DomBuildingSaxHandler extends ContextAwareSaxAdapter
-{
+import static com.berryworks.edireader.util.FixedLength.isPresent;
 
-  private Document document;
-  private Element currentElement;
+public class DomBuildingSaxHandler extends ContextAwareSaxAdapter {
 
-  public DomBuildingSaxHandler() throws ParserConfigurationException
-  {
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder builder = factory.newDocumentBuilder();
-    document = builder.newDocument();
+    private Document document;
+    private Element currentElement;
 
-  }
-
-  public Document getDocument()
-  {
-    return document;
-  }
-
-  @Override
-  public void start(String uri, String name, String data, EDIAttributes attributes) throws SAXException
-  {
-    Element newElement = document.createElement(name);
-
-    if (currentElement == null)
-    {
-      document.appendChild(newElement);
-    }
-    else
-    {
-      currentElement.appendChild(newElement);
-    }
-
-    currentElement = newElement;
-    if (data != null && data.length() > 0)
-    {
-      Text text = document.createTextNode(data);
-      currentElement.appendChild(text);
-    }
-
-    if (attributes != null && attributes.getLength() > 0)
-    {
-      for (int i = 0; i < attributes.getLength(); i++)
-      {
-        String n = attributes.getLocalName(i);
-        String v = attributes.getValue(i);
-        currentElement.setAttribute(n, v);
-      }
+    public DomBuildingSaxHandler() throws ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        document = builder.newDocument();
 
     }
-  }
 
-  @Override
-  public void end(String uri, String name) throws SAXException
-  {
-    Node parentNode = currentElement.getParentNode();
-    if (parentNode instanceof Element)
-    {
-      currentElement = (Element) parentNode;
+    public Document getDocument() {
+        return document;
     }
-  }
+
+    @Override
+    public void start(String uri, String name, String data, EDIAttributes attributes) throws SAXException {
+        Element newElement = document.createElement(name);
+
+        if (currentElement == null) {
+            document.appendChild(newElement);
+        } else {
+            currentElement.appendChild(newElement);
+        }
+
+        currentElement = newElement;
+        if (isPresent(data)) {
+            Text text = document.createTextNode(data);
+            currentElement.appendChild(text);
+        }
+
+        if (attributes != null && attributes.getLength() > 0) {
+            for (int i = 0; i < attributes.getLength(); i++) {
+                String n = attributes.getLocalName(i);
+                String v = attributes.getValue(i);
+                currentElement.setAttribute(n, v);
+            }
+
+        }
+    }
+
+    @Override
+    public void end(String uri, String name) throws SAXException {
+        Node parentNode = currentElement.getParentNode();
+        if (parentNode instanceof Element) {
+            currentElement = (Element) parentNode;
+        }
+    }
 
 }
