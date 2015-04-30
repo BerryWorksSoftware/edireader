@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -26,6 +26,7 @@ import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.error.EDISyntaxExceptionHandler;
 import com.berryworks.edireader.error.RecoverableSyntaxException;
 import com.berryworks.edireader.util.CommandLine;
+import com.berryworks.edireader.util.XmlFormatter;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -54,7 +55,7 @@ import java.io.*;
  */
 public class EDItoXML {
     private final InputSource inputSource;
-    private final Writer generatedOutput;
+    private Writer generatedOutput;
     private final Reader inputReader;
     private boolean namespaceEnabled;
     private boolean recover;
@@ -182,9 +183,7 @@ public class EDItoXML {
 
             // Call the Transformer to generate XML output from the parsed input
             transformer.transform(source, result);
-        } catch (SAXException e) {
-            System.err.println("\nUnable to create EDIReader: " + e);
-        } catch (ParserConfigurationException e) {
+        } catch (SAXException | ParserConfigurationException e) {
             System.err.println("\nUnable to create EDIReader: " + e);
         } catch (TransformerConfigurationException e) {
             System.err.println("\nUnable to create Transformer: " + e);
@@ -203,13 +202,14 @@ public class EDItoXML {
         CommandLine commandLine = new CommandLine(args) {
             @Override
             public String usage() {
-                return "EDItoXML [inputfile] [-o outputfile] [-n true|false] [-r true|false]";
+                return "EDItoXML [inputfile] [-o outputfile] [-n true|false] [-r true|false] [-i true|false]";
             }
         };
         String inputFileName = commandLine.getPosition(0);
         String outputFileName = commandLine.getOption("o");
         boolean namespaceEnabled = "true".equals(commandLine.getOption("n"));
         boolean recover = "true".equals(commandLine.getOption("r"));
+        boolean indent = "true".equals(commandLine.getOption("i"));
 
         // Establish input
         Reader inputReader;
@@ -243,6 +243,7 @@ public class EDItoXML {
         EDItoXML theObject = new EDItoXML(inputReader, generatedOutput);
         theObject.setNamespaceEnabled(namespaceEnabled);
         theObject.setRecover(recover);
+        theObject.setIndent(indent);
         theObject.run();
         String s = System.getProperty("line.separator");
         System.out.print(s + "Transformation complete" + s);
@@ -258,6 +259,17 @@ public class EDItoXML {
 
     public void setRecover(boolean recover) {
         this.recover = recover;
+    }
+
+    public void setIndent(boolean indent) {
+        if (indent) {
+            if (generatedOutput instanceof XmlFormatter) {
+                // The output Writer is already wrapper in an indenting filter, so do not do it again
+            } else {
+                // Wrap the Writer for the generated output with an indenting filter
+                generatedOutput = new XmlFormatter(generatedOutput);
+            }
+        }
     }
 
     static class IgnoreSyntaxExceptions implements EDISyntaxExceptionHandler {

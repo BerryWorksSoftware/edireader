@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -184,20 +184,21 @@ public class EDITransform
     String inputFileName = null;
     for (int i = 0; i < args.length; i++)
     {
-      if (args[i].equals("-o"))
-      {
-        if ((++i) >= args.length)
-          badArgs();
-        outputFileName = args[i];
+      switch (args[i]) {
+        case "-o":
+          if ((++i) >= args.length)
+            badArgs();
+          outputFileName = args[i];
+          break;
+        case "-x":
+          if ((++i) >= args.length)
+            badArgs();
+          stylesheetFileName = args[i];
+          break;
+        default:
+          inputFileName = args[i];
+          break;
       }
-      else if (args[i].equals("-x"))
-      {
-        if ((++i) >= args.length)
-          badArgs();
-        stylesheetFileName = args[i];
-      }
-      else
-        inputFileName = args[i];
     }
     if (stylesheetFileName == null)
       badArgs();

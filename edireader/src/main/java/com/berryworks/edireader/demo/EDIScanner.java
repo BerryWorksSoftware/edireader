@@ -1,23 +1,3 @@
-/*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
- *
- * This file is part of EDIReader. You may obtain a license for its use directly from
- * BerryWorks Software, and you may also choose to use this software under the terms of the
- * GPL version 3. Other products in the EDIReader software suite are available only by licensing
- * with BerryWorks. Only those files bearing the GPL statement below are available under the GPL.
- *
- * EDIReader is free software: you can redistribute it and/or modify it under the terms of the
- * GNU General Public License as published by the Free Software Foundation, either version 3 of
- * the License, or (at your option) any later version.
- *
- * EDIReader is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with EDIReader.  If not,
- * see <http://www.gnu.org/licenses/>.
- */
-
 package com.berryworks.edireader.demo;
 
 import com.berryworks.edireader.EDIReader;
@@ -57,200 +37,158 @@ import java.io.*;
  * If an input-file is not specified, System.in is used; if an output-file is
  * not specified, System.out is used.
  */
-public class EDIScanner
-{
-  private InputSource inputSource;
-  private PrintStream scannerOutput;
-  private EDIReader parser;
-  private int interchangeCount;
+public class EDIScanner {
+    private InputSource inputSource;
+    private PrintStream scannerOutput;
+    private EDIReader parser;
+    private int interchangeCount;
 
-  /**
-   * Constructor for the EDIScanner object
-   *
-   * @param input  Description of the Parameter
-   * @param output Description of the Parameter
-   */
-  public EDIScanner(String input, String output)
-  {
+    /**
+     * Constructor for the EDIScanner object
+     *
+     * @param input  Description of the Parameter
+     * @param output Description of the Parameter
+     */
+    public EDIScanner(String input, String output) {
 
-    // Establish output file
-    if (output != null)
-    {
-      try
-      {
-        scannerOutput = new PrintStream(new FileOutputStream(
-          output));
-        System.out.println("Output file " + output + " opened");
-      } catch (IOException e)
-      {
-        System.out.println(e.getMessage());
-        throw new RuntimeException(e.getMessage());
-      }
-    }
-    else
-    {
-      scannerOutput = System.out;
-    }
+        // Establish output stream
+        if (output == null) {
+            scannerOutput = System.out;
 
-    // Establish inputSource, a SAX InputSource
-    if (input != null)
-    {
-      try
-      {
-        inputSource = new InputSource(new FileReader(input));
-      } catch (IOException e)
-      {
-        System.out.println(e.getMessage());
-        throw new RuntimeException(e.getMessage());
-      }
-    }
-    else
-    {
-      inputSource = new InputSource(new InputStreamReader(System.in));
-    }
-  }
-
-  /**
-   * Main processing method for the EDIScanner object
-   */
-  public void run()
-  {
-
-    ContentHandler handler = new ScanningHandler();
-    char[] leftOver = null;
-
-    try
-    {
-      while (true)
-      {
-        // The following line creates an EDIReader explicitly
-        // as an alternative to the JAXP-based technique.
-        parser = EDIReaderFactory.createEDIReader(inputSource, leftOver);
-        if (parser == null)
-        {
-          // end of input
-          break;
+        } else {
+            try {
+                scannerOutput = new PrintStream(new FileOutputStream(output));
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage());
+            }
         }
-        parser.setContentHandler(handler);
-        parser.setSyntaxExceptionHandler(new SyntaxExceptionHandler());
-        parser.parse(inputSource);
-        leftOver = parser.getTokenizer().getBuffered();
-      }
 
-    } catch (IOException e)
-    {
-      System.out.println(e.getMessage());
-      throw new RuntimeException(e.getMessage());
+        // Establish inputSource, a SAX InputSource
+        if (input == null) {
+            inputSource = new InputSource(new InputStreamReader(System.in));
 
-    } catch (SAXException syntaxException)
-    {
-      System.out.println();
-      System.out.println("Unrecoverable syntax exception: " +
-        syntaxException.getClass().getCanonicalName() +
-        " - " + syntaxException.getMessage());
-
-      Tokenizer ediTokenizer = parser.getTokenizer();
-      System.out.println("Internal EDIReader diagnostic information: ");
-      char delimiter = ediTokenizer.getDelimiter();
-      System.out.println("Field delimiter: " + representationOf(delimiter));
-      char terminator = ediTokenizer.getTerminator();
-      System.out.println("Segment terminator: " + representationOf(terminator));
-
-      throw new RuntimeException(syntaxException.getMessage());
-    }
-  }
-
-  private String representationOf(char c)
-  {
-    String result = "|" + c + "|";
-    result += " (" + (int) c + ")";
-    return result;
-  }
-
-  public static void main(String args[])
-  {
-    CommandLine commandLine = new CommandLine(args);
-    String inputFileName = commandLine.getPosition(0);
-    if (inputFileName == null) badArgs();
-    String outputFileName = commandLine.getOption("o");
-
-    EDIScanner scanner = new EDIScanner(inputFileName, outputFileName);
-//        EDIReader.setDebug(true);
-    scanner.run();
-  }
-
-  private static void badArgs()
-  {
-    System.out.println("Usage: EDIScanner inputfile [-o outputfile]");
-    throw new RuntimeException("Missing or invalid command line arguments");
-  }
-
-  private class ScanningHandler extends DefaultHandler
-  {
-
-    @Override
-    public void startElement(String namespace, String localName,
-                             String qName, Attributes atts) throws SAXException
-    {
-      String indent;
-      if (localName.startsWith(parser.getXMLTags().getInterchangeTag()))
-      {
-        scannerOutput.println("+Interchange  (" + ++interchangeCount + ")");
-        indent = "   ";
-      }
-      else if (localName.startsWith(parser.getXMLTags().getSenderTag()))
-      {
-        scannerOutput.println("  +Sender");
-        indent = "     ";
-      }
-      else if (localName.startsWith(parser.getXMLTags().getReceiverTag()))
-      {
-        scannerOutput.println("  +Recipient");
-        indent = "     ";
-      }
-      else if (localName.startsWith(parser.getXMLTags().getAddressTag()))
-      {
-        scannerOutput.println("    +Address");
-        indent = "       ";
-      }
-      else if (localName.startsWith(parser.getXMLTags().getGroupTag()))
-      {
-        scannerOutput.println("  +Group");
-        indent = "     ";
-      }
-      else if (localName.startsWith(parser.getXMLTags()
-        .getDocumentTag()))
-      {
-        scannerOutput.println("    +Document");
-        indent = "       ";
-      }
-      else
-      {
-        // indent = " ";
-        return;
-      }
-
-      for (int i = 0; i < atts.getLength(); i++)
-        scannerOutput.println(indent + atts.getLocalName(i) + "="
-          + atts.getValue(i));
+        } else {
+            try {
+                inputSource = new InputSource(new FileReader(input));
+            } catch (IOException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }
     }
 
-  }
+    /**
+     * Main processing method for the EDIScanner object
+     */
+    public void run() {
 
-  public int interchangeCount()
-  {
-    return interchangeCount;
-  }
+        ContentHandler handler = new ScanningHandler();
+        char[] leftOver = null;
 
-  private class SyntaxExceptionHandler implements EDISyntaxExceptionHandler
-  {
-    public boolean process(RecoverableSyntaxException syntaxException)
-    {
-      scannerOutput.println();
-      scannerOutput.println("Recoverable syntax exception: " +
-        syntaxException.getClass().getCanonicalName() +
-        " - " + syntaxException.getMessage());
-      return true;
+        try {
+            while (true) {
+                // The following line creates an EDIReader explicitly
+                // as an alternative to the JAXP-based technique.
+                parser = EDIReaderFactory.createEDIReader(inputSource, leftOver);
+                if (parser == null) {
+                    // end of input
+                    break;
+                }
+                parser.setContentHandler(handler);
+                parser.setSyntaxExceptionHandler(new SyntaxExceptionHandler());
+                parser.parse(inputSource);
+                leftOver = parser.getTokenizer().getBuffered();
+            }
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+
+        } catch (SAXException syntaxException) {
+            System.out.println();
+            System.out.println("Unrecoverable syntax exception: " +
+                    syntaxException.getClass().getCanonicalName() +
+                    " - " + syntaxException.getMessage());
+
+            Tokenizer ediTokenizer = parser.getTokenizer();
+            System.out.println("Internal EDIReader diagnostic information: ");
+            char delimiter = ediTokenizer.getDelimiter();
+            System.out.println("Field delimiter: " + representationOf(delimiter));
+            char terminator = ediTokenizer.getTerminator();
+            System.out.println("Segment terminator: " + representationOf(terminator));
+
+            throw new RuntimeException(syntaxException.getMessage());
+        }
     }
-  }
+
+    private String representationOf(char c) {
+        String result = "|" + c + "|";
+        result += " (" + (int) c + ")";
+        return result;
+    }
+
+    public static void main(String args[]) {
+        CommandLine commandLine = new CommandLine(args);
+        String inputFileName = commandLine.getPosition(0);
+        if (inputFileName == null) badArgs();
+        String outputFileName = commandLine.getOption("o");
+
+        EDIScanner scanner = new EDIScanner(inputFileName, outputFileName);
+        scanner.run();
+    }
+
+    private static void badArgs() {
+        System.out.println("Usage: EDIScanner inputfile [-o outputfile]");
+        throw new RuntimeException("Missing or invalid command line arguments");
+    }
+
+    private class ScanningHandler extends DefaultHandler {
+
+        @Override
+        public void startElement(String namespace, String localName,
+                                 String qName, Attributes atts) throws SAXException {
+            String indent;
+            if (localName.startsWith(parser.getXMLTags().getInterchangeTag())) {
+                scannerOutput.println("+Interchange  (" + ++interchangeCount + ")");
+                indent = "   ";
+            } else if (localName.startsWith(parser.getXMLTags().getSenderTag())) {
+                scannerOutput.println("  +Sender");
+                indent = "     ";
+            } else if (localName.startsWith(parser.getXMLTags().getReceiverTag())) {
+                scannerOutput.println("  +Recipient");
+                indent = "     ";
+            } else if (localName.startsWith(parser.getXMLTags().getAddressTag())) {
+                scannerOutput.println("    +Address");
+                indent = "       ";
+            } else if (localName.startsWith(parser.getXMLTags().getGroupTag())) {
+                scannerOutput.println("  +Group");
+                indent = "     ";
+            } else if (localName.startsWith(parser.getXMLTags()
+                    .getDocumentTag())) {
+                scannerOutput.println("    +Document");
+                indent = "       ";
+            } else {
+                // indent = " ";
+                return;
+            }
+
+            for (int i = 0; i < atts.getLength(); i++)
+                scannerOutput.println(indent + atts.getLocalName(i) + "="
+                        + atts.getValue(i));
+        }
+
+    }
+
+    public int interchangeCount() {
+        return interchangeCount;
+    }
+
+    private class SyntaxExceptionHandler implements EDISyntaxExceptionHandler {
+        public boolean process(RecoverableSyntaxException syntaxException) {
+            scannerOutput.println();
+            scannerOutput.println("Recoverable syntax exception: " +
+                    syntaxException.getClass().getCanonicalName() +
+                    " - " + syntaxException.getMessage());
+            return true;
+        }
+    }
 }

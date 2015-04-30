@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -40,147 +40,121 @@ import java.io.*;
  * from the EDI input as if that document had been the only
  * document in its interchange.
  */
-public class EDISplitter
-{
-  private static int count;
-  private final InputSource inputSource;
-  private HandlerFactory handlerFactory;
+public class EDISplitter {
+    private static int count;
+    private final InputSource inputSource;
+    private HandlerFactory handlerFactory;
 
-  public EDISplitter(Reader inputReader, String outputFileNamePattern)
-  {
-    inputSource = new InputSource(inputReader);
-    setHandlerFactory(new FileSequenceHandlerFactory(outputFileNamePattern));
-  }
-
-  public void run() throws IOException, SAXException
-  {
-    new SplittingHandler(handlerFactory).split(inputSource);
-  }
-
-  public void setHandlerFactory(HandlerFactory handlerFactory)
-  {
-    this.handlerFactory = handlerFactory;
-  }
-
-  public static void main(String args[])
-  {
-    CommandLine commandLine = new CommandLine(args);
-    String inputFileName = commandLine.getPosition(0);
-    String outputFileNamePattern = commandLine.getOption("o");
-
-    if (outputFileNamePattern == null) badArgs();
-
-    // Establish input
-    Reader inputReader;
-    if (inputFileName == null)
-    {
-      inputReader = new InputStreamReader(System.in);
-    }
-    else
-    {
-      try
-      {
-        inputReader = new InputStreamReader(
-          new FileInputStream(inputFileName), "ISO-8859-1");
-      } catch (IOException e)
-      {
-        System.out.println(e.getMessage());
-        throw new RuntimeException(e.getMessage());
-      }
+    public EDISplitter(Reader inputReader, String outputFileNamePattern) {
+        inputSource = new InputSource(inputReader);
+        setHandlerFactory(new FileSequenceHandlerFactory(outputFileNamePattern));
     }
 
-    EDISplitter ediSplitter = new EDISplitter(inputReader, outputFileNamePattern);
-    try
-    {
-      ediSplitter.run();
-    } catch (SAXException e)
-    {
-      System.out.print(e);
-      throw new RuntimeException(e.getMessage());
-    } catch (IOException e)
-    {
-      System.out.print(e);
-      throw new RuntimeException(e.getMessage());
-    } catch (Exception e)
-    {
-      e.printStackTrace(System.out);
-      throw new RuntimeException(e.getMessage());
-    }
-    String s = System.getProperty("line.separator");
-    System.out.print(s + "EDI input parsed into " + count + " XML output files" + s);
-  }
-
-  private static void badArgs()
-  {
-    System.err.println("Usage: EDISplitter [inputFile] [-o outputFilenamePattern]");
-    throw new RuntimeException("Missing or invalid command line arguments");
-  }
-
-  public static int getCount()
-  {
-    return count;
-  }
-
-  static class FileSequenceHandlerFactory implements HandlerFactory
-  {
-    private String filenameSuffix, filenamePrefix;
-    private int sequenceNumberLength;
-    private DomBuildingSaxHandler saxHandler;
-
-    public FileSequenceHandlerFactory(String fileNamePattern)
-    {
-      establishPattern(fileNamePattern);
+    public void run() throws IOException, SAXException {
+        new SplittingHandler(handlerFactory).split(inputSource);
     }
 
-    public ContentHandler createDocument() throws Exception
-    {
-      count++;
-      saxHandler = new DomBuildingSaxHandler();
-      return saxHandler;
+    public void setHandlerFactory(HandlerFactory handlerFactory) {
+        this.handlerFactory = handlerFactory;
     }
 
-    public void closeDocument() throws IOException
-    {
-      String xmlFilename = generateName();
-      System.out.println("Generating XML into file " + xmlFilename);
+    public static void main(String args[]) {
+        CommandLine commandLine = new CommandLine(args);
+        String inputFileName = commandLine.getPosition(0);
+        String outputFileNamePattern = commandLine.getOption("o");
 
-      DOMSource source = new DOMSource(saxHandler.getDocument());
+        if (outputFileNamePattern == null) badArgs();
 
-      FileWriter writer = new FileWriter(xmlFilename);
-      StreamResult result = new StreamResult(writer);
+        // Establish input
+        Reader inputReader;
+        if (inputFileName == null) {
+            inputReader = new InputStreamReader(System.in);
+        } else {
+            try {
+                inputReader = new InputStreamReader(
+                        new FileInputStream(inputFileName), "ISO-8859-1");
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException(e.getMessage());
+            }
+        }
 
-      try
-      {
-        TransformerFactory.newInstance().newTransformer().transform(source, result);
-      } catch (TransformerException e)
-      {
-        throw new IOException("Unable to generate XML from DOM");
-      } finally
-      {
-        writer.close();
-      }
-
+        EDISplitter ediSplitter = new EDISplitter(inputReader, outputFileNamePattern);
+        try {
+            ediSplitter.run();
+        } catch (SAXException | IOException e) {
+            System.out.print(e);
+            throw new RuntimeException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+            throw new RuntimeException(e.getMessage());
+        }
+        String s = System.getProperty("line.separator");
+        System.out.print(s + "EDI input parsed into " + count + " XML output files" + s);
     }
 
-    public void markEndOfStream()
-    {
+    private static void badArgs() {
+        System.err.println("Usage: EDISplitter [inputFile] [-o outputFilenamePattern]");
+        throw new RuntimeException("Missing or invalid command line arguments");
     }
 
-    private void establishPattern(String fileNamePattern)
-    {
-      String[] splitResult = fileNamePattern.split("0+", 2);
-      if (splitResult.length < 2) badArgs();
-      filenamePrefix = splitResult[0];
-      filenameSuffix = splitResult[1];
-      sequenceNumberLength = fileNamePattern.length() - filenamePrefix.length() - filenameSuffix.length();
+    public static int getCount() {
+        return count;
     }
 
-    private String generateName()
-    {
-      String sequenceDigits = "" + (100000 + count);
-      sequenceDigits = sequenceDigits.substring(sequenceDigits.length() - sequenceNumberLength);
-      return filenamePrefix + sequenceDigits + filenameSuffix;
+    static class FileSequenceHandlerFactory implements HandlerFactory {
+        private String filenameSuffix, filenamePrefix;
+        private int sequenceNumberLength;
+        private DomBuildingSaxHandler saxHandler;
+
+        public FileSequenceHandlerFactory(String fileNamePattern) {
+            establishPattern(fileNamePattern);
+        }
+
+        @Override
+        public ContentHandler createDocument() throws Exception {
+            count++;
+            saxHandler = new DomBuildingSaxHandler();
+            return saxHandler;
+        }
+
+        @Override
+        public void closeDocument(
+                String senderQualifier, String senderId,
+                String receiverQualifier, String receiverId,
+                String interchangeControlNumber, String groupControlNumber, String documentControlNumber,
+                String documentType) throws IOException {
+            String xmlFilename = generateName();
+
+//            System.out.println("Generating XML into file " + xmlFilename);
+
+            DOMSource source = new DOMSource(saxHandler.getDocument());
+
+            try (FileWriter writer = new FileWriter(xmlFilename)) {
+                TransformerFactory.newInstance().newTransformer().transform(source, new StreamResult(writer));
+
+            } catch (TransformerException e) {
+                throw new IOException("Unable to generate XML from DOM");
+            }
+        }
+
+        @Override
+        public void markEndOfStream() {
+        }
+
+        private void establishPattern(String fileNamePattern) {
+            String[] splitResult = fileNamePattern.split("0+", 2);
+            if (splitResult.length < 2) badArgs();
+            filenamePrefix = splitResult[0];
+            filenameSuffix = splitResult[1];
+            sequenceNumberLength = fileNamePattern.length() - filenamePrefix.length() - filenameSuffix.length();
+        }
+
+        private String generateName() {
+            String sequenceDigits = "" + (100000 + count);
+            sequenceDigits = sequenceDigits.substring(sequenceDigits.length() - sequenceNumberLength);
+            return filenamePrefix + sequenceDigits + filenameSuffix;
+        }
     }
-  }
 
 }
