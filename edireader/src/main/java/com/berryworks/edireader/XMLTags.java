@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -23,173 +23,186 @@ package com.berryworks.edireader;
 /**
  * XML tags used when generating XML from EDI
  */
-public interface XMLTags
-{
+public interface XMLTags {
 
-  public abstract String getRootTag();
+    public abstract String getRootTag();
 
-  public abstract String getInterchangeTag();
+    public abstract String getInterchangeTag();
 
-  public abstract String getSenderTag();
+    public abstract String getSenderTag();
 
-  public abstract String getReceiverTag();
+    public abstract String getReceiverTag();
 
-  public abstract String getAddressTag();
+    public abstract String getAddressTag();
 
-  public abstract String getGroupTag();
+    public abstract String getGroupTag();
 
-  public abstract String getDocumentTag();
+    public abstract String getDocumentTag();
 
-  public abstract String getLoopTag();
+    public abstract String getLoopTag();
 
-  public abstract String getSegTag();
+    public abstract String getSegTag();
 
-  public abstract String getElementTag();
+    public abstract String getElementTag();
 
-  public abstract String getCompositeTag();
+    public abstract String getCompositeTag();
 
-  public abstract String getSubElementTag();
+    public abstract String getSubElementTag();
 
-  public abstract String getAddendaTag();
+    public abstract String getAddendaTag();
 
-  public abstract String getPackageTag();
+    public abstract String getPackageTag();
 
-  public abstract String getIdAttribute();
+    public abstract String getIdAttribute();
 
-  public abstract String getQualifierAttribute();
+    public abstract String getQualifierAttribute();
 
-  public abstract String getAddressExtraAttribute();
+    public abstract String getAddressExtraAttribute();
 
-  public abstract String getSubElementSequence();
+    public abstract String getSubElementSequence();
 
-  public abstract String getCompositeIndicator();
+    public abstract String getCompositeIndicator();
 
-  public abstract String getControl();
+    public abstract String getControl();
 
-  public abstract String getRecipientReference();
+    public abstract String getRecipientReference();
 
-  public abstract String getApplicationReference();
+    public abstract String getApplicationReference();
 
-  public abstract String getAssociation();
+    public abstract String getAssociation();
 
-  public abstract String getProcessingPriority();
+    public abstract String getProcessingPriority();
 
-  public abstract String getProcessingId();
+    public abstract String getProcessingId();
 
-  public abstract String getAcknowledgementRequest();
+    public abstract String getAcknowledgementRequest();
 
-  public abstract String getInterchangeAgreementIdentifier();
+    public abstract String getInterchangeAgreementIdentifier();
 
-  public abstract String getTestIndicator();
+    public abstract String getTestIndicator();
 
-  public abstract String getTime();
+    public abstract String getTime();
 
-  public abstract String getDate();
+    public abstract String getDate();
 
-  public abstract String getApplReceiver();
+    public abstract String getApplReceiver();
 
-  public abstract String getApplSender();
+    public abstract String getApplSender();
 
-  public abstract String getGroupType();
+    public abstract String getGroupType();
 
-  public abstract String getStandardVersion();
+    public abstract String getStandardVersion();
 
-  public abstract String getStandardCode();
+    public abstract String getStandardCode();
 
-  public abstract String getSyntaxIdentifier();
+    public abstract String getSyntaxIdentifier();
 
-  public abstract String getSyntaxVersion();
+    public abstract String getSyntaxVersion();
 
-  public abstract String getStandard();
+    public abstract String getStandard();
 
-  public abstract String getName();
+    public abstract String getName();
 
-  public abstract String getDocumentType();
+    public abstract String getDocumentType();
 
-  public abstract String getMessageVersion();
+    public abstract String getMessageVersion();
 
-  public abstract String getMessageType();
+    public abstract String getMessageType();
 
-  public abstract String getEvent();
+    public abstract String getEvent();
 
-  public abstract String getMessageRelease();
+    public abstract String getMessageRelease();
 
-  public abstract String getSecurity();
+    public abstract String getSecurity();
 
-  public abstract String getAgency();
+    public abstract String getAgency();
 
-  public abstract String getAccessReference();
+    public abstract String getAccessReference();
 
-  public abstract String getDecimal();
+    public abstract String getDecimal();
 
-  public abstract String getPriority();
+    public abstract String getPriority();
 
-  public abstract String getServiceClassCode();
+    public abstract String getServiceClassCode();
 
-  public abstract String getServiceClassDesc();
+    public abstract String getServiceClassDesc();
 
-  public abstract String getCompanyName();
+    public abstract String getCompanyName();
 
-  public abstract String getDiscretionaryData();
+    public abstract String getDiscretionaryData();
 
-  public abstract String getStandardEntryClass();
+    public abstract String getStandardEntryClass();
 
-  public abstract String getStandardEntryClassDesc();
+    public abstract String getStandardEntryClassDesc();
 
-  public abstract String getCompanyEntryDesc();
+    public abstract String getCompanyEntryDesc();
 
-  public abstract String getCompanyDescriptiveDate();
+    public abstract String getCompanyDescriptiveDate();
 
-  public abstract String getEffectiveEntryDate();
+    public abstract String getEffectiveEntryDate();
 
-  public abstract String getOriginatorStatusCode();
+    public abstract String getOriginatorStatusCode();
 
-  public abstract String getOriginatingIdentity();
+    public abstract String getOriginatingIdentity();
 
-  public abstract String getBatchNumber();
+    public abstract String getBatchNumber();
 
-  public abstract String getTransactionCode();
+    public abstract String getTransactionCode();
 
-  public abstract String getRDFI();
+    public abstract String getRDFI();
 
-  public abstract String getCheckDigit();
+    public abstract String getCheckDigit();
 
-  public abstract String getDFIAccountNumber();
+    public abstract String getDFIAccountNumber();
 
-  public abstract String getAmount();
+    public abstract String getAmount();
 
-  public abstract String getIdentificationNumber();
+    public abstract String getIdentificationNumber();
 
-  public abstract String getReceiverName();
+    public abstract String getReceiverName();
 
-  public abstract String getAddendaIndicator();
+    public abstract String getAddendaIndicator();
 
-  public abstract String getTraceNumber();
+    public abstract String getTraceNumber();
 
-  public abstract String getEntryTraceNumber();
+    public abstract String getEntryTraceNumber();
 
-  public abstract String getAddendaType();
+    public abstract String getAddendaType();
 
-  public abstract String getPaymentInformation();
+    public abstract String getPaymentInformation();
 
-  public abstract String getAuthorizationQual();
+    public abstract String getAuthorizationQual();
 
-  public abstract String getAuthorization();
+    public abstract String getAuthorization();
 
-  public abstract String getSecurityQual();
+    public abstract String getSecurityQual();
 
-  public abstract String getAcknowledgementCode();
+    public abstract String getAcknowledgementCode();
 
-  public abstract String getNotCode();
+    public abstract String getNotCode();
 
-  public String getFileIdModifier();
+    public String getFileIdModifier();
 
-  public String getStandardsId();
+    public String getStandardsId();
 
-  public String getVersion();
+    public String getVersion();
 
-  public String getRelease();
+    public String getRelease();
 
-  public String getAcknowledgementTag();
+    public String getAcknowledgementTag();
+
+    public String getTransmissionType();
+
+    public String getBinNumber();
+
+    public String getTransactionCount();
+
+    public String getVendor();
+
+    public String getServiceProviderIdQualifier();
+
+    public String getServiceProviderId();
+
+    public String getDescription();
 
 }

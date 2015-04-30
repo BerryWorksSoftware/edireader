@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -20,432 +20,463 @@
 
 package com.berryworks.edireader;
 
-public class DefaultXMLTags implements XMLTags
-{
-  private static final XMLTags theInstance = new DefaultXMLTags();
-
-  public DefaultXMLTags()
-  {
-  }
-
-  public String getRootTag()
-  {
-    return "ediroot";
-  }
-
-  public String getInterchangeTag()
-  {
-    return "interchange";
-  }
-
-  public String getSenderTag()
-  {
-    return "sender";
-  }
-
-  public String getReceiverTag()
-  {
-    return "receiver";
-  }
-
-  public String getAddressTag()
-  {
-    return "address";
-  }
-
-  public String getAcknowledgementTag()
-  {
-    return "acknowledgement";
-  }
-
-  public String getGroupTag()
-  {
-    return "group";
-  }
-
-  public String getDocumentTag()
-  {
-    return "transaction";
-  }
-
-  public String getLoopTag()
-  {
-    return "loop";
-  }
-
-  public String getSegTag()
-  {
-    return "segment";
-  }
-
-  public String getElementTag()
-  {
-    return "element";
-  }
-
-  public String getCompositeTag()
-  {
-    return "composite";
-  }
-
-  public String getSubElementTag()
-  {
-    return "subelement";
-  }
-
-  public String getAddendaTag()
-  {
-    return "addenda";
-  }
-
-  public String getPackageTag()
-  {
-    return "package";
-  }
-
-  public String getIdAttribute()
-  {
-    return "Id";
-  }
-
-  public String getQualifierAttribute()
-  {
-    return "Qual";
-  }
-
-  public String getAddressExtraAttribute()
-  {
-    return "Extra";
-  }
-
-  public String getSubElementSequence()
-  {
-    return "Sequence";
-  }
-
-  public String getCompositeIndicator()
-  {
-    return "Composite";
-  }
-
-  public String getControl()
-  {
-    return "Control";
-  }
-
-  public String getRecipientReference()
-  {
-    return "RecipientRef";
-  }
-
-  public String getApplicationReference()
-  {
-    return "ApplRef";
-  }
-
-  public String getAssociation()
-  {
-    return "Association";
-  }
-
-  public String getProcessingPriority()
-  {
-    return "Priority";
-  }
-
-  public String getProcessingId()
-  {
-    return "ProcessingId";
-  }
-
-  public String getAcknowledgementRequest()
-  {
-    return "AckRequest";
-  }
-
-  public String getInterchangeAgreementIdentifier()
-  {
-    return "AgreementIdentifier";
-  }
-
-  public String getTestIndicator()
-  {
-    return "TestIndicator";
-  }
-
-  public String getTime()
-  {
-    return "Time";
-  }
-
-  public String getDate()
-  {
-    return "Date";
-  }
-
-  public String getApplReceiver()
-  {
-    return "ApplReceiver";
-  }
-
-  public String getApplSender()
-  {
-    return "ApplSender";
-  }
-
-  public String getGroupType()
-  {
-    return "GroupType";
-  }
-
-  public String getStandardVersion()
-  {
-    return "StandardVersion";
-  }
-
-  public String getStandardCode()
-  {
-    return "StandardCode";
-  }
-
-  public String getSyntaxIdentifier()
-  {
-    return "SyntaxId";
-  }
-
-  public String getSyntaxVersion()
-  {
-    return "SyntaxVersion";
-  }
-
-  public String getStandard()
-  {
-    return "Standard";
-  }
-
-  public String getName()
-  {
-    return "Name";
-  }
-
-  public String getDocumentType()
-  {
-    return "DocType";
-  }
-
-  public String getMessageVersion()
-  {
-    return "Version";
-  }
-
-  public String getMessageType()
-  {
-    return "Type";
-  }
-
-  public String getEvent()
-  {
-    return "Event";
-  }
-
-  public String getSecurity()
-  {
-    return "Security";
-  }
-
-  public String getMessageRelease()
-  {
-    return "Release";
-  }
-
-  public String getAgency()
-  {
-    return "Agency";
-  }
-
-  public String getAccessReference()
-  {
-    return "AccessReference";
-  }
-
-  public String getDecimal()
-  {
-    return "Decimal";
-  }
-
-  public String getPriority()
-  {
-    return "Priority";
-  }
-
-  public String getFileIdModifier()
-  {
-    return "FileModifier";
-  }
-
-  public String getServiceClassCode()
-  {
-    return "ServiceClassCode";
-  }
-
-  public String getServiceClassDesc()
-  {
-    return "ServiceClassDesc";
-  }
-
-  public String getCompanyName()
-  {
-    return "CompanyName";
-  }
-
-  public String getDiscretionaryData()
-  {
-    return "DiscretionaryData";
-  }
-
-  public String getStandardEntryClass()
-  {
-    return "StandardEntryClass";
-  }
-
-  public String getStandardEntryClassDesc()
-  {
-    return "StandardEntryClassDesc";
-  }
-
-  public String getCompanyEntryDesc()
-  {
-    return "CompanyEntryDesc";
-  }
-
-  public String getCompanyDescriptiveDate()
-  {
-    return "CompanyDescriptiveDate";
-  }
-
-  public String getEffectiveEntryDate()
-  {
-    return "EffectiveEntryDate";
-  }
-
-  public String getOriginatorStatusCode()
-  {
-    return "OriginatorStatus";
-  }
-
-  public String getOriginatingIdentity()
-  {
-    return "OriginatingIdentity";
-  }
-
-  public String getBatchNumber()
-  {
-    return "BatchNumber";
-  }
-
-  public String getTransactionCode()
-  {
-    return "TransactionCode";
-  }
-
-  public String getRDFI()
-  {
-    return "RDFI";
-  }
-
-  public String getCheckDigit()
-  {
-    return "CheckDigit";
-  }
-
-  public String getDFIAccountNumber()
-  {
-    return "AccountNumber";
-  }
-
-  public String getAmount()
-  {
-    return "Amount";
-  }
-
-  public String getIdentificationNumber()
-  {
-    return "IdentificationNumber";
-  }
-
-  public String getReceiverName()
-  {
-    return "ReceiverName";
-  }
-
-  public String getAddendaIndicator()
-  {
-    return "AddendaIndicator";
-  }
-
-  public String getTraceNumber()
-  {
-    return "TraceNumber";
-  }
-
-  public String getEntryTraceNumber()
-  {
-    return "EntryTraceNumber";
-  }
-
-  public String getAddendaType()
-  {
-    return "AddendaType";
-  }
-
-  public String getPaymentInformation()
-  {
-    return "PaymentInformation";
-  }
-
-  public String getStandardsId()
-  {
-    return "StandardsId";
-  }
-
-  public String getVersion()
-  {
-    return "Version";
-  }
-
-  public String getRelease()
-  {
-    return "Release";
-  }
-
-  public String getAuthorizationQual()
-  {
-    return "AuthorizationQual";
-  }
-
-  public String getAuthorization()
-  {
-    return "Authorization";
-  }
-
-  public String getSecurityQual()
-  {
-    return "SecurityQual";
-  }
-
-  public String getAcknowledgementCode()
-  {
-    return "AcknowledgementCode";
-  }
-
-  public String getNotCode()
-  {
-    return "NoteCode";
-  }
-
-
-  public static XMLTags getInstance()
-  {
-    return theInstance;
-  }
+public class DefaultXMLTags implements XMLTags {
+    private static final XMLTags theInstance = new DefaultXMLTags();
+
+    public DefaultXMLTags() {
+    }
+
+    public static XMLTags getInstance() {
+        return theInstance;
+    }
+
+    @Override
+    public String getRootTag() {
+        return "ediroot";
+    }
+
+    @Override
+    public String getInterchangeTag() {
+        return "interchange";
+    }
+
+    @Override
+    public String getSenderTag() {
+        return "sender";
+    }
+
+    @Override
+    public String getReceiverTag() {
+        return "receiver";
+    }
+
+    @Override
+    public String getAddressTag() {
+        return "address";
+    }
+
+    @Override
+    public String getAcknowledgementTag() {
+        return "acknowledgement";
+    }
+
+    @Override
+    public String getGroupTag() {
+        return "group";
+    }
+
+    @Override
+    public String getDocumentTag() {
+        return "transaction";
+    }
+
+    @Override
+    public String getLoopTag() {
+        return "loop";
+    }
+
+    @Override
+    public String getSegTag() {
+        return "segment";
+    }
+
+    @Override
+    public String getElementTag() {
+        return "element";
+    }
+
+    @Override
+    public String getCompositeTag() {
+        return "composite";
+    }
+
+    @Override
+    public String getSubElementTag() {
+        return "subelement";
+    }
+
+    @Override
+    public String getAddendaTag() {
+        return "addenda";
+    }
+
+    @Override
+    public String getPackageTag() {
+        return "package";
+    }
+
+    @Override
+    public String getIdAttribute() {
+        return "Id";
+    }
+
+    @Override
+    public String getQualifierAttribute() {
+        return "Qual";
+    }
+
+    @Override
+    public String getAddressExtraAttribute() {
+        return "Extra";
+    }
+
+    @Override
+    public String getSubElementSequence() {
+        return "Sequence";
+    }
+
+    @Override
+    public String getCompositeIndicator() {
+        return "Composite";
+    }
+
+    @Override
+    public String getControl() {
+        return "Control";
+    }
+
+    @Override
+    public String getRecipientReference() {
+        return "RecipientRef";
+    }
+
+    @Override
+    public String getApplicationReference() {
+        return "ApplRef";
+    }
+
+    @Override
+    public String getAssociation() {
+        return "Association";
+    }
+
+    @Override
+    public String getProcessingPriority() {
+        return "Priority";
+    }
+
+    @Override
+    public String getProcessingId() {
+        return "ProcessingId";
+    }
+
+    @Override
+    public String getAcknowledgementRequest() {
+        return "AckRequest";
+    }
+
+    @Override
+    public String getInterchangeAgreementIdentifier() {
+        return "AgreementIdentifier";
+    }
+
+    @Override
+    public String getTestIndicator() {
+        return "TestIndicator";
+    }
+
+    @Override
+    public String getTime() {
+        return "Time";
+    }
+
+    @Override
+    public String getDate() {
+        return "Date";
+    }
+
+    @Override
+    public String getApplReceiver() {
+        return "ApplReceiver";
+    }
+
+    @Override
+    public String getApplSender() {
+        return "ApplSender";
+    }
+
+    @Override
+    public String getGroupType() {
+        return "GroupType";
+    }
+
+    @Override
+    public String getStandardVersion() {
+        return "StandardVersion";
+    }
+
+    @Override
+    public String getStandardCode() {
+        return "StandardCode";
+    }
+
+    @Override
+    public String getSyntaxIdentifier() {
+        return "SyntaxId";
+    }
+
+    @Override
+    public String getSyntaxVersion() {
+        return "SyntaxVersion";
+    }
+
+    @Override
+    public String getStandard() {
+        return "Standard";
+    }
+
+    @Override
+    public String getName() {
+        return "Name";
+    }
+
+    @Override
+    public String getDocumentType() {
+        return "DocType";
+    }
+
+    @Override
+    public String getMessageVersion() {
+        return "Version";
+    }
+
+    @Override
+    public String getMessageType() {
+        return "Type";
+    }
+
+    @Override
+    public String getEvent() {
+        return "Event";
+    }
+
+    @Override
+    public String getSecurity() {
+        return "Security";
+    }
+
+    @Override
+    public String getMessageRelease() {
+        return "Release";
+    }
+
+    @Override
+    public String getAgency() {
+        return "Agency";
+    }
+
+    @Override
+    public String getAccessReference() {
+        return "AccessReference";
+    }
+
+    @Override
+    public String getDecimal() {
+        return "Decimal";
+    }
+
+    @Override
+    public String getPriority() {
+        return "Priority";
+    }
+
+    @Override
+    public String getFileIdModifier() {
+        return "FileModifier";
+    }
+
+    @Override
+    public String getServiceClassCode() {
+        return "ServiceClassCode";
+    }
+
+    @Override
+    public String getServiceClassDesc() {
+        return "ServiceClassDesc";
+    }
+
+    @Override
+    public String getCompanyName() {
+        return "CompanyName";
+    }
+
+    @Override
+    public String getDiscretionaryData() {
+        return "DiscretionaryData";
+    }
+
+    @Override
+    public String getStandardEntryClass() {
+        return "StandardEntryClass";
+    }
+
+    @Override
+    public String getStandardEntryClassDesc() {
+        return "StandardEntryClassDesc";
+    }
+
+    @Override
+    public String getCompanyEntryDesc() {
+        return "CompanyEntryDesc";
+    }
+
+    @Override
+    public String getCompanyDescriptiveDate() {
+        return "CompanyDescriptiveDate";
+    }
+
+    @Override
+    public String getEffectiveEntryDate() {
+        return "EffectiveEntryDate";
+    }
+
+    @Override
+    public String getOriginatorStatusCode() {
+        return "OriginatorStatus";
+    }
+
+    @Override
+    public String getOriginatingIdentity() {
+        return "OriginatingIdentity";
+    }
+
+    @Override
+    public String getBatchNumber() {
+        return "BatchNumber";
+    }
+
+    @Override
+    public String getTransactionCode() {
+        return "TransactionCode";
+    }
+
+    @Override
+    public String getRDFI() {
+        return "RDFI";
+    }
+
+    @Override
+    public String getCheckDigit() {
+        return "CheckDigit";
+    }
+
+    @Override
+    public String getDFIAccountNumber() {
+        return "AccountNumber";
+    }
+
+    @Override
+    public String getAmount() {
+        return "Amount";
+    }
+
+    @Override
+    public String getIdentificationNumber() {
+        return "IdentificationNumber";
+    }
+
+    @Override
+    public String getReceiverName() {
+        return "ReceiverName";
+    }
+
+    @Override
+    public String getAddendaIndicator() {
+        return "AddendaIndicator";
+    }
+
+    @Override
+    public String getTraceNumber() {
+        return "TraceNumber";
+    }
+
+    @Override
+    public String getEntryTraceNumber() {
+        return "EntryTraceNumber";
+    }
+
+    @Override
+    public String getAddendaType() {
+        return "AddendaType";
+    }
+
+    @Override
+    public String getPaymentInformation() {
+        return "PaymentInformation";
+    }
+
+    @Override
+    public String getStandardsId() {
+        return "StandardsId";
+    }
+
+    @Override
+    public String getVersion() {
+        return "Version";
+    }
+
+    @Override
+    public String getRelease() {
+        return "Release";
+    }
+
+    @Override
+    public String getAuthorizationQual() {
+        return "AuthorizationQual";
+    }
+
+    @Override
+    public String getAuthorization() {
+        return "Authorization";
+    }
+
+    @Override
+    public String getSecurityQual() {
+        return "SecurityQual";
+    }
+
+    @Override
+    public String getAcknowledgementCode() {
+        return "AcknowledgementCode";
+    }
+
+    @Override
+    public String getNotCode() {
+        return "NoteCode";
+    }
+
+    @Override
+    public String getTransmissionType() {
+        return "TransmissionType";
+    }
+
+    @Override
+    public String getBinNumber() {
+        return "BINNumber";
+    }
+
+    @Override
+    public String getTransactionCount() {
+        return "TransactionCount";
+    }
+
+    @Override
+    public String getVendor() {
+        return "Vendor";
+    }
+
+    @Override
+    public String getServiceProviderIdQualifier() {
+        return "ServiceProviderIdQualifier";
+    }
+
+    @Override
+    public String getServiceProviderId() {
+        return "ServiceProviderId";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Description";
+    }
 }
