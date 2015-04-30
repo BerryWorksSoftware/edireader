@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -21,7 +21,9 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.error.ErrorMessages;
+import com.berryworks.edireader.plugin.PluginControllerFactory;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -38,147 +40,139 @@ import java.io.IOException;
  * for additional EDIReader subclasses to be developed and integrated with
  * little impact.
  */
-public class EDIReader extends EDIAbstractReader implements ErrorMessages
-{
+public class EDIReader extends EDIAbstractReader implements ErrorMessages {
 
-  /**
-   * If debug is set to true, then a parser may emit diagnostic information to
-   * System.err
-   */
-  public static boolean debug;
+    /**
+     * If debug is set to true, then a parser may emit diagnostic information to
+     * System.err
+     */
+    public static boolean debug;
 
-  private EDIReader theReader;
+    private EDIReader theReader;
 
-  private XMLTags xmlTags;
+    private XMLTags xmlTags;
 
-  public EDIReader()
-  {
-    if (Boolean.getBoolean("edireader.debug"))
-      setDebug(true);
-  }
+    private PluginControllerFactory pluginControllerFactory;
 
-  /**
-   * Read enough of the EDI interchange to establish which characters are used
-   * for segment terminators, element delimiters, etc. Each subclass of
-   * EDIReader overrides this method with logic specific to a particular EDI
-   * standard. Upon return, the input stream has been re-positioned so that
-   * the interchange will be parsed from the beginning by <code>parse()</code>.
-   */
-  @Override
-  public void preview() throws EDISyntaxException, IOException
-  {
-    throw new EDISyntaxException("EDIReader.preview() called unexpectedly");
-  }
+    public EDIReader() {
+        if (Boolean.getBoolean("edireader.debug"))
+            setDebug(true);
+    }
 
-  /**
-   * Parse an EDI interchange from the input source.
-   */
-  public void parse(InputSource source) throws SAXException, IOException
-  {
+    /**
+     * Read enough of the EDI interchange to establish which characters are used
+     * for segment terminators, element delimiters, etc. Each subclass of
+     * EDIReader overrides this method with logic specific to a particular EDI
+     * standard. Upon return, the input stream has been re-positioned so that
+     * the interchange will be parsed from the beginning by <code>parse()</code>.
+     */
+    @Override
+    public void preview() throws EDISyntaxException, IOException {
+        throw new EDISyntaxException("EDIReader.preview() called unexpectedly");
+    }
 
-    startXMLDocument();
+    /**
+     * Parse an EDI interchange from the input source.
+     */
+    public void parse(InputSource source) throws SAXException, IOException {
 
-    char[] leftOver = null;
-    while (true)
-    {
-      if (theReader == null)
-      {
-        theReader = EDIReaderFactory.createEDIReader(source, leftOver);
-        if (theReader == null)
-        {
-          if (debug)
-            trace("EDIReader.parse(InputSource) hit end of input");
-          break;
+        startXMLDocument();
+
+        char[] leftOver = null;
+        while (true) {
+            if (theReader == null) {
+                theReader = EDIReaderFactory.createEDIReader(source, leftOver);
+                if (theReader == null) {
+                    if (debug)
+                        trace("EDIReader.parse(InputSource) hit end of input");
+                    break;
+                }
+                if (debug)
+                    trace("EDIReader.parse(InputSource) created an EDIReader of type "
+                            + theReader.getClass().getName());
+                theReader.setExternalXmlDocumentStart(true);
+                theReader.setAcknowledgment(getAckStream());
+                theReader.setAlternateAcknowledgment(getAlternateAckStream());
+                theReader.setContentHandler(getContentHandler());
+                theReader.setSyntaxExceptionHandler(getSyntaxExceptionHandler());
+                theReader.setNamespaceEnabled(isNamespaceEnabled());
+            }
+            theReader.setXMLTags(xmlTags);
+            if (pluginControllerFactory != null) {
+                theReader.setPluginControllerFactory(pluginControllerFactory);
+            }
+            theReader.parse(source);
+            setDelimiter(theReader.getDelimiter());
+            setSubDelimiter(theReader.getSubDelimiter());
+            setTerminator(theReader.getTerminator());
+            setTerminatorSuffix(theReader.getTerminatorSuffix());
+
+            leftOver = theReader.getTokenizer().getBuffered();
+            theReader = null;
         }
-        if (debug)
-          trace("EDIReader.parse(InputSource) created an EDIReader of type "
-            + theReader.getClass().getName());
-        theReader.setExternalXmlDocumentStart(true);
-        theReader.setAcknowledgment(getAckStream());
-        theReader.setContentHandler(getContentHandler());
-        theReader.setSyntaxExceptionHandler(getSyntaxExceptionHandler());
-        theReader.setNamespaceEnabled(isNamespaceEnabled());
-      }
-      theReader.setXMLTags(xmlTags);
-      theReader.parse(source);
-      setDelimiter(theReader.getDelimiter());
-      setSubDelimiter(theReader.getSubDelimiter());
-      setTerminator(theReader.getTerminator());
-      setTerminatorSuffix(theReader.getTerminatorSuffix());
 
-      leftOver = theReader.getTokenizer().getBuffered();
-      theReader = null;
+        endXMLDocument();
+
     }
 
-    endXMLDocument();
-
-  }
-
-  public void setXMLTags(XMLTags tags)
-  {
-    xmlTags = tags;
-  }
-
-  public XMLTags getXMLTags()
-  {
-    if (xmlTags == null)
-      xmlTags = DefaultXMLTags.getInstance();
-
-    return xmlTags;
-  }
-
-  /**
-   * Sets debug on or off.
-   *
-   * @param d true to turn debug on, false to turn it off
-   */
-  public static void setDebug(boolean d)
-  {
-    if (debug && d)
-    {
-      trace("Debug already on");
+    public void setXMLTags(XMLTags tags) {
+        xmlTags = tags;
     }
-    else if (!debug && d)
-    {
-      trace("Debug turned on");
-    }
-    else if (debug && !d)
-    {
-      trace("Debug turned off");
-    }
-    debug = d;
-  }
 
-  protected void startXMLDocument() throws SAXException
-  {
-    AttributesImpl attrList = new AttributesImpl();
-    attrList.clear();
-    getContentHandler().startDocument();
-    if (isNamespaceEnabled())
-    {
-      String rootTag = getXMLTags().getRootTag();
-      getContentHandler().startElement(BERRYWORKS_NAMESPACE, rootTag, rootTag, attrList);
+    public XMLTags getXMLTags() {
+        if (xmlTags == null)
+            xmlTags = DefaultXMLTags.getInstance();
+
+        return xmlTags;
     }
-    else
-    {
-      startElement(getXMLTags().getRootTag(), attrList);
+
+    public void setPluginControllerFactory(PluginControllerFactory pluginControllerFactory) {
+        this.pluginControllerFactory = pluginControllerFactory;
     }
-  }
 
-  protected void endXMLDocument() throws SAXException
-  {
-    endElement(getXMLTags().getRootTag());
-    getContentHandler().endDocument();
-  }
+    /**
+     * Sets debug on or off.
+     *
+     * @param d true to turn debug on, false to turn it off
+     */
+    public static void setDebug(boolean d) {
+        if (debug && d) {
+            trace("Debug already on");
+        } else if (!debug && d) {
+            trace("Debug turned on");
+        } else if (debug && !d) {
+            trace("Debug turned off");
+        }
+        debug = d;
+    }
 
-  protected void startElement(String tag, Attributes attributes)
-    throws SAXException
-  {
-    getContentHandler().startElement("", tag, tag, attributes);
-  }
+    protected void startXMLDocument() throws SAXException {
+        AttributesImpl attrList = new AttributesImpl();
+        attrList.clear();
+        final ContentHandler contentHandler = getContentHandler();
+        if (contentHandler == null) {
+            throw new SAXException("No ContentHandler configured for EDIReader");
+        }
+        contentHandler.startDocument();
+        String rootTag = getXMLTags().getRootTag();
+        if (isNamespaceEnabled()) {
+            contentHandler.startElement(BERRYWORKS_NAMESPACE, rootTag, rootTag, attrList);
+        } else {
+            startElement(rootTag, attrList);
+        }
+    }
 
-  protected void endElement(String tag) throws SAXException
-  {
-    getContentHandler().endElement("", tag, tag);
-  }
+    protected void endXMLDocument() throws SAXException {
+        endElement(getXMLTags().getRootTag());
+        getContentHandler().endDocument();
+    }
+
+    protected void startElement(String tag, Attributes attributes)
+            throws SAXException {
+        getContentHandler().startElement("", tag, tag, attributes);
+    }
+
+    protected void endElement(String tag) throws SAXException {
+        getContentHandler().endElement("", tag, tag);
+    }
 }

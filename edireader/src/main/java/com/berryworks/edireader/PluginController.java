@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -20,10 +20,7 @@
 
 package com.berryworks.edireader;
 
-import com.berryworks.edireader.tokenizer.Tokenizer;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.xml.sax.ContentHandler;
 
 /**
  * Determines and maintains state transitions for the segment looping structure
@@ -48,195 +45,138 @@ import java.lang.reflect.Method;
  * @see com.berryworks.edireader.validator.FilteringPluginController
  * @see com.berryworks.edireader.validator.ValidatingPluginController
  */
-public class PluginController
-{
-  protected static boolean debug;
+public class PluginController {
+    protected static boolean debug;
 
-  /**
-   * Creates a new instance of a PluginController, selecting a plugin based on the standard and type of document.
-   *
-   * @param standard
-   * @param docType
-   * @param tokenizer
-   * @return instance
-   */
-  public static PluginController create(String standard, String docType, Tokenizer tokenizer)
-  {
-    return create(standard, docType, null, null, tokenizer);
-  }
-
-  /**
-   * Creates a new instance of a PluginController, selecting a plugin based on the standard, the type of document,
-   * and the version and release characteristics.
-   * <p/>
-   * This factory method delegates to the corresponding create method on a PluginControllerImpl,
-   * if such a class is available. If not, then this factory method simply returns an instance of this
-   * PluginController class, which supports the required interfaces but disables the entire plugin mechanism.
-   *
-   * @param standard
-   * @param docType
-   * @param docVersion
-   * @param docRelease
-   * @param tokenizer
-   * @return instance
-   */
-  public static PluginController create(String standard,
-                                        String docType,
-                                        String docVersion,
-                                        String docRelease,
-                                        Tokenizer tokenizer)
-  {
-    try
-    {
-      Class controllerClass = Class.forName("com.berryworks.edireader.plugin.PluginControllerImpl");
-
-      Method createMethod = controllerClass.getDeclaredMethod("create",
-        String.class, String.class, String.class, String.class, Tokenizer.class);
-
-      return (PluginController) createMethod.invoke(null,
-        standard, docType, docVersion, docRelease, tokenizer);
-
-    } catch (ClassNotFoundException ignored)
-    {
-    } catch (NoSuchMethodException ignored)
-    {
-    } catch (InvocationTargetException ignored)
-    {
-    } catch (IllegalAccessException ignored)
-    {
+    /**
+     * Compute a state transition that may have occurred as the result of the
+     * presence of a particular segment type at this point in parsing the
+     * document.
+     *
+     * @param segmentName type of segment encountered, for example: 837
+     * @return true if there was a transition to a new loop, false otherwise
+     * @throws com.berryworks.edireader.EDISyntaxException Description of the Exception
+     */
+    public boolean transition(String segmentName) throws EDISyntaxException {
+        return false;
     }
 
-    return new PluginController();
-  }
-
-  /**
-   * Compute a state transition that may have occurred as the result of the
-   * presence of a particular segment type at this point in parsing the
-   * document.
-   *
-   * @param segmentName type of segment encountered, for example: 837
-   * @return true if there was a transition to a new loop, false otherwise
-   * @throws com.berryworks.edireader.EDISyntaxException
-   *          Description of the Exception
-   */
-  public boolean transition(String segmentName) throws EDISyntaxException
-  {
-    return false;
-  }
-
-  /**
-   * Return the name of a loop that was entered as the result of the most
-   * recent transition.
-   *
-   * @return name of the entered loop, or null if no loop was entered
-   */
-  public String getLoopEntered()
-  {
-    return null;
-  }
-
-  /**
-   * Get the number of loops that were closed as the result of the most recent
-   * state transition. Re-entering the implicit outer loop does not count as a
-   * loop closing.
-   *
-   * @return Description of the Return Value
-   */
-  public int closedCount()
-  {
-    return 0;
-  }
-
-  /**
-   * Get the nesting level of the current loop.
-   *
-   * @return Description of the Return Value
-   */
-  public int getNestingLevel()
-  {
-    return 0;
-  }
-
-  /**
-   * Returns true if this controller is currently enabled.
-   *
-   * @return
-   */
-  public boolean isEnabled()
-  {
-    return false;
-  }
-
-  /**
-   * Returns the document name associated with the plugin.
-   *
-   * @return
-   */
-  public String getDocumentName()
-  {
-    return null;
-  }
-
-  /**
-   * Returns the Plugin used by this PluginController.
-   *
-   * @return Plugin
-   */
-  public Plugin getPlugin()
-  {
-    return null;
-  }
-
-  /**
-   * Shorthand for EDIReader.trace(String)
-   *
-   * @param text message to appear in trace
-   */
-  protected static void trace(String text)
-  {
-    EDIAbstractReader.trace(text);
-  }
-
-  /**
-   * Returns true if the most recent loop transition was to resume an outer loop.
-   *
-   * @return
-   */
-  public boolean isResumed()
-  {
-    return false;
-  }
-
-  /**
-   * Returns the class name of the most recently loaded plugin.
-   *
-   * @return
-   */
-  public String lastPluginLoaded()
-  {
-    return null;
-  }
-
-  /**
-   * Sets debugging on or off.
-   *
-   * @param d
-   */
-  public static void setDebug(boolean d)
-  {
-    if (d)
-      if (debug)
-        PluginController.trace("PluginController: debug already on");
-      else
-      {
-        PluginController.trace("PluginController: debug turn on");
-        debug = true;
-      }
-    else if (debug)
-    {
-      PluginController.trace("PluginController: debug turn off");
-      debug = false;
+    /**
+     * Return the name of a loop that was entered as the result of the most
+     * recent transition.
+     *
+     * @return name of the entered loop, or null if no loop was entered
+     */
+    public String getLoopEntered() {
+        return null;
     }
-    // If it's already off, leave it off but keep quiet about it
-  }
+
+    /**
+     * Get the number of loops that were closed as the result of the most recent
+     * state transition. Re-entering the implicit outer loop does not count as a
+     * loop closing.
+     *
+     * @return Description of the Return Value
+     */
+    public int closedCount() {
+        return 0;
+    }
+
+    /**
+     * Get the nesting level of the current loop.
+     *
+     * @return Description of the Return Value
+     */
+    public int getNestingLevel() {
+        return 0;
+    }
+
+    /**
+     * Returns true if this controller is currently enabled.
+     *
+     * @return true if currently enabled
+     */
+    public boolean isEnabled() {
+        return false;
+    }
+
+    /**
+     * Returns the document name associated with the plugin.
+     *
+     * @return name of the document
+     */
+    public String getDocumentName() {
+        return null;
+    }
+
+    /**
+     * Returns the Plugin used by this PluginController.
+     *
+     * @return Plugin
+     */
+    public Plugin getPlugin() {
+        return null;
+    }
+
+    /**
+     * Shorthand for EDIReader.trace(String)
+     *
+     * @param text message to appear in trace
+     */
+    protected static void trace(String text) {
+        EDIAbstractReader.trace(text);
+    }
+
+    /**
+     * Returns true if the most recent loop transition was to resume an outer loop.
+     *
+     * @return true if the transition was to an outer loop
+     */
+    public boolean isResumed() {
+        return false;
+    }
+
+    /**
+     * Sets debugging on or off.
+     *
+     * @param d - true to turn debug on, false to turn if off
+     */
+    public static void setDebug(boolean d) {
+        if (d)
+            if (debug)
+                PluginController.trace("PluginController: debug already on");
+            else {
+                PluginController.trace("PluginController: debug turn on");
+                debug = true;
+            }
+        else if (debug) {
+            PluginController.trace("PluginController: debug turn off");
+            debug = false;
+        }
+        // If it's already off, leave it off but keep quiet about it
+    }
+
+    public boolean isQueuedContentHandlerRequired() {
+        return false;
+    }
+
+    /**
+     * Notifies a plugin controller of an EDI element and it value
+     * so that a subclass of PluginController could make decisions based
+     * on this information.
+     *
+     * @param contentHandler
+     * @param elementId      - identifies the particular EDI element (e.g. "HL02")
+     * @param valueChars     - chars of the element's value
+     * @param index          - index into valueChars array
+     * @param valueLength    - length of the element's value
+     */
+    public void noteElement(ContentHandler contentHandler, String elementId, char[] valueChars, int index, int valueLength) {
+    }
+
+    public void noteBeginningOfSegment(ContentHandler contentHandler, String segmentType) {
+    }
+
+    public void noteEndOfSegment(ContentHandler contentHandler, String segmentType) {
+    }
 }
