@@ -53,24 +53,19 @@ public class SAXObjectReader implements XMLReader {
          * used on the previous call.
          */
         if (inputStream == null) {
-            System.err.println(getClass().getName() + " parsing first time on input stream");
             inputStream = new ObjectInputStream(input.getByteStream());
-        } else
-            System.err.println(getClass().getName() + " parsing again on the same input stream");
+        }
 
         try {
             while (true) {
                 Object o = inputStream.readObject();
                 if (o == null) {
-                    System.err.println("SAXObjectReader got null from readObject(), parse throwing EOFException");
                     throw new EOFException();
-                } else {
-//                    System.err.println("object of type " + o.getClass().getName());
                 }
+
                 SAXObject saxObject = (SAXObject) o;
                 saxObject.saxCall(contentHandler);
                 if (saxObject instanceof SAXEndDocument) {
-                    System.err.println("SAXObjectReader noted the end document, parse returning");
                     break;
                 } else if (saxObject instanceof SAXEndOfStreamMarker)
                     throw new EOFException();

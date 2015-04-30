@@ -21,6 +21,7 @@
 package com.berryworks.edireader.util.sax;
 
 import com.berryworks.edireader.EDIAttributes;
+import com.berryworks.edireader.tokenizer.SourcePosition;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -36,12 +37,14 @@ import java.util.LinkedList;
  */
 public class QueuedContentHandler extends DefaultHandler {
     private final ContentHandler wrappedHandler;
-    private final LinkedList<QueuedItem> queue = new LinkedList<QueuedItem>();
+    private final LinkedList<QueuedItem> queue = new LinkedList<>();
     private final int queueSizeLimit;
+    private final SourcePosition sourcePosition;
 
-    public QueuedContentHandler(ContentHandler handler, int queueSizeLimit) {
+    public QueuedContentHandler(ContentHandler handler, int queueSizeLimit, SourcePosition sourcePosition) {
         wrappedHandler = handler;
         this.queueSizeLimit = queueSizeLimit;
+        this.sourcePosition = sourcePosition;
     }
 
     @Override
@@ -55,27 +58,36 @@ public class QueuedContentHandler extends DefaultHandler {
         wrappedHandler.endDocument();
     }
 
-    private void drainQueue() throws SAXException {
+    public void drainQueue() throws SAXException {
         while (queue.size() > 0) {
             queue.removeFirst().process(wrappedHandler);
         }
+        if (wrappedHandler instanceof SourcePosition) {
+            ((SourcePosition) wrappedHandler).setCharCounts(-1, -1);
+        }
+
     }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         limitSize();
-        queue.add(new QueuedStartItem(uri, localName, qName, attributes));
+        final int charCount = sourcePosition == null ? 0 : sourcePosition.getCharCount();
+        final int segmentCharCount = sourcePosition == null ? 0 : sourcePosition.getSegmentCharCount();
+        queue.add(new QueuedStartItem(uri, localName, qName, attributes, charCount, segmentCharCount));
     }
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         limitSize();
-        queue.add(new QueuedEndItem(uri, localName, qName));
+        final int charCount = sourcePosition == null ? 0 : sourcePosition.getCharCount();
+        final int segmentCharCount = sourcePosition == null ? 0 : sourcePosition.getSegmentCharCount();
+        queue.add(new QueuedEndItem(uri, localName, qName, charCount, segmentCharCount));
     }
 
     private void limitSize() throws SAXException {
         while (queue.size() >= queueSizeLimit) {
-            queue.removeFirst().process(wrappedHandler);
+            final QueuedItem queuedItem = queue.removeFirst();
+            queuedItem.process(wrappedHandler);
         }
     }
 
@@ -86,6 +98,17 @@ public class QueuedContentHandler extends DefaultHandler {
 
     public void characters(String data) {
         queue.getLast().addData(data);
+    }
+
+    public String getAttribute(String tag, String attributeName) {
+        for (int i = queue.size() - 1; i >= 0; i--) {
+            QueuedItem queuedItem = queue.get(i);
+            if (tag.equals(queuedItem.getLocalName())) {
+                EDIAttributes attributes = queuedItem.getAttributes();
+                return attributes.getValue(attributeName);
+            }
+        }
+        return null;
     }
 
     public void putAttribute(String tag, String attributeName, String data) {
@@ -110,15 +133,23 @@ public class QueuedContentHandler extends DefaultHandler {
         return queue.getFirst().getAttributes();
     }
 
+    public ContentHandler getWrappedContentHandler() {
+        return wrappedHandler;
+    }
+
     abstract class QueuedItem {
         private final String uri;
         private final String localName;
         private final String qName;
+        private final int charCount;
+        private final int segmentCharCount;
 
-        QueuedItem(String uri, String localName, String qName) {
+        QueuedItem(String uri, String localName, String qName, int charCount, int segmentCharCount) {
             this.uri = uri;
             this.localName = localName;
             this.qName = qName;
+            this.charCount = charCount;
+            this.segmentCharCount = segmentCharCount;
         }
 
         public String getUri() {
@@ -142,14 +173,22 @@ public class QueuedContentHandler extends DefaultHandler {
         public abstract void addData(String data);
 
         public abstract EDIAttributes getAttributes();
+
+        public int getCharCount() {
+            return charCount;
+        }
+
+        public int getSegmentCharCount() {
+            return segmentCharCount;
+        }
     }
 
     class QueuedStartItem extends QueuedItem {
         private final EDIAttributes attributes;
         private String data;
 
-        QueuedStartItem(String uri, String localName, String qName, Attributes attributes) {
-            super(uri, localName, qName);
+        QueuedStartItem(String uri, String localName, String qName, Attributes attributes, int charCount, int segmentCharCount) {
+            super(uri, localName, qName, charCount, segmentCharCount);
             this.attributes = new EDIAttributes(attributes);
         }
 
@@ -185,6 +224,9 @@ public class QueuedContentHandler extends DefaultHandler {
             String uri = getUri();
             if (uri == null)
                 throw new RuntimeException("null uri");
+            if (handler instanceof SourcePosition) {
+                ((SourcePosition) handler).setCharCounts(getCharCount(), getSegmentCharCount());
+            }
             handler.startElement(uri, name, qname, attributes1);
             if (getData() != null) {
                 char[] ca = getData().toCharArray();
@@ -195,12 +237,15 @@ public class QueuedContentHandler extends DefaultHandler {
 
     class QueuedEndItem extends QueuedItem {
 
-        QueuedEndItem(String uri, String localName, String qName) {
-            super(uri, localName, qName);
+        QueuedEndItem(String uri, String localName, String qName, int charCount, int segmentCharCount) {
+            super(uri, localName, qName, charCount, segmentCharCount);
         }
 
         @Override
         public void process(ContentHandler handler) throws SAXException {
+            if (handler instanceof SourcePosition) {
+                ((SourcePosition) handler).setCharCounts(getCharCount(), getSegmentCharCount());
+            }
             handler.endElement(getUri(), getLocalName(), getQName());
         }
 

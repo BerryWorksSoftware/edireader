@@ -28,13 +28,13 @@ import org.xml.sax.SAXException;
  * a sequence of SAXObjects.
  */
 public class SAXEndOfStreamMarker extends SAXObject {
-    @Override
-    public void saxCall(ContentHandler contentHandler) throws SAXException {
-    }
+  @Override
+  public void saxCall(ContentHandler contentHandler) throws SAXException {
+  }
 
-    @Override
-    public String toString() {
-        return "SAXEndOfStreamMarker";
-    }
+  @Override
+  public String toString() {
+    return "SAXEndOfStreamMarker";
+  }
 
 }

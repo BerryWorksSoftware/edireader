@@ -29,23 +29,23 @@ import org.xml.sax.SAXException;
  * received by a ContentHandler from an XMLReader.
  */
 public class SAXCharacters extends SAXObject {
-    private final char[] ch;
+  private final char[] ch;
 
-    public SAXCharacters(char[] ch, int start, int length) {
-        this.ch = new char[length];
-        System.arraycopy(ch, start, this.ch, 0, length);
-    }
+  public SAXCharacters(char[] ch, int start, int length) {
+    this.ch = new char[length];
+    System.arraycopy(ch, start, this.ch, 0, length);
+  }
 
-    @Override
-    public void saxCall(ContentHandler contentHandler) throws SAXException {
-        contentHandler.characters(ch, 0, ch.length);
-    }
+  @Override
+  public void saxCall(ContentHandler contentHandler) throws SAXException {
+    contentHandler.characters(ch, 0, ch.length);
+  }
 
-    public String toString() {
-        return "SAXCharacters: " + String.valueOf(ch);
-    }
+  public String toString() {
+    return "SAXCharacters: " + String.valueOf(ch);
+  }
 
-    public String getData() {
-        return String.valueOf(ch);
-    }
+  public String getData() {
+    return String.valueOf(ch);
+  }
 }

@@ -40,194 +40,194 @@ import java.io.PrintStream;
  * These two classes need to combined into a single class.
  */
 public class SAXAdapter extends DefaultHandler {
-    protected final XMLTags xmlTags;
+  protected final XMLTags xmlTags;
 
-    protected boolean anotherSEG, implicitGroup, implicitDocument;
+  protected boolean anotherSEG, implicitGroup, implicitDocument;
 
-    public boolean isImplicitInterchangeTermination() {
-        return implicitInterchangeTermination;
-    }
+  public boolean isImplicitInterchangeTermination() {
+    return implicitInterchangeTermination;
+  }
 
-    private boolean implicitInterchangeTermination;
+  private boolean implicitInterchangeTermination;
 
-    protected String elementString, subElementString;
+  protected String elementString, subElementString;
 
-    public SAXAdapter(XMLTags xmlTags) {
-        this.xmlTags = xmlTags;
-    }
+  public SAXAdapter(XMLTags xmlTags) {
+    this.xmlTags = xmlTags;
+  }
 
-    @Override
-    public void startElement(String namespace, String localName, String qName,
-                             Attributes atts) throws SAXException {
-        int charCount = getCharCount();
-        int segmentCharCount = getSegmentCount();
+  @Override
+  public void startElement(String namespace, String localName, String qName,
+                           Attributes atts) throws SAXException {
+    int charCount = getCharCount();
+    int segmentCharCount = getSegmentCount();
 
-        if (localName.startsWith(xmlTags.getInterchangeTag())) {
-            anotherSEG = false;
-            beginInterchange(charCount, segmentCharCount);
-        } else if (localName.startsWith(xmlTags.getGroupTag())) {
-            anotherSEG = false;
-            if (atts.getLength() == 0) {
-                implicitGroup = true;
-                beginImplicitGroup();
-            } else
-                beginExplicitGroup(charCount, segmentCharCount);
-        } else if (localName.startsWith(xmlTags.getDocumentTag())) {
-            anotherSEG = false;
-            if (atts.getLength() == 0) {
-                implicitDocument = true;
-                beginImplicitDocument();
-            } else {
-                String title = atts.getValue(xmlTags.getName());
-                beginDocument(charCount, segmentCharCount, title);
-            }
-        } else if (localName.startsWith(xmlTags.getSegTag())) {
-            if (anotherSEG)
-                beginAnotherSegment(atts);
-            else {
-                beginFirstSegment(atts);
-                anotherSEG = true;
-            }
-        } else if (localName.startsWith(xmlTags.getLoopTag())) {
-            anotherSEG = true;
-            String loopName = "";
-            if (atts.getLength() > 0)
-                loopName = atts.getValue(0);
-            beginSegmentGroup(loopName);
-        } else if (localName.startsWith(xmlTags.getElementTag())) {
-            elementString = "";
-            beginSegmentElement(atts);
-        } else if (localName.startsWith(xmlTags.getSubElementTag())) {
-            subElementString = "";
-            beginSegmentSubElement(atts);
-        }
-    }
-
-    protected int getSegmentCount() {
-        return 0;
-    }
-
-    protected int getCharCount() {
-        return 0;
-    }
-
-    @Override
-    public void endElement(String namespace, String localName, String qName)
-            throws SAXException {
-        int charCount = getCharCount();
-        int segmentCharCount = getSegmentCount();
-
-        if (localName.startsWith(xmlTags.getInterchangeTag())) {
-            anotherSEG = false;
-            endInterchange(charCount, segmentCharCount);
-            implicitInterchangeTermination = false;
-        } else if (localName.startsWith(xmlTags.getGroupTag())) {
-            anotherSEG = false;
-            if (implicitGroup)
-                endImplicitGroup();
-            else
-                endExplicitGroup(charCount, segmentCharCount);
-        } else if (localName.startsWith(xmlTags.getDocumentTag())) {
-            anotherSEG = false;
-            if (!implicitDocument)
-                endDocument(charCount, segmentCharCount);
-        } else if (localName.startsWith(xmlTags.getSegTag())) {
-            endSegment(charCount, segmentCharCount);
-        } else if (localName.startsWith(xmlTags.getElementTag())) {
-            endSegmentElement(elementString);
-            elementString = null;
-        } else if (localName.startsWith(xmlTags.getSubElementTag())) {
-            endSegmentSubElement(subElementString);
-            subElementString = null;
-        } else if (localName.startsWith(xmlTags.getLoopTag())) {
-            endSegmentGroup();
-        }
-    }
-
-    @Override
-    public void characters(char ch[], int start, int length) throws SAXException {
-        String s = new String(ch, start, length);
-        if (elementString != null) elementString += s;
-    }
-
-    public void preface() {
-    }
-
-    public void addendum() {
-    }
-
-    protected void beginInterchange(int charCount, int segmentCharCount) {
-    }
-
-    protected void endInterchange(int charCount, int segmentCharCount) {
-    }
-
-    protected void beginExplicitGroup(int charCount, int segmentCharCount) {
-    }
-
-    protected void endExplicitGroup(int charCount, int segmentCharCount) {
-    }
-
-    protected void beginImplicitGroup() {
-    }
-
-    protected void endImplicitGroup() {
-    }
-
-    protected void beginSegmentGroup(String loopName) {
-    }
-
-    protected void beginFirstSegment(Attributes atts) {
+    if (localName.startsWith(xmlTags.getInterchangeTag())) {
+      anotherSEG = false;
+      beginInterchange(charCount, segmentCharCount);
+    } else if (localName.startsWith(xmlTags.getGroupTag())) {
+      anotherSEG = false;
+      if (atts.getLength() == 0) {
+        implicitGroup = true;
+        beginImplicitGroup();
+      } else
+        beginExplicitGroup(charCount, segmentCharCount);
+    } else if (localName.startsWith(xmlTags.getDocumentTag())) {
+      anotherSEG = false;
+      if (atts.getLength() == 0) {
+        implicitDocument = true;
+        beginImplicitDocument();
+      } else {
+        String title = atts.getValue(xmlTags.getName());
+        beginDocument(charCount, segmentCharCount, title);
+      }
+    } else if (localName.startsWith(xmlTags.getSegTag())) {
+      if (anotherSEG)
         beginAnotherSegment(atts);
+      else {
+        beginFirstSegment(atts);
+        anotherSEG = true;
+      }
+    } else if (localName.startsWith(xmlTags.getLoopTag())) {
+      anotherSEG = true;
+      String loopName = "";
+      if (atts.getLength() > 0)
+        loopName = atts.getValue(0);
+      beginSegmentGroup(loopName);
+    } else if (localName.startsWith(xmlTags.getElementTag())) {
+      elementString = "";
+      beginSegmentElement(atts);
+    } else if (localName.startsWith(xmlTags.getSubElementTag())) {
+      subElementString = "";
+      beginSegmentSubElement(atts);
     }
+  }
 
-    protected void beginAnotherSegment(Attributes atts) {
-    }
+  protected int getSegmentCount() {
+    return 0;
+  }
 
-    protected void beginDocument(int charCount, int segmentCharCount,
-                                 String title) {
-    }
+  protected int getCharCount() {
+    return 0;
+  }
 
-    protected void endDocument(int charCount, int segmentCharCount) {
-    }
+  @Override
+  public void endElement(String namespace, String localName, String qName)
+          throws SAXException {
+    int charCount = getCharCount();
+    int segmentCharCount = getSegmentCount();
 
-    protected void beginImplicitDocument() {
+    if (localName.startsWith(xmlTags.getInterchangeTag())) {
+      anotherSEG = false;
+      endInterchange(charCount, segmentCharCount);
+      implicitInterchangeTermination = false;
+    } else if (localName.startsWith(xmlTags.getGroupTag())) {
+      anotherSEG = false;
+      if (implicitGroup)
+        endImplicitGroup();
+      else
+        endExplicitGroup(charCount, segmentCharCount);
+    } else if (localName.startsWith(xmlTags.getDocumentTag())) {
+      anotherSEG = false;
+      if (!implicitDocument)
+        endDocument(charCount, segmentCharCount);
+    } else if (localName.startsWith(xmlTags.getSegTag())) {
+      endSegment(charCount, segmentCharCount);
+    } else if (localName.startsWith(xmlTags.getElementTag())) {
+      endSegmentElement(elementString);
+      elementString = null;
+    } else if (localName.startsWith(xmlTags.getSubElementTag())) {
+      endSegmentSubElement(subElementString);
+      subElementString = null;
+    } else if (localName.startsWith(xmlTags.getLoopTag())) {
+      endSegmentGroup();
     }
+  }
 
-    protected void endSegment(int charCount, int segmentCharCount) {
-    }
+  @Override
+  public void characters(char ch[], int start, int length) throws SAXException {
+    String s = new String(ch, start, length);
+    if (elementString != null) elementString += s;
+  }
 
-    protected void endSegmentGroup() {
-    }
+  public void preface() {
+  }
 
-    protected void beginSegmentElement(Attributes atts) {
-    }
+  public void addendum() {
+  }
 
-    protected void endSegmentElement(String elementString) {
-    }
+  protected void beginInterchange(int charCount, int segmentCharCount) {
+  }
 
-    protected void beginSegmentSubElement(Attributes atts) {
-    }
+  protected void endInterchange(int charCount, int segmentCharCount) {
+  }
 
-    protected void endSegmentSubElement(String subElementString) {
-    }
+  protected void beginExplicitGroup(int charCount, int segmentCharCount) {
+  }
 
-    protected void recover(Exception e) {
-    }
+  protected void endExplicitGroup(int charCount, int segmentCharCount) {
+  }
 
-    @Override
-    public void processingInstruction(String target, String data)
-            throws SAXException {
-        if ("interchangeTermination".equals(target) && "implicit".equals(data)) {
-            implicitInterchangeTermination = true;
-        }
-    }
+  protected void beginImplicitGroup() {
+  }
 
-    protected void printAttributes(Attributes atts, PrintStream out) {
-        for (int i = 0; i < atts.getLength(); i++) {
-            out.println("attribute " + i + ": " + atts.getLocalName(i) + "=" + atts.getValue(i));
-        }
+  protected void endImplicitGroup() {
+  }
+
+  protected void beginSegmentGroup(String loopName) {
+  }
+
+  protected void beginFirstSegment(Attributes atts) {
+    beginAnotherSegment(atts);
+  }
+
+  protected void beginAnotherSegment(Attributes atts) {
+  }
+
+  protected void beginDocument(int charCount, int segmentCharCount,
+                               String title) {
+  }
+
+  protected void endDocument(int charCount, int segmentCharCount) {
+  }
+
+  protected void beginImplicitDocument() {
+  }
+
+  protected void endSegment(int charCount, int segmentCharCount) {
+  }
+
+  protected void endSegmentGroup() {
+  }
+
+  protected void beginSegmentElement(Attributes atts) {
+  }
+
+  protected void endSegmentElement(String elementString) {
+  }
+
+  protected void beginSegmentSubElement(Attributes atts) {
+  }
+
+  protected void endSegmentSubElement(String subElementString) {
+  }
+
+  protected void recover(Exception e) {
+  }
+
+  @Override
+  public void processingInstruction(String target, String data)
+          throws SAXException {
+    if ("interchangeTermination".equals(target) && "implicit".equals(data)) {
+      implicitInterchangeTermination = true;
     }
+  }
+
+  protected void printAttributes(Attributes atts, PrintStream out) {
+    for (int i = 0; i < atts.getLength(); i++) {
+      out.println("attribute " + i + ": " + atts.getLocalName(i) + "=" + atts.getValue(i));
+    }
+  }
 
 
 }

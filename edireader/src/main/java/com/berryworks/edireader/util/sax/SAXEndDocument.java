@@ -31,13 +31,13 @@ import java.io.Serializable;
  * received by a ContentHandler from an XMLReader.
  */
 public class SAXEndDocument extends SAXObject implements Serializable {
-    @Override
-    public void saxCall(ContentHandler contentHandler) throws SAXException {
-        contentHandler.endDocument();
-    }
+  @Override
+  public void saxCall(ContentHandler contentHandler) throws SAXException {
+    contentHandler.endDocument();
+  }
 
-    @Override
-    public String toString() {
-        return "SAXEndDocument";
-    }
+  @Override
+  public String toString() {
+    return "SAXEndDocument";
+  }
 }

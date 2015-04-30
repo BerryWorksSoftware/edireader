@@ -32,24 +32,24 @@ import java.io.Serializable;
  * received by a ContentHandler from an XMLReader.
  */
 public class SAXStartElement extends SAXObject implements Serializable {
-    private final SerializableAttributes attributes;
+  private final SerializableAttributes attributes;
 
-    public SAXStartElement(String uri, String localName, String qName, Attributes attributes) {
-        super(uri, localName, qName);
-        this.attributes = new SerializableAttributes(attributes);
-    }
+  public SAXStartElement(String uri, String localName, String qName, Attributes attributes) {
+    super(uri, localName, qName);
+    this.attributes = new SerializableAttributes(attributes);
+  }
 
-    @Override
-    public void saxCall(ContentHandler contentHandler) throws SAXException {
-        contentHandler.startElement(uri, localName, qName, attributes);
-    }
+  @Override
+  public void saxCall(ContentHandler contentHandler) throws SAXException {
+    contentHandler.startElement(uri, localName, qName, attributes);
+  }
 
-    @Override
-    public String toString() {
-        return "SAXStarElement: " + qName + ", " + attributes;
-    }
+  @Override
+  public String toString() {
+    return "SAXStarElement: " + qName + ", " + attributes;
+  }
 
-    public Attributes getAttributes() {
-        return attributes;
-    }
+  public Attributes getAttributes() {
+    return attributes;
+  }
 }

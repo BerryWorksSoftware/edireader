@@ -40,11 +40,12 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
     private String pendingName;
     private EDIAttributes pendingAttributes;
     private String pendingData;
-    private final List<String> context = new ArrayList<String>();
+    private final List<String> context = new ArrayList<>();
 
     @Override
     public final void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (pending) {
+            if (pendingData != null) pendingData = pendingData.trim();
             start(pendingUri, pendingName, pendingData, pendingAttributes);
             pending = false;
         }
@@ -66,8 +67,10 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
     @Override
     public final void endElement(String uri, String localName, String qName) throws SAXException {
         if (pending) {
+            if (pendingData != null) pendingData = pendingData.trim();
             start(pendingUri, pendingName, pendingData, pendingAttributes);
             pending = false;
+            pendingData = null;
         }
         end(uri, localName);
         context.remove(context.size() - 1);
@@ -75,14 +78,11 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
 
     @Override
     public void characters(char ch[], int start, int length) throws SAXException {
-        String trimmedString = new String(ch, start, length).trim();
-
-        if (trimmedString.length() == 0) return;
-
+        String fragment = new String(ch, start, length);
         if (pendingData == null)
-            pendingData = trimmedString;
+            pendingData = fragment;
         else
-            pendingData += trimmedString;
+            pendingData += fragment;
     }
 
     public abstract void start(String uri, String name, String data, EDIAttributes attributes) throws SAXException;

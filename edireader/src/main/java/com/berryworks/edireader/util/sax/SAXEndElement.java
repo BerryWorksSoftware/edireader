@@ -32,17 +32,17 @@ import java.io.Serializable;
  */
 public class SAXEndElement extends SAXObject implements Serializable {
 
-    public SAXEndElement(String uri, String localName, String qName) {
-        super(uri, localName, qName);
-    }
+  public SAXEndElement(String uri, String localName, String qName) {
+    super(uri, localName, qName);
+  }
 
-    @Override
-    public void saxCall(ContentHandler contentHandler) throws SAXException {
-        contentHandler.endElement(uri, localName, qName);
-    }
+  @Override
+  public void saxCall(ContentHandler contentHandler) throws SAXException {
+    contentHandler.endElement(uri, localName, qName);
+  }
 
-    @Override
-    public String toString() {
-        return "SAXEndElement: " + qName;
-    }
+  @Override
+  public String toString() {
+    return "SAXEndElement: " + qName;
+  }
 }

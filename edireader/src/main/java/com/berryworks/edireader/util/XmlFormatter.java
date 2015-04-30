@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -20,124 +20,226 @@
 
 package com.berryworks.edireader.util;
 
-public class XmlFormatter
-{
-  private final static String SEPARATOR = System.getProperty("line.separator");
+import java.io.FilterWriter;
+import java.io.IOException;
+import java.io.Writer;
 
-  private final static String INDENT = "    ";
-  private final static int INDENT_LENGTH = 4;
+public class XmlFormatter extends FilterWriter {
+    private final static String SEPARATOR = System.getProperty("line.separator");
 
-  public String format(String xmlText)
-  {
+    private final static String INDENT = "    ";
+    private char mostRecentCharOfInterest;
+    private String currentIndent = "";
 
-    String indent = "";
+    private enum State {
+        NORMAL_TEXT,
+        HOLDING_A_CLOSE,
+        HOLDING_A_CLOSE_FOLLOWED_BY_OPEN
+    }
 
-    int startLookingAtIndex = 0;
+    private State state;
 
-    while (true)
-    {
+    public XmlFormatter(Writer writer) {
+        super(writer);
+        state = State.NORMAL_TEXT;
+    }
 
-      int i = xmlText.indexOf("><", startLookingAtIndex);
-      if (i < 0)
-      {
-        break;
-      }
-
-      char peekAhead = xmlText.charAt(i + 2);
-
-      int delta = changeIndent(xmlText, i, peekAhead);
-      if (delta < 0)
-      {
-        switch (indent.length())
-        {
-          case 0:
-            break;
-          case INDENT_LENGTH:
-            indent = "";
-            break;
-          default:
-            indent = indent.substring(INDENT.length());
+    @Override
+    public void write(int i) throws IOException {
+        if (i <= 0) {
+            super.write(i);
+        } else {
+            process((char) i);
         }
-      }
-      else if (delta > 0)
-      {
-        indent += INDENT;
-      }
+    }
 
-      String insertedWhitespace = SEPARATOR + indent;
-      xmlText = xmlText.substring(0, i + 1) + insertedWhitespace + xmlText.substring(i + 1);
+    private void process(char c) throws IOException {
 
-      startLookingAtIndex = i + insertedWhitespace.length() + 1;
+        switch (state) {
+            case NORMAL_TEXT:
+                if (c == '>') {
+                    state = State.HOLDING_A_CLOSE;
+                    break;
+                } else {
+                    if (isCharacterOfInterest(c)) {
+                        mostRecentCharOfInterest = c;
+                    }
+                    out.write(c);
+                }
+                break;
+
+            case HOLDING_A_CLOSE:
+                if (c == '<') {
+                    state = State.HOLDING_A_CLOSE_FOLLOWED_BY_OPEN;
+                    break;
+                } else if (Character.isWhitespace(c)) {
+                    // ignore whitespace after a >
+                } else {
+                    out.write('>');
+                    out.write(c);
+                    state = State.NORMAL_TEXT;
+                }
+                break;
+
+            case HOLDING_A_CLOSE_FOLLOWED_BY_OPEN:
+                out.write('>');
+                out.write(indentionAsNeeded(c));
+                out.write('<');
+                out.write(c);
+                state = State.NORMAL_TEXT;
+                break;
+        }
 
     }
 
-    return xmlText;
-  }
-
-  private int changeIndent(String xmlText, int startingIndex, char peekAhead)
-  {
-
-    int index = startingIndex;
-
-    while (--index > 0)
-    {
-      char c = xmlText.charAt(index);
-
-      switch (c)
-      {
-        case '<':
-          return 1;
-        case '?':
-          return 0;
-        case '/':
-          if (index + 1 == startingIndex)
-          {
-            return -1;
-          }
-          else
-          {
-            return peekAhead == '/' ? -1 : 0;
-          }
-      }
-
+    private String indentionAsNeeded(char currentChar) {
+        if (currentChar == '/') {
+            // ...<def><abc></def...
+            currentIndent = shrink(currentIndent);
+        } else if (mostRecentCharOfInterest == '?') {
+            // <?xml...?><root...
+            mostRecentCharOfInterest = '<';
+        } else {
+            // ...abc><def...
+            if (mostRecentCharOfInterest == '/') {
+                // do not increase the indent
+                mostRecentCharOfInterest = '<';
+            } else {
+                currentIndent += INDENT; // expand
+            }
+        }
+        return SEPARATOR + currentIndent;
     }
 
-    return 0;
-  }
-
-  private char priorNonWhitespace(String xmlText, int index)
-  {
-
-    while (true)
-    {
-
-      if (--index <= 0)
-        return xmlText.charAt(0);
-
-      char c = xmlText.charAt(index);
-      if (!Character.isWhitespace(c))
-        return c;
-    }
-  }
-
-  private boolean isClosing(String xmlText, int index)
-  {
-
-    while (--index > 0)
-    {
-      char c = xmlText.charAt(index);
-
-      switch (c)
-      {
-        case '<':
-          return false;
-        case '?':
-        case '/':
-          return true;
-      }
-
+    private boolean isCharacterOfInterest(char c) {
+        return c == '<' || c == '?' || c == '/';
     }
 
-    return false;
-  }
+    @Override
+    public void write(char[] chars, int startIndex, int length) throws IOException {
+        for (int i = 0; i < length; i++) {
+            process(chars[startIndex + i]);
+        }
+    }
+
+    @Override
+    public void write(String text, int startIndex, int length) throws IOException {
+        for (int i = 0; i < length; i++) {
+            process(text.charAt(startIndex + i));
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        switch (state) {
+            case NORMAL_TEXT:
+                break;
+
+            case HOLDING_A_CLOSE:
+                out.write('>');
+                break;
+
+            case HOLDING_A_CLOSE_FOLLOWED_BY_OPEN:
+                out.write('>');
+                out.write('<');
+                break;
+        }
+
+        super.close();
+    }
+
+    public static String format(String xmlText) {
+
+        String indent = "";
+
+        int startLookingAtIndex = 0;
+
+        while (true) {
+
+            int i = xmlText.indexOf("><", startLookingAtIndex);
+            if (i < 0) {
+                break;
+            }
+
+            char peekAhead = xmlText.charAt(i + 2);
+
+            int delta = changeIndent(xmlText, i, peekAhead);
+            if (delta < 0) {
+                indent = shrink(indent);
+            } else if (delta > 0) {
+                indent += INDENT;
+            }
+
+            String insertedWhitespace = SEPARATOR + indent;
+            xmlText = xmlText.substring(0, i + 1) + insertedWhitespace + xmlText.substring(i + 1);
+
+            startLookingAtIndex = i + insertedWhitespace.length() + 1;
+
+        }
+
+        return xmlText;
+    }
+
+    private static String shrink(String indent) {
+        if (indent == null || indent.length() <= INDENT.length())
+            return "";
+
+        return indent.substring(INDENT.length());
+    }
+
+    private static int changeIndent(String xmlText, int startingIndex, char peekAhead) {
+
+        int index = startingIndex;
+
+        while (--index > 0) {
+            char c = xmlText.charAt(index);
+
+            switch (c) {
+                case '<':
+                    return 1;
+                case '?':
+                    return 0;
+                case '/':
+                    if (index + 1 == startingIndex) {
+                        return -1;
+                    } else {
+                        return peekAhead == '/' ? -1 : 0;
+                    }
+            }
+
+        }
+
+        return 0;
+    }
+
+    private char priorNonWhitespace(String xmlText, int index) {
+
+        while (true) {
+
+            if (--index <= 0)
+                return xmlText.charAt(0);
+
+            char c = xmlText.charAt(index);
+            if (!Character.isWhitespace(c))
+                return c;
+        }
+    }
+
+    private boolean isClosing(String xmlText, int index) {
+
+        while (--index > 0) {
+            char c = xmlText.charAt(index);
+
+            switch (c) {
+                case '<':
+                    return false;
+                case '?':
+                case '/':
+                    return true;
+            }
+
+        }
+
+        return false;
+    }
 }

@@ -21,6 +21,7 @@
 package com.berryworks.edireader.util.sax;
 
 import com.berryworks.edireader.XMLTags;
+import com.berryworks.edireader.tokenizer.SourcePosition;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -39,10 +40,12 @@ import java.io.PrintStream;
  * See also com.berryworks.edireader.SAXAdapter which serves a similar purpose.
  * These two classes need to combined into a single class.
  */
-public class EDIReaderSAXAdapter extends DefaultHandler {
+public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePosition {
     protected final XMLTags xmlTags;
 
     protected boolean anotherSEG, implicitGroup, implicitDocument;
+    private int charCount = -1;
+    private int segmentCharCount = -1;
 
     public boolean isImplicitInterchangeTermination() {
         return implicitInterchangeTermination;
@@ -59,8 +62,8 @@ public class EDIReaderSAXAdapter extends DefaultHandler {
     @Override
     public void startElement(String namespace, String localName, String qName,
                              Attributes atts) throws SAXException {
-        int charCount = getCharCount(localName, atts);
-        int segmentCharCount = getSegmentCount(localName, atts);
+        int charCount = getCharCount();
+        int segmentCharCount = getSegmentCharCount();
 
         if (localName.startsWith(xmlTags.getInterchangeTag())) {
             anotherSEG = false;
@@ -102,19 +105,28 @@ public class EDIReaderSAXAdapter extends DefaultHandler {
         }
     }
 
-    protected int getSegmentCount(String localName, Attributes attributes) {
-        return 0;
+    @Override
+    public void setCharCounts(int charCount, int segmentCharCount) {
+        this.charCount = charCount;
+        this.segmentCharCount = segmentCharCount;
     }
 
-    protected int getCharCount(String localName, Attributes attributes) {
-        return 0;
+
+    @Override
+    public int getCharCount() {
+        return charCount;
+    }
+
+    @Override
+    public int getSegmentCharCount() {
+        return segmentCharCount;
     }
 
     @Override
     public void endElement(String namespace, String localName, String qName)
             throws SAXException {
-        int charCount = getCharCount(localName, null);
-        int segmentCharCount = getSegmentCount(localName, null);
+        int charCount = getCharCount();
+        int segmentCharCount = getSegmentCharCount();
 
         if (localName.startsWith(xmlTags.getInterchangeTag())) {
             anotherSEG = false;
@@ -227,6 +239,5 @@ public class EDIReaderSAXAdapter extends DefaultHandler {
             out.println("attribute " + i + ": " + atts.getLocalName(i) + "=" + atts.getValue(i));
         }
     }
-
 
 }

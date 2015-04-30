@@ -31,14 +31,14 @@ import java.io.Serializable;
  * received by a ContentHandler from an XMLReader.
  */
 public class SAXStartDocument extends SAXObject implements Serializable {
-    @Override
-    public void saxCall(ContentHandler contentHandler) throws SAXException {
-        contentHandler.startDocument();
-    }
+  @Override
+  public void saxCall(ContentHandler contentHandler) throws SAXException {
+    contentHandler.startDocument();
+  }
 
-    @Override
-    public String toString() {
-        return "SAXStartDocument";
-    }
+  @Override
+  public String toString() {
+    return "SAXStartDocument";
+  }
 
 }

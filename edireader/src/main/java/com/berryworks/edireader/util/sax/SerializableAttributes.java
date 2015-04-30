@@ -33,208 +33,208 @@ import java.util.List;
  */
 public class SerializableAttributes extends AttributesImpl implements Serializable {
 
-    private List<SerializableAttribute> attributes;
+  private List<SerializableAttribute> attributes;
 
-    public SerializableAttributes(Attributes fromAttributes) {
-        attributes = new ArrayList<SerializableAttribute>();
+  public SerializableAttributes(Attributes fromAttributes) {
+    attributes = new ArrayList<>();
 
-        if (fromAttributes == null)
-            return;
+    if (fromAttributes == null)
+      return;
 
-        for (int i = 0; i < fromAttributes.getLength(); i++) {
-            SerializableAttribute attribute = new SerializableAttribute();
-            attribute.setLocalName(fromAttributes.getLocalName(i));
-            attribute.setQName(fromAttributes.getQName(i));
-            attribute.setType(fromAttributes.getType(i));
-            attribute.setURI(fromAttributes.getURI(i));
-            attribute.setValue(fromAttributes.getValue(i));
-            attributes.add(attribute);
-        }
+    for (int i = 0; i < fromAttributes.getLength(); i++) {
+      SerializableAttribute attribute = new SerializableAttribute();
+      attribute.setLocalName(fromAttributes.getLocalName(i));
+      attribute.setQName(fromAttributes.getQName(i));
+      attribute.setType(fromAttributes.getType(i));
+      attribute.setURI(fromAttributes.getURI(i));
+      attribute.setValue(fromAttributes.getValue(i));
+      attributes.add(attribute);
+    }
+  }
+
+
+  @Override
+  public String getURI(int index) {
+    return attributes.get(index).getURI();
+  }
+
+  @Override
+  public String getLocalName(int index) {
+    return attributes.get(index).getLocalName();
+  }
+
+  @Override
+  public String getQName(int index) {
+    return attributes.get(index).getQName();
+  }
+
+  @Override
+  public String getType(int index) {
+    return attributes.get(index).getType();
+  }
+
+  @Override
+  public String getValue(int index) {
+    return attributes.get(index).getValue();
+  }
+
+  @Override
+  public int getLength() {
+    return attributes.size();
+  }
+
+  @Override
+  public void clear() {
+    attributes = new ArrayList<>();
+  }
+
+  @Override
+  public int getIndex(String uri, String localName) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public int getIndex(String qName) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public String getType(String uri, String localName) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public String getType(String qName) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public String getValue(String uri, String localName) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public String getValue(String qName) {
+    for (SerializableAttribute a : attributes) {
+      if (qName.equals(a.getLocalName())) {
+        return a.getValue();
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public void setAttributes(Attributes atts) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public void addAttribute(String uri, String localName, String qName, String type, String value) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public void setAttribute(int index, String uri, String localName, String qName, String type, String value) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public void removeAttribute(int index) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public void setURI(int index, String uri) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public void setLocalName(int index, String localName) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public void setQName(int index, String qName) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public void setType(int index, String type) {
+    throw new RuntimeException("not implemented");
+  }
+
+  @Override
+  public void setValue(int index, String value) {
+    throw new RuntimeException("not implemented");
+  }
+
+  static class SerializableAttribute implements Serializable {
+
+    private String localName;
+    private String qName;
+    private String type;
+    private String uRI;
+
+    public String getType() {
+      return type;
     }
 
-
-    @Override
-    public String getURI(int index) {
-        return attributes.get(index).getURI();
+    public void setType(String type) {
+      this.type = type;
     }
 
-    @Override
-    public String getLocalName(int index) {
-        return attributes.get(index).getLocalName();
+    public String getURI() {
+      return uRI;
     }
 
-    @Override
-    public String getQName(int index) {
-        return attributes.get(index).getQName();
+    public void setURI(String uRI) {
+      this.uRI = uRI;
     }
 
-    @Override
-    public String getType(int index) {
-        return attributes.get(index).getType();
+    public String getValue() {
+      return value;
     }
 
-    @Override
-    public String getValue(int index) {
-        return attributes.get(index).getValue();
+    public void setValue(String value) {
+      this.value = value;
     }
 
-    @Override
-    public int getLength() {
-        return attributes.size();
+    private String value;
+
+
+    public String getLocalName() {
+      return localName;
     }
 
-    @Override
-    public void clear() {
-        attributes = new ArrayList<SerializableAttribute>();
+    public void setLocalName(String localName) {
+      this.localName = localName;
     }
 
-    @Override
-    public int getIndex(String uri, String localName) {
-        throw new RuntimeException("not implemented");
+    public String getQName() {
+      return qName;
     }
 
-    @Override
-    public int getIndex(String qName) {
-        throw new RuntimeException("not implemented");
+    public void setQName(String qName) {
+      this.qName = qName;
+    }
+  }
+
+  @Override
+  public String toString() {
+    String result = "";
+
+    int n = getLength();
+    for (int i = 0; i < n; i++) {
+      String name = getQName(i);
+      String value = getValue(i);
+      if (result.length() > 0) {
+        result += ", ";
+      }
+      result += name + "=" + value;
     }
 
-    @Override
-    public String getType(String uri, String localName) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public String getType(String qName) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public String getValue(String uri, String localName) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public String getValue(String qName) {
-        for (SerializableAttribute a : attributes) {
-            if (qName.equals(a.getLocalName())) {
-                return a.getValue();
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void setAttributes(Attributes atts) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public void addAttribute(String uri, String localName, String qName, String type, String value) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public void setAttribute(int index, String uri, String localName, String qName, String type, String value) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public void removeAttribute(int index) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public void setURI(int index, String uri) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public void setLocalName(int index, String localName) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public void setQName(int index, String qName) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public void setType(int index, String type) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
-    public void setValue(int index, String value) {
-        throw new RuntimeException("not implemented");
-    }
-
-    static class SerializableAttribute implements Serializable {
-
-        private String localName;
-        private String qName;
-        private String type;
-        private String uRI;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public String getURI() {
-            return uRI;
-        }
-
-        public void setURI(String uRI) {
-            this.uRI = uRI;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-
-        private String value;
-
-
-        public String getLocalName() {
-            return localName;
-        }
-
-        public void setLocalName(String localName) {
-            this.localName = localName;
-        }
-
-        public String getQName() {
-            return qName;
-        }
-
-        public void setQName(String qName) {
-            this.qName = qName;
-        }
-    }
-
-    @Override
-    public String toString() {
-        String result = "";
-
-        int n = getLength();
-        for (int i = 0; i < n; i++) {
-            String name = getQName(i);
-            String value = getValue(i);
-            if (result.length() > 0) {
-                result += ", ";
-            }
-            result += name + "=" + value;
-        }
-
-        return "SerializableAttribute(" + n + "): " + result;
-    }
+    return "SerializableAttribute(" + n + "): " + result;
+  }
 
 
 }

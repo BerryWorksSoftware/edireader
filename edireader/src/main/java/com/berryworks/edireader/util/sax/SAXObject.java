@@ -30,33 +30,33 @@ import java.io.Serializable;
  * into a serializable object.
  */
 public abstract class SAXObject implements Serializable {
-    protected final String uri;
-    protected final String localName;
-    protected final String qName;
+  protected final String uri;
+  protected final String localName;
+  protected final String qName;
 
-    public SAXObject() {
-        this.localName = null;
-        this.qName = null;
-        this.uri = null;
-    }
+  public SAXObject() {
+    this.localName = null;
+    this.qName = null;
+    this.uri = null;
+  }
 
-    public SAXObject(String uri, String localName, String qName) {
-        this.localName = localName;
-        this.qName = qName;
-        this.uri = uri;
-    }
+  public SAXObject(String uri, String localName, String qName) {
+    this.localName = localName;
+    this.qName = qName;
+    this.uri = uri;
+  }
 
-    public String getqName() {
-        return qName;
-    }
+  public String getqName() {
+    return qName;
+  }
 
-    public String getUri() {
-        return uri;
-    }
+  public String getUri() {
+    return uri;
+  }
 
-    public String getLocalName() {
-        return localName;
-    }
+  public String getLocalName() {
+    return localName;
+  }
 
-    public abstract void saxCall(ContentHandler contentHandler) throws SAXException;
+  public abstract void saxCall(ContentHandler contentHandler) throws SAXException;
 }

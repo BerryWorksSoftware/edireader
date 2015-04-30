@@ -35,101 +35,101 @@ import java.io.OutputStream;
  */
 public class SAXObjectHandler extends DefaultHandler {
 
-    private ObjectOutputStream objectStream;
-    private int sAXEventsWritten;
-    private boolean disabled;
+  private ObjectOutputStream objectStream;
+  private int sAXEventsWritten;
+  private boolean disabled;
 
-    public SAXObjectHandler(OutputStream outputStream) throws IOException {
-        objectStream = new ObjectOutputStream(outputStream);
+  public SAXObjectHandler(OutputStream outputStream) throws IOException {
+    objectStream = new ObjectOutputStream(outputStream);
+  }
+
+  @Override
+  public void startDocument() {
+    if (disabled)
+      return;
+
+    try {
+      objectStream.writeObject(new SAXStartDocument());
+      sAXEventsWritten++;
+    } catch (IOException e) {
+      e.printStackTrace();
+      disable();
     }
+  }
 
-    @Override
-    public void startDocument() {
-        if (disabled)
-            return;
+  @Override
+  public void endDocument() throws SAXException {
+    if (disabled)
+      return;
 
-        try {
-            objectStream.writeObject(new SAXStartDocument());
-            sAXEventsWritten++;
-        } catch (IOException e) {
-            e.printStackTrace();
-            disable();
-        }
+    try {
+      objectStream.writeObject(new SAXEndDocument());
+      sAXEventsWritten++;
+    } catch (IOException e) {
+      e.printStackTrace();
+      disable();
     }
+  }
 
-    @Override
-    public void endDocument() throws SAXException {
-        if (disabled)
-            return;
+  @Override
+  public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    if (disabled)
+      return;
 
-        try {
-            objectStream.writeObject(new SAXEndDocument());
-            sAXEventsWritten++;
-        } catch (IOException e) {
-            e.printStackTrace();
-            disable();
-        }
+    try {
+      objectStream.writeObject(new SAXStartElement(uri, localName, qName, attributes));
+      sAXEventsWritten++;
+    } catch (IOException e) {
+      e.printStackTrace();
+      disable();
     }
+  }
 
-    @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (disabled)
-            return;
+  @Override
+  public void endElement(String uri, String localName, String qName) throws SAXException {
+    if (disabled)
+      return;
 
-        try {
-            objectStream.writeObject(new SAXStartElement(uri, localName, qName, attributes));
-            sAXEventsWritten++;
-        } catch (IOException e) {
-            e.printStackTrace();
-            disable();
-        }
+    try {
+      objectStream.writeObject(new SAXEndElement(uri, localName, qName));
+      sAXEventsWritten++;
+    } catch (IOException e) {
+      e.printStackTrace();
+      disable();
     }
+  }
 
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        if (disabled)
-            return;
+  @Override
+  public void characters(char ch[], int start, int length) throws SAXException {
+    if (disabled)
+      return;
 
-        try {
-            objectStream.writeObject(new SAXEndElement(uri, localName, qName));
-            sAXEventsWritten++;
-        } catch (IOException e) {
-            e.printStackTrace();
-            disable();
-        }
+    try {
+      objectStream.writeObject(new SAXCharacters(ch, start, length));
+      sAXEventsWritten++;
+    } catch (IOException e) {
+      e.printStackTrace();
+      disable();
     }
+  }
 
-    @Override
-    public void characters(char ch[], int start, int length) throws SAXException {
-        if (disabled)
-            return;
+  public int getSAXEventsWritten() {
+    return sAXEventsWritten;
+  }
 
-        try {
-            objectStream.writeObject(new SAXCharacters(ch, start, length));
-            sAXEventsWritten++;
-        } catch (IOException e) {
-            e.printStackTrace();
-            disable();
-        }
+  public void markEndOfStream() throws IOException {
+    if (disabled)
+      return;
+
+    objectStream.writeObject(new SAXEndOfStreamMarker());
+  }
+
+  public void disable() {
+    disabled = true;
+    try {
+      objectStream.close();
+    } catch (IOException ignore) {
     }
-
-    public int getSAXEventsWritten() {
-        return sAXEventsWritten;
-    }
-
-    public void markEndOfStream() throws IOException {
-        if (disabled)
-            return;
-
-        objectStream.writeObject(new SAXEndOfStreamMarker());
-    }
-
-    public void disable() {
-        disabled = true;
-        try {
-            objectStream.close();
-        } catch (IOException ignore) {
-        }
-    }
+  }
 
 }
