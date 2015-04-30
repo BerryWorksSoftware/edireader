@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -21,7 +21,6 @@
 package com.berryworks.edireader.tokenizer;
 
 import com.berryworks.edireader.EDIReader;
-import com.berryworks.edireader.EDISyntaxException;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -30,10 +29,12 @@ import java.nio.CharBuffer;
 /**
  * Interprets EDI input as a sequence of primitive syntactic tokens.
  * <p/>
- * As an EDI interchange is parsed, the parser uses an EDITokenizer to advance through the
+ * As an EDI interchange is parsed, the parser uses a Tokenizer to advance through the
  * input EDI stream one token at a time. A call to <code>nextToken()</code> causes the tokenizer to advance
  * past the next token and return a <code>Token</code> instance describing that token.
  * <p/>
+ * This implementation of Tokenizer uses CharBuffer instead of char[].
+ * <p.>
  */
 public class EDITokenizer extends AbstractTokenizer {
 
@@ -82,7 +83,7 @@ public class EDITokenizer extends AbstractTokenizer {
     /**
      * Gets the next character of input. <pr>Sets cChar, cClass
      *
-     * @throws java.io.IOException for problem reading EDI data
+     * @throws IOException for problem reading EDI data
      */
     public void getChar() throws IOException {
         if (unGot) {
@@ -159,10 +160,9 @@ public class EDITokenizer extends AbstractTokenizer {
      *
      * @param n number of chars to return
      * @return char[] containing upcoming input chars
-     * @throws java.io.IOException                         for problem reading EDI data
-     * @throws com.berryworks.edireader.EDISyntaxException
+     * @throws IOException for problem reading EDI data
      */
-    public char[] lookahead(int n) throws IOException, EDISyntaxException {
+    public char[] lookahead(int n) throws IOException {
         if (EDIReader.debug)
             trace("EDITokenizer.lookahead(" + n + ")");
 
@@ -180,7 +180,9 @@ public class EDITokenizer extends AbstractTokenizer {
             if (EDIReader.debug)
                 if (EDIReader.debug)
                     trace("buffering more data to satisfy lookahead(" + n + ")");
+            charBuffer.compact();
             readUntilBufferProvidesAtLeast(n - 1);
+            charBuffer.flip();
         }
 
         // Move chars from the buffer into the return value
@@ -192,6 +194,7 @@ public class EDITokenizer extends AbstractTokenizer {
         // then fill the return value with '?' to the requested length.
         for (; j < n; ) {
             rval[j++] = '?';
+//            throw new RuntimeException("problem with lookahead " + n);
         }
 
         return rval;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -20,113 +20,127 @@
 
 package com.berryworks.edireader.tokenizer;
 
+import com.berryworks.edireader.EDISyntaxException;
+
 /**
  * A token noted by EDITokenizer.
  */
-public interface Token
-{
+public interface Token {
 
-  enum TokenType
-  {
-    UNKNOWN, SEGMENT_START, SIMPLE, EMPTY, SUB_ELEMENT, SUB_EMPTY, SEGMENT_END, END_OF_DATA
-  }
+    enum TokenType {
+        UNKNOWN, SEGMENT_START, SIMPLE, EMPTY, SUB_ELEMENT, SUB_EMPTY, SEGMENT_END, END_OF_DATA
+    }
 
+    int getValueLength();
 
-  /**
-   * Gets the type of the token.
-   *
-   * @return SEGMENT_START, SIMPLE, SUB_ELEMENT, ...
-   */
-  public TokenType getType();
+    void append(char c);
 
+    void resetValue();
 
-  /**
-   * Is true for the first subelement in a series of subelements.
-   *
-   * @return boolean
-   */
-  public boolean isFirst();
+    void incrementSubElementIndex();
 
+    void setType(TokenType tokenType);
 
-  /**
-   * Is true for the last subelement in a series of subelements.
-   *
-   * @return boolean
-   */
-  public boolean isLast();
+    void setLast(boolean value);
 
+    void setValue(char c);
 
-  /**
-   * Gets the ordinal position of the token in the segment, origin 0.
-   *
-   * @return The index value
-   */
-  public int getIndex();
+    void incrementIndex();
+
+    void resetSubElementIndex();
+
+    void resetIndexes();
+
+    void setSegmentType(String s) throws EDISyntaxException;
+
+    boolean containsNonSpace();
+
+    /**
+     * Gets the type of the token.
+     *
+     * @return SEGMENT_START, SIMPLE, SUB_ELEMENT, ...
+     */
+    public TokenType getType();
 
 
-  /**
-   * Gets the ordinal position of a subelement within a series of subelements token in the segment.
-   *
-   * @return int position origin 0
-   */
-  public int getSubIndex();
+    /**
+     * Is true for the first subelement in a series of subelements.
+     *
+     * @return boolean
+     */
+    public boolean isFirst();
 
 
-  /**
-   * Gets the value of a SIMPLE token.
-   * <pr>
-   * If this token is of type SEGMENT_START, the value of getSegmentType()
-   * is returned.
-   *
-   * @return The value value
-   */
-  public String getValue();
+    /**
+     * Is true for the last subelement in a series of subelements.
+     *
+     * @return boolean
+     */
+    public boolean isLast();
 
 
-  /**
-   * Gets the same thing as <code>getValue</code>, returning it
-   * as a <code>char[]</code>.
-   *
-   * @return The valueChars value
-   */
-  public char[] getValueChars();
+    /**
+     * Gets the ordinal position of the token in the segment, origin 0.
+     *
+     * @return The index value
+     */
+    public int getIndex();
 
 
-  /**
-   * Returns true if the value of this token equals
-   * the argument.
-   *
-   * @param v Description of the Parameter
-   * @return Description of the Return Value
-   */
-  public boolean valueEquals(String v);
+    /**
+     * Gets the ordinal position of a subelement within a series of subelements token in the segment.
+     *
+     * @return int position origin 0
+     */
+    public int getSubIndex();
 
 
-  /**
-   * Gets the value of the first token in the segment.
-   *
-   * @return The segmentType value
-   */
-  public String getSegmentType();
+    /**
+     * Gets the value of a SIMPLE token.
+     * <pr>
+     * If this token is of type SEGMENT_START, the value of getSegmentType()
+     * is returned.
+     *
+     * @return The value value
+     */
+    public String getValue();
 
 
-  /**
-   * For a token of type COMPOSITE, returns an array of tokens
-   * corresponding to the first-level subtokens.
-   *
-   * @return The subTokens value
-   */
-  public Token[] getSubTokens();
+    /**
+     * Gets the same thing as <code>getValue</code>, returning it
+     * as a <code>char[]</code>.
+     *
+     * @return The valueChars value
+     */
+    public char[] getValueChars();
 
 
-  /**
-   * Returns a String concatenation of the segment type and
-   * a two-digit (or more) representation of the token's
-   * getIndex() value.
-   *
-   * @return The elementIdS value
-   */
-  public String getElementId();
+    /**
+     * Returns true if the value of this token equals
+     * the argument.
+     *
+     * @param v Description of the Parameter
+     * @return Description of the Return Value
+     */
+    public boolean valueEquals(String v);
+
+
+    /**
+     * Gets the value of the first token in the segment.
+     *
+     * @return The segmentType value
+     */
+    public String getSegmentType();
+
+
+    /**
+     * Returns a String concatenation of the segment type and
+     * a two-digit (or more) representation of the token's
+     * getIndex() value.
+     *
+     * @return The elementIdS value
+     */
+    public String getElementId();
 
 }
 

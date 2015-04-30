@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -24,12 +24,15 @@ import org.xml.sax.ContentHandler;
 
 import java.io.IOException;
 
-public interface HandlerFactory
-{
+public interface HandlerFactory {
 
-  public ContentHandler createDocument() throws Exception;
+    public ContentHandler createDocument() throws Exception;
 
-  public void closeDocument() throws IOException;
+    public void closeDocument(
+            String senderQualifier, String senderId,
+            String receiverQualifier, String receiverId,
+            String interchangeControlNumber, String groupControlNumber, String documentControlNumber,
+            String documentType) throws IOException;
 
-  public void markEndOfStream() throws IOException;
+    public void markEndOfStream() throws IOException;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -28,103 +28,98 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
 
-public interface Tokenizer
-{
-  String WHITESPACE = "\n\r \\";
+public interface Tokenizer extends SourcePosition {
+    String WHITESPACE = "\n\r \\";
 
-  char getTerminator();
+    char getTerminator();
 
-  void setTerminator(char d);
+    void setTerminator(char d);
 
-  char getDelimiter();
+    char getDelimiter();
 
-  void setDelimiter(char d);
+    void setDelimiter(char d);
 
-  char getSubDelimiter();
+    char getSubDelimiter();
 
-  void setSubDelimiter(char sd);
+    void setSubDelimiter(char sd);
 
-  int getRepetitionSeparator();
+    int getRepetitionSeparator();
 
-  void setRepetitionSeparator(int e);
+    void setRepetitionSeparator(int e);
 
-  void setRelease(int e);
+    void setRelease(int e);
 
-  boolean hasMoreTokens() throws IOException, EDISyntaxException;
+    boolean hasMoreTokens() throws IOException, EDISyntaxException;
 
-  Token nextToken() throws IOException, EDISyntaxException;
+    Token nextToken() throws IOException, EDISyntaxException;
 
-  String nextSimpleValue() throws SAXException, IOException;
+    String nextSimpleValue() throws SAXException, IOException;
 
-  List<String> nextCompositeElement() throws IOException, EDISyntaxException;
+    List<String> nextCompositeElement() throws IOException, EDISyntaxException;
 
-  List<String> nextCompositeElement(boolean returnNullAtSegmentEnd) throws IOException, EDISyntaxException;
+    List<String> nextCompositeElement(boolean returnNullAtSegmentEnd) throws IOException, EDISyntaxException;
 
-  String nextSimpleValue(boolean required) throws SAXException,
-    IOException;
+    String nextSimpleValue(boolean required) throws SAXException,
+            IOException;
 
-  int nextIntValue() throws SAXException, IOException;
+    int nextIntValue() throws SAXException, IOException;
 
-  String nextSegment() throws SAXException, IOException;
+    String nextSegment() throws SAXException, IOException;
 
-  int getCharCount();
+    String getRecording();
 
-  int getSegmentCharCount();
+    void setRecorder(boolean b);
 
-  String getRecording();
+    /**
+     * Look ahead into the source of input chars and return the next n chars to
+     * be seen, without disturbing the normal operation of getChar().
+     *
+     * @param n number of chars to return
+     * @return char[] containing upcoming input chars
+     * @throws IOException for problem reading EDI data
+     */
+    char[] lookahead(int n) throws IOException;
 
-  void setRecorder(boolean b);
+    /**
+     * Returns any chars that have been read from the input stream but not yet
+     * returned by getChar(). The use of lookahead() is a typical reason for
+     * this to happen.
+     *
+     * @return char[] containing buffered chars of unused input
+     */
+    char[] getBuffered();
 
-  /**
-   * Look ahead into the source of input chars and return the next n chars to
-   * be seen, without disturbing the normal operation of getChar().
-   *
-   * @param n number of chars to return
-   * @return char[] containing upcoming input chars
-   * @throws java.io.IOException for problem reading EDI data
-   * @throws com.berryworks.edireader.EDISyntaxException
-   *
-   */
-  char[] lookahead(int n) throws IOException, EDISyntaxException;
+    char[] getChars(int n) throws IOException, EDISyntaxException;
 
-  /**
-   * Returns any chars that have been read from the input stream but not yet
-   * returned by getChar(). The use of lookahead() is a typical reason for
-   * this to happen.
-   */
-  char[] getBuffered();
+    int getSegmentCount();
 
-  char[] getChars(int n) throws IOException, EDISyntaxException;
+    int getElementInSegmentCount();
 
-  int getSegmentCount();
+    void setWriter(Writer writer);
 
-  int getElementInSegmentCount();
+    Token skipSegment() throws SAXException, IOException;
 
-  void setWriter(Writer writer);
+    void ungetToken();
 
-  Token skipSegment() throws SAXException, IOException;
+    String nextSimpleValue(boolean required, boolean returnNullAtSegmentEnd) throws SAXException,
+            IOException;
 
-  void ungetToken();
+    void scanTerminatorSuffix() throws IOException;
 
-  String nextSimpleValue(boolean required, boolean returnNullAtSegmentEnd) throws SAXException,
-    IOException;
+    boolean isEndOfData();
 
-  void scanTerminatorSuffix() throws IOException;
+    char getSubSubDelimiter();
 
-  boolean isEndOfData();
+    void setSubSubDelimiter(char ssd);
 
-  char getSubSubDelimiter();
+    Reader getReader();
 
-  void setSubSubDelimiter(char ssd);
+    void ungetChar();
 
-  Reader getReader();
-
-  void ungetChar();
-
-  /**
-   * Gets the next character of input. <pr>Sets cChar, cClass
-   *
-   * @throws java.io.IOException for problem reading EDI data
-   */
-  void getChar() throws IOException;
+    /**
+     * Gets the next character of input. <pr>Sets cChar, cClass
+     *
+     * @throws IOException for problem reading EDI data
+     */
+    void getChar() throws IOException;
 }
