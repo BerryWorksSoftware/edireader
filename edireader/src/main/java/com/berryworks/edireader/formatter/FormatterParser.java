@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -33,89 +33,74 @@ import java.io.Reader;
  * Controller used by the Formatter utility to run in a separate thread
  * and conduct the work of an EDIReader and a FormatterHandler.
  */
-public class FormatterParser implements Runnable
-{
+public class FormatterParser implements Runnable {
 
-  protected final Reader inputA;
-  protected final Reader inputB;
-  protected final PrintWriter output;
+    protected final Reader inputA;
+    protected final Reader inputB;
+    protected final PrintWriter output;
 
-  protected String filename;
+    protected String filename;
 
-  public FormatterParser(Reader inputA, Reader inputB, PrintWriter output, String filename)
-  {
-    this(inputA, inputB, output);
-    this.filename = filename;
-  }
-
-  public FormatterParser(Reader inputA, Reader inputB, PrintWriter output)
-  {
-    this.inputA = inputA;
-    this.inputB = inputB;
-    this.output = output;
-  }
-
-  public void run()
-  {
-    // Feed inputB through an EDIReader, and use its call-back
-    // results to direct the reading of inputA, which is expected
-    // to be an exact copy of inputB.
-    InputSource inputSource = new InputSource(inputB);
-    EDIReader ediReader;
-    FormatterHandler handler;
-
-    try
-    {
-      ediReader = createEDIReader(inputSource);
-      if (ediReader == null)
-      {
-        throw new RuntimeException("createEDIReader returned null");
-      }
-      log(ediReader);
-      handler = createFormatterHandler(ediReader, inputA, output);
-      try
-      {
-        handler.preface();
-        ediReader.setContentHandler(handler);
-        ediReader.parse(inputSource);
-        handler.addendum();
-      } catch (Exception e)
-      {
-        handler.recover(e);
-      }
-    } catch (Exception e)
-    {
-      errorReport(e);
+    public FormatterParser(Reader inputA, Reader inputB, PrintWriter output, String filename) {
+        this(inputA, inputB, output);
+        this.filename = filename;
     }
 
-    try
-    {
-      if (inputA != null) inputA.close();
-      inputB.close();
-    } catch (IOException e1)
-    {
-      // ignore
+    public FormatterParser(Reader inputA, Reader inputB, PrintWriter output) {
+        this.inputA = inputA;
+        this.inputB = inputB;
+        this.output = output;
     }
-  }
 
-  protected EDIReader createEDIReader(InputSource inputSource) throws EDISyntaxException, IOException
-  {
-    return EDIReaderFactory.createEDIReader(inputSource);
-  }
+    public void run() {
+        // Feed inputB through an EDIReader, and use its call-back
+        // results to direct the reading of inputA, which is expected
+        // to be an exact copy of inputB.
+        InputSource inputSource = new InputSource(inputB);
+        EDIReader ediReader;
+        FormatterHandler handler;
 
-  protected void log(EDIReader parser)
-  {
-  }
+        try {
+            ediReader = createEDIReader(inputSource);
+            if (ediReader == null) {
+                throw new RuntimeException("createEDIReader returned null");
+            }
+            log(ediReader);
+            handler = createFormatterHandler(ediReader, inputA, output);
+            try {
+                handler.preface();
+                ediReader.setContentHandler(handler);
+                ediReader.parse(inputSource);
+                handler.addendum();
+            } catch (Exception e) {
+                handler.recover(e);
+            }
+        } catch (Exception e) {
+            errorReport(e);
+        }
 
-  protected void errorReport(Exception e)
-  {
-    output.println(e.getMessage());
-  }
+        try {
+            if (inputA != null) inputA.close();
+            inputB.close();
+        } catch (IOException e1) {
+            // ignore
+        }
+    }
 
-  protected FormatterHandler createFormatterHandler(EDIReader parser,
-                                                    Reader input, PrintWriter out)
-  {
-    return new FormatterHandler(parser, input, out);
-  }
+    protected EDIReader createEDIReader(InputSource inputSource) throws EDISyntaxException, IOException {
+        return EDIReaderFactory.createEDIReader(inputSource);
+    }
+
+    protected void log(EDIReader parser) {
+    }
+
+    protected void errorReport(Exception e) {
+        output.println(e.getMessage());
+    }
+
+    protected FormatterHandler createFormatterHandler(EDIReader parser,
+                                                      Reader input, PrintWriter out) {
+        return new FormatterHandler(parser, input, out);
+    }
 
 }
