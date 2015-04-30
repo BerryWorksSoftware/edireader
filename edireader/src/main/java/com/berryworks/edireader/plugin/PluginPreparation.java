@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -31,47 +31,42 @@ import java.util.Map;
  *
  * @see com.berryworks.edireader.Plugin
  */
-public class PluginPreparation
-{
+public class PluginPreparation {
 
-  protected final Map<String, List<LoopDescriptor>> segmentMap = new HashMap<String, List<LoopDescriptor>>();
+    protected final Map<String, List<LoopDescriptor>> segmentMap = new HashMap<>();
 
-  /**
-   * Constructs an instance given an array of LoopDescriptors.
-   * <p/>
-   * The LoopDescriptors typically are taken directly from the EDIPlugin for a given type of document.
-   *
-   * @param loops
-   */
-  public PluginPreparation(LoopDescriptor[] loops)
-  {
-    if (loops == null)
-      return;
-    for (LoopDescriptor loop : loops)
-    {
-      String segmentName = loop.getFirstSegment();
-      List<LoopDescriptor> descriptorList = segmentMap.get(segmentName);
-      if (descriptorList == null)
-      {
-        descriptorList = new ArrayList<LoopDescriptor>();
-        segmentMap.put(segmentName, descriptorList);
-      }
-      descriptorList.add(loop);
+    /**
+     * Constructs an instance given an array of LoopDescriptors.
+     * <p/>
+     * The LoopDescriptors typically are taken directly from the EDIPlugin for a given type of document.
+     *
+     * @param loops - array of LoopDescriptors
+     */
+    public PluginPreparation(LoopDescriptor[] loops) {
+        if (loops == null)
+            return;
+        for (LoopDescriptor loop : loops) {
+            String segmentName = loop.getFirstSegment();
+            List<LoopDescriptor> descriptorList = segmentMap.get(segmentName);
+            if (descriptorList == null) {
+                descriptorList = new ArrayList<>();
+                segmentMap.put(segmentName, descriptorList);
+            }
+            descriptorList.add(loop);
+        }
     }
-  }
 
-  /**
-   * Returns an ordered list of LoopDescriptors corresponding to loops that start with a
-   * given segment name.
-   * <p/>
-   * The LoopDescriptors appear in the same order as they were mentioned in the plugin.
-   *
-   * @param segment
-   * @return
-   */
-  public List<LoopDescriptor> getList(String segment)
-  {
-    return segmentMap.get(segment);
-  }
+    /**
+     * Returns an ordered list of LoopDescriptors corresponding to loops that start with a
+     * given segment name.
+     * <p/>
+     * The LoopDescriptors appear in the same order as they were mentioned in the plugin.
+     *
+     * @param segment - name of the segment of interest
+     * @return List of LoopDescriptors
+     */
+    public List<LoopDescriptor> getList(String segment) {
+        return segmentMap.get(segment);
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -40,138 +40,125 @@ import java.util.Set;
  *
  * @see LoopStack
  */
-public class LoopContext
-{
-  private final String loopName;
-  private int segmentPosition;
-  private int segmentRepetitions;
-  private Set<String> mandatorySegments;
+public class LoopContext {
+    private final String loopName;
+    private int segmentPosition;
+    private int segmentRepetitions;
+    private Set<String> mandatorySegments;
 
-  /**
-   * Construct a LoopContext with a specified loop name.
-   *
-   * @param loopName
-   */
-  public LoopContext(String loopName)
-  {
-    this.loopName = loopName;
-    segmentPosition = 0;
-    segmentRepetitions = 0;
-    mandatorySegments = new HashSet<String>();
-  }
-
-  /**
-   * Records the fact that a given segment has appeared.
-   * <p/>
-   * If that segment type is mandatory, then this appearance satisfies that requirement.
-   *
-   * @param segmentName
-   */
-  public void noteSegmentPresence(String segmentName)
-  {
-    mandatorySegments.remove(segmentName);
-  }
-
-  /**
-   * Returns true if and only if all of the mandatory segment requirements have been met.
-   *
-   * @return
-   */
-  public boolean isMandatorySegmentValidationSatisfied()
-  {
-    return mandatorySegments.isEmpty();
-  }
-
-  /**
-   * Returns a String representation of the LoopContext
-   * for testing and debugging purposes.
-   *
-   * @return String representation
-   */
-  @Override
-  public String toString()
-  {
-    return "LoopContext loopName:" + loopName +
-      " position:" + segmentPosition +
-      " repetitions:" + segmentRepetitions +
-      " mandatory:" + getMandatorySegmentsRemaining();
-  }
-
-  /**
-   * Returns the name of the loop.
-   *
-   * @return String loop name
-   */
-  public String getLoopName()
-  {
-    return loopName;
-  }
-
-
-  /**
-   * Returns the current value of the segment position attribute.
-   *
-   * @return segment position
-   */
-  public int getSegmentPosition()
-  {
-    return segmentPosition;
-  }
-
-  /**
-   * Sets the segment position attribute.
-   *
-   * @param segmentPosition
-   */
-  public void setSegmentPosition(int segmentPosition)
-  {
-    this.segmentPosition = segmentPosition;
-  }
-
-  /**
-   * Returns the segment repetitions attribute
-   *
-   * @return segment repetitions
-   */
-  public int getSegmentRepetitions()
-  {
-    return segmentRepetitions;
-  }
-
-  /**
-   * Sets the segment repetitions attribute.
-   *
-   * @param segmentRepetitions
-   */
-  public void setSegmentRepetitions(int segmentRepetitions)
-  {
-    this.segmentRepetitions = segmentRepetitions;
-  }
-
-  /**
-   * Returns a comma-separated list of mandatory segment names that have not been noted.
-   *
-   * @return
-   */
-  public String getMandatorySegmentsRemaining()
-  {
-    StringBuilder result = new StringBuilder();
-    for (Object mandatorySegment : mandatorySegments)
-    {
-      if (result.length() > 0)
-        result.append(", ");
-      result.append(mandatorySegment);
+    /**
+     * Construct a LoopContext with a specified loop name.
+     *
+     * @param loopName name of the loop
+     */
+    public LoopContext(String loopName) {
+        this.loopName = loopName;
+        segmentPosition = 0;
+        segmentRepetitions = 0;
+        mandatorySegments = new HashSet<>();
     }
-    return result.toString();
-  }
 
-  /**
-   * Establishes the set of segment types that are mandatory for a valid instance of the segment loop.
-   *
-   * @param segmentSet
-   */
-  public void setMandatorySegments(Set<String> segmentSet)
-  {
-    mandatorySegments = segmentSet;
-  }
+    /**
+     * Records the fact that a given segment has appeared.
+     * <p/>
+     * If that segment type is mandatory, then this appearance satisfies that requirement.
+     *
+     * @param segmentName segment type of the segment
+     */
+    public void noteSegmentPresence(String segmentName) {
+        mandatorySegments.remove(segmentName);
+    }
+
+    /**
+     * Returns true if and only if all of the mandatory segment requirements have been met.
+     *
+     * @return boolean true if the requirements are satisfied
+     */
+    public boolean isMandatorySegmentValidationSatisfied() {
+        return mandatorySegments.isEmpty();
+    }
+
+    /**
+     * Returns a String representation of the LoopContext
+     * for testing and debugging purposes.
+     *
+     * @return String representation
+     */
+    @Override
+    public String toString() {
+        return "LoopContext loopName:" + loopName +
+                " position:" + segmentPosition +
+                " repetitions:" + segmentRepetitions +
+                " mandatory:" + getMandatorySegmentsRemaining();
+    }
+
+    /**
+     * Returns the name of the loop.
+     *
+     * @return String loop name
+     */
+    public String getLoopName() {
+        return loopName;
+    }
+
+
+    /**
+     * Returns the current value of the segment position attribute.
+     *
+     * @return segment position
+     */
+    public int getSegmentPosition() {
+        return segmentPosition;
+    }
+
+    /**
+     * Sets the segment position attribute.
+     *
+     * @param segmentPosition position
+     */
+    public void setSegmentPosition(int segmentPosition) {
+        this.segmentPosition = segmentPosition;
+    }
+
+    /**
+     * Returns the segment repetitions attribute
+     *
+     * @return segment repetitions
+     */
+    public int getSegmentRepetitions() {
+        return segmentRepetitions;
+    }
+
+    /**
+     * Sets the segment repetitions attribute.
+     *
+     * @param segmentRepetitions - maximum number of repetitions allowed
+     */
+    public void setSegmentRepetitions(int segmentRepetitions) {
+        this.segmentRepetitions = segmentRepetitions;
+    }
+
+    /**
+     * Returns a comma-separated list of mandatory segment names that have not been noted.
+     *
+     * @return String - comma-separated list
+     */
+    public String getMandatorySegmentsRemaining() {
+        StringBuilder result = new StringBuilder();
+        for (Object mandatorySegment : mandatorySegments) {
+            if (result.length() > 0)
+                result.append(", ");
+            result.append(mandatorySegment);
+        }
+        return result.toString();
+    }
+
+    /**
+     * Establishes the set of segment types that are mandatory for a valid instance of the segment loop.
+     *
+     * @param segmentSet - designates which segments are mandatory
+     */
+    public void setMandatorySegments(Set<String> segmentSet) {
+        mandatorySegments = segmentSet;
+    }
 }

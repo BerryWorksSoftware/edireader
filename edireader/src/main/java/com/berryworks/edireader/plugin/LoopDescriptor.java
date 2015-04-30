@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -145,182 +145,177 @@ import com.berryworks.edireader.Plugin;
  * @see com.berryworks.edireader.Plugin
  * @see com.berryworks.edireader.plugin.PluginPreparation
  */
-public class LoopDescriptor
-{
+public class LoopDescriptor {
 
-  /**
-   * Name of the loop entered as the result of applying this descriptor.
-   * <p/>
-   * The name is typically a simple text name that appears in the
-   * specifications of the EDI document but not in the actual data. The value
-   * "/" in this field designates the implicit outer loop. The variant form
-   * /segmentname designates the outer loop following the appearance of the
-   * named segment.
-   */
-  protected final String name;
+    /**
+     * Name of the loop entered as the result of applying this descriptor.
+     * <p/>
+     * The name is typically a simple text name that appears in the
+     * specifications of the EDI document but not in the actual data. The value
+     * "/" in this field designates the implicit outer loop. The variant form
+     * /segmentname designates the outer loop following the appearance of the
+     * named segment.
+     */
+    protected final String name;
 
-  /**
-   * Segment type of the first segment in this loop.
-   */
-  protected final String firstSegment;
+    /**
+     * Segment type of the first segment in this loop.
+     */
+    protected final String firstSegment;
 
-  /**
-   * Level of nesting for this loop.
-   * <p/>
-   * Typically, a document will begin with one or more segments that are
-   * considered to be outside of any segment loops. The segments are
-   * implicitly at nesting level 0. The first level of explicit nesting is
-   * level 1, and increases with each new level.
-   */
-  protected final int nestingLevel;
+    /**
+     * Level of nesting for this loop.
+     * <p/>
+     * Typically, a document will begin with one or more segments that are
+     * considered to be outside of any segment loops. The segments are
+     * implicitly at nesting level 0. The first level of explicit nesting is
+     * level 1, and increases with each new level.
+     */
+    protected final int nestingLevel;
 
-  /**
-   * Context which determines whether or not a particular appearance of a
-   * segment type that matches the firstSegment is in fact an instance of this
-   * loop.
-   */
-  protected final String loopContext;
+    /**
+     * Context which determines whether or not a particular appearance of a
+     * segment type that matches the firstSegment is in fact an instance of this
+     * loop.
+     */
+    protected final String loopContext;
 
-  private final int levelContext;
+    private final int levelContext;
 
-  /**
-   * Constructor a descriptor for recognizing the beginning of a nested loop.
-   *
-   * @param loopName     Name of the loop, suitable for use as an XML attribute value
-   * @param firstSegment Segment type that (at least sometimes) indicates entry into
-   *                     this loop.
-   * @param nestingLevel How deeply is this loop nested within other loops.
-   * @param currentLoop  Name of a loop; indicates a valid prior state
-   */
-  public LoopDescriptor(String loopName, String firstSegment, int nestingLevel,
-                        String currentLoop)
-  {
-    this.name = loopName;
-    this.firstSegment = firstSegment;
-    this.nestingLevel = nestingLevel;
-    this.loopContext = currentLoop;
-    this.levelContext = -1;
-  }
+    /**
+     * Constructor a descriptor for recognizing the beginning of a nested loop.
+     *
+     * @param loopName     Name of the loop, suitable for use as an XML attribute value
+     * @param firstSegment Segment type that (at least sometimes) indicates entry into
+     *                     this loop.
+     * @param nestingLevel How deeply is this loop nested within other loops.
+     * @param currentLoop  Name of a loop; indicates a valid prior state
+     */
+    public LoopDescriptor(String loopName, String firstSegment, int nestingLevel,
+                          String currentLoop) {
+        this.name = loopName;
+        this.firstSegment = firstSegment;
+        this.nestingLevel = nestingLevel;
+        this.loopContext = currentLoop;
+        this.levelContext = -1;
+    }
 
-  /**
-   * Equivalent to LoopDescriptor(loopName, firstSegment, nestingLevel, ANY_CONTEXT)
-   */
-  public LoopDescriptor(String loopName, String firstSegment, int nestingLevel)
-  {
-    this(loopName, firstSegment, nestingLevel, Plugin.ANY_CONTEXT);
-  }
+    /**
+     * Equivalent to LoopDescriptor(loopName, firstSegment, nestingLevel, ANY_CONTEXT)
+     *
+     * @param loopName     Name of the loop, suitable for use as an XML attribute value
+     * @param firstSegment Segment type that (at least sometimes) indicates entry into
+     *                     this loop.
+     * @param nestingLevel How deeply is this loop nested within other loops.
+     */
+    public LoopDescriptor(String loopName, String firstSegment, int nestingLevel) {
+        this(loopName, firstSegment, nestingLevel, Plugin.ANY_CONTEXT);
+    }
 
-  public LoopDescriptor(String loopName, String firstSegment)
-  {
-    this(loopName, firstSegment, 1, Plugin.INITIAL_CONTEXT);
-  }
+    public LoopDescriptor(String loopName, String firstSegment) {
+        this(loopName, firstSegment, 1, Plugin.INITIAL_CONTEXT);
+    }
 
-  public LoopDescriptor(String loopName, String firstSegment, int nestingLevel, int currentLevel)
-  {
-    this.name = loopName;
-    this.firstSegment = firstSegment;
-    this.nestingLevel = nestingLevel;
-    this.loopContext = Plugin.ANY_CONTEXT;
-    this.levelContext = currentLevel;
-  }
+    public LoopDescriptor(String loopName, String firstSegment, int nestingLevel, int currentLevel) {
+        this.name = loopName;
+        this.firstSegment = firstSegment;
+        this.nestingLevel = nestingLevel;
+        this.loopContext = Plugin.ANY_CONTEXT;
+        this.levelContext = currentLevel;
+    }
 
-  /**
-   * Get the name of the loop.
-   *
-   * @return String
-   */
-  public String getName()
-  {
-    return name;
-  }
+    /**
+     * Get the name of the loop.
+     *
+     * @return String
+     */
+    public String getName() {
+        return name;
+    }
 
-  /**
-   * Get the nested loop depth for this loop within the document.
-   *
-   * @return int nestingLevel value
-   */
-  public int getNestingLevel()
-  {
-    return nestingLevel;
-  }
+    /**
+     * Get the nested loop depth for this loop within the document.
+     *
+     * @return int nestingLevel value
+     */
+    public int getNestingLevel() {
+        return nestingLevel;
+    }
 
-  public String getLoopContext()
-  {
-    return loopContext;
-  }
+    public String getLoopContext() {
+        return loopContext;
+    }
 
-  public int getLevelContext()
-  {
-    return levelContext;
-  }
+    public int getLevelContext() {
+        return levelContext;
+    }
 
-  /**
-   * Get the segment type of the first segment in the loop which, in context,
-   * defines an occurrence of the loop.
-   *
-   * @return The firstSegment value
-   */
-  public String getFirstSegment()
-  {
-    return firstSegment;
-  }
+    /**
+     * Get the segment type of the first segment in the loop which, in context,
+     * defines an occurrence of the loop.
+     *
+     * @return The firstSegment value
+     */
+    public String getFirstSegment() {
+        return firstSegment;
+    }
 
-  /**
-   * Returns a String representation of this LoopDescriptor
-   * for testing and debugging purposes.
-   *
-   * @return String representation
-   */
-  @Override
-  public String toString()
-  {
-    String result = "loop " + getName() + " at nesting level " + getNestingLevel()
-      + ": encountering segment " + getFirstSegment();
-    String context = getLoopContext();
-    if ("*".equals(context))
-      result += " anytime";
-    else if ("/".equals(context))
-      result += " while outside any loop";
-    else
-      result += " while currently in loop " + context;
-    if (levelContext > -1)
-      result += " while current at nesting level " + levelContext;
-    return result;
-  }
+    /**
+     * Returns a String representation of this LoopDescriptor
+     * for testing and debugging purposes.
+     *
+     * @return String representation
+     */
+    @Override
+    public String toString() {
+        String result = "loop " + getName() + " at nesting level " + getNestingLevel()
+                + ": encountering segment " + getFirstSegment();
+        String context = getLoopContext();
+        switch (context) {
+            case "*":
+                result += " anytime";
+                break;
+            case "/":
+                result += " while outside any loop";
+                break;
+            default:
+                result += " while currently in loop " + context;
+                break;
+        }
+        if (levelContext > -1)
+            result += " while current at nesting level " + levelContext;
+        return result;
+    }
 
-  /**
-   * Overrides equals
-   *
-   * @param target - the reference object with which to compare.
-   * @return true if this object is the same as the obj argument; false otherwise.
-   */
-  public boolean equals(Object target)
-  {
-    if (!(target instanceof LoopDescriptor))
-      return false;
+    /**
+     * Overrides equals
+     *
+     * @param target - the reference object with which to compare.
+     * @return true if this object is the same as the obj argument; false otherwise.
+     */
+    public boolean equals(Object target) {
+        if (!(target instanceof LoopDescriptor))
+            return false;
 
-    LoopDescriptor sld = (LoopDescriptor) target;
-    return equalsOrBothNull(getName(), sld.getName())
-      && equalsOrBothNull(getFirstSegment(), sld
-      .getFirstSegment())
-      && getNestingLevel() == sld.getNestingLevel()
-      && getLoopContext().equals(sld.getLoopContext())
-      && getLevelContext() == sld.getLevelContext();
-  }
+        LoopDescriptor sld = (LoopDescriptor) target;
+        return equalsOrBothNull(getName(), sld.getName())
+                && equalsOrBothNull(getFirstSegment(), sld
+                .getFirstSegment())
+                && getNestingLevel() == sld.getNestingLevel()
+                && getLoopContext().equals(sld.getLoopContext())
+                && getLevelContext() == sld.getLevelContext();
+    }
 
-  public int hashCode()
-  {
-    return getName().hashCode() + getFirstSegment().hashCode();
-  }
+    public int hashCode() {
+        return getName().hashCode() + getFirstSegment().hashCode();
+    }
 
-  private boolean equalsOrBothNull(String value1, String value2)
-  {
-    return value1 == null && value2 == null || value1 != null && value1.equals(value2);
-  }
+    private boolean equalsOrBothNull(String value1, String value2) {
+        return value1 == null && value2 == null || value1 != null && value1.equals(value2);
+    }
 
-  public boolean isAnyContext()
-  {
-    return Plugin.ANY_CONTEXT.equals(loopContext);
-  }
+    public boolean isAnyContext() {
+        return Plugin.ANY_CONTEXT.equals(loopContext);
+    }
 }
 
