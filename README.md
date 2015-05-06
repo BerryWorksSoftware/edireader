@@ -11,4 +11,4 @@ EDIReader Community Edition is now available in Maven Central repository using
             <version>4.7.3.1</version>
         </dependency>
         
-The 5.3.2 release will be available soon, and represents a major update from the 4.7.3. It has been fully updated for Java 7 and a variety of improvements. It is a subset of the commercial version of EDIReader, used in a number of commercial systems and products.         
+The 5.3.2 release will be available soon, and represents a major update from the 4.7.3 release. It has been fully updated for Java 7 and includes a variety of improvements. It is a subset of the commercial version of EDIReader used in a number of commercial systems and products.         
