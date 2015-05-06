@@ -45,7 +45,7 @@ public class TestSAXObject {
 
         assertEquals(1, finalHandler.getDocumentCount());
         assertEquals(125, finalHandler.getElementCount());
-        assertEquals(138, finalHandler.getAttributeCount());
+        assertEquals(144, finalHandler.getAttributeCount());
         assertEquals(331, finalHandler.getCharCount());
     }
 
