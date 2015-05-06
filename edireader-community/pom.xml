@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>edireader</artifactId>
+    <artifactId>edireader-community</artifactId>
     <packaging>jar</packaging>
-    <name>edireader</name>
+    <name>EDIReader Commmunit Edition</name>
     <url>http://maven.apache.org</url>
 
     <parent>

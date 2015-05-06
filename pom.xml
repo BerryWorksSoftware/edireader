@@ -188,7 +188,7 @@
     </reporting>
 
     <modules>
-        <module>edireader</module>
+        <module>edireader-community</module>
     </modules>
 
 </project>
