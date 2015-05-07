@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.berryworks</groupId>
-    <artifactId>berryworks</artifactId>
+    <artifactId>EDIReaderCommunityEdition</artifactId>
     <version>5.3.2-SNAPSHOT</version>
 
     <packaging>pom</packaging>
@@ -188,7 +188,7 @@
     </reporting>
 
     <modules>
-        <module>edireader-community</module>
+        <module>edireader</module>
     </modules>
 
 </project>
