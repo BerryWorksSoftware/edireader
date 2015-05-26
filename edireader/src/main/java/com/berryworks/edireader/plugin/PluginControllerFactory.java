@@ -30,7 +30,7 @@ import java.util.Map;
 
 import static com.berryworks.edireader.util.FixedLength.isPresent;
 
-public class PluginControllerFactory {
+public class PluginControllerFactory implements PluginControllerFactoryInterface {
 
     protected static boolean debug;
     public static final String DEFAULT_EDIREADER_PLUGIN_PACKAGE = "com.berryworks.edireader.plugin";
@@ -48,6 +48,7 @@ public class PluginControllerFactory {
      * @param tokenizer - reference to the Tokenizer to provide context for syntax exceptions
      * @return instance of a PluginController
      */
+    @Override
     public PluginController create(String standard, String docType, Tokenizer tokenizer) {
         return create(standard, docType, null, null, tokenizer);
     }
@@ -68,6 +69,7 @@ public class PluginControllerFactory {
      * @param tokenizer  - reference to the Tokenizer to provide context for syntax exceptions
      * @return instance of a PluginController
      */
+    @Override
     public PluginController create(String standard, String docType, String docVersion, String docRelease, Tokenizer tokenizer) {
         PluginControllerImpl result;
         Plugin plugin = PluginControllerFactory.loadPlugin(standard, docType, docVersion, docRelease);
@@ -86,6 +88,7 @@ public class PluginControllerFactory {
         return result;
     }
 
+    @Override
     public Plugin getPlugin() {
         return plugin;
     }

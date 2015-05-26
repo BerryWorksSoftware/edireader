@@ -23,6 +23,7 @@ package com.berryworks.edireader;
 import com.berryworks.edireader.error.ErrorMessages;
 import com.berryworks.edireader.error.RecoverableSyntaxException;
 import com.berryworks.edireader.plugin.PluginControllerFactory;
+import com.berryworks.edireader.plugin.PluginControllerFactoryInterface;
 import com.berryworks.edireader.tokenizer.Token;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -54,7 +55,7 @@ public abstract class StandardReader extends EDIReader {
     private ReplyGenerator ackGenerator;
     private ReplyGenerator alternateAckGenerator;
     private RecoverableSyntaxException syntaxException;
-    private PluginControllerFactory pluginControllerFactory = new PluginControllerFactory();
+    private PluginControllerFactoryInterface pluginControllerFactoryInterface = new PluginControllerFactory();
     private PluginController segmentPluginController;
 
     protected abstract Token recognizeBeginning() throws IOException, SAXException;
@@ -255,13 +256,13 @@ public abstract class StandardReader extends EDIReader {
         this.alternateAckGenerator = generator;
     }
 
-    public PluginControllerFactory getPluginControllerFactory() {
-        return pluginControllerFactory;
+    public PluginControllerFactoryInterface getPluginControllerFactory() {
+        return pluginControllerFactoryInterface;
     }
 
     @Override
-    public void setPluginControllerFactory(PluginControllerFactory pluginControllerFactory) {
-        this.pluginControllerFactory = pluginControllerFactory;
+    public void setPluginControllerFactory(PluginControllerFactoryInterface pluginControllerFactoryInterface) {
+        this.pluginControllerFactoryInterface = pluginControllerFactoryInterface;
     }
 
     protected void parseSegment(PluginController pluginController, String segmentType) throws SAXException, IOException {

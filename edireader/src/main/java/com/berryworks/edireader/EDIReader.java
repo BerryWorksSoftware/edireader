@@ -21,7 +21,7 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.error.ErrorMessages;
-import com.berryworks.edireader.plugin.PluginControllerFactory;
+import com.berryworks.edireader.plugin.PluginControllerFactoryInterface;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -52,7 +52,7 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
 
     private XMLTags xmlTags;
 
-    private PluginControllerFactory pluginControllerFactory;
+    private PluginControllerFactoryInterface pluginControllerFactory;
 
     public EDIReader() {
         if (Boolean.getBoolean("edireader.debug"))
@@ -126,7 +126,7 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
         return xmlTags;
     }
 
-    public void setPluginControllerFactory(PluginControllerFactory pluginControllerFactory) {
+    public void setPluginControllerFactory(PluginControllerFactoryInterface pluginControllerFactory) {
         this.pluginControllerFactory = pluginControllerFactory;
     }
 
