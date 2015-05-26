@@ -55,7 +55,7 @@ public abstract class StandardReader extends EDIReader {
     private ReplyGenerator ackGenerator;
     private ReplyGenerator alternateAckGenerator;
     private RecoverableSyntaxException syntaxException;
-    private PluginControllerFactoryInterface pluginControllerFactoryInterface = new PluginControllerFactory();
+    private PluginControllerFactoryInterface pluginControllerFactory;
     private PluginController segmentPluginController;
 
     protected abstract Token recognizeBeginning() throws IOException, SAXException;
@@ -257,12 +257,16 @@ public abstract class StandardReader extends EDIReader {
     }
 
     public PluginControllerFactoryInterface getPluginControllerFactory() {
-        return pluginControllerFactoryInterface;
+        // Lazy load
+        if (pluginControllerFactory == null ) {
+            pluginControllerFactory = new PluginControllerFactory();
+        }
+        return pluginControllerFactory;
     }
 
     @Override
-    public void setPluginControllerFactory(PluginControllerFactoryInterface pluginControllerFactoryInterface) {
-        this.pluginControllerFactoryInterface = pluginControllerFactoryInterface;
+    public void setPluginControllerFactory(PluginControllerFactoryInterface pluginControllerFactory) {
+        this.pluginControllerFactory = pluginControllerFactory;
     }
 
     protected void parseSegment(PluginController pluginController, String segmentType) throws SAXException, IOException {
