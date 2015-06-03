@@ -34,16 +34,10 @@ import org.xml.sax.ContentHandler;
  * This base implementation of PluginController provides the normal
  * segment loop support based on LoopDescriptors in Plugins.
  * It is possible, however, to extend this behavior by subclassing
- * PluginController and Plugin. A ValidatingPlugin is one example,
- * which provides for certain EDI validation rules, beyond those applied by
- * normal EDIReader parsing, to be applied while a document is being parsed.
- * Another example is a FilteringPlugin, which allows a plugin to provide
- * custom logic to filter out certain LoopDescriptors based on run-time decisions.
+ * PluginController and Plugin.
  *
  * @see com.berryworks.edireader.Plugin
  * @see com.berryworks.edireader.plugin.LoopDescriptor
- * @see com.berryworks.edireader.validator.FilteringPluginController
- * @see com.berryworks.edireader.validator.ValidatingPluginController
  */
 public class PluginController {
     protected static boolean debug;
