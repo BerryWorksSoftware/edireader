@@ -38,7 +38,7 @@ public class PluginControllerFactory implements PluginControllerFactoryInterface
     protected static final Map<String, Plugin> pluginCache = new HashMap<>();
     protected static String lastPluginLoaded = null;
 
-    protected Plugin plugin;
+    protected PluginController lastPluginController;
 
     /**
      * Creates a new instance of a PluginController, selecting a plugin based on the standard and type of document.
@@ -85,12 +85,13 @@ public class PluginControllerFactory implements PluginControllerFactoryInterface
 
         result.setDocumentType(docType);
         result.setPlugin(plugin);
+        lastPluginController = result;
         return result;
     }
 
     @Override
-    public Plugin getPlugin() {
-        return plugin;
+    public PluginController getLastControllerCreated() {
+        return lastPluginController;
     }
 
     /**
