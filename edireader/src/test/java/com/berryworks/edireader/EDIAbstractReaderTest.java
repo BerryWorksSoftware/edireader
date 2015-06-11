@@ -111,6 +111,7 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
         inputSource = new InputSource(new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
         try {
             EDIReaderFactory.createEDIReader(inputSource);
+            fail("should have thrown an exception");
         } catch (EDISyntaxException e) {
             assertEquals(ErrorMessages.XML_INSTEAD_OF_EDI, e.getMessage());
         }
