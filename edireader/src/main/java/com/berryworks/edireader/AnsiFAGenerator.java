@@ -22,6 +22,7 @@ package com.berryworks.edireader;
 
 import com.berryworks.edireader.util.BranchingWriter;
 import com.berryworks.edireader.util.DateTimeGenerator;
+import com.berryworks.edireader.util.FixedLength;
 
 import java.io.IOException;
 
@@ -178,11 +179,25 @@ public class AnsiFAGenerator extends ReplyGenerator {
 
         // The ISA envelope is basically the same as that of the input
         // interchange except for reversal of the sender and receiver addresses.
-        String sender = firstSegment.substring(51, 70);
-        String receiver = firstSegment.substring(32, 51);
-        String faHeader = firstSegment.substring(0, 32) + sender + receiver
-                + DateTimeGenerator.generate(delimiter)
-                + firstSegment.substring(81, firstSegment.length() - 1);
+        // Force the generated ISA to have fixed length fields, even if the input ISA does not.
+
+        final String[] isaFields = referencedISA.split("\\" + delimiter);
+        String faHeader = isaFields[0] + delimiter +
+                FixedLength.valueOf(isaFields[1], 2) + delimiter +
+                FixedLength.valueOf(isaFields[2], 10) + delimiter +
+                FixedLength.valueOf(isaFields[3], 2) + delimiter +
+                FixedLength.valueOf(isaFields[4], 10) + delimiter +
+                FixedLength.valueOf(isaFields[7], 2) + delimiter +
+                FixedLength.valueOf(isaFields[8], 15) + delimiter +
+                FixedLength.valueOf(isaFields[5], 2) + delimiter +
+                FixedLength.valueOf(isaFields[6], 15) + delimiter +
+                DateTimeGenerator.generate(delimiter) + delimiter +
+                FixedLength.valueOf(isaFields[11], 1) + delimiter +
+                FixedLength.valueOf(isaFields[12], 5) + delimiter +
+                FixedLength.valueOf(isaFields[13], 9) + delimiter +
+                FixedLength.valueOf(isaFields[14], 1) + delimiter +
+                FixedLength.valueOf(isaFields[15], 1) + delimiter +
+                FixedLength.valueOf(isaFields[16], 1);
 
         char senderDelimiter = standardReader.getDelimiter();
         if (senderDelimiter != delimiter)
