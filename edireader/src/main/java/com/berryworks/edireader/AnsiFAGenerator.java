@@ -32,6 +32,9 @@ import java.io.IOException;
  */
 public class AnsiFAGenerator extends ReplyGenerator {
 
+    public static final String REGEX_CHARS_NEEDING_ESCAPE = "\\.[{(*+?^$|";
+    public static final String REGEX_ESCAPE = "\\";
+
     protected final BranchingWriter ackStream;
     protected boolean preambleGenerated, skipFA;
     protected final String thisGroupControlNumber;
@@ -181,7 +184,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
         // interchange except for reversal of the sender and receiver addresses.
         // Force the generated ISA to have fixed length fields, even if the input ISA does not.
 
-        final String[] isaFields = referencedISA.split("\\" + delimiter);
+        final String[] isaFields = splitOnDelimiter();
         String faHeader = isaFields[0] + delimiter +
                 FixedLength.valueOf(isaFields[1], 2) + delimiter +
                 FixedLength.valueOf(isaFields[2], 10) + delimiter +
@@ -224,6 +227,12 @@ public class AnsiFAGenerator extends ReplyGenerator {
         ackStream.write(terminatorWithSuffix);
 
         preambleGenerated = true;
+    }
+
+    private String[] splitOnDelimiter() {
+        final String delimiterAsString = String.valueOf(delimiter);
+        final String delimiterPattern = REGEX_CHARS_NEEDING_ESCAPE.contains(delimiterAsString) ? REGEX_ESCAPE + delimiter : delimiterAsString;
+        return referencedISA.split(delimiterPattern);
     }
 
     private void establishSyntaxCharacters() {
