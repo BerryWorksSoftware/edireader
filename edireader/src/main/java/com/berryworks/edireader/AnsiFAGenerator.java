@@ -37,6 +37,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
 
     protected final BranchingWriter ackStream;
     protected boolean preambleGenerated, skipFA;
+    protected String thisInterchangeControlNumber;
     protected final String thisGroupControlNumber;
     protected int thisDocumentCount;
     protected String referencedISA;
@@ -153,13 +154,11 @@ public class AnsiFAGenerator extends ReplyGenerator {
 
         if (EDIReader.debug) EDIReader.trace("generating GE, IEA");
         // Generate the GE to match the GS
-        ackStream.write("GE" + delimiter + thisDocumentCount + delimiter
-                + thisGroupControlNumber);
+        ackStream.write("GE" + delimiter + thisDocumentCount + delimiter + thisGroupControlNumber);
         ackStream.write(terminatorWithSuffix);
 
         // Finish with an IEA corresponding to the ISA
-        ackStream.write("IEA" + delimiter + "1" + delimiter
-                + referencedISA.substring(90, 99));
+        ackStream.write("IEA" + delimiter + "1" + delimiter + thisInterchangeControlNumber);
         ackStream.write(terminatorWithSuffix);
         if (positiveFA)
             ackStream.close();
@@ -201,6 +200,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
                 FixedLength.valueOf(isaFields[14], 1) + delimiter +
                 FixedLength.valueOf(isaFields[15], 1) + delimiter +
                 FixedLength.valueOf(isaFields[16], 1);
+        thisInterchangeControlNumber = isaFields[13].trim();
 
         char senderDelimiter = standardReader.getDelimiter();
         if (senderDelimiter != delimiter)
@@ -210,6 +210,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
         ackStream.write(terminatorWithSuffix);
 
         if (standardReader.isInterchangeAcknowledgment()) {
+            // TODO these need to avoid using fixed length assumptions
             ackStream.write("TA1" + delimiter +
                     firstSegment.substring(90, 99) + delimiter +
                     firstSegment.substring(70, 76) + delimiter +
