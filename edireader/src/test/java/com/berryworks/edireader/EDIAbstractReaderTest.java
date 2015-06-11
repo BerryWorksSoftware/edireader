@@ -107,7 +107,18 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
         assertEquals(EDITestData.getEdifactInterchange().length(), reader.getCharCount());
         assertEquals(24, reader.getSegmentCharCount());
 
-        // XML
+        // Not EDI and not XML
+        inputSource = new InputSource(new StringReader("abcdefghijklmnop"));
+        try {
+            EDIReaderFactory.createEDIReader(inputSource);
+        } catch (EDISyntaxException e) {
+            assertEquals("No supported EDI standard interchange begins with abc", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testParseXMLWhenExpectingEDI() throws Exception {
+
         inputSource = new InputSource(new StringReader("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"));
         try {
             EDIReaderFactory.createEDIReader(inputSource);
@@ -116,13 +127,6 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
             assertEquals(ErrorMessages.XML_INSTEAD_OF_EDI, e.getMessage());
         }
 
-        // Not EDI and not XML
-        inputSource = new InputSource(new StringReader("abcdefghijklmnop"));
-        try {
-            EDIReaderFactory.createEDIReader(inputSource);
-        } catch (EDISyntaxException e) {
-            assertEquals("No supported EDI standard interchange begins with abc", e.getMessage());
-        }
     }
 
     @Test
