@@ -108,11 +108,11 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
         assertEquals(24, reader.getSegmentCharCount());
 
         // Not EDI and not XML
-        inputSource = new InputSource(new StringReader("abcdefghijklmnop"));
+        inputSource = new InputSource(new StringReader("this is not edi"));
         try {
             EDIReaderFactory.createEDIReader(inputSource);
         } catch (EDISyntaxException e) {
-            assertEquals("No supported EDI standard interchange begins with abc", e.getMessage());
+            assertEquals("No supported EDI standard interchange begins with thi", e.getMessage());
         }
     }
 
