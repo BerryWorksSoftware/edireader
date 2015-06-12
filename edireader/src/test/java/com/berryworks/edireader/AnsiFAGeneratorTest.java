@@ -46,8 +46,7 @@ public class AnsiFAGeneratorTest {
     public void canGenerate997() throws IOException, SAXException {
         ansiReader = new AnsiReader();
         ansiReader.setContentHandler(new DefaultHandler());
-        generator = new MyAnsiFAGenerator(ansiReader, ackStream);
-        ansiReader.setAckGenerator(generator);
+        ansiReader.setAcknowledgment(ackStream);
         ansiReader.parse(EDITestData.getAnsiInputSource());
 //        assertEquals(TEST_DATA_997, output.toString());
         assertLikeness(TEST_DATA_997, output.toString());
@@ -57,14 +56,27 @@ public class AnsiFAGeneratorTest {
     public void canGenerate997FromVariableLengthISAInput() throws IOException, SAXException {
         ansiReader = new AnsiReader();
         ansiReader.setContentHandler(new DefaultHandler());
-        generator = new MyAnsiFAGenerator(ansiReader, ackStream);
-        ansiReader.setAckGenerator(generator);
+        ansiReader.setAcknowledgment(ackStream);
         String ansiInterchange = EDITestData.getAnsiInterchange();
         ansiInterchange = ansiInterchange.replaceAll("58401    ", "58401");
         final InputSource inputSource = new InputSource(new StringReader(ansiInterchange));
         ansiReader.parse(inputSource);
         assertLikeness(TEST_DATA_997, output.toString());
     }
+
+    @Test
+    public void canGenerate997WithDelimiterDifferentThanInput() throws IOException, SAXException {
+        ansiReader = new AnsiReader();
+        ansiReader.setContentHandler(new DefaultHandler());
+        final SyntaxDescriptor syntaxDescriptor = new SyntaxDescriptor();
+        syntaxDescriptor.setDelimiter('-');
+        ansiReader.setAcknowledgment(ackStream, syntaxDescriptor);
+
+        ansiReader.parse(EDITestData.getAnsiInputSource());
+//        assertEquals(TEST_DATA_997, output.toString());
+        assertLikeness(TEST_DATA_997.replaceAll("~", "-"), output.toString());
+    }
+
 
     @Test
     public void canBuildPreambleWithFixedLengthISA() throws IOException {

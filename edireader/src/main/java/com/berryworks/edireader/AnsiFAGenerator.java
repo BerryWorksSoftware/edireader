@@ -184,6 +184,9 @@ public class AnsiFAGenerator extends ReplyGenerator {
         // Force the generated ISA to have fixed length fields, even if the input ISA does not.
 
         final String[] isaFields = splitOnDelimiter();
+        if (isaFields.length < 17) {
+            throw new RuntimeException("*** Internal Error: Unable to interpret input ISA when forming ISA for acknowledgement. " + referencedISA);
+        }
         String faHeader = isaFields[0] + delimiter +
                 FixedLength.valueOf(isaFields[1], 2) + delimiter +
                 FixedLength.valueOf(isaFields[2], 10) + delimiter +
@@ -231,7 +234,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
     }
 
     private String[] splitOnDelimiter() {
-        final String delimiterAsString = String.valueOf(delimiter);
+        final String delimiterAsString = String.valueOf(referencedISA.charAt(3));
         final String delimiterPattern = REGEX_CHARS_NEEDING_ESCAPE.contains(delimiterAsString) ? REGEX_ESCAPE + delimiter : delimiterAsString;
         return referencedISA.split(delimiterPattern);
     }
