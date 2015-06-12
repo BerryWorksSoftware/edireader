@@ -46,8 +46,6 @@ import com.berryworks.edireader.tokenizer.Tokenizer;
  *
  * @see com.berryworks.edireader.Plugin
  * @see com.berryworks.edireader.plugin.LoopDescriptor
- * @see com.berryworks.edireader.validator.FilteringPluginController
- * @see com.berryworks.edireader.validator.ValidatingPluginController
  */
 public class PluginControllerImpl extends PluginController {
 

@@ -26,13 +26,13 @@ import java.io.IOException;
 
 public interface HandlerFactory {
 
-    public ContentHandler createDocument() throws Exception;
+    ContentHandler createDocument() throws Exception;
 
-    public void closeDocument(
+    void closeDocument(
             String senderQualifier, String senderId,
             String receiverQualifier, String receiverId,
             String interchangeControlNumber, String groupControlNumber, String documentControlNumber,
             String documentType) throws IOException;
 
-    public void markEndOfStream() throws IOException;
+    void markEndOfStream() throws IOException;
 }

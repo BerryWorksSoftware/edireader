@@ -21,7 +21,7 @@
 package com.berryworks.edireader;
 
 public interface TransactionCallback {
-    public void startTransaction(String segmentType);
+    void startTransaction(String segmentType);
 
-    public void endTransaction();
+    void endTransaction();
 }

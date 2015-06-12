@@ -60,7 +60,7 @@ public interface Token {
      *
      * @return SEGMENT_START, SIMPLE, SUB_ELEMENT, ...
      */
-    public TokenType getType();
+    TokenType getType();
 
 
     /**
@@ -68,7 +68,7 @@ public interface Token {
      *
      * @return boolean
      */
-    public boolean isFirst();
+    boolean isFirst();
 
 
     /**
@@ -76,7 +76,7 @@ public interface Token {
      *
      * @return boolean
      */
-    public boolean isLast();
+    boolean isLast();
 
 
     /**
@@ -84,7 +84,7 @@ public interface Token {
      *
      * @return The index value
      */
-    public int getIndex();
+    int getIndex();
 
 
     /**
@@ -92,7 +92,7 @@ public interface Token {
      *
      * @return int position origin 0
      */
-    public int getSubIndex();
+    int getSubIndex();
 
 
     /**
@@ -103,7 +103,7 @@ public interface Token {
      *
      * @return The value value
      */
-    public String getValue();
+    String getValue();
 
 
     /**
@@ -112,7 +112,7 @@ public interface Token {
      *
      * @return The valueChars value
      */
-    public char[] getValueChars();
+    char[] getValueChars();
 
 
     /**
@@ -122,7 +122,7 @@ public interface Token {
      * @param v Description of the Parameter
      * @return Description of the Return Value
      */
-    public boolean valueEquals(String v);
+    boolean valueEquals(String v);
 
 
     /**
@@ -130,7 +130,7 @@ public interface Token {
      *
      * @return The segmentType value
      */
-    public String getSegmentType();
+    String getSegmentType();
 
 
     /**
@@ -140,7 +140,7 @@ public interface Token {
      *
      * @return The elementIdS value
      */
-    public String getElementId();
+    String getElementId();
 
 }
 

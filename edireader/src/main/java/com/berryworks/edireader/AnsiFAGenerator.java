@@ -125,8 +125,8 @@ public class AnsiFAGenerator extends ReplyGenerator {
         ackStream.write(terminatorWithSuffix);
 
         // Generate the SE to match the ST
-        final int segmentount = 4 + (standardReader.isGroupAcknowledgment() ? 0 : 2 * docCount);
-        ackStream.writeTrunk("SE" + delimiter + segmentount + delimiter + CONTROL_NUMBER_997);
+        final int segmentCount = 4 + (standardReader.isGroupAcknowledgment() ? 0 : 2 * docCount);
+        ackStream.writeTrunk("SE" + delimiter + segmentCount + delimiter + CONTROL_NUMBER_997);
         ackStream.writeBranch("SE" + delimiter + "4" + delimiter + CONTROL_NUMBER_997);
         ackStream.write(terminatorWithSuffix);
         groupTrailerGenerated = true;

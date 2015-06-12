@@ -128,7 +128,7 @@ public abstract class FixedLength {
     /**
      * Determine if a String argument is null and not empty.
      *
-     * @param value to be checked
+     * @param list to be checked
      * @return false if the argument is null or empty, and true otherwise
      */
     public static boolean isPresent(List<?> list) {
