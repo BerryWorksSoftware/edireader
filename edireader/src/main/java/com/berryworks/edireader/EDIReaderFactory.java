@@ -35,7 +35,7 @@ import java.io.Reader;
  * This decision does not imply that data in well-formed with regard to the
  * chosen standard, but merely that we know which actual parser to use.
  */
-public class EDIReaderFactory {
+public abstract class EDIReaderFactory {
 
     /**
      * Equivalent to createEDIReader(source, debugging=false)
@@ -117,10 +117,12 @@ public class EDIReaderFactory {
 
         // Get an appropriate parser, based on the first few characters
         String asString = new String(buf);
+        System.out.println("... looking at " + asString);
         EDIReader parser = ParserRegistry.get(asString);
         if (parser == null) throw new EDISyntaxException("<?xml ".startsWith(asString) ?
                 ErrorMessages.XML_INSTEAD_OF_EDI :
                 ErrorMessages.NO_STANDARD_BEGINS_WITH + asString);
+        System.out.println("... using a parser of type " + parser.getClass().getName());
 
         source.setCharacterStream(inputReader);
         parser.setTokenizer(tokenizer);
