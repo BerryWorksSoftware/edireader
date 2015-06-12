@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 public class AnsiFAGeneratorTest {
 
     public static final String TEST_DATA_997 = "ISA~00~          ~00~          ~ZZ~58401          ~ZZ~04000          ~999999~9999~U~00204~000038449~0~P~<$" +
-            "GS~FA~58401~04000~150611~9999~12345~X~002040CHRY$" +
+            "GS~FA~58401~04000~999999~9999~12345~X~002040CHRY$" +
             "ST~997~0001$" +
             "AK1~AG~38327$" +
             "AK2~824~000042460$AK5~A$" +
@@ -49,6 +49,7 @@ public class AnsiFAGeneratorTest {
         generator = new MyAnsiFAGenerator(ansiReader, ackStream);
         ansiReader.setAckGenerator(generator);
         ansiReader.parse(EDITestData.getAnsiInputSource());
+//        assertEquals(TEST_DATA_997, output.toString());
         assertLikeness(TEST_DATA_997, output.toString());
     }
 
