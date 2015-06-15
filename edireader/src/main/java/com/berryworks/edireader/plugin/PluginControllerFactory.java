@@ -20,126 +20,11 @@
 
 package com.berryworks.edireader.plugin;
 
-import com.berryworks.edireader.EDIAbstractReader;
 import com.berryworks.edireader.Plugin;
-import com.berryworks.edireader.PluginController;
-import com.berryworks.edireader.tokenizer.Tokenizer;
 
-import java.util.HashMap;
-import java.util.Map;
+public class PluginControllerFactory extends AbstractPluginControllerFactory {
 
-import static com.berryworks.edireader.util.FixedLength.isPresent;
-
-public class PluginControllerFactory implements PluginControllerFactoryInterface {
-
-    protected static boolean debug;
     public static final String DEFAULT_EDIREADER_PLUGIN_PACKAGE = "com.berryworks.edireader.plugin";
-
-    protected static final Map<String, Plugin> pluginCache = new HashMap<>();
-    protected static String lastPluginLoaded = null;
-
-    protected PluginController lastPluginController;
-
-    /**
-     * Creates a new instance of a PluginController, selecting a plugin based on the standard and type of document.
-     *
-     * @param standard  - name of EDI standard (for example: "EDIFACT" or "ANSI")
-     * @param docType   - type of document (for example: "837" or "INVOIC")
-     * @param tokenizer - reference to the Tokenizer to provide context for syntax exceptions
-     * @return instance of a PluginController
-     */
-    @Override
-    public PluginController create(String standard, String docType, Tokenizer tokenizer) {
-        return create(standard, docType, null, null, tokenizer);
-    }
-
-    /**
-     * Creates a new instance of a PluginController, selecting a plugin based on the standard, the type of document,
-     * and the version and release characteristics.
-     * <p/>
-     * This factory method supports version-specific plugins for a given type of document. If first tries to load
-     * a plugin specific to a particular release and version using the naming convention for plugin class names.
-     * If no version-specific plugin is available, it uses the other factory method
-     * to create a plugin based simply on the standard and type.
-     *
-     * @param standard   - name of EDI standard (for example: "EDIFACT" or "ANSI")
-     * @param docType    - type of document (for example: "837" or "INVOIC")
-     * @param docVersion - a particular version of the standard (for example: "X" in ANSI or "04A" in EDIFACT)
-     * @param docRelease - a particular release of the standard (for example: "D" in EDIFACT or "004010" in ANSI)
-     * @param tokenizer  - reference to the Tokenizer to provide context for syntax exceptions
-     * @return instance of a PluginController
-     */
-    @Override
-    public PluginController create(String standard, String docType, String docVersion, String docRelease, Tokenizer tokenizer) {
-        PluginControllerImpl result;
-        Plugin plugin = PluginControllerFactory.loadPlugin(standard, docType, docVersion, docRelease);
-
-        if (plugin == null) {
-            result = new PluginControllerImpl(standard, tokenizer);
-            result.setEnabled(false);
-        } else {
-            plugin.init();
-            result = plugin.createController(standard, tokenizer);
-            result.setEnabled(true);
-        }
-
-        result.setDocumentType(docType);
-        result.setPlugin(plugin);
-        lastPluginController = result;
-        return result;
-    }
-
-    @Override
-    public PluginController getLastControllerCreated() {
-        return lastPluginController;
-    }
-
-    /**
-     * Find a plugin for a given standard, document type, version, and release.
-     * If no matching plugin is found, return null.
-     * Plugins are cached so that once a plugin is loaded it can be quickly found again without using the
-     * class loader.
-     *
-     * @param standard   - name of EDI standard (for example: "EDIFACT" or "ANSI")
-     * @param docType    - type of document (for example: "837" or "INVOIC")
-     * @param docVersion - a particular version of the standard (for example: "X" in ANSI or "04A" in EDIFACT)
-     * @param docRelease - a particular release of the standard (for example: "D" in EDIFACT or "004010" in ANSI)
-     * @return Plugin that was found, or null if no suitable plugin was found
-     */
-    protected static Plugin loadPlugin(String standard, String docType, String docVersion, String docRelease) {
-        Plugin result = null;
-        String key = standard + "_" + docType + "_" + docVersion + "_" + docRelease;
-        if (pluginCache.containsKey(key)) {
-            if (debug)
-                trace("plugin for " + key + " found in cache");
-            lastPluginLoaded = key;
-            result = pluginCache.get(key);
-
-        } else {
-            String suffix = System.getProperty("EDIREADER_PLUGIN_SUFFIX");
-            if (docVersion != null && docVersion.length() > 0 && docRelease != null && docRelease.length() > 0) {
-                if (isPresent(suffix))
-                    result = lookForSpecificPlugin(standard, docVersion + "_" + docRelease + "." + standard + "_" + docType + "_" + suffix);
-
-                if (result == null)
-                    result = lookForSpecificPlugin(standard, docVersion + "_" + docRelease + "." + standard + "_" + docType);
-
-                if (isPresent(suffix))
-                    result = lookForSpecificPlugin(standard, docType + "_" + docVersion + "_" + docRelease + "_" + suffix);
-
-                if (result == null)
-                    result = lookForSpecificPlugin(standard, docType + "_" + docVersion + "_" + docRelease);
-            }
-            if (result == null && suffix != null && suffix.length() > 0)
-                result = lookForSpecificPlugin(standard, docType + "_" + suffix);
-
-            if (result == null)
-                result = lookForSpecificPlugin(standard, docType);
-            pluginCache.put(key, result);
-        }
-
-        return result;
-    }
 
     /**
      * Used only within the internal implementation of this class and its subclasses.
@@ -218,21 +103,5 @@ public class PluginControllerFactory implements PluginControllerFactoryInterface
         return packageName;
     }
 
-    public static String getLastPluginLoaded() {
-        return lastPluginLoaded;
-    }
 
-    /**
-     * Shorthand for EDIReader.trace(String)
-     *
-     * @param text message to appear in trace
-     */
-    protected static void trace(String text) {
-        EDIAbstractReader.trace(text);
-    }
-
-
-    public void clearCache() {
-        pluginCache.clear();
-    }
 }
