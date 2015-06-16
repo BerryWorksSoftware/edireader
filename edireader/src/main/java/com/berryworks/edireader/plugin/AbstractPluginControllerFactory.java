@@ -34,11 +34,11 @@ public abstract class AbstractPluginControllerFactory implements PluginControlle
 
     protected static final Map<String, Plugin> pluginCache = new HashMap<>();
     protected static boolean debug;
-    protected static String lastPluginLoaded = null;
 
+    protected String lastPluginLoaded = null;
     protected PluginController lastPluginController;
 
-    public static String getLastPluginLoaded() {
+    public String getLastPluginLoaded() {
         return lastPluginLoaded;
     }
 
@@ -68,35 +68,35 @@ public abstract class AbstractPluginControllerFactory implements PluginControlle
      * @param docRelease - a particular release of the standard (for example: "D" in EDIFACT or "004010" in ANSI)
      * @return Plugin that was found, or null if no suitable plugin was found
      */
-    protected static Plugin loadPlugin(String standard, String docType, String docVersion, String docRelease) {
+    protected Plugin loadPlugin(String standard, String docType, String docVersion, String docRelease) {
         Plugin result = null;
         String key = standard + "_" + docType + "_" + docVersion + "_" + docRelease;
         if (AbstractPluginControllerFactory.pluginCache.containsKey(key)) {
             if (AbstractPluginControllerFactory.debug)
                 AbstractPluginControllerFactory.trace("plugin for " + key + " found in cache");
-            AbstractPluginControllerFactory.lastPluginLoaded = key;
+            lastPluginLoaded = key;
             result = AbstractPluginControllerFactory.pluginCache.get(key);
 
         } else {
             String suffix = System.getProperty("EDIREADER_PLUGIN_SUFFIX");
             if (isPresent(docVersion) && isPresent(docRelease)) {
                 if (isPresent(suffix))
-                    result = PluginControllerFactory.lookForSpecificPlugin(standard, docVersion + "_" + docRelease + "." + standard + "_" + docType + "_" + suffix);
+                    result = lookForSpecificPlugin(standard, docVersion + "_" + docRelease + "." + standard + "_" + docType + "_" + suffix);
 
                 if (result == null)
-                    result = PluginControllerFactory.lookForSpecificPlugin(standard, docVersion + "_" + docRelease + "." + standard + "_" + docType);
+                    result = lookForSpecificPlugin(standard, docVersion + "_" + docRelease + "." + standard + "_" + docType);
 
                 if (isPresent(suffix))
-                    result = PluginControllerFactory.lookForSpecificPlugin(standard, docType + "_" + docVersion + "_" + docRelease + "_" + suffix);
+                    result = lookForSpecificPlugin(standard, docType + "_" + docVersion + "_" + docRelease + "_" + suffix);
 
                 if (result == null)
-                    result = PluginControllerFactory.lookForSpecificPlugin(standard, docType + "_" + docVersion + "_" + docRelease);
+                    result = lookForSpecificPlugin(standard, docType + "_" + docVersion + "_" + docRelease);
             }
             if (result == null && isPresent(suffix))
-                result = PluginControllerFactory.lookForSpecificPlugin(standard, docType + "_" + suffix);
+                result = lookForSpecificPlugin(standard, docType + "_" + suffix);
 
             if (result == null)
-                result = PluginControllerFactory.lookForSpecificPlugin(standard, docType);
+                result = lookForSpecificPlugin(standard, docType);
             AbstractPluginControllerFactory.pluginCache.put(key, result);
         }
 
@@ -140,7 +140,7 @@ public abstract class AbstractPluginControllerFactory implements PluginControlle
     @Override
     public PluginController create(String standard, String docType, String docVersion, String docRelease, Tokenizer tokenizer) {
         PluginControllerImpl result;
-        Plugin plugin = AbstractPluginControllerFactory.loadPlugin(standard, docType, docVersion, docRelease);
+        Plugin plugin = loadPlugin(standard, docType, docVersion, docRelease);
 
         if (plugin == null) {
             result = new PluginControllerImpl(standard, tokenizer);
@@ -156,4 +156,9 @@ public abstract class AbstractPluginControllerFactory implements PluginControlle
         lastPluginController = result;
         return result;
     }
+
+    protected abstract Plugin lookForSpecificPlugin(String standard, String docType);
+
+    protected abstract Plugin getInstance(String standard, String docType) throws Exception;
+
 }

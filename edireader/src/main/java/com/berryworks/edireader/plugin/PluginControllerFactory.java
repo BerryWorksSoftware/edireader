@@ -33,7 +33,8 @@ public class PluginControllerFactory extends AbstractPluginControllerFactory {
      * @param docType  - type of document
      * @return Plugin if search was satisfied, or null if not
      */
-    protected static Plugin lookForSpecificPlugin(String standard, String docType) {
+    @Override
+    protected Plugin lookForSpecificPlugin(String standard, String docType) {
         Plugin pluginFound = null;
         try {
             pluginFound = getInstance(standard, docType);
@@ -51,6 +52,9 @@ public class PluginControllerFactory extends AbstractPluginControllerFactory {
         } catch (IllegalAccessException e) {
             if (debug)
                 trace("plugin for " + docType + " caused IllegalAccessException" + e);
+        } catch (Exception e) {
+            if (debug)
+                trace("plugin for " + docType + " threw Exception" + e);
         }
 
         return pluginFound;
@@ -66,8 +70,8 @@ public class PluginControllerFactory extends AbstractPluginControllerFactory {
      * @throws InstantiationException for problems when attempting to load the class
      * @throws IllegalAccessException for problems when attempting to load the class
      */
-    protected static Plugin getInstance(String standard, String docType) throws ClassNotFoundException,
-            InstantiationException, IllegalAccessException {
+    @Override
+    protected Plugin getInstance(String standard, String docType) throws Exception {
         Plugin instance;
         String pluginName = pluginPackage() + "." + standard + "_" + docType;
         if (debug)
