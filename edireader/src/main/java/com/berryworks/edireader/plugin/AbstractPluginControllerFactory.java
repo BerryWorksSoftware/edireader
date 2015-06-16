@@ -71,11 +71,11 @@ public abstract class AbstractPluginControllerFactory implements PluginControlle
     protected Plugin loadPlugin(String standard, String docType, String docVersion, String docRelease) {
         Plugin result = null;
         String key = standard + "_" + docType + "_" + docVersion + "_" + docRelease;
-        if (AbstractPluginControllerFactory.pluginCache.containsKey(key)) {
-            if (AbstractPluginControllerFactory.debug)
-                AbstractPluginControllerFactory.trace("plugin for " + key + " found in cache");
+        if (pluginCache.containsKey(key)) {
+            if (debug)
+                trace("plugin for " + key + " found in cache");
             lastPluginLoaded = key;
-            result = AbstractPluginControllerFactory.pluginCache.get(key);
+            result = pluginCache.get(key);
 
         } else {
             String suffix = System.getProperty("EDIREADER_PLUGIN_SUFFIX");
@@ -97,7 +97,9 @@ public abstract class AbstractPluginControllerFactory implements PluginControlle
 
             if (result == null)
                 result = lookForSpecificPlugin(standard, docType);
-            AbstractPluginControllerFactory.pluginCache.put(key, result);
+
+            if (result != null)
+                pluginCache.put(key, result);
         }
 
         return result;
