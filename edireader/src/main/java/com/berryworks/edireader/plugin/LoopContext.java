@@ -25,18 +25,18 @@ import java.util.Set;
 
 /**
  * An object that represents a segment loop within an EDI document.
- * <p/>
+ * <p>
  * EDIReader uses a LoopStack, which is a stack of LoopContext objects, to track the
  * current nested segment loops while parsing an EDI document.
- * <p/>
+ * <p>
  * In the UN/EDIFACT EDI standards, a segment loop is typically called
  * a segment group.
- * <p/>
+ * <p>
  * The primary attribute of a LoopContext instance is simply the name of the segment loop.
  * However, when a ValidatingPlugin is used, the LoopContext is also used to track
  * how many times a given segment has been repeated, which mandatory segment types have been seen,
  * and the current position within an expected ordering of segment types.
- * <p/>
+ * <p>
  *
  * @see LoopStack
  */
@@ -60,7 +60,7 @@ public class LoopContext {
 
     /**
      * Records the fact that a given segment has appeared.
-     * <p/>
+     * <p>
      * If that segment type is mandatory, then this appearance satisfies that requirement.
      *
      * @param segmentName segment type of the segment

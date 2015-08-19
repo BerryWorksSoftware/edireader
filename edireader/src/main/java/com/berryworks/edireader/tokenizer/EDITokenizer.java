@@ -28,13 +28,12 @@ import java.nio.CharBuffer;
 
 /**
  * Interprets EDI input as a sequence of primitive syntactic tokens.
- * <p/>
+ * <p>
  * As an EDI interchange is parsed, the parser uses a Tokenizer to advance through the
  * input EDI stream one token at a time. A call to <code>nextToken()</code> causes the tokenizer to advance
  * past the next token and return a <code>Token</code> instance describing that token.
- * <p/>
+ * <p>
  * This implementation of Tokenizer uses CharBuffer instead of char[].
- * <p.>
  */
 public class EDITokenizer extends AbstractTokenizer {
 

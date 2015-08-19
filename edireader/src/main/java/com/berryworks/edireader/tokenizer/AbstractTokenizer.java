@@ -249,7 +249,6 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
 
     /**
      * Gets the next token expecting it to be a digit sequence.
-     * <p/>
      *
      * @return value integer value implied by digits
      * @throws SAXException                                for SAX compatibility
@@ -418,7 +417,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
     /**
      * Scans a series of data characters up to the first character other than a
      * data character.
-     * <p/>
+     * <p>
      * Each character is appended to the value of the current token. Upon
      * return, cChar and cClass are left referencing the character after the
      * last character of data; in other words, getChar() will have been called

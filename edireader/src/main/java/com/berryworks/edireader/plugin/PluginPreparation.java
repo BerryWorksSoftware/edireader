@@ -37,7 +37,7 @@ public class PluginPreparation {
 
     /**
      * Constructs an instance given an array of LoopDescriptors.
-     * <p/>
+     * <p>
      * The LoopDescriptors typically are taken directly from the EDIPlugin for a given type of document.
      *
      * @param loops - array of LoopDescriptors
@@ -59,7 +59,7 @@ public class PluginPreparation {
     /**
      * Returns an ordered list of LoopDescriptors corresponding to loops that start with a
      * given segment name.
-     * <p/>
+     * <p>
      * The LoopDescriptors appear in the same order as they were mentioned in the plugin.
      *
      * @param segment - name of the segment of interest

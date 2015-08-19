@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * Stack of LoopContext instances used while parsing an EDI document.
- * <p/>
+ * <p>
  * As EDIReader parses each segment within an EDI document, it uses a LoopStack
  * to track the nested segment loops in which the current segment occurs.
  * The bottom of the stack is a LoopContext that describes the implied outer segment loop.

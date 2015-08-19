@@ -44,7 +44,7 @@ import java.io.*;
 
 /**
  * Converts EDI input to XML output using the default XSLT transformer.
- * <p/><br><br>
+ * <p>
  * Assuming your CLASSPATH contains edireader-n.n.n.jar, you may run this program with
  * the command line <br>
  * <br><code>

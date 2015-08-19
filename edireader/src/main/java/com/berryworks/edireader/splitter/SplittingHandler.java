@@ -35,7 +35,7 @@ import java.io.IOException;
 /**
  * Splits an EDI interchange containing multiple
  * documents into a series of interchanges containing one document each.
- * <p/>
+ * <p>
  * This implementation of a SAX ContentHandler filters the SAX
  * calls produced by parsing an interchange into an equivalent sequence of
  * SAX calls that make each EDI document appear to have been in an interchange

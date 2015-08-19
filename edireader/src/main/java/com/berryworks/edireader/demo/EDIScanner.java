@@ -36,12 +36,11 @@ import java.io.*;
 
 /**
  * Scans EDI input to produce a summary report.
- * <p/>
+ * <p>
  * This program illustrates the use of EDIReader with a ContentHandler other
  * than XSLT. In this case, a simple inner class accepts the call-backs from the
  * EDIReader and produces the report.
- * </p>
- * <p/>
+ * <p>
  * This programs also demonstrates how to parse a single input stream that
  * contains multiple EDI interchanges. Note the interchanges are not required to
  * be all of the same EDI standard; ANSI and EDIFACT interchanges can be freely

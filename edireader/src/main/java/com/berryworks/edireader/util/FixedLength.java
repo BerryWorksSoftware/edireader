@@ -48,7 +48,7 @@ public abstract class FixedLength {
     /**
      * Force a given String value to a fixed length
      * by truncating right-most characters or padding on the right with spaces.
-     * <p/>
+     * <p>
      * A null or empty String argument results in a String of spaces with the
      * fixed length.
      *
@@ -71,7 +71,7 @@ public abstract class FixedLength {
     /**
      * Return a String of a fixed length by adding zeros at the beginning
      * of a given String.
-     * <p/>
+     * <p>
      * If the original String is greater than the
      * fixed length, return a right-truncated copy of the String.
      *

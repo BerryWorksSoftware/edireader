@@ -43,7 +43,7 @@ import java.util.List;
 
 /**
  * Provides convenience methods for using the W3C DOM API in an EDI context.
- * <p/>
+ * <p>
  * These method are written using the EDIReader and DOM APIs and simply encapsulate
  * functional sequences that may be useful for testing and other purposes.
  */

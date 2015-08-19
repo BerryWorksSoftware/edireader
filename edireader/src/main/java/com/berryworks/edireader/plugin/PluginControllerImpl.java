@@ -29,12 +29,12 @@ import com.berryworks.edireader.tokenizer.Tokenizer;
 /**
  * Determines and maintains state transitions for the segment looping structure
  * within a particular EDI document.
- * <p/>
+ * <p>
  * An EDI parser delegates the job of detecting segment loop boundaries
  * to a PluginController. This allows the EDI parsers for ANSI and EDIFACT
  * to be fully consistent with their use of plugins and focus on the specifics of
  * the particular EDI standard.
- * <p/>
+ * <p>
  * This PluginControllerImpl provides the normal
  * segment loop support based on LoopDescriptors in Plugins.
  * It is possible, however, to extend this behavior by creating a subclass of
@@ -193,7 +193,7 @@ public class PluginControllerImpl extends PluginController {
 
     /**
      * Performs validation logic with respect to a candidate LoopDescriptor.
-     * <p/>
+     * <p>
      * The default implementation provide by this class returns true, indicating that the
      * LoopDescriptor is valid, for any non-null LoopDescriptor.
      * The primary purpose of this method is to provide a "hook" so that a subclass of
@@ -213,7 +213,7 @@ public class PluginControllerImpl extends PluginController {
 
     /**
      * Performs validation logic appropriate for the end of a segment loop.
-     * <p/>
+     * <p>
      * The default implementation is empty. A PluginController subclass can override
      * this method in order to apply its own validation policies.
      *
@@ -225,7 +225,7 @@ public class PluginControllerImpl extends PluginController {
 
     /**
      * Validates the appearance of a segment, given the selected LoopDescriptor and the current LoopStack.
-     * <p/>
+     * <p>
      * The default implementation always returns true.
      * The primary purpose of this method is to provide a hook for subclasses to perform
      * a particular type of validation.

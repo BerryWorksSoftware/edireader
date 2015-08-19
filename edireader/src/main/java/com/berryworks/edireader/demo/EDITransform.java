@@ -38,7 +38,7 @@ import java.io.*;
 
 /**
  * Transform EDI input using an XSLT stylesheet.
- * <p/>
+ * <p>
  * <br>
  * <br>
  * Assuming your CLASSPATH contains EDIReader.jar, you may run this program with

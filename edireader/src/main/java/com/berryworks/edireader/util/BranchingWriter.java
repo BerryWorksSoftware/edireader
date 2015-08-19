@@ -28,16 +28,16 @@ import java.io.Writer;
 /**
  * An implementation of Writer that supports two alternate versions
  * of the written output.
- * <p/>
+ * <p>
  * As a matter of convention, the two version are termed the "trunk" and the "branch".
  * In addition to the normal write methods which write data to both the trunk and the branch,
  * methods are provided to write different data to the trunk and/or the branch.
- * <p/>
+ * <p>
  * If this Writer is closed using the normal close method, then the trunk version is used
  * and the branch is discarded.
  * A closeUsingBranch() method is provided which causes the branch version to be used instead
  * of the trunk version.
- * <p/>
+ * <p>
  * Once the two versions diverge, the alternate versions are buffered in memory.
  * Therefore, this implementation is not appropriate for arbitrarily large volumes of data.
  */

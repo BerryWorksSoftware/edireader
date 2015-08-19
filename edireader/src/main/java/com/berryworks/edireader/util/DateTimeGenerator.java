@@ -64,7 +64,7 @@ public class DateTimeGenerator {
     /**
      * Inject particular date and time values to use instead of
      * the current date and time.
-     * <p/>
+     * <p>
      * This can be very useful in testing as a mean of allowing expected
      * results that are full repeatable.
      *

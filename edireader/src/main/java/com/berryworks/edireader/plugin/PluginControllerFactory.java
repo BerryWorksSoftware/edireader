@@ -87,7 +87,7 @@ public class PluginControllerFactory extends AbstractPluginControllerFactory {
 
     /**
      * Returns the name of the package in which plugins are expected to appear.
-     * <p/>
+     * <p>
      * The default value is "com.berryworks.edireader.plugin" but this can be changed by setting
      * the system property EDIREADER_PLUGIN_PACKAGE. In this way, a user can develop their own plugins and using
      * a package naming scheme of their choice.

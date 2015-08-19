@@ -126,7 +126,7 @@ public abstract class AbstractPluginControllerFactory implements PluginControlle
     /**
      * Creates a new instance of a PluginController, selecting a plugin based on the standard, the type of document,
      * and the version and release characteristics.
-     * <p/>
+     * <p>
      * This factory method supports version-specific plugins for a given type of document. If first tries to load
      * a plugin specific to a particular release and version using the naming convention for plugin class names.
      * If no version-specific plugin is available, it uses the other factory method

@@ -28,14 +28,14 @@ import com.berryworks.edireader.Plugin;
  * comprise the essence of a transaction set Plugin which allows a subclass of
  * EDIReader to consider the nested segment loops that are often important to
  * the semantics of a document.
- * <p/>
+ * <p>
  * <b>Overview.</b>
  * An instance of a LoopDescriptor in a plugin is an expression of a rule.
  * Generally speaking, when an EDIReader parser is parsing an EDI document
  * for which a plugin is available, it consults these LoopDescriptor rules
  * for each segment in the document to determine if the appearance of the
  * segment marks the beginning of a new segment loop.
- * <p/>
+ * <p>
  * For each segment, the parser evaluates each rule in order
  * and performs the action described
  * by the first rule that applies in the current context.
@@ -43,26 +43,26 @@ import com.berryworks.edireader.Plugin;
  * to the segment in current context, then no action is taken;
  * in other words, the segment is treated simply as another segment in the
  * current segment loop.
- * <p/>
+ * <p>
  * <p><b>Basic attributes of a LoopDescriptor.</b>
  * There are four attributes of a LoopDescriptor which are specified in its constructor.
- * <p/>
+ * <p>
  * The <i>name</i> is simply the name of a segment loop described by this rule.
  * This name will appear as the value of the "Id" attribute in the &LT;loop&GT; element of the
  * generated XML.
  * There are a few special cases for this attribute that are described below.
- * <p/>
+ * <p>
  * The <i>nestingLevel</i> indicates how deeply nested is the loop. The segments of an
  * EDI document that are not within a segment loop are considered to be
  * in an implicit outer loop at nesting level 0.
- * <p/>
+ * <p>
  * The <i>firstSegment</i> attribute is the type of the segment that
  * marks the beginning of a new instance of the described segment loop.
  * For example a "PID" value might be used in a plugin for an ANSI 810 Invoice
  * document to define the segment loop that begins with the PID segment.
  * Similarly, a "LIN" value might be used in a plugin for
  * an EDIFACT INVOIC message to define a loop that begins with an LIN segment.
- * <p/>
+ * <p>
  * The <i>loopContext</i> attribute places a condition on when the
  * LoopDescriptor applies as described below.
  * <p><b>When does a LoopDescriptor rule apply?</b>
@@ -72,7 +72,7 @@ import com.berryworks.edireader.Plugin;
  * and loopContext attributes are considered;
  * the other two attributes govern the action take once a rule is selected
  * and have no bearing on the decision of whether or not the rule applies.
- * <p/>
+ * <p>
  * For a rule to apply, the firstSegment attribute must match exactly the
  * segment type of the segment in the document.
  * Once the segment type is matched to the firstSegment attribute,
@@ -81,7 +81,7 @@ import com.berryworks.edireader.Plugin;
  * which can be specified by ANY_CONTEXT symbolic constant,
  * indicates that this LoopDescriptor rule applies any time that the
  * segment in the EDI document matches the firstSegment attribute.
- * <p/>
+ * <p>
  * The loopContext attribute may also begin with a "/" and specify
  * a nested loop path of slash-delimited loop names. For example, a loopContext
  * of "/ABC/DEF/GHI" would indicate a GHI loop nested within a DEF loop
@@ -91,8 +91,8 @@ import com.berryworks.edireader.Plugin;
  * LoopDescriptor rule if the segment type matches the firstSegment attribute
  * and the nested segment loop context of that segment in the parsed document
  * is included in the context described by the path.
- * <p/>
- * <p/><b>Actions described by a LoopDescriptor.</b>
+ * <p>
+ * <p><b>Actions described by a LoopDescriptor.</b>
  * The most obvious action is for the parser to start a new instance of a segment loop,
  * and this action is designated by simply using the desired loop name as the loopName
  * attribute.
@@ -103,17 +103,17 @@ import com.berryworks.edireader.Plugin;
  * In this way, the LoopDescriptor rules need only describe the conditions are entering a
  * new segment loop, and the parser and supporting framework can determine where the end of
  * each segment loop occurs.
- * <p/>
+ * <p>
  * A loopName of null indicates an explicit non-action. When a rule of this kind is applied,
  * then no loop transition occurs in the EDI document, and since a matching rule was encountered
  * no further are considered. By placing a null action rule in the sequence of rules for a given
  * segment type, you can in effect eliminate certain conditions and therefore simplify the
  * rules that follow.
- * <p/>
+ * <p>
  * The value "/" as a loopName indicates re-entry of the current loop at the designated nesting level.
  * The appropriate number of nested loops are properly terminated.
- * <p/>
- * <p/><b>Ordering of LoopDescriptors in a Plugin.</b>
+ * <p>
+ * <p><b>Ordering of LoopDescriptors in a Plugin.</b>
  * Remember that the parser considers LoopDescriptors in the order that they appear
  * in the plugin and accepts the first one that matches, ignoring the rest.
  * Therefore, if there are multiple LoopDescriptors for a given segment type,
@@ -123,7 +123,7 @@ import com.berryworks.edireader.Plugin;
  * not important, only the relative order of LoopDescriptors with respect to others
  * for the same segment type. (For readability, it is suggested that you group LoopDescriptors
  * for a given segment type together, and order those groups alphabetically by segment type.)
- * <p/>
+ * <p>
  * Within a series of LoopDescriptors for a particular segment type,
  * it is usually a good idea to place those descriptors with the deepest nesting level
  * and longest context path first. In this way, the parser will consider the most
@@ -132,8 +132,8 @@ import com.berryworks.edireader.Plugin;
  * This can simplify the context argument for LoopDescriptors. In fact, it is common for the last
  * LoopDescriptor for a given segment type to use ANY_CONTEXT for its context argument, since the
  * prior LoopDescriptors would have covered all possibilities but one.
- * <p/>
- * <p/><b>Plugin Optimization.</b>
+ * <p>
+ * <p><b>Plugin Optimization.</b>
  * The description above suggests that the entire array of LoopDescriptors in
  * a plugin is examined serially for each segment within an EDI document.
  * This is logically but not literally true.
@@ -149,7 +149,7 @@ public class LoopDescriptor {
 
     /**
      * Name of the loop entered as the result of applying this descriptor.
-     * <p/>
+     * <p>
      * The name is typically a simple text name that appears in the
      * specifications of the EDI document but not in the actual data. The value
      * "/" in this field designates the implicit outer loop. The variant form
@@ -165,7 +165,7 @@ public class LoopDescriptor {
 
     /**
      * Level of nesting for this loop.
-     * <p/>
+     * <p>
      * Typically, a document will begin with one or more segments that are
      * considered to be outside of any segment loops. The segments are
      * implicitly at nesting level 0. The first level of explicit nesting is
