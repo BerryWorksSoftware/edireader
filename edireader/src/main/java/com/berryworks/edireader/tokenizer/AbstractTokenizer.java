@@ -563,9 +563,9 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
     }
 
     /**
-     * Advances to the next token. <pr>Sets tokenReady, currentToken, and state.
+     * Advances to the next token. Sets tokenReady, currentToken, and state.
      *
-     * @throws IOException                                 for problem reading EDI data
+     * @throws IOException for problem reading EDI data
      * @throws com.berryworks.edireader.EDISyntaxException if invalid EDI is detected
      */
     protected void advance() throws IOException, EDISyntaxException {
