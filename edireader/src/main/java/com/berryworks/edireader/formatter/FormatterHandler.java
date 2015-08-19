@@ -49,7 +49,7 @@ public class FormatterHandler extends EDIReaderSAXAdapter {
     }
 
     @Override
-    protected void beginInterchange(int charCount, int segmentCharCount) {
+    protected void beginInterchange(int charCount, int segmentCharCount, Attributes attributes) {
         indent = "";
         String segment = readSegment((charCount - segmentCharCount), segmentCharCount);
         output.println(indent + segment);
@@ -63,7 +63,7 @@ public class FormatterHandler extends EDIReaderSAXAdapter {
     }
 
     @Override
-    protected void beginExplicitGroup(int charCount, int segmentCharCount) {
+    protected void beginExplicitGroup(int charCount, int segmentCharCount, Attributes attributes) {
         indent = "   ";
         String segment = readSegment((charCount - segmentCharCount), segmentCharCount);
         output.println(indent + segment);

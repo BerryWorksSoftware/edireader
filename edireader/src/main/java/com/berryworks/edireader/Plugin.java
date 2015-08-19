@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * Parent class for all EDIReader plugins.
- * <p/>
+ * <p>
  * <b>Naming plugin classes.</b>
  * The class should extend com.berryworks.edireader.Plugin and must be named
  * precisely according to a specific pattern. If the plugin is for an
@@ -42,8 +42,8 @@ import java.util.List;
  * is the symbolic name for the message type that appears in the UNH segment.
  * For instance, a plugin for an EDIFACT purchase order message would have the
  * class name EDIFACT_ORDERS.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * EDIReader uses this class name to make the runtime linkage to the plugin.
  * Once it has parsed the ST segment (or UNH segment for EDIFACT) it
  * forms the classname that the plugin would have if it is available and
@@ -51,23 +51,23 @@ import java.util.List;
  * If no such class exists, then EDIReader continues without a plugin and
  * generates XML that does not reflect the internal looping structure of the
  * document.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * For this linkage to work properly, the fully-qualified class name must
  * match. Therefore, your plugin must bear a package name of
  * com.berryworks.edireader.plugin
  * although it can be compiled separately and does not have to be placed
  * inside any particular jar file.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * <b>LoopDescriptors.</b>
  * The essence of a Plugin is an array of LoopDescriptors. An EDIReader plugin is expected
  * to subclass Plugin and initialize the loops array with loop descriptors.
  * Each LoopDescriptor expresses a specific situation that corresponds to the entry or exit of a
  * loop instance while parsing.
  * Refer to the documentation for LoopDescriptor for further details.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * <b>PluginController.</b>
  * A parser for a particular EDI standard, typically AnsiReader or EdifactReader,
  * uses an instance of a PluginController to interact with the plugin while parsing the
@@ -82,8 +82,8 @@ import java.util.List;
  * expressed in the query arguments is returned by the query method. Therefore, the ordering
  * of the LoopDescriptors for a given segment type is very important as described in the
  * documentation for LoopDescriptor.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * <b>Plugin Optimization.</b>
  * The description above suggests that the entire array of LoopDescriptors in
  * a plugin is examined serially for each segment within an EDI document.
@@ -130,7 +130,7 @@ public abstract class Plugin {
 
     /**
      * Perform any initialization needed for the plugin before use with a new document.
-     * <p/>
+     * <p>
      * The only cases where this is needed is for plugins that have state. Most plugins are stateless and therefore
      * an instance of a plugin can be reused for many documents. However, it is possible to develop a subclass of Plugin
      * that maintains state. For example, a FilteringPlugin might need to make decisions based on what segment types

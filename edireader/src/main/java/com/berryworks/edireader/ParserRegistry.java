@@ -28,15 +28,15 @@ import java.util.Map;
  * When an EDI or EDI-like stream of data is to be parsed without pre-knowledge of which particular
  * EDI standard is to be used, this parser registry is used to select a parser based on the initial
  * characters of data.
- * <p/>
+ * <p>
  * The parsers for ANSI X.12 and UN/EDIFACT are included in the registry be default. The classes
  * that implement these parsers are provided by the core EDIReader framework.
- * <p/>
+ * <p>
  * Parsers for other formats, including HL7, ACH, and NSF, are also listed in the registry.
  * The classes that implement these formats are optional modules not included in the core EDIReader framework.
  * If an optional parser module is present in the classpath, the registry is therefore able to
  * select and load the appropriate parser in response to the leading character sequences in the data.
- * <p/>
+ * <p>
  * It is also possible for a developer to implement a parser for an EDI-like data format and register that
  * parser along with the leading data characters which signal the instance of an interchange of that format.
  * In this way, the EDIReader framework can be extended to parse previously unsupported data formats in the same
@@ -72,7 +72,7 @@ public class ParserRegistry {
     /**
      * Returns an instance of some EDIReader subclass based on the first
      * several chars of data to be parsed.
-     * <p/>
+     * <p>
      * Parsers for ANSI X12 and UN/EDIFACT are built-in. Other parsers can be registered, including
      * custom parsers developed by users. Parsers registered via register() are considered first for
      * a match with the incoming data before the built-in parsers are considered, allowing users to

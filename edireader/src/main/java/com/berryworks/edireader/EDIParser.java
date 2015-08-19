@@ -29,7 +29,7 @@ import javax.xml.parsers.SAXParser;
 
 /**
  * Wraps an EDIReader.
- * <p/>
+ * <p>
  * EDIParser is necessary to satisfy the JAXP conventions
  * for dynamic selection and loading of a specific XML parser into
  * an XML application. By following this convention,
@@ -43,7 +43,7 @@ public class EDIParser extends SAXParser {
 
     /**
      * Construct an EDIParser object.
-     * <p/>
+     * <p>
      * This EDIParser provides for delayed format recognition,
      * where the actual subclass of EDIReader is not created until
      * the parse method is first called. This mechanism is in support

@@ -22,7 +22,7 @@ package com.berryworks.edireader;
 
 /**
  * Represents the full collection of syntax characters that apply to EDI interchanges.
- * <p/>
+ * <p>
  * An instance of a SyntaxDescriptor is typically used to describe the particular syntax
  * characters used in a given EDI interchange.
  * The <bold>delimiter</bold> is the character that separates two consecutive fields in an EDI segment.
