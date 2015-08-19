@@ -97,7 +97,7 @@ public interface Token {
 
     /**
      * Gets the value of a SIMPLE token.
-     * <pr>
+     * <p>
      * If this token is of type SEGMENT_START, the value of getSegmentType()
      * is returned.
      *

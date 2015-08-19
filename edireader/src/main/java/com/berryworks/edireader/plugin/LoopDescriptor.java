@@ -113,7 +113,7 @@ import com.berryworks.edireader.Plugin;
  * The value "/" as a loopName indicates re-entry of the current loop at the designated nesting level.
  * The appropriate number of nested loops are properly terminated.
  * <p>
- * <p><b>Ordering of LoopDescriptors in a Plugin.</b>
+ * <b>Ordering of LoopDescriptors in a Plugin.</b>
  * Remember that the parser considers LoopDescriptors in the order that they appear
  * in the plugin and accepts the first one that matches, ignoring the rest.
  * Therefore, if there are multiple LoopDescriptors for a given segment type,

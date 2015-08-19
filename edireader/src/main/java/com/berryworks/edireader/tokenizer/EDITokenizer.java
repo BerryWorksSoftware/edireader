@@ -80,7 +80,7 @@ public class EDITokenizer extends AbstractTokenizer {
     }
 
     /**
-     * Gets the next character of input. <pr>Sets cChar, cClass
+     * Gets the next character of input. Sets cChar and cClass
      *
      * @throws IOException for problem reading EDI data
      */

@@ -32,7 +32,7 @@ import java.io.PrintStream;
  * A SAX ContentHandler with specific knowledge of the XML structures emitted by EDIReader.
  * If adapts the general purpose SAX ContentHandler API to an API that receives calls in terms
  * of EDI interchanges, groups, transactions, etc.
- * <p/>
+ * <p>
  * If you need to develop a SAX back-end to process EDI content parsed by EDIReader,
  * it may be convenient to inherit from this class and avoid some of the tedious aspects
  * of detecting EDI structures in the SAX interface.

@@ -47,7 +47,7 @@ public class DateTimeGenerator {
     private static String timeTestValue = null;
 
     /**
-     * Generate the date and time in an yyMMdd<delimiter>HHmm format.
+     * Generate the date and time in an yyMMdd delimiter HHmm format.
      *
      * @param delimiter char placed between day and time of day
      * @return String representation of date and time
