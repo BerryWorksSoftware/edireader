@@ -36,7 +36,6 @@ import java.util.Set;
  * However, when a ValidatingPlugin is used, the LoopContext is also used to track
  * how many times a given segment has been repeated, which mandatory segment types have been seen,
  * and the current position within an expected ordering of segment types.
- * <p>
  *
  * @see LoopStack
  */

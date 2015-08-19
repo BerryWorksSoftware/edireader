@@ -203,7 +203,7 @@ public class PluginControllerImpl extends PluginController {
      * @param segmentName - name of the segment
      * @param tokenizer   - reference to the Tokenizer to provide context for syntax exceptions
      * @return true if the LoopDescriptor is considered valid.
-     * @throws EDISyntaxException
+     * @throws EDISyntaxException - corresponding to a validation fault
      */
     protected boolean validateDescriptor(LoopDescriptor descriptor,
                                          String segmentName,
@@ -217,8 +217,8 @@ public class PluginControllerImpl extends PluginController {
      * The default implementation is empty. A PluginController subclass can override
      * this method in order to apply its own validation policies.
      *
-     * @param completedLoop
-     * @throws EDISyntaxException
+     * @param completedLoop - describes the loop that was just completed
+     * @throws EDISyntaxException - corresponding to a validation fault
      */
     protected void validateCompletedLoop(LoopContext completedLoop) throws EDISyntaxException {
     }

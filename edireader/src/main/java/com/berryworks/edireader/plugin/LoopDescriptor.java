@@ -44,11 +44,11 @@ import com.berryworks.edireader.Plugin;
  * in other words, the segment is treated simply as another segment in the
  * current segment loop.
  * <p>
- * <p><b>Basic attributes of a LoopDescriptor.</b>
+ * <b>Basic attributes of a LoopDescriptor.</b>
  * There are four attributes of a LoopDescriptor which are specified in its constructor.
  * <p>
  * The <i>name</i> is simply the name of a segment loop described by this rule.
- * This name will appear as the value of the "Id" attribute in the &LT;loop&GT; element of the
+ * This name will appear as the value of the "Id" attribute in the loop element of the
  * generated XML.
  * There are a few special cases for this attribute that are described below.
  * <p>
@@ -92,7 +92,7 @@ import com.berryworks.edireader.Plugin;
  * and the nested segment loop context of that segment in the parsed document
  * is included in the context described by the path.
  * <p>
- * <p><b>Actions described by a LoopDescriptor.</b>
+ * <b>Actions described by a LoopDescriptor.</b>
  * The most obvious action is for the parser to start a new instance of a segment loop,
  * and this action is designated by simply using the desired loop name as the loopName
  * attribute.
@@ -133,7 +133,7 @@ import com.berryworks.edireader.Plugin;
  * LoopDescriptor for a given segment type to use ANY_CONTEXT for its context argument, since the
  * prior LoopDescriptors would have covered all possibilities but one.
  * <p>
- * <p><b>Plugin Optimization.</b>
+ * <b>Plugin Optimization.</b>
  * The description above suggests that the entire array of LoopDescriptors in
  * a plugin is examined serially for each segment within an EDI document.
  * This is logically but not literally true.
