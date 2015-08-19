@@ -43,7 +43,6 @@ import java.util.List;
  * For instance, a plugin for an EDIFACT purchase order message would have the
  * class name EDIFACT_ORDERS.
  * <p>
- * <p>
  * EDIReader uses this class name to make the runtime linkage to the plugin.
  * Once it has parsed the ST segment (or UNH segment for EDIFACT) it
  * forms the classname that the plugin would have if it is available and

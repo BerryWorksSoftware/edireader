@@ -159,7 +159,7 @@ public class PluginController {
      * so that a subclass of PluginController could make decisions based
      * on this information.
      *
-     * @param contentHandler
+     * @param contentHandler - the ContentHandler
      * @param elementId      - identifies the particular EDI element (e.g. "HL02")
      * @param valueChars     - chars of the element's value
      * @param index          - index into valueChars array

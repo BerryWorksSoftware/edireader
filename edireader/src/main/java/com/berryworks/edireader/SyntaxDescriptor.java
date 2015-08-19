@@ -25,19 +25,19 @@ package com.berryworks.edireader;
  * <p>
  * An instance of a SyntaxDescriptor is typically used to describe the particular syntax
  * characters used in a given EDI interchange.
- * The <bold>delimiter</bold> is the character that separates two consecutive fields in an EDI segment.
- * The <bold>subdelimiter</bold> is the character that separates two consecutive subfields.
- * The <bold>subSubDelimiter</bold> the the character that separates two consecutive sub-subfields.
+ * The delimiter is the character that separates two consecutive fields in an EDI segment.
+ * The subdelimiter is the character that separates two consecutive subfields.
+ * The subSubDelimiter the the character that separates two consecutive sub-subfields.
  * (ANSI X12 and EDIFACT standards to no use sub-subfields. This is included for other standards
  * such as HL7.)
- * The <bold>decimalMark</bold> is the character used in numeric EDI data to represent the radix point.
+ * The decimalMark is the character used in numeric EDI data to represent the radix point.
  * The decimal mark is the often the period but can be a comma or other value.
- * The <bold>repetitionSeparator</bold> is the character used to separate consecutive instances of
+ * The repetitionSeparator is the character used to separate consecutive instances of
  * field that is allowed to repeat.
- * The <bold>terminator</bold> is the character used to mark the end of a segment.
- * The <bold>terminatorSuffix</bold> is a short String of characters that optionally follow the
+ * The terminator is the character used to mark the end of a segment.
+ * The terminatorSuffix is a short String of characters that optionally follow the
  * terminator. Such suffixes are typically a LF or CR,LF sequence marking the end of a record.
- * The <bold>release</bold> character is the used to mark the immediately following character as
+ * The release character is the used to mark the immediately following character as
  * data and not to be interpreted as a syntax characters.
  */
 public class SyntaxDescriptor {
