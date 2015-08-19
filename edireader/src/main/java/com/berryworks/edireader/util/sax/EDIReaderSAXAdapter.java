@@ -36,9 +36,6 @@ import java.io.PrintStream;
  * If you need to develop a SAX back-end to process EDI content parsed by EDIReader,
  * it may be convenient to inherit from this class and avoid some of the tedious aspects
  * of detecting EDI structures in the SAX interface.
- * <p/>
- * See also com.berryworks.edireader.SAXAdapter which serves a similar purpose.
- * These two classes need to combined into a single class.
  */
 public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePosition {
     protected final XMLTags xmlTags;
@@ -46,12 +43,8 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
     protected boolean anotherSEG, implicitGroup, implicitDocument;
     private int charCount = -1;
     private int segmentCharCount = -1;
-
-    public boolean isImplicitInterchangeTermination() {
-        return implicitInterchangeTermination;
-    }
-
     private boolean implicitInterchangeTermination;
+    private boolean senderAddress;
 
     protected String elementString, subElementString;
 
@@ -67,14 +60,32 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
 
         if (localName.startsWith(xmlTags.getInterchangeTag())) {
             anotherSEG = false;
-            beginInterchange(charCount, segmentCharCount);
+            beginInterchange(charCount, segmentCharCount, atts);
+
+        } else if (localName.startsWith(xmlTags.getSenderTag())) {
+            senderAddress = true;
+
+        } else if (localName.startsWith(xmlTags.getReceiverTag())) {
+            senderAddress = false;
+
+        } else if (localName.startsWith(xmlTags.getAddressTag())) {
+            final String qualifier = atts.getValue(xmlTags.getQualifierAttribute());
+            final String address = atts.getValue(xmlTags.getIdAttribute());
+            final String extra = atts.getValue(xmlTags.getAddressExtraAttribute());
+            if (senderAddress) {
+                senderAddress(qualifier, address, extra);
+            } else {
+                receiverAddress(qualifier, address, extra);
+            }
+
         } else if (localName.startsWith(xmlTags.getGroupTag())) {
             anotherSEG = false;
             if (atts.getLength() == 0) {
                 implicitGroup = true;
                 beginImplicitGroup();
             } else
-                beginExplicitGroup(charCount, segmentCharCount);
+                beginExplicitGroup(charCount, segmentCharCount, atts);
+
         } else if (localName.startsWith(xmlTags.getDocumentTag())) {
             anotherSEG = false;
             if (atts.getLength() == 0) {
@@ -83,6 +94,7 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
             } else {
                 beginDocument(charCount, segmentCharCount, atts);
             }
+
         } else if (localName.startsWith(xmlTags.getSegTag())) {
             if (anotherSEG)
                 beginAnotherSegment(atts);
@@ -90,15 +102,18 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
                 beginFirstSegment(atts);
                 anotherSEG = true;
             }
+
         } else if (localName.startsWith(xmlTags.getLoopTag())) {
             anotherSEG = true;
             String loopName = "";
             if (atts.getLength() > 0)
                 loopName = atts.getValue(0);
             beginSegmentGroup(loopName, atts);
+
         } else if (localName.startsWith(xmlTags.getElementTag())) {
             elementString = "";
             beginSegmentElement(atts);
+
         } else if (localName.startsWith(xmlTags.getSubElementTag())) {
             subElementString = "";
             beginSegmentSubElement(atts);
@@ -110,7 +125,6 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
         this.charCount = charCount;
         this.segmentCharCount = segmentCharCount;
     }
-
 
     @Override
     public int getCharCount() {
@@ -161,19 +175,29 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
         if (elementString != null) elementString += s;
     }
 
+    public boolean isImplicitInterchangeTermination() {
+        return implicitInterchangeTermination;
+    }
+
     public void preface() {
     }
 
     public void addendum() {
     }
 
-    protected void beginInterchange(int charCount, int segmentCharCount) {
+    protected void beginInterchange(int charCount, int segmentCharCount, Attributes attributes) {
+    }
+
+    protected void senderAddress(String qualifier, String address, String extra) {
+    }
+
+    protected void receiverAddress(String qualifier, String address, String extra) {
     }
 
     protected void endInterchange(int charCount, int segmentCharCount) {
     }
 
-    protected void beginExplicitGroup(int charCount, int segmentCharCount) {
+    protected void beginExplicitGroup(int charCount, int segmentCharCount, Attributes attributes) {
     }
 
     protected void endExplicitGroup(int charCount, int segmentCharCount) {
