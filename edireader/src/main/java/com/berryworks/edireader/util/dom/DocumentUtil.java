@@ -43,7 +43,7 @@ import java.util.List;
 
 /**
  * Provides convenience methods for using the W3C DOM API in an EDI context.
- * <p>
+ * <p/>
  * These method are written using the EDIReader and DOM APIs and simply encapsulate
  * functional sequences that may be useful for testing and other purposes.
  */
@@ -116,13 +116,21 @@ public class DocumentUtil {
         return e;
     }
 
+    public static List<Element> getChildren(Element element) {
+        return getChildren(element, null);
+    }
+
     public static List<Element> getChildren(Element element, String tag) {
         List<Element> result = new ArrayList<>();
         NodeList childNodes = element.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node node = childNodes.item(i);
-            if (Node.ELEMENT_NODE == node.getNodeType() && node.getNodeName().equals(tag))
-                result.add((Element) node);
+            if (Node.ELEMENT_NODE == node.getNodeType()) {
+                // tag == null is considered a wildcard
+                if (tag == null || tag.equals(node.getNodeName())) {
+                    result.add((Element) node);
+                }
+            }
         }
         return result;
     }
