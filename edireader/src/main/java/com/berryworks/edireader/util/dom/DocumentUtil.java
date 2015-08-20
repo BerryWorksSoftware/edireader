@@ -21,6 +21,7 @@
 package com.berryworks.edireader.util.dom;
 
 import com.berryworks.edireader.EDIReader;
+import com.berryworks.edireader.plugin.PluginControllerFactoryInterface;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -71,10 +72,18 @@ public class DocumentUtil {
      * @throws Exception if problem reading or parsing input
      */
     public synchronized Document buildDocumentFromEdi(InputSource inputSource) throws Exception {
-        XMLReader ediReader = new EDIReader();
+        return buildDocumentFromEdi(inputSource, null);
+    }
+
+    public synchronized Document buildDocumentFromEdi(InputSource inputSource, PluginControllerFactoryInterface factory) throws Exception {
+        EDIReader ediReader = new EDIReader();
+        if (factory != null) {
+            ediReader.setPluginControllerFactory(factory);
+        }
+        XMLReader xmlReader = ediReader;
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         DOMResult domResult = new DOMResult();
-        transformer.transform(new SAXSource(ediReader, inputSource), domResult);
+        transformer.transform(new SAXSource(xmlReader, inputSource), domResult);
         Document document = (Document) domResult.getNode();
         if (document == null)
             throw new RuntimeException("transform produced null document");
