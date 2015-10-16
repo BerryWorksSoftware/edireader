@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
  */
 package com.berryworks.edireader.tokenizer;
 
@@ -1460,23 +1460,42 @@ public class TestEDITokenizer {
         assertEquals('z', consumed[consumed.length - 1]);
         returnValue = tokenizer.getBuffered();
         assertEquals(0, returnValue.length);
+        // We've read all the data, but have not actually hit the eof
+        assertFalse(tokenizer.isEndOfData());
 
-        // Unget a char, then put it back
+        // Unget a char, then get it again
         tokenizer.ungetChar();
         returnValue = tokenizer.getBuffered();
         assertEquals(1, returnValue.length);
         assertEquals('z', returnValue[0]);
-        tokenizer.getChars(1);
+        char[] chars = tokenizer.getChars(1);
+        assertEquals(1, chars.length);
+        assertEquals('z', chars[0]);
+        returnValue = tokenizer.getBuffered();
+        assertEquals(0, returnValue.length);
+        assertFalse(tokenizer.isEndOfData());
 
-        // Try to consume another
+        // Try to get another
         tokenizer.getChar();
+        // Now we have hit the end
+        assertTrue(tokenizer.isEndOfData());
         returnValue = tokenizer.getBuffered();
         assertEquals(0, returnValue.length);
 
-        // Try to unget a char, but ...
+        // Once end of data has become true, it remains true, and
+        // ungetChar no longer influences what getBuffered() returns. and
+        // and getChar(n) throws an exception
         tokenizer.ungetChar();
+        assertTrue(tokenizer.isEndOfData());
         returnValue = tokenizer.getBuffered();
         assertEquals(0, returnValue.length);
+
+        try {
+            tokenizer.getChars(1);
+            fail("");
+        } catch (EDISyntaxException ignore) {
+
+        }
 
     }
 
@@ -1521,6 +1540,8 @@ public class TestEDITokenizer {
         assertEquals(1, consumed.length);
         assertEquals('a', consumed[0]);
 
+        // Notice that if you use lookahead to view beyond
+        // the end of data, you see '?' chars.
         lookahead = tokenizer.lookahead(27);
         assertEquals(27, lookahead.length);
         assertEquals('b', lookahead[0]);

@@ -135,18 +135,40 @@ public class EDITokenizer extends AbstractTokenizer {
         segCharCount++;
     }
 
+    /**
+     * Gets the remaining chars that have been read into the buffer
+     * and not returned by getChars(n) or equivalant. Chars previewed
+     * by lookahead(n) are not considered to have been used and therefore
+     * are included among the chars returned by getBuffered.
+     *
+     * The use of getBuffered() is intended for only very special situations.
+     * For example, if an input stream contains multiple fully independent EDI
+     * interchanges -- perhaps from different EDI standards -- it is useful to
+     * logically "start from scratch" on each successive interchange, with new
+     * parser, tokenizer, buffer, etc, with any chars remaining in the buffer
+     * from the previous interchange to be used as new data.
+     *
+     * @return chars of unprocessed input data
+     */
     public char[] getBuffered() {
         char[] result = new char[0];
 
-        if (endOfFile)
-            return result;
+//        if (endOfFile)
+//            return result;
 
         if (charBuffer.remaining() == 0 && !unGot) {
             return result;
         }
 
         try {
-            result = lookahead(charBuffer.remaining() + (unGot ? 1 : 0));
+            int n = charBuffer.remaining();
+            if (endOfFile && n == 0) {
+                // Special case: if we've hit eof and the charBuffer is empty
+                // ignore an unGot char if there is one.
+            } else {
+                n += unGot ? 1 : 0;
+            }
+            result = lookahead(n);
         } catch (Exception ignore) {
         }
 
@@ -177,11 +199,8 @@ public class EDITokenizer extends AbstractTokenizer {
         // The minus 1 is because we have already filled the first char of the return value, so we only need n-1 more
         if (charBuffer.remaining() < n - 1) {
             if (EDIReader.debug)
-                if (EDIReader.debug)
-                    trace("buffering more data to satisfy lookahead(" + n + ")");
-            charBuffer.compact();
+                trace("Buffering more data to satisfy lookahead(" + n + ")");
             readUntilBufferProvidesAtLeast(n - 1);
-            charBuffer.flip();
         }
 
         // Move chars from the buffer into the return value
@@ -201,19 +220,26 @@ public class EDITokenizer extends AbstractTokenizer {
 
     private void readUntilBufferProvidesAtLeast(int needed) throws IOException {
 
-        while (charBuffer.remaining() < needed) {
+        int remaining;
+        while ((remaining = charBuffer.remaining()) < needed) {
+            if (EDIReader.debug)
+                trace("Reading from input stream because at least " + needed +
+                        " chars are needed and only " + remaining + " are avilalble");
             charBuffer.compact();
             int n;
             while ((n = inputReader.read(charBuffer)) == 0) {
             }
-
             charBuffer.flip();
+
             if (n < 0) {
+                if (EDIReader.debug)
+                    trace("Hit end of file on the input stream");
                 endOfFile = true;
                 break;
+            } else {
+                if (EDIReader.debug)
+                    trace("Number of chars read from input stream: " + n);
             }
         }
     }
-
-
 }
