@@ -546,7 +546,7 @@ public class AnsiReader extends StandardReader {
         if (isPreviewed())
             throw new EDISyntaxException(INTERNAL_ERROR_MULTIPLE_EOFS);
 
-        // No release character is support for ANSI X.12
+        // No release character is supported for ANSI X.12
         setRelease(-1);
 
         char[] buf = getTokenizer().lookahead(128);

@@ -72,8 +72,6 @@ public class XmlFormatter extends FilterWriter {
                 if (c == '<') {
                     state = State.HOLDING_A_CLOSE_FOLLOWED_BY_OPEN;
                     break;
-                } else if (Character.isWhitespace(c)) {
-                    // ignore whitespace after a >
                 } else {
                     out.write('>');
                     out.write(c);
