@@ -1,0 +1,4 @@
+rootProject.name = 'EDIReaderCommunityEdition'
+include ':edireader'
+
+project(':edireader').projectDir = "$rootDir/edireader" as File
