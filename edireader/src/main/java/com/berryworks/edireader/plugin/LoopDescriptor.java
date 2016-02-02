@@ -23,7 +23,7 @@ package com.berryworks.edireader.plugin;
 import com.berryworks.edireader.Plugin;
 
 /**
- * Static metadata about a segment group or loop segments within an EDI document
+ * Static metadata about a segment loop (also known as a segment group) within an EDI document
  * (also known as transaction set or message). A sequence of LoopDescriptors
  * comprise the essence of a transaction set Plugin which allows a subclass of
  * EDIReader to consider the nested segment loops that are often important to
@@ -87,7 +87,7 @@ import com.berryworks.edireader.Plugin;
  * of "/ABC/DEF/GHI" would indicate a GHI loop nested within a DEF loop
  * nested within an ABC loop which is nested within the implicit outer loop
  * of the document.
- * A segment appearing in an EDI document is consider to match such a
+ * A segment appearing in an EDI document is considered to match such a
  * LoopDescriptor rule if the segment type matches the firstSegment attribute
  * and the nested segment loop context of that segment in the parsed document
  * is included in the context described by the path.
@@ -100,7 +100,7 @@ import com.berryworks.edireader.Plugin;
  * but this is not necessary.
  * If the new loop instance is at a lower nesting level than the current loop, then the parser
  * generates the proper XML to terminate the current loops as needed.
- * In this way, the LoopDescriptor rules need only describe the conditions are entering a
+ * In this way, the LoopDescriptor rules need only describe the conditions for entering a
  * new segment loop, and the parser and supporting framework can determine where the end of
  * each segment loop occurs.
  * <p>

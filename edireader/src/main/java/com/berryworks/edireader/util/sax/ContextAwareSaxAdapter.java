@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * The implementation of the SAX ContentHandler adapts to a modified API enhanced with
  * two new features: the characters of XML data content are made available when an element is
- * started, and the names of all the nested elements is available at any point.
+ * started, and the names of all the nested elements are available at any point.
  */
 public abstract class ContextAwareSaxAdapter extends DefaultHandler {
 

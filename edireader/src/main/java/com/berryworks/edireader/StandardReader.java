@@ -258,7 +258,7 @@ public abstract class StandardReader extends EDIReader {
 
     public PluginControllerFactoryInterface getPluginControllerFactory() {
         // Lazy load
-        if (pluginControllerFactory == null ) {
+        if (pluginControllerFactory == null) {
             pluginControllerFactory = new PluginControllerFactory();
         }
         return pluginControllerFactory;
