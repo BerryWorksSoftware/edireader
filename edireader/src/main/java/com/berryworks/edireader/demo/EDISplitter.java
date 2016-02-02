@@ -123,7 +123,7 @@ public class EDISplitter {
                 String senderQualifier, String senderId,
                 String receiverQualifier, String receiverId,
                 String interchangeControlNumber, String groupControlNumber, String documentControlNumber,
-                String documentType) throws IOException {
+                String documentType, String version) throws IOException {
             String xmlFilename = generateName();
 
 //            System.out.println("Generating XML into file " + xmlFilename);

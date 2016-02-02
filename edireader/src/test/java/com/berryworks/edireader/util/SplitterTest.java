@@ -225,7 +225,7 @@ public class SplitterTest extends VerboseTestCase {
                 String senderQualifier, String senderId,
                 String receiverQualifier, String receiverId,
                 String interchangeControlNumber, String groupControlNumber, String documentControlNumber,
-                String documentType) throws IOException {
+                String documentType, String version) throws IOException {
         }
 
         public int getCreateCalls() {

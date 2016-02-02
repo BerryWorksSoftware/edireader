@@ -32,7 +32,7 @@ public interface HandlerFactory {
             String senderQualifier, String senderId,
             String receiverQualifier, String receiverId,
             String interchangeControlNumber, String groupControlNumber, String documentControlNumber,
-            String documentType) throws IOException;
+            String documentType, String version) throws IOException;
 
     void markEndOfStream() throws IOException;
 }

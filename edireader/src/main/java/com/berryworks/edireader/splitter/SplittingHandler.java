@@ -100,7 +100,8 @@ public class SplittingHandler extends DefaultHandler {
                     interchangeAttributes.getValue(xmlTags.getControl()),
                     groupAttributes.getValue(xmlTags.getControl()),
                     documentAttributes.getValue(xmlTags.getControl()),
-                    documentAttributes.getValue(xmlTags.getDocumentType()));
+                    documentAttributes.getValue(xmlTags.getDocumentType()),
+                    "");
         } catch (Exception e) {
             throw new SAXException(e);
         }
