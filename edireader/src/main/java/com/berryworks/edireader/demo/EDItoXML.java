@@ -34,10 +34,7 @@ import org.xml.sax.XMLReader;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
@@ -180,6 +177,8 @@ public class EDItoXML {
 
             // Use a StreamResult to capture the generated XML output
             StreamResult result = new StreamResult(generatedOutput);
+
+            transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
 
             // Call the Transformer to generate XML output from the parsed input
             transformer.transform(source, result);
