@@ -162,24 +162,9 @@ public class EDIScanner {
 
     private class ScanningHandler extends DefaultHandler {
 
-        boolean ref03;
-
-        @Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
-            if (ref03) {
-                String data = String.valueOf(ch, start, length);
-                System.out.println(data);
-                if (data.contains("appl")) {
-                    System.out.println("***");
-                }
-            }
-            super.characters(ch, start, length);
-        }
-
         @Override
         public void startElement(String namespace, String localName,
                                  String qName, Attributes atts) throws SAXException {
-            ref03 = false;
             String indent;
             if (localName.startsWith(parser.getXMLTags().getInterchangeTag())) {
                 scannerOutput.println("+Interchange  (" + ++interchangeCount + ")");
@@ -200,17 +185,6 @@ public class EDIScanner {
                     .getDocumentTag())) {
                 scannerOutput.println("    +Document");
                 indent = "       ";
-
-            } else if (localName.startsWith(parser.getXMLTags().getElementTag())) {
-                System.out.println(localName);
-                String id = atts.getValue("Id");
-                System.out.println(id);
-                if ("REF03".equals(id)) {
-                    ref03 = true;
-                }
-
-                indent = "?";
-
 
             } else {
                 // indent = " ";
