@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2016 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -25,6 +25,8 @@ import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.Plugin;
 import com.berryworks.edireader.PluginController;
 import com.berryworks.edireader.tokenizer.Tokenizer;
+
+import static com.berryworks.edireader.Plugin.CURRENT;
 
 /**
  * Determines and maintains state transitions for the segment looping structure
@@ -119,8 +121,7 @@ public class PluginControllerImpl extends PluginController {
             return false;
 
         String newLoopName = newDescriptor.getName();
-        if (Plugin.CURRENT.equals(newLoopName) &&
-                newDescriptor.getNestingLevel() == loopDescriptor.getNestingLevel()) {
+        if (CURRENT.equals(newLoopName) && newDescriptor.getNestingLevel() == loopDescriptor.getNestingLevel()) {
             if (debug) trace("resuming current loop without transition");
         } else {
             if (debug) trace("transitioning to level " + newDescriptor.getNestingLevel());
@@ -137,8 +138,7 @@ public class PluginControllerImpl extends PluginController {
                 // closing it.
                 currentLoopName = newDescriptor.getNestingLevel() == 0 ? "/" : ".";
             } else {
-                // Close the current loop at the target level so that we
-                // can initiate a new one.
+                // Close the current loop at the target level so that we can initiate a new one.
                 numberOfLoopsClosed++;
                 currentLoopName = newLoopName;
                 resumeLoop = false;
@@ -146,10 +146,9 @@ public class PluginControllerImpl extends PluginController {
 
             if (debug) trace("closing " + numberOfLoopsClosed + " loops");
 
-            if ((numberOfLoopsClosed < 0)
-                    || (numberOfLoopsClosed > loopDescriptor.getNestingLevel()))
-                throw new EDISyntaxException(
-                        "Improper sequencing noted with segment " + segmentName, tokenizer);
+            if ((numberOfLoopsClosed < 0) || (numberOfLoopsClosed > loopDescriptor.getNestingLevel()))
+                throw new EDISyntaxException("Improper sequencing noted with segment " + segmentName, tokenizer);
+
             else if (numberOfLoopsClosed > 0) {
                 // Pop that many off the tack
                 for (int i = 0; i < numberOfLoopsClosed; i++) {
@@ -161,9 +160,7 @@ public class PluginControllerImpl extends PluginController {
             loopDescriptor = newDescriptor;
             if (resumeLoop) {
                 if (debug)
-                    trace("resuming loop at level "
-                            + loopDescriptor.getNestingLevel()
-                            + " with name " + loopDescriptor.getName());
+                    trace("resuming loop at level " + loopDescriptor.getNestingLevel() + " with name " + loopDescriptor.getName());
                 if (loopDescriptor.getNestingLevel() == 0
                         && loopDescriptor.getName().length() > 1
                         && loopDescriptor.getName().startsWith("/")) {

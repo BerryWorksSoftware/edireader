@@ -38,9 +38,8 @@ public class PluginControllerImplTest {
         plugin.prepare();
         controller.setPlugin(plugin);
         controller.setEnabled(true);
-        assertTrue(controller.isEnabled());
+
         assertEquals("Motor Carrier Freight Details and Invoice", controller.getDocumentName());
-        assertNull(controller.getDocumentType());
 
         assertFalse(controller.transition("B3"));
         assertTransition("N1", 1, "N1", "/N1", 0);
@@ -66,6 +65,42 @@ public class PluginControllerImplTest {
         assertTransition("LX", 1, "LX", "/LX", 1);
         assertFalse(controller.transition("L1"));
         assertTrue(controller.transition("L3"));
+    }
+
+    @Test
+    public void canTransitionThrough850() throws EDISyntaxException {
+        plugin = new ANSI_850();
+        plugin.prepare();
+        controller.setPlugin(plugin);
+        controller.setEnabled(true);
+
+        assertEquals("Purchase Order", controller.getDocumentName());
+
+        assertFalse(controller.transition("BEG"));
+        assertFalse(controller.transition("CUR"));
+        assertFalse(controller.transition("FOB"));
+        assertFalse(controller.transition("ITD"));
+        assertFalse(controller.transition("DTM"));
+        assertFalse(controller.transition("DTM"));
+        assertFalse(controller.transition("TD5"));
+        assertTransition("N9", 1, "N9", "/N9", 0);
+        assertTransition("N9", 1, "N9", "/N9", 1);
+        assertTransition("N9", 1, "N9", "/N9", 1);
+        assertTransition("N9", 1, "N9", "/N9", 1);
+        assertTransition("N1", 1, "N1", "/N1", 1);
+        assertTransition("N1", 1, "N1", "/N1", 1);
+        assertFalse(controller.transition("N2"));
+        assertFalse(controller.transition("N3"));
+        assertFalse(controller.transition("N4"));
+        assertTransition("PO1", 1, "PO1", "/PO1", 1);
+        assertTransition("PID", 2, "PID", "/PO1/PID", 0);
+        assertFalse(controller.transition("N9*"));
+        assertFalse(controller.transition("MSG"));
+        assertTransition("PO1", 1, "PO1", "/PO1", 2);
+        assertFalse(controller.transition("PI"));
+        assertTransition("N9", 2, "N9", "/PO1/N9", 0);
+        assertFalse(controller.transition("MSG"));
+        assertTransition("CTT", 1, "CTT", "/CTT", 2);
     }
 
     private void assertTransition(String segment, int nestingLevel, String loopEntered, String loopStack, int closedCount) throws EDISyntaxException {
