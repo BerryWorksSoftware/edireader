@@ -101,6 +101,8 @@ public class PluginControllerImplTest {
         assertTransition("PO1", 1, "PO1-0700", "/PO1-0700", 2);
         assertFalse(controller.transition("PI"));
         assertTransition("N9", 2, "N9", "/PO1-0700/N9", 0);
+        assertTransition("AMT", 2, "AMT-0790", "/PO1-0700/AMT-0790", 1);
+        assertTransition("AMT", 2, "AMT-0790", "/PO1-0700/AMT-0790", 1);
         assertFalse(controller.transition("MSG"));
         assertTransition("CTT", 1, "CTT", "/CTT", 2);
 //        assertTransition("AMT", 1, "?", "?", 1);
@@ -133,7 +135,7 @@ public class PluginControllerImplTest {
                     new LoopDescriptor(null, "ADV", 2, "/PO1-0700/SLN"),
                     new LoopDescriptor("ADV", "ADV", 1, "*"),
 
-                    new LoopDescriptor("AMT", "AMT", 2, "/PO1-0700"),
+                    new LoopDescriptor("AMT-0790", "AMT", 2, "/PO1-0700"),
                     new LoopDescriptor(null, "AMT", 1, "/CTT"),
                     new LoopDescriptor("AMT-0200", "AMT", 1, "*"),
 
