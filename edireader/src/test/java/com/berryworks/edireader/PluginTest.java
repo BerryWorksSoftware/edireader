@@ -14,19 +14,20 @@ import org.junit.Test;
 
 import java.io.StringReader;
 
+import static com.berryworks.edireader.Plugin.ANY_CONTEXT;
 import static org.junit.Assert.*;
 
 public class PluginTest {
 
     private static final LoopDescriptor[] LOOP_DESCRIPTORS = new LoopDescriptor[]{
-            new LoopDescriptor("A", "seg1", 1, "*"),
+            new LoopDescriptor("A", "seg1", 1, ANY_CONTEXT),
             new LoopDescriptor("*", "N1", 1, "N1"),
-            new LoopDescriptor("LX", "LX", 1, "*"),
+            new LoopDescriptor("LX", "LX", 1, ANY_CONTEXT),
             new LoopDescriptor("N1", "N1", 2, "LX"),
-            new LoopDescriptor("*", "P1", 1, "*"),
-            new LoopDescriptor("L5", "L5", 2, "*"),
-            new LoopDescriptor("L1", "L1", 3, "*"),
-            new LoopDescriptor("*", "L3", 0, "*")
+            new LoopDescriptor("*", "P1", 1, ANY_CONTEXT),
+            new LoopDescriptor("L5", "L5", 2, ANY_CONTEXT),
+            new LoopDescriptor("L1", "L1", 3, ANY_CONTEXT),
+            new LoopDescriptor("*", "L3", 0, ANY_CONTEXT)
     };
     private Plugin plugin;
     private Plugin.PluginDiff diff;
@@ -144,7 +145,7 @@ public class PluginTest {
     @Test
     public void testLevelSensitive() {
         plugin.loops = new LoopDescriptor[]{
-                new LoopDescriptor("A", "seg1", 1, "*"),
+                new LoopDescriptor("A", "seg1", 1, ANY_CONTEXT),
                 new LoopDescriptor("B", "seg2", 2, "A"),
                 new LoopDescriptor("C", "seg3", 3, 2),
         };
@@ -204,7 +205,7 @@ public class PluginTest {
         // Baseline
         plugin.loops = new LoopDescriptor[]{
                 new LoopDescriptor("*", "N1", 1, "N1"),
-                new LoopDescriptor("LX", "LX", 1, "*"),
+                new LoopDescriptor("LX", "LX", 1, ANY_CONTEXT),
                 new LoopDescriptor("N1", "N1", 2, "LX")
         };
         plugin.prepare();
@@ -222,7 +223,7 @@ public class PluginTest {
         // Same as baseline, but with null loop name
         plugin.loops = new LoopDescriptor[]{
                 new LoopDescriptor("*", "N1", 1, "N1"),
-                new LoopDescriptor("LX", "LX", 1, "*"),
+                new LoopDescriptor("LX", "LX", 1, ANY_CONTEXT),
                 new LoopDescriptor(null, "N1", 2, "LX")
         };
         plugin.prepare();

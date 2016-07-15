@@ -177,15 +177,11 @@ public abstract class Plugin {
         LoopDescriptor result = null;
         if (debug) trace("plugin query for segment " + segment);
 
-        if (currentLoopStack == null)
-            currentLoopStack = "*";
-
         if (loops == null)
             return null;
 
         if (optimizedForm == null)
-            throw new RuntimeException(
-                    "Internal error: plugin not properly constructed");
+            throw new RuntimeException("Internal error: plugin not properly constructed");
 
         List<LoopDescriptor> descriptorList = optimizedForm.getList(segment);
         if (descriptorList == null) {
@@ -195,42 +191,44 @@ public abstract class Plugin {
         if (debug) trace("Number of descriptors found: " + descriptorList.size());
 
         for (LoopDescriptor descriptor : descriptorList) {
-            if (descriptor.getFirstSegment().equals(segment)) {
-                int levelContext = descriptor.getLevelContext();
-                if (debug) trace("checking level context " + levelContext);
-                if (levelContext > -1) {
-                    if (levelContext == currentLevel) {
-                        result = descriptor;
-                        break;
-                    }
-                    continue;
-                }
-                String candidateContext = descriptor.getLoopContext();
-                if (debug) trace("checking loop context " + candidateContext +
-                        " with current loop stack " + currentLoopStack);
-                if ("*".equals(candidateContext)) {
-                    result = descriptor;
-                    break;
-                } else if (candidateContext.startsWith("/")
-                        && candidateContext.length() > 1
-                        && currentLoopStack.startsWith(candidateContext)) {
-                    if (debug) trace("startsWith satisfied");
-                    result = descriptor;
-                    break;
-                } else if (currentLoopStack.endsWith(candidateContext)) {
-                    result = descriptor;
-                    break;
-                }
-            } else {
-                throw new RuntimeException(
-                        "Internal error: optimized plugin structure invalid");
+            if (!descriptor.getFirstSegment().equals(segment)) {
+                throw new RuntimeException("Internal error: optimized plugin structure invalid");
             }
+            int levelContext = descriptor.getLevelContext();
+            if (debug) trace("checking level context " + levelContext);
+            if (levelContext > -1) {
+                if (levelContext == currentLevel) {
+                    result = descriptor;
+                    break;
+                }
+                continue;
+            }
+
+            String candidateContext = descriptor.getLoopContext();
+
+            if (currentLoopStack == null)
+                currentLoopStack = "*";
+            if (debug)
+                trace("checking loop context " + candidateContext + " with current loop stack " + currentLoopStack);
+
+            if (ANY_CONTEXT.equals(candidateContext)) {
+                result = descriptor;
+                break;
+            } else if (candidateContext.startsWith("/")
+                    && candidateContext.length() > 1
+                    && currentLoopStack.startsWith(candidateContext)) {
+                if (debug) trace("startsWith satisfied");
+                result = descriptor;
+                break;
+            } else if (currentLoopStack.endsWith(candidateContext)) {
+                result = descriptor;
+                break;
+            }
+
         }
         // A loop descriptor with a null loop name serves as a NOT rule.
-        // No further loop descriptors are considered, and query returns a null
-        // indicating that no transition should occur. This provides a way to
-        // express a specific context where the appearance of a segment does NOT
-        // mark the entry of a new loop.
+        // No further loop descriptors are considered, and query returns a null indicating that no transition should occur.
+        // This provides a way to express a specific context where the appearance of a segment does NOT mark the entry of a new loop.
         if (result != null && result.getName() == null)
             result = null;
         return result;
@@ -250,9 +248,8 @@ public abstract class Plugin {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
-        result.append("Plugin ").append(getClass().getName());
-        result.append("\n  ").append(getDocumentName()).append(" (").append(getDocumentType()).append(')');
+        StringBuilder result = new StringBuilder().append("Plugin ").append(getClass().getName()).append("\n  ")
+                .append(getDocumentName()).append(" (").append(getDocumentType()).append(')');
         if (loops != null) {
             for (LoopDescriptor loop : loops)
                 result.append('\n').append(loop.toString());
