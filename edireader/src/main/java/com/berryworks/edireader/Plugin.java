@@ -254,8 +254,10 @@ public abstract class Plugin {
         StringBuilder result = new StringBuilder();
         result.append("Plugin ").append(getClass().getName());
         result.append("\n  ").append(getDocumentName()).append(" (").append(getDocumentType()).append(')');
-        for (LoopDescriptor loop : loops)
-            result.append('\n').append(loop.toString());
+        if (loops != null) {
+            for (LoopDescriptor loop : loops)
+                result.append('\n').append(loop.toString());
+        }
         return result.toString();
     }
 
