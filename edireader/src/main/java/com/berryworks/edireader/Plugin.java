@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2016 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -173,8 +173,7 @@ public abstract class Plugin {
      * @param currentLevel     nesting level of current state
      * @return descriptor matching query parameters, or null if none
      */
-    public LoopDescriptor query(String segment, String currentLoopStack,
-                                int currentLevel) {
+    public LoopDescriptor query(String segment, String currentLoopStack, int currentLevel) {
         LoopDescriptor result = null;
         if (debug) trace("plugin query for segment " + segment);
 

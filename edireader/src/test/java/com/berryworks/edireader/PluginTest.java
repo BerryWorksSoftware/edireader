@@ -6,8 +6,13 @@ package com.berryworks.edireader;
 
 import com.berryworks.edireader.plugin.CompositeAwarePlugin;
 import com.berryworks.edireader.plugin.LoopDescriptor;
+import com.berryworks.edireader.plugin.PluginControllerImpl;
+import com.berryworks.edireader.tokenizer.EDITokenizer;
+import com.berryworks.edireader.tokenizer.Tokenizer;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.StringReader;
 
 import static org.junit.Assert.*;
 
@@ -25,6 +30,7 @@ public class PluginTest {
     };
     private Plugin plugin;
     private Plugin.PluginDiff diff;
+    private LoopDescriptor response;
 
     @Before
     public void setUp() {
@@ -47,8 +53,18 @@ public class PluginTest {
         assertEquals("T", plugin.getDocumentType());
         assertEquals("N", plugin.getDocumentName());
         assertTrue(plugin.isValidating());
+        plugin.loops = LOOP_DESCRIPTORS;
         assertEquals(
-                "Plugin com.berryworks.edireader.PluginTest$1\n  N (T)",
+                "Plugin com.berryworks.edireader.PluginTest$1\n" +
+                        "  N (T)\n" +
+                        "loop A at nesting level 1: encountering segment seg1 anytime\n" +
+                        "loop * at nesting level 1: encountering segment N1 while currently in loop N1\n" +
+                        "loop LX at nesting level 1: encountering segment LX anytime\n" +
+                        "loop N1 at nesting level 2: encountering segment N1 while currently in loop LX\n" +
+                        "loop * at nesting level 1: encountering segment P1 anytime\n" +
+                        "loop L5 at nesting level 2: encountering segment L5 anytime\n" +
+                        "loop L1 at nesting level 3: encountering segment L1 anytime\n" +
+                        "loop * at nesting level 0: encountering segment L3 anytime",
                 plugin.toString());
         assertEquals(countOfPluginsConstructed + 1, Plugin.getCount());
     }
@@ -62,12 +78,39 @@ public class PluginTest {
     }
 
     @Test
+    public void canConcatenateLoopDescriptors() {
+        plugin.loops = LOOP_DESCRIPTORS;
+        assertEquals(8, plugin.getLoopDescriptors().length);
+
+        LoopDescriptor[] more = new LoopDescriptor[]{
+                new LoopDescriptor("X", "x"),
+                new LoopDescriptor("Y", "y")
+        };
+        LoopDescriptor[] concatenated = plugin.concatenate(LOOP_DESCRIPTORS, more);
+        assertEquals(10, concatenated.length);
+    }
+
+    @Test
+    public void canCreateController() {
+        Tokenizer tokenizer = new EDITokenizer(new StringReader(""), null);
+        PluginControllerImpl controller = plugin.createController("SomeStandard", tokenizer);
+        assertNotNull(controller);
+    }
+
+    @Test
+    public void canGetDocumentVersionFromPluginName() {
+        assertNull(plugin.getDocumentVersion());
+
+        assertEquals("Four", new Plugin_Two_Three_Four().getDocumentVersion());
+    }
+
+    @Test
     public void testQueries() {
-        ((MockPlugin) plugin).setDescriptors(LOOP_DESCRIPTORS);
+        plugin.loops = LOOP_DESCRIPTORS;
         plugin.prepare();
 
         plugin.debug(false);
-        LoopDescriptor response = plugin.query("seg1", null, -1);
+        response = plugin.query("seg1", null, -1);
         assertNotNull(response);
         assertEquals("A", response.getName());
         assertEquals(1, response.getNestingLevel());
@@ -100,16 +143,13 @@ public class PluginTest {
 
     @Test
     public void testLevelSensitive() {
-        LoopDescriptor[] loops = {
+        plugin.loops = new LoopDescriptor[]{
                 new LoopDescriptor("A", "seg1", 1, "*"),
                 new LoopDescriptor("B", "seg2", 2, "A"),
                 new LoopDescriptor("C", "seg3", 3, 2),
         };
-        ((MockPlugin) plugin).setDescriptors(loops);
         plugin.prepare();
-
         plugin.debug(false);
-        LoopDescriptor response;
 
         response = plugin.query("seg1", null, 0);
         assertNotNull(response);
@@ -132,16 +172,13 @@ public class PluginTest {
 
     @Test
     public void testStackContextQuery() {
-        LoopDescriptor[] loops = {
+        plugin.loops = new LoopDescriptor[]{
                 new LoopDescriptor("A", "seg1", 1),
                 new LoopDescriptor("B", "seg2", 2, "/A"),
                 new LoopDescriptor("C", "seg3", 3, "/A/B"),
         };
-        ((MockPlugin) plugin).setDescriptors(loops);
         plugin.prepare();
-
         plugin.debug(false);
-        LoopDescriptor response;
 
         response = plugin.query("seg1", null, 0);
         assertNotNull(response);
@@ -161,6 +198,58 @@ public class PluginTest {
         response = plugin.query("seg3", "C", 3);
         assertNull(response);
     }
+
+    @Test
+    public void testNullLoopNameActsAsANotRule() {
+        // Baseline
+        plugin.loops = new LoopDescriptor[]{
+                new LoopDescriptor("*", "N1", 1, "N1"),
+                new LoopDescriptor("LX", "LX", 1, "*"),
+                new LoopDescriptor("N1", "N1", 2, "LX")
+        };
+        plugin.prepare();
+
+        response = plugin.query("LX", null, 0);
+        assertNotNull(response);
+        assertEquals("LX", response.getName());
+        assertEquals(1, response.getNestingLevel());
+
+        response = plugin.query("N1", "LX", 1);
+        assertNotNull(response);
+        assertEquals("N1", response.getName());
+        assertEquals(2, response.getNestingLevel());
+
+        // Same as baseline, but with null loop name
+        plugin.loops = new LoopDescriptor[]{
+                new LoopDescriptor("*", "N1", 1, "N1"),
+                new LoopDescriptor("LX", "LX", 1, "*"),
+                new LoopDescriptor(null, "N1", 2, "LX")
+        };
+        plugin.prepare();
+
+        response = plugin.query("LX", null, 0);
+        assertNotNull(response);
+        assertEquals("LX", response.getName());
+        assertEquals(1, response.getNestingLevel());
+
+        assertNull(plugin.query("N1", "LX", 1));
+    }
+
+    @Test
+    public void queryWithNullLoopsReturnsNull() {
+        plugin.prepare();
+        plugin.debug(false);
+
+        assertNull(plugin.query("seg1", null, -1));
+    }
+
+
+    @Test(expected = RuntimeException.class)
+    public void mustPrepareOptimizedForm() {
+        plugin.loops = LOOP_DESCRIPTORS;
+        plugin.query("seg1", null, -1);
+    }
+
 
     @Test
     public void comparePluginToItself() {
@@ -216,8 +305,14 @@ public class PluginTest {
     }
 
     private static class MockPlugin extends Plugin {
-
         public MockPlugin() {
+            super("dt", "dn");
+        }
+    }
+
+    private static class Plugin_Two_Three_Four extends Plugin {
+
+        public Plugin_Two_Three_Four() {
             super("dt", "dn");
         }
 
