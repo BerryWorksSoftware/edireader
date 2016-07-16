@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.StringReader;
+import java.util.Set;
 
 import static com.berryworks.edireader.Plugin.ANY_CONTEXT;
 import static org.junit.Assert.*;
@@ -32,6 +33,7 @@ public class PluginTest {
     private Plugin plugin;
     private Plugin.PluginDiff diff;
     private LoopDescriptor response;
+    private Set<String> resultFlags;
 
     @Before
     public void setUp() {
@@ -111,32 +113,32 @@ public class PluginTest {
         plugin.prepare();
 
         plugin.debug(false);
-        response = plugin.query("seg1", null, -1);
+        response = plugin.query("seg1", null, -1, resultFlags);
         assertNotNull(response);
         assertEquals("A", response.getName());
         assertEquals(1, response.getNestingLevel());
 
-        response = plugin.query("seg1", "A", 1);
+        response = plugin.query("seg1", "A", 1, resultFlags);
         assertNotNull(response);
         assertEquals("A", response.getName());
         assertEquals(1, response.getNestingLevel());
 
-        response = plugin.query("LX", null, 0);
+        response = plugin.query("LX", null, 0, resultFlags);
         assertNotNull(response);
         assertEquals("LX", response.getName());
         assertEquals(1, response.getNestingLevel());
 
-        response = plugin.query("N1", "LX", 1);
+        response = plugin.query("N1", "LX", 1, resultFlags);
         assertNotNull(response);
         assertEquals("N1", response.getName());
         assertEquals(2, response.getNestingLevel());
 
-        response = plugin.query("L1", "N1", 2);
+        response = plugin.query("L1", "N1", 2, resultFlags);
         assertNotNull(response);
         assertEquals("L1", response.getName());
         assertEquals(3, response.getNestingLevel());
 
-        response = plugin.query("L1", "L1", 3);
+        response = plugin.query("L1", "L1", 3, resultFlags);
         assertNotNull(response);
         assertEquals("L1", response.getName());
         assertEquals(3, response.getNestingLevel());
@@ -152,22 +154,22 @@ public class PluginTest {
         plugin.prepare();
         plugin.debug(false);
 
-        response = plugin.query("seg1", null, 0);
+        response = plugin.query("seg1", null, 0, resultFlags);
         assertNotNull(response);
         assertEquals("A", response.getName());
         assertEquals(1, response.getNestingLevel());
 
-        response = plugin.query("seg2", "A", 1);
+        response = plugin.query("seg2", "A", 1, resultFlags);
         assertNotNull(response);
         assertEquals("B", response.getName());
         assertEquals(2, response.getNestingLevel());
 
-        response = plugin.query("seg3", "B", 2);
+        response = plugin.query("seg3", "B", 2, resultFlags);
         assertNotNull(response);
         assertEquals("C", response.getName());
         assertEquals(3, response.getNestingLevel());
 
-        response = plugin.query("seg3", "C", 3);
+        response = plugin.query("seg3", "C", 3, resultFlags);
         assertNull(response);
     }
 
@@ -181,22 +183,22 @@ public class PluginTest {
         plugin.prepare();
         plugin.debug(false);
 
-        response = plugin.query("seg1", null, 0);
+        response = plugin.query("seg1", null, 0, resultFlags);
         assertNotNull(response);
         assertEquals("A", response.getName());
         assertEquals(1, response.getNestingLevel());
 
-        response = plugin.query("seg2", "/A", 1);
+        response = plugin.query("seg2", "/A", 1, resultFlags);
         assertNotNull(response);
         assertEquals("B", response.getName());
         assertEquals(2, response.getNestingLevel());
 
-        response = plugin.query("seg3", "/A/B", 2);
+        response = plugin.query("seg3", "/A/B", 2, resultFlags);
         assertNotNull(response);
         assertEquals("C", response.getName());
         assertEquals(3, response.getNestingLevel());
 
-        response = plugin.query("seg3", "C", 3);
+        response = plugin.query("seg3", "C", 3, resultFlags);
         assertNull(response);
     }
 
@@ -210,12 +212,12 @@ public class PluginTest {
         };
         plugin.prepare();
 
-        response = plugin.query("LX", null, 0);
+        response = plugin.query("LX", null, 0, resultFlags);
         assertNotNull(response);
         assertEquals("LX", response.getName());
         assertEquals(1, response.getNestingLevel());
 
-        response = plugin.query("N1", "LX", 1);
+        response = plugin.query("N1", "LX", 1, resultFlags);
         assertNotNull(response);
         assertEquals("N1", response.getName());
         assertEquals(2, response.getNestingLevel());
@@ -228,12 +230,12 @@ public class PluginTest {
         };
         plugin.prepare();
 
-        response = plugin.query("LX", null, 0);
+        response = plugin.query("LX", null, 0, resultFlags);
         assertNotNull(response);
         assertEquals("LX", response.getName());
         assertEquals(1, response.getNestingLevel());
 
-        assertNull(plugin.query("N1", "LX", 1));
+        assertNull(plugin.query("N1", "LX", 1, resultFlags));
     }
 
     @Test
@@ -241,14 +243,14 @@ public class PluginTest {
         plugin.prepare();
         plugin.debug(false);
 
-        assertNull(plugin.query("seg1", null, -1));
+        assertNull(plugin.query("seg1", null, -1, resultFlags));
     }
 
 
     @Test(expected = RuntimeException.class)
     public void mustPrepareOptimizedForm() {
         plugin.loops = LOOP_DESCRIPTORS;
-        plugin.query("seg1", null, -1);
+        plugin.query("seg1", null, -1, resultFlags);
     }
 
 

@@ -391,5 +391,9 @@ public class LoopDescriptor {
     public boolean isConditionFlag(String flagName) {
         return conditionFlags.contains(flagName);
     }
+
+    public Set<String> getConditionFlags() {
+        return conditionFlags;
+    }
 }
 

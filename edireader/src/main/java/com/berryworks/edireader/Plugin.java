@@ -26,6 +26,7 @@ import com.berryworks.edireader.plugin.PluginPreparation;
 import com.berryworks.edireader.tokenizer.Tokenizer;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Parent class for all EDIReader plugins.
@@ -171,9 +172,10 @@ public abstract class Plugin {
      * @param segment          type of segment encountered
      * @param currentLoopStack stack representing nested loops in current state
      * @param currentLevel     nesting level of current state
+     * @param resultFlags
      * @return descriptor matching query parameters, or null if none
      */
-    public LoopDescriptor query(String segment, String currentLoopStack, int currentLevel) {
+    public LoopDescriptor query(String segment, String currentLoopStack, int currentLevel, Set<String> resultFlags) {
         LoopDescriptor result = null;
         if (debug) trace("plugin query for segment " + segment);
 
@@ -193,8 +195,24 @@ public abstract class Plugin {
         for (LoopDescriptor descriptor : descriptorList) {
             boolean candidate = matchesWithoutRegardToFlagConditionals(descriptor, segment, currentLoopStack, currentLevel);
             if (candidate) {
-                result = descriptor;
-                break;
+
+                // Now check to see if has any flag-related conditions.
+                Set<String> conditions = descriptor.getConditionFlags();
+                boolean satisfied = true;
+                for (String condition : conditions) {
+                    if (resultFlags.contains(condition)) {
+                        // The condition is satified.
+                        continue;
+                    } else {
+                        satisfied = false;
+                        break;
+                    }
+                }
+
+                if (satisfied) {
+                    result = descriptor;
+                    break;
+                }
             }
         }
 

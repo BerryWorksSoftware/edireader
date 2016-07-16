@@ -115,14 +115,14 @@ public class PluginControllerImpl extends PluginController {
         LoopDescriptor newDescriptor = plugin.query(
                 segmentName,
                 loopStack.toString(),
-                loopDescriptor.getNestingLevel());
+                loopDescriptor.getNestingLevel(),
+                resultFlags);
 
         if (debug)
             trace("considering segment " + segmentName + " using descriptor " + newDescriptor);
 
         if (!validateDescriptor(newDescriptor, segmentName, tokenizer))
             return false;
-
 
         // Set flags related to this descriptor.
         Set<String> flags = newDescriptor.getResultFlags();

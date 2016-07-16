@@ -109,7 +109,7 @@ public class PluginControllerImplTest {
         assertTransition("AMT", 2, "AMT-0790", "/PO1-0700/AMT-0790", 1);
         assertFalse(controller.transition("MSG"));
         assertTransition("CTT", 0, "/", "/", 2, true);
-        assertTransition("AMT", 0, "/", "/", 0);
+        assertFalse(controller.transition("AMT"));
     }
 
 //    @Ignore
