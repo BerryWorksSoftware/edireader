@@ -72,6 +72,39 @@ public class LoopDescriptorTest {
     }
 
     @Test
+    public void canConstructionWithFlagsSet() {
+        loopDescriptor = new LoopDescriptor("LoopName+Flag1", "FirstSegment");
+        assertEquals("LoopName", loopDescriptor.getName());
+        assertTrue("Missing Flag1", loopDescriptor.isFlag("Flag1"));
+        assertFalse("Flag2 unexpected", loopDescriptor.isFlag("Flag2"));
+        assertEquals("FirstSegment", loopDescriptor.getFirstSegment());
+        assertEquals(1, loopDescriptor.getNestingLevel());
+        assertEquals(-1, loopDescriptor.getLevelContext());
+        assertEquals(INITIAL_CONTEXT, loopDescriptor.getLoopContext());
+        assertFalse(loopDescriptor.isAnyContext());
+        assertEquals(
+                "loop LoopName at nesting level 1: encountering segment FirstSegment while outside any loop" +
+                        ", setting Flag1",
+                loopDescriptor.toString());
+
+        loopDescriptor = new LoopDescriptor("LoopName+Flag1+Flag0", "FirstSegment");
+        assertEquals("LoopName", loopDescriptor.getName());
+        assertTrue("Missing Flag0", loopDescriptor.isFlag("Flag0"));
+        assertTrue("Missing Flag1", loopDescriptor.isFlag("Flag1"));
+        assertFalse("Flag2 unexpected", loopDescriptor.isFlag("Flag2"));
+        assertEquals("FirstSegment", loopDescriptor.getFirstSegment());
+        assertEquals(1, loopDescriptor.getNestingLevel());
+        assertEquals(-1, loopDescriptor.getLevelContext());
+        assertEquals(INITIAL_CONTEXT, loopDescriptor.getLoopContext());
+        assertFalse(loopDescriptor.isAnyContext());
+        assertEquals(
+                "loop LoopName at nesting level 1: encountering segment FirstSegment while outside any loop" +
+                        ", setting Flag0 Flag1",
+                loopDescriptor.toString());
+    }
+
+
+    @Test
     public void testEquals() {
         loopDescriptor = new LoopDescriptor("name", "firstSegment", 1, ANY_CONTEXT);
         assertEquals(loopDescriptor, loopDescriptor);

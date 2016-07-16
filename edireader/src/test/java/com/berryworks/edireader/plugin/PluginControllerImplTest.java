@@ -134,7 +134,8 @@ public class PluginControllerImplTest {
                         "PO1*0001*1*BX*121.20000**FS*8465015151158*UA*718020072050$" +
                         "PID*F****STRAP, INVOLUNTARY, RESTRAINT$" +
                         "CTT*1$" +
-                        "SE*18*000042460$" +
+                        "AMT*TT*121.2$" +
+                        "SE*19*000042460$" +
                         "GE*1*38327$" +
                         "IEA*1*000038449$";
 
@@ -171,6 +172,7 @@ public class PluginControllerImplTest {
                         "</loop>" +
                         "</loop>" +
                         "<segment Id=\"CTT\"><element Id=\"CTT01\">1</element></segment>" +
+                        "<segment Id=\"AMT\"><element Id=\"AMT01\">TT</element><element Id=\"AMT02\">121.2</element></segment>" +
                         "</transaction>" +
                         "</group>" +
                         "</interchange>" +
