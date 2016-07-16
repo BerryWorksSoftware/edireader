@@ -20,7 +20,6 @@
 
 package com.berryworks.edireader.plugin;
 
-import com.berryworks.edireader.EDIAbstractReader;
 import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.Plugin;
 import com.berryworks.edireader.PluginController;
@@ -315,15 +314,6 @@ public class PluginControllerImpl extends PluginController {
 
     public void setPlugin(Plugin plugin) {
         this.plugin = plugin;
-    }
-
-    /**
-     * Shorthand for EDIReader.trace(String)
-     *
-     * @param text message to appear in trace
-     */
-    protected static void trace(String text) {
-        EDIAbstractReader.trace(text);
     }
 
     /**

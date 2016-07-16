@@ -2,8 +2,12 @@ package com.berryworks.edireader.plugin;
 
 import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.Plugin;
+import com.berryworks.edireader.demo.EDItoXML;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.StringReader;
+import java.io.StringWriter;
 
 import static org.junit.Assert.*;
 
@@ -69,12 +73,12 @@ public class PluginControllerImplTest {
 
     @Test
     public void canTransitionThrough850WithDifficultAMT() throws EDISyntaxException {
-        plugin = new My_850();
+        plugin = new ANSI_850_X_003999();
         plugin.prepare();
         controller.setPlugin(plugin);
         controller.setEnabled(true);
 
-        assertEquals("Purchase Order", controller.getDocumentName());
+        assertEquals("Purchase Order (for test purposes only)", controller.getDocumentName());
 
         assertFalse(controller.transition("BEG"));
         assertFalse(controller.transition("CUR"));
@@ -104,17 +108,89 @@ public class PluginControllerImplTest {
         assertTransition("AMT", 2, "AMT-0790", "/PO1-0700/AMT-0790", 1);
         assertTransition("AMT", 2, "AMT-0790", "/PO1-0700/AMT-0790", 1);
         assertFalse(controller.transition("MSG"));
-        assertTransition("CTT", 1, "CTT", "/CTT", 2);
+        assertTransition("CTT", 0, "/", "/", 2, true);
 //        assertTransition("AMT", 1, "?", "?", 1);
     }
 
-    private void assertTransition(String segment, int nestingLevel, String loopEntered, String loopStack, int closedCount) throws EDISyntaxException {
+    @Test
+    public void canProduceCorrectXmlFor850WithDifficultAMT() {
+        String TINY_850 =
+                "ISA*00*          *00*          *ZZ*04000          *ZZ*58401          *040714*1003*U*00204*000038449*0*P*<$" +
+                        "GS*PO*04000*58401*040714*1003*38327*X*003999$" +
+                        "ST*850*000042460$" +
+                        "BEG*00*RL*SPE1C115D1099*1594*160701****FR*SP$" +
+                        "REF*DS*DOC9$" +
+                        "AMT*KC*121.2$" +
+                        "AT**97 0X0X49305CBX*****S33189**001      2620$" +
+                        "REF*AX*BX$" +
+                        "N1*BY*DLA TROOP SUPPORT*10*SPE1C1$" +
+                        "N2*C AND T SUPPLY CHAIN$" +
+                        "N3*800 SNOWBALL AVENUE$" +
+                        "N4*PHILADELPHIA*PA*191115096*US$" +
+                        "N1*SE*ANOTHER, INC. DBA*33*1CAY9$" +
+                        "N2*ADS$" +
+                        "N3*921 HAVEN HWY STE 100$" +
+                        "N4*VIRGINIA BEACH*VA*234527448*US$" +
+                        "PO1*0001*1*BX*121.20000**FS*8465015151158*UA*718020072050$" +
+                        "PID*F****STRAP, INVOLUNTARY, RESTRAINT$" +
+                        "CTT*1$" +
+                        "SE*18*000042460$" +
+                        "GE*1*38327$" +
+                        "IEA*1*000038449$";
+
+        StringReader reader = new StringReader(TINY_850);
+        StringWriter writer = new StringWriter();
+        EDItoXML ediToXml = new EDItoXML(reader, writer);
+        ediToXml.run();
+        String xmlText = writer.toString();
+        System.out.println(xmlText);
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                        "<ediroot>" +
+                        "<interchange Standard=\"ANSI X.12\" AuthorizationQual=\"00\" Authorization=\"          \" SecurityQual=\"00\" Security=\"          \" Date=\"040714\" Time=\"1003\" StandardsId=\"U\" Version=\"00204\" Control=\"000038449\" AckRequest=\"0\" TestIndicator=\"P\">" +
+                        "<sender><address Id=\"04000          \" Qual=\"ZZ\"/></sender>" +
+                        "<receiver><address Id=\"58401          \" Qual=\"ZZ\"/></receiver>" +
+                        "<group GroupType=\"PO\" ApplSender=\"04000\" ApplReceiver=\"58401\" Date=\"040714\" Time=\"1003\" Control=\"38327\" StandardCode=\"X\" StandardVersion=\"003999\">" +
+                        "<transaction DocType=\"850\" Name=\"Purchase Order (for test purposes only)\" Control=\"000042460\">" +
+                        "<segment Id=\"BEG\"><element Id=\"BEG01\">00</element><element Id=\"BEG02\">RL</element><element Id=\"BEG03\">SPE1C115D1099</element><element Id=\"BEG04\">1594</element><element Id=\"BEG05\">160701</element><element Id=\"BEG09\">FR</element><element Id=\"BEG10\">SP</element></segment>" +
+                        "<segment Id=\"REF\"><element Id=\"REF01\">DS</element><element Id=\"REF02\">DOC9</element></segment><loop Id=\"AMT-0200\">" +
+                        "<segment Id=\"AMT\"><element Id=\"AMT01\">KC</element><element Id=\"AMT02\">121.2</element></segment>" +
+                        "<segment Id=\"AT\"><element Id=\"AT02\">97 0X0X49305CBX</element><element Id=\"AT07\">S33189</element><element Id=\"AT09\">001      2620</element></segment>" +
+                        "<segment Id=\"REF\"><element Id=\"REF01\">AX</element><element Id=\"REF02\">BX</element></segment></loop>" +
+                        "<loop Id=\"N1\">" +
+                        "<segment Id=\"N1\"><element Id=\"N101\">BY</element><element Id=\"N102\">DLA TROOP SUPPORT</element><element Id=\"N103\">10</element><element Id=\"N104\">SPE1C1</element></segment>" +
+                        "<segment Id=\"N2\"><element Id=\"N201\">C AND T SUPPLY CHAIN</element></segment><segment Id=\"N3\"><element Id=\"N301\">800 SNOWBALL AVENUE</element></segment>" +
+                        "<segment Id=\"N4\"><element Id=\"N401\">PHILADELPHIA</element><element Id=\"N402\">PA</element><element Id=\"N403\">191115096</element><element Id=\"N404\">US</element></segment>" +
+                        "</loop>" +
+                        "<loop Id=\"N1\">" +
+                        "<segment Id=\"N1\"><element Id=\"N101\">SE</element><element Id=\"N102\">ANOTHER, INC. DBA</element><element Id=\"N103\">33</element><element Id=\"N104\">1CAY9</element></segment>" +
+                        "<segment Id=\"N2\"><element Id=\"N201\">ADS</element></segment><segment Id=\"N3\"><element Id=\"N301\">921 HAVEN HWY STE 100</element></segment>" +
+                        "<segment Id=\"N4\"><element Id=\"N401\">VIRGINIA BEACH</element><element Id=\"N402\">VA</element><element Id=\"N403\">234527448</element><element Id=\"N404\">US</element></segment>" +
+                        "</loop>" +
+                        "<loop Id=\"PO1-0700\">" +
+                        "<segment Id=\"PO1\"><element Id=\"PO101\">0001</element><element Id=\"PO102\">1</element><element Id=\"PO103\">BX</element><element Id=\"PO104\">121.20000</element><element Id=\"PO106\">FS</element><element Id=\"PO107\">8465015151158</element><element Id=\"PO108\">UA</element><element Id=\"PO109\">718020072050</element></segment>" +
+                        "<loop Id=\"PID\">" +
+                        "<segment Id=\"PID\"><element Id=\"PID01\">F</element><element Id=\"PID05\">STRAP, INVOLUNTARY, RESTRAINT</element></segment>" +
+                        "</loop>" +
+                        "</loop>" +
+                        "<segment Id=\"CTT\"><element Id=\"CTT01\">1</element></segment>" +
+                        "</transaction>" +
+                        "</group>" +
+                        "</interchange>" +
+                        "</ediroot>",
+                xmlText);
+    }
+
+    private void assertTransition(String segment, int nestingLevel, String loopEntered, String loopStack, int closedCount, boolean resumed) throws EDISyntaxException {
         assertTrue(controller.transition(segment));
         assertEquals(nestingLevel, controller.getNestingLevel());
         assertEquals(loopEntered, controller.getLoopEntered());
         assertEquals(loopStack, controller.getLoopStack().toString());
         assertEquals(closedCount, controller.closedCount());
-        assertFalse(controller.isResumed());
+        assertEquals(resumed, controller.isResumed());
+    }
+
+    private void assertTransition(String segment, int nestingLevel, String loopEntered, String loopStack, int closedCount) throws EDISyntaxException {
+        assertTransition(segment, nestingLevel, loopEntered, loopStack, closedCount, false);
     }
 
     @Test
@@ -126,240 +202,5 @@ public class PluginControllerImplTest {
 
         assertFalse(controller.transition("B3"));
         assertFalse(controller.transition("N1"));
-    }
-
-    class My_850 extends ANSI_850 {
-        public My_850() {
-
-            loops = new LoopDescriptor[]{
-                    new LoopDescriptor(null, "ADV", 2, "/PO1-0700/SLN"),
-                    new LoopDescriptor("ADV", "ADV", 1, "*"),
-
-                    new LoopDescriptor("AMT-0790", "AMT", 2, "/PO1-0700"),
-                    new LoopDescriptor(null, "AMT", 1, "/CTT"),
-                    new LoopDescriptor("AMT-0200", "AMT", 1, "*"),
-
-                    new LoopDescriptor(".", "BEG", 0, "*"),
-
-                    new LoopDescriptor("CB1", "CB1", 2, "/SPI"),
-
-                    new LoopDescriptor(null, "CN1", 1, "/PO1-0700"),
-
-                    new LoopDescriptor(null, "CSH", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "CSH", 0, "*"),
-
-                    new LoopDescriptor(null, "CTB", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "CTB", 0, "*"),
-
-                    new LoopDescriptor(null, "CTP", 3, "/PO1-0700/SLN/SAC"),
-                    new LoopDescriptor(null, "CTP", 2, "/PO1-0700/SLN"),
-                    new LoopDescriptor(null, "CTP", 2, "/PO1-0700/SAC"),
-                    new LoopDescriptor("CTP", "CTP", 2, "/PO1-0700"),
-                    new LoopDescriptor(".", "CTP", 0, "*"),
-
-                    new LoopDescriptor("CTT", "CTT", 1, "*"),
-
-                    new LoopDescriptor(null, "CUR", 3, "/PO1-0700/SLN/SAC"),
-                    new LoopDescriptor(null, "CUR", 2, "/PO1-0700/CTP"),
-                    new LoopDescriptor(null, "CUR", 1, "/PO1-0700"),
-                    new LoopDescriptor(null, "CUR", 1, "/SAC"),
-                    new LoopDescriptor(".", "CUR", 0, "*"),
-
-                    new LoopDescriptor(null, "DIS", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "DIS", 0, "*"),
-
-                    new LoopDescriptor(null, "DTM", 3, "/PO1-0700/SLN/N9"),
-                    new LoopDescriptor(null, "DTM", 2, "/SPI/CB1"),
-                    new LoopDescriptor(null, "DTM", 1, "/PO1-0700"),
-                    new LoopDescriptor(null, "DTM", 1, "/AMT"),
-                    new LoopDescriptor(null, "DTM", 1, "/ADV"),
-                    new LoopDescriptor(null, "DTM", 1, "/SPI"),
-                    new LoopDescriptor(null, "DTM", 1, "/N9"),
-                    new LoopDescriptor(".", "DTM", 0, "*"),
-
-                    new LoopDescriptor("FA1", "FA1", 2, "/AMT"),
-
-                    new LoopDescriptor(null, "FA2", 2, "/AMT/FA1"),
-
-                    new LoopDescriptor(null, "FOB", 2, "/PO1-0700/N1"),
-                    new LoopDescriptor(null, "FOB", 1, "/PO1-0700"),
-                    new LoopDescriptor(null, "FOB", 1, "/N1"),
-                    new LoopDescriptor(".", "FOB", 0, "*"),
-
-                    new LoopDescriptor(null, "G61", 2, "/SPI/N1"),
-
-                    new LoopDescriptor(null, "INC", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "INC", 0, "*"),
-
-                    new LoopDescriptor(null, "IT3", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "IT8", 1, "/PO1-0700"),
-
-                    new LoopDescriptor(null, "ITD", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "ITD", 0, "*"),
-
-                    new LoopDescriptor("LDT", "LDT", 3, "/PO1-0700/N1"),
-                    new LoopDescriptor(null, "LDT", 2, "/SPI/CB1"),
-                    new LoopDescriptor("LDT", "LDT", 2, "/PO1-0700"),
-                    new LoopDescriptor(".", "LDT", 0, "*"),
-
-                    new LoopDescriptor(".", "LE", 1, "/PO1-0700"),
-
-                    new LoopDescriptor(null, "LIN", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "LIN", 0, "*"),
-
-                    new LoopDescriptor("LM", "LM", 3, "/PO1-0700/LDT"),
-                    new LoopDescriptor("LM", "LM", 2, "/PO1-0700"),
-                    new LoopDescriptor("LM", "LM", 1, "*"),
-
-                    new LoopDescriptor(null, "LQ", 3, "/PO1-0700/LDT/LM"),
-                    new LoopDescriptor(null, "LQ", 2, "/PO1-0700/LM"),
-                    new LoopDescriptor(null, "LQ", 1, "/LM"),
-
-                    new LoopDescriptor(".", "LS", 1, "/PO1-0700"),
-
-                    new LoopDescriptor(null, "MAN", 3, "/PO1-0700/N1/LDT"),
-                    new LoopDescriptor(null, "MAN", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "MAN", 0, "*"),
-
-                    new LoopDescriptor(null, "MEA", 2, "/PO1-0700/PID"),
-                    new LoopDescriptor(null, "MEA", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "MEA", 0, "*"),
-
-                    new LoopDescriptor(null, "MSG", 3, "/PO1-0700/N1/LDT"),
-                    new LoopDescriptor(null, "MSG", 2, "/SPI/N1"),
-                    new LoopDescriptor(null, "MSG", 1, "/N9"),
-
-                    new LoopDescriptor(null, "MTX", 1, "/ADV"),
-
-                    new LoopDescriptor("N1", "N1", 3, "/PO1-0700/SLN"),
-                    new LoopDescriptor("N1", "N1", 2, "/PO1-0700"),
-                    new LoopDescriptor("N1", "N1", 2, "/SPI"),
-                    new LoopDescriptor("N1", "N1", 1, "*"),
-
-                    new LoopDescriptor(null, "N2", 3, "/PO1-0700/SLN/N1"),
-                    new LoopDescriptor(null, "N2", 2, "/SPI/N1"),
-                    new LoopDescriptor(null, "N2", 1, "/N1"),
-
-                    new LoopDescriptor(null, "N3", 3, "/PO1-0700/SLN/N1"),
-                    new LoopDescriptor(null, "N3", 2, "/SPI/N1"),
-                    new LoopDescriptor(null, "N3", 1, "/N1"),
-
-                    new LoopDescriptor(null, "N4", 3, "/PO1-0700/SLN/N1"),
-                    new LoopDescriptor(null, "N4", 2, "/SPI/N1"),
-                    new LoopDescriptor(null, "N4", 1, "/N1"),
-
-                    new LoopDescriptor("N9", "N9", 3, "/PO1-0700/SLN"),
-                    new LoopDescriptor("N9", "N9", 2, "/PO1-0700"),
-                    new LoopDescriptor("N9", "N9", 1, "*"),
-
-                    new LoopDescriptor(null, "NX2", 3, "/PO1-0700/SLN/N1"),
-                    new LoopDescriptor(null, "NX2", 2, "/PO1-0700/N1"),
-                    new LoopDescriptor(null, "NX2", 1, "/N1"),
-
-                    new LoopDescriptor(null, "PAM", 2, "/PO1-0700/SLN"),
-                    new LoopDescriptor(".", "PAM", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "PAM", 0, "*"),
-
-                    new LoopDescriptor(null, "PCT", 2, "/PO1-0700/AMT"),
-                    new LoopDescriptor(null, "PCT", 1, "/PO1-0700"),
-                    new LoopDescriptor(null, "PCT", 1, "/AMT"),
-                    new LoopDescriptor(".", "PCT", 0, "*"),
-
-                    new LoopDescriptor(null, "PER", 3, "/PO1-0700/SLN/N1"),
-                    new LoopDescriptor(null, "PER", 2, "/PO1-0700/N1"),
-                    new LoopDescriptor(null, "PER", 1, "/PO1-0700"),
-                    new LoopDescriptor(null, "PER", 1, "/N1"),
-                    new LoopDescriptor(".", "PER", 0, "*"),
-
-                    new LoopDescriptor(null, "PID", 2, "/PO1-0700/SLN"),
-                    new LoopDescriptor("PID", "PID", 2, "/PO1-0700"),
-                    new LoopDescriptor(".", "PID", 0, "*"),
-
-                    new LoopDescriptor(null, "PKG", 3, "/PO1-0700/N1"),
-                    new LoopDescriptor("PKG", "PKG", 2, "/PO1-0700"),
-                    new LoopDescriptor(null, "PKG", 1, "/N1"),
-                    new LoopDescriptor(".", "PKG", 0, "*"),
-
-                    new LoopDescriptor("PO1-0700", "PO1", 1, "*"),
-
-                    new LoopDescriptor(null, "PO3", 2, "/PO1-0700/SLN"),
-                    new LoopDescriptor(null, "PO3", 1, "/PO1-0700"),
-
-                    new LoopDescriptor(null, "PO4", 2, "/PO1-0700/SLN"),
-                    new LoopDescriptor(null, "PO4", 1, "/PO1-0700"),
-
-                    new LoopDescriptor(".", "PWK", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "PWK", 0, "*"),
-
-                    new LoopDescriptor(null, "QTY", 3, "/PO1-0700/N1/LDT"),
-                    new LoopDescriptor("QTY", "QTY", 3, "/PO1-0700/SLN"),
-                    new LoopDescriptor(null, "QTY", 3, "/PO1-0700/LDT"),
-                    new LoopDescriptor(null, "QTY", 3, "/PO1-0700/N1"),
-                    new LoopDescriptor("QTY", "QTY", 2, "/PO1-0700"),
-
-                    new LoopDescriptor(null, "REF", 3, "/PO1-0700/N1/LDT"),
-                    new LoopDescriptor(null, "REF", 2, "/SPI/N1"),
-                    new LoopDescriptor(null, "REF", 1, "/SPI"),
-                    new LoopDescriptor(null, "REF", 1, "/PO1-0700"),
-                    new LoopDescriptor(null, "REF", 1, "/AMT"),
-                    new LoopDescriptor(null, "REF", 1, "/N1"),
-                    new LoopDescriptor(".", "REF", 0, "*"),
-
-                    new LoopDescriptor("SAC", "SAC", 3, "/PO1-0700/SLN"),
-                    new LoopDescriptor("SAC", "SAC", 2, "/PO1-0700"),
-                    new LoopDescriptor("SAC", "SAC", 1, "*"),
-
-                    new LoopDescriptor(null, "SCH", 3, "/PO1-0700/N1"),
-                    new LoopDescriptor("SCH", "SCH", 2, "/PO1-0700"),
-
-                    new LoopDescriptor(null, "SDQ", 1, "/PO1-0700"),
-
-                    new LoopDescriptor(".", "SE", 0, "*"),
-
-                    new LoopDescriptor(null, "SI", 3, "/PO1-0700/SLN/QTY"),
-                    new LoopDescriptor(null, "SI", 2, "/PO1-0700/QTY"),
-                    new LoopDescriptor(null, "SI", 2, "/PO1-0700/SLN"),
-                    new LoopDescriptor(null, "SI", 1, "/N1"),
-                    new LoopDescriptor(".", "SI", 0, "*"),
-
-                    new LoopDescriptor("SLN", "SLN", 2, "/PO1-0700"),
-
-                    new LoopDescriptor(null, "SPI", 1, "/PO1-0700"),
-                    new LoopDescriptor("SPI", "SPI", 1, "*"),
-
-                    new LoopDescriptor(".", "ST", 0, "*"),
-
-                    new LoopDescriptor(null, "TAX", 2, "/PO1-0700/SLN"),
-                    new LoopDescriptor(null, "TAX", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "TAX", 0, "*"),
-
-                    new LoopDescriptor(null, "TC2", 2, "/PO1-0700/SLN"),
-                    new LoopDescriptor(null, "TC2", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "TC2", 0, "*"),
-
-                    new LoopDescriptor(null, "TD1", 2, "/PO1-0700/SCH"),
-                    new LoopDescriptor(null, "TD1", 1, "/PO1-0700"),
-                    new LoopDescriptor(null, "TD1", 1, "/N1"),
-                    new LoopDescriptor(".", "TD1", 0, "*"),
-
-                    new LoopDescriptor(null, "TD3", 2, "/PO1-0700/SCH"),
-                    new LoopDescriptor(null, "TD3", 1, "/PO1-0700"),
-                    new LoopDescriptor(null, "TD3", 1, "/N1"),
-                    new LoopDescriptor(".", "TD3", 0, "*"),
-
-                    new LoopDescriptor(null, "TD4", 2, "/PO1-0700/SCH"),
-                    new LoopDescriptor(null, "TD4", 1, "/PO1-0700"),
-                    new LoopDescriptor(null, "TD4", 1, "/N1"),
-                    new LoopDescriptor(".", "TD4", 0, "*"),
-
-                    new LoopDescriptor(null, "TD5", 2, "/PO1-0700/SCH"),
-                    new LoopDescriptor(null, "TD5", 1, "/PO1-0700"),
-                    new LoopDescriptor(null, "TD5", 1, "/N1"),
-                    new LoopDescriptor(".", "TD5", 0, "*"),
-
-                    new LoopDescriptor(null, "TXI", 1, "/PO1-0700"),
-                    new LoopDescriptor(".", "TXI", 0, "*"),
-            };
-        }
     }
 }
