@@ -4,7 +4,6 @@ import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.Plugin;
 import com.berryworks.edireader.demo.EDItoXML;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.StringReader;
@@ -20,7 +19,7 @@ public class PluginControllerImplTest {
     @Before
     public void setUp() {
         controller = new PluginControllerImpl("TestStandard", null);
-//        PluginControllerImpl.setDebug(true);
+        PluginControllerImpl.setDebug(true);
     }
 
     @Test
@@ -110,10 +109,10 @@ public class PluginControllerImplTest {
         assertTransition("AMT", 2, "AMT-0790", "/PO1-0700/AMT-0790", 1);
         assertFalse(controller.transition("MSG"));
         assertTransition("CTT", 0, "/", "/", 2, true);
-//        assertTransition("AMT", 1, "?", "?", 1);
+        assertTransition("AMT", 0, "/", "/", 0);
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void canProduceCorrectXmlFor850WithDifficultAMT() {
         String TINY_850 =
@@ -184,8 +183,8 @@ public class PluginControllerImplTest {
 
     private void assertTransition(String segment, int nestingLevel, String loopEntered, String loopStack, int closedCount, boolean resumed) throws EDISyntaxException {
         assertTrue(controller.transition(segment));
-        assertEquals(nestingLevel, controller.getNestingLevel());
         assertEquals(loopEntered, controller.getLoopEntered());
+        assertEquals(nestingLevel, controller.getNestingLevel());
         assertEquals(loopStack, controller.getLoopStack().toString());
         assertEquals(closedCount, controller.closedCount());
         assertEquals(resumed, controller.isResumed());

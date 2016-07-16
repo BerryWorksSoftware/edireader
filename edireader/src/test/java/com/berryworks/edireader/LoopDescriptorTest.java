@@ -119,8 +119,8 @@ public class LoopDescriptorTest {
                 ", conditional based on Flag1",
                 loopDescriptor.toString());
 
-        loopDescriptor = new LoopDescriptor("LoopName", "FirstSegment", 3, "CurrentLoop?Flag1?Flag0");
-        assertEquals("LoopName", loopDescriptor.getName());
+        loopDescriptor = new LoopDescriptor(null, "FirstSegment", 3, "CurrentLoop?Flag1?Flag0");
+        assertNull(loopDescriptor.getName());
         assertEquals("FirstSegment", loopDescriptor.getFirstSegment());
         assertEquals(3, loopDescriptor.getNestingLevel());
         assertEquals(-1, loopDescriptor.getLevelContext());
@@ -130,7 +130,7 @@ public class LoopDescriptorTest {
         assertFalse("Condition Flag2 unexpected", loopDescriptor.isConditionFlag("Flag2"));
         assertFalse(loopDescriptor.isAnyContext());
         assertEquals(
-                "loop LoopName at nesting level 3: encountering segment FirstSegment while currently in loop CurrentLoop" +
+                "loop null at nesting level 3: encountering segment FirstSegment while currently in loop CurrentLoop" +
                 ", conditional based on Flag0 Flag1",
                 loopDescriptor.toString());
     }

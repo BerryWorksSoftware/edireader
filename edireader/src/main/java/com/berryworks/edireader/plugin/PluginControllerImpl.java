@@ -25,6 +25,9 @@ import com.berryworks.edireader.Plugin;
 import com.berryworks.edireader.PluginController;
 import com.berryworks.edireader.tokenizer.Tokenizer;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.berryworks.edireader.Plugin.CURRENT;
 
 /**
@@ -75,6 +78,7 @@ public class PluginControllerImpl extends PluginController {
      * consider the outer loop in this count.
      */
     protected int numberOfLoopsClosed;
+    private final Set<String> resultFlags = new HashSet<>();
 
     /**
      * Construct a PluginControllerImpl
@@ -118,6 +122,14 @@ public class PluginControllerImpl extends PluginController {
 
         if (!validateDescriptor(newDescriptor, segmentName, tokenizer))
             return false;
+
+
+        // Set flags related to this descriptor.
+        Set<String> flags = newDescriptor.getResultFlags();
+        for (String flagName : flags) {
+            if (debug) trace("setting flag " + flagName);
+            resultFlags.add(flagName);
+        }
 
         String newLoopName = newDescriptor.getName();
         if (CURRENT.equals(newLoopName) && newDescriptor.getNestingLevel() == loopDescriptor.getNestingLevel()) {

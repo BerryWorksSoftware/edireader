@@ -241,31 +241,33 @@ public class LoopDescriptor {
 
     private void lookForFlags() {
         // Look for name+flag+flag pattern in name
-        if (!isPresent(name)) return;
-        int indexOfFirstPlus = name.indexOf('+');
-        if (indexOfFirstPlus > 0) {
-            boolean first = true;
-            for (String part : name.split("\\+")) {
-                if (first) {
-                    name = part;
-                    first = false;
-                } else {
-                    resultFlags.add(part);
+        if (isPresent(name)) {
+            int indexOfFirstPlus = name.indexOf('+');
+            if (indexOfFirstPlus > 0) {
+                boolean first = true;
+                for (String part : name.split("\\+")) {
+                    if (first) {
+                        name = part;
+                        first = false;
+                    } else {
+                        resultFlags.add(part);
+                    }
                 }
             }
         }
 
         // Look for text?flag?flag pattern in the loop context
-        if (!isPresent(loopContext)) return;
-        int indexOfFirstQuestion = loopContext.indexOf('?');
-        if (indexOfFirstQuestion > 0) {
-            boolean first = true;
-            for (String part : loopContext.split("\\?")) {
-                if (first) {
-                    loopContext = part;
-                    first = false;
-                } else {
-                    conditionFlags.add(part);
+        if (isPresent(loopContext)) {
+            int indexOfFirstQuestion = loopContext.indexOf('?');
+            if (indexOfFirstQuestion > 0) {
+                boolean first = true;
+                for (String part : loopContext.split("\\?")) {
+                    if (first) {
+                        loopContext = part;
+                        first = false;
+                    } else {
+                        conditionFlags.add(part);
+                    }
                 }
             }
         }
@@ -380,6 +382,10 @@ public class LoopDescriptor {
 
     public boolean isResultFlag(String flagName) {
         return resultFlags.contains(flagName);
+    }
+
+    public Set<String> getResultFlags() {
+        return resultFlags;
     }
 
     public boolean isConditionFlag(String flagName) {
