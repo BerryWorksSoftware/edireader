@@ -75,8 +75,8 @@ public class LoopDescriptorTest {
     public void canConstructionWithFlagsSet() {
         loopDescriptor = new LoopDescriptor("LoopName+Flag1", "FirstSegment");
         assertEquals("LoopName", loopDescriptor.getName());
-        assertTrue("Missing Flag1", loopDescriptor.isFlag("Flag1"));
-        assertFalse("Flag2 unexpected", loopDescriptor.isFlag("Flag2"));
+        assertTrue("Missing Flag1", loopDescriptor.isResultFlag("Flag1"));
+        assertFalse("Flag2 unexpected", loopDescriptor.isResultFlag("Flag2"));
         assertEquals("FirstSegment", loopDescriptor.getFirstSegment());
         assertEquals(1, loopDescriptor.getNestingLevel());
         assertEquals(-1, loopDescriptor.getLevelContext());
@@ -89,9 +89,9 @@ public class LoopDescriptorTest {
 
         loopDescriptor = new LoopDescriptor("LoopName+Flag1+Flag0", "FirstSegment");
         assertEquals("LoopName", loopDescriptor.getName());
-        assertTrue("Missing Flag0", loopDescriptor.isFlag("Flag0"));
-        assertTrue("Missing Flag1", loopDescriptor.isFlag("Flag1"));
-        assertFalse("Flag2 unexpected", loopDescriptor.isFlag("Flag2"));
+        assertTrue("Missing Flag0", loopDescriptor.isResultFlag("Flag0"));
+        assertTrue("Missing Flag1", loopDescriptor.isResultFlag("Flag1"));
+        assertFalse("Flag2 unexpected", loopDescriptor.isResultFlag("Flag2"));
         assertEquals("FirstSegment", loopDescriptor.getFirstSegment());
         assertEquals(1, loopDescriptor.getNestingLevel());
         assertEquals(-1, loopDescriptor.getLevelContext());
@@ -100,6 +100,38 @@ public class LoopDescriptorTest {
         assertEquals(
                 "loop LoopName at nesting level 1: encountering segment FirstSegment while outside any loop" +
                         ", setting Flag0 Flag1",
+                loopDescriptor.toString());
+    }
+
+    @Test
+    public void canConstructionWithFlagsAsConditions() {
+        loopDescriptor = new LoopDescriptor("LoopName", "FirstSegment", 3, "CurrentLoop?Flag1");
+        assertEquals("LoopName", loopDescriptor.getName());
+        assertEquals("FirstSegment", loopDescriptor.getFirstSegment());
+        assertEquals(3, loopDescriptor.getNestingLevel());
+        assertEquals(-1, loopDescriptor.getLevelContext());
+        assertEquals("CurrentLoop", loopDescriptor.getLoopContext());
+        assertTrue("Missing condition Flag1", loopDescriptor.isConditionFlag("Flag1"));
+        assertFalse("Condition Flag2 unexpected", loopDescriptor.isConditionFlag("Flag2"));
+        assertFalse(loopDescriptor.isAnyContext());
+        assertEquals(
+                "loop LoopName at nesting level 3: encountering segment FirstSegment while currently in loop CurrentLoop" +
+                ", conditional based on Flag1",
+                loopDescriptor.toString());
+
+        loopDescriptor = new LoopDescriptor("LoopName", "FirstSegment", 3, "CurrentLoop?Flag1?Flag0");
+        assertEquals("LoopName", loopDescriptor.getName());
+        assertEquals("FirstSegment", loopDescriptor.getFirstSegment());
+        assertEquals(3, loopDescriptor.getNestingLevel());
+        assertEquals(-1, loopDescriptor.getLevelContext());
+        assertEquals("CurrentLoop", loopDescriptor.getLoopContext());
+        assertTrue("Missing condition Flag1", loopDescriptor.isConditionFlag("Flag1"));
+        assertTrue("Missing condition Flag0", loopDescriptor.isConditionFlag("Flag0"));
+        assertFalse("Condition Flag2 unexpected", loopDescriptor.isConditionFlag("Flag2"));
+        assertFalse(loopDescriptor.isAnyContext());
+        assertEquals(
+                "loop LoopName at nesting level 3: encountering segment FirstSegment while currently in loop CurrentLoop" +
+                ", conditional based on Flag0 Flag1",
                 loopDescriptor.toString());
     }
 

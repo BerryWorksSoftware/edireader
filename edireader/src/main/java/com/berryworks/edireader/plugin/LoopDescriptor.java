@@ -25,6 +25,8 @@ import com.berryworks.edireader.Plugin;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static com.berryworks.edireader.util.FixedLength.isPresent;
+
 /**
  * Static metadata about a segment loop (also known as a segment group) within an EDI document
  * (also known as transaction set or message). A sequence of LoopDescriptors
@@ -181,15 +183,18 @@ public class LoopDescriptor {
      * segment type that matches the firstSegment is in fact an instance of this
      * loop.
      */
-    protected final String loopContext;
+    protected String loopContext;
 
     private final int levelContext;
 
     /**
      * One or flags which may be set as the result of encountering the loop.
      * These flags may be used as conditions within the context for the loop.
+     * resultFlags are the flags that are set when the rule (loop descriptor) is fired
+     * conditionFlags are the flags that must be set for the descriptor's condition to be satisfied
      */
-    private final Set<String> flagSet = new TreeSet<>();
+    private final Set<String> resultFlags = new TreeSet<>();
+    private final Set<String> conditionFlags = new TreeSet<>();
 
     /**
      * Constructor a descriptor for recognizing the beginning of a nested loop.
@@ -236,6 +241,7 @@ public class LoopDescriptor {
 
     private void lookForFlags() {
         // Look for name+flag+flag pattern in name
+        if (!isPresent(name)) return;
         int indexOfFirstPlus = name.indexOf('+');
         if (indexOfFirstPlus > 0) {
             boolean first = true;
@@ -244,7 +250,22 @@ public class LoopDescriptor {
                     name = part;
                     first = false;
                 } else {
-                    flagSet.add(part);
+                    resultFlags.add(part);
+                }
+            }
+        }
+
+        // Look for text?flag?flag pattern in the loop context
+        if (!isPresent(loopContext)) return;
+        int indexOfFirstQuestion = loopContext.indexOf('?');
+        if (indexOfFirstQuestion > 0) {
+            boolean first = true;
+            for (String part : loopContext.split("\\?")) {
+                if (first) {
+                    loopContext = part;
+                    first = false;
+                } else {
+                    conditionFlags.add(part);
                 }
             }
         }
@@ -310,12 +331,19 @@ public class LoopDescriptor {
         }
         if (levelContext > -1)
             result += " while current at nesting level " + levelContext;
-        if (!flagSet.isEmpty()) {
+        if (!resultFlags.isEmpty()) {
             result += ", setting";
-            for (String flagName : flagSet) {
+            for (String flagName : resultFlags) {
                 result += " " + flagName;
             }
         }
+        if (!conditionFlags.isEmpty()) {
+            result += ", conditional based on";
+            for (String flagName : conditionFlags) {
+                result += " " + flagName;
+            }
+        }
+
         return result;
     }
 
@@ -350,8 +378,12 @@ public class LoopDescriptor {
         return Plugin.ANY_CONTEXT.equals(loopContext);
     }
 
-    public boolean isFlag(String flagName) {
-        return flagSet.contains(flagName);
+    public boolean isResultFlag(String flagName) {
+        return resultFlags.contains(flagName);
+    }
+
+    public boolean isConditionFlag(String flagName) {
+        return conditionFlags.contains(flagName);
     }
 }
 

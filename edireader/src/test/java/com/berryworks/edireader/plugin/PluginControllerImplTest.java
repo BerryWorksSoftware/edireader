@@ -4,6 +4,7 @@ import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.Plugin;
 import com.berryworks.edireader.demo.EDItoXML;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.StringReader;
@@ -112,6 +113,7 @@ public class PluginControllerImplTest {
 //        assertTransition("AMT", 1, "?", "?", 1);
     }
 
+    @Ignore
     @Test
     public void canProduceCorrectXmlFor850WithDifficultAMT() {
         String TINY_850 =
