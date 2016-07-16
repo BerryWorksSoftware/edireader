@@ -22,6 +22,9 @@ package com.berryworks.edireader.plugin;
 
 import com.berryworks.edireader.Plugin;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * Static metadata about a segment loop (also known as a segment group) within an EDI document
  * (also known as transaction set or message). A sequence of LoopDescriptors
@@ -156,7 +159,7 @@ public class LoopDescriptor {
      * /segmentname designates the outer loop following the appearance of the
      * named segment.
      */
-    protected final String name;
+    protected String name;
 
     /**
      * Segment type of the first segment in this loop.
@@ -183,6 +186,12 @@ public class LoopDescriptor {
     private final int levelContext;
 
     /**
+     * One or flags which may be set as the result of encountering the loop.
+     * These flags may be used as conditions within the context for the loop.
+     */
+    private final Set<String> flagSet = new TreeSet<>();
+
+    /**
      * Constructor a descriptor for recognizing the beginning of a nested loop.
      *
      * @param loopName     Name of the loop, suitable for use as an XML attribute value
@@ -191,13 +200,13 @@ public class LoopDescriptor {
      * @param nestingLevel How deeply is this loop nested within other loops.
      * @param currentLoop  Name of a loop; indicates a valid prior state
      */
-    public LoopDescriptor(String loopName, String firstSegment, int nestingLevel,
-                          String currentLoop) {
+    public LoopDescriptor(String loopName, String firstSegment, int nestingLevel, String currentLoop) {
         this.name = loopName;
         this.firstSegment = firstSegment;
         this.nestingLevel = nestingLevel;
         this.loopContext = currentLoop;
         this.levelContext = -1;
+        lookForFlags();
     }
 
     /**
@@ -222,6 +231,23 @@ public class LoopDescriptor {
         this.nestingLevel = nestingLevel;
         this.loopContext = Plugin.ANY_CONTEXT;
         this.levelContext = currentLevel;
+        lookForFlags();
+    }
+
+    private void lookForFlags() {
+        // Look for name+flag+flag pattern in name
+        int indexOfFirstPlus = name.indexOf('+');
+        if (indexOfFirstPlus > 0) {
+            boolean first = true;
+            for (String part : name.split("\\+")) {
+                if (first) {
+                    name = part;
+                    first = false;
+                } else {
+                    flagSet.add(part);
+                }
+            }
+        }
     }
 
     /**
@@ -284,6 +310,12 @@ public class LoopDescriptor {
         }
         if (levelContext > -1)
             result += " while current at nesting level " + levelContext;
+        if (!flagSet.isEmpty()) {
+            result += ", setting";
+            for (String flagName : flagSet) {
+                result += " " + flagName;
+            }
+        }
         return result;
     }
 
@@ -316,6 +348,10 @@ public class LoopDescriptor {
 
     public boolean isAnyContext() {
         return Plugin.ANY_CONTEXT.equals(loopContext);
+    }
+
+    public boolean isFlag(String flagName) {
+        return flagSet.contains(flagName);
     }
 }
 
