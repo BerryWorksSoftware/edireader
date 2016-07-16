@@ -138,12 +138,8 @@ public class PluginControllerImplTest {
                         "GE*1*38327$" +
                         "IEA*1*000038449$";
 
-        StringReader reader = new StringReader(TINY_850);
         StringWriter writer = new StringWriter();
-        EDItoXML ediToXml = new EDItoXML(reader, writer);
-        ediToXml.run();
-        String xmlText = writer.toString();
-        System.out.println(xmlText);
+        new EDItoXML(new StringReader(TINY_850), writer).run();
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                         "<ediroot>" +
                         "<interchange Standard=\"ANSI X.12\" AuthorizationQual=\"00\" Authorization=\"          \" SecurityQual=\"00\" Security=\"          \" Date=\"040714\" Time=\"1003\" StandardsId=\"U\" Version=\"00204\" Control=\"000038449\" AckRequest=\"0\" TestIndicator=\"P\">" +
@@ -152,10 +148,12 @@ public class PluginControllerImplTest {
                         "<group GroupType=\"PO\" ApplSender=\"04000\" ApplReceiver=\"58401\" Date=\"040714\" Time=\"1003\" Control=\"38327\" StandardCode=\"X\" StandardVersion=\"003999\">" +
                         "<transaction DocType=\"850\" Name=\"Purchase Order (for test purposes only)\" Control=\"000042460\">" +
                         "<segment Id=\"BEG\"><element Id=\"BEG01\">00</element><element Id=\"BEG02\">RL</element><element Id=\"BEG03\">SPE1C115D1099</element><element Id=\"BEG04\">1594</element><element Id=\"BEG05\">160701</element><element Id=\"BEG09\">FR</element><element Id=\"BEG10\">SP</element></segment>" +
-                        "<segment Id=\"REF\"><element Id=\"REF01\">DS</element><element Id=\"REF02\">DOC9</element></segment><loop Id=\"AMT-0200\">" +
+                        "<segment Id=\"REF\"><element Id=\"REF01\">DS</element><element Id=\"REF02\">DOC9</element></segment>" +
+                        "<loop Id=\"AMT-0200\">" +
                         "<segment Id=\"AMT\"><element Id=\"AMT01\">KC</element><element Id=\"AMT02\">121.2</element></segment>" +
                         "<segment Id=\"AT\"><element Id=\"AT02\">97 0X0X49305CBX</element><element Id=\"AT07\">S33189</element><element Id=\"AT09\">001      2620</element></segment>" +
-                        "<segment Id=\"REF\"><element Id=\"REF01\">AX</element><element Id=\"REF02\">BX</element></segment></loop>" +
+                        "<segment Id=\"REF\"><element Id=\"REF01\">AX</element><element Id=\"REF02\">BX</element></segment>" +
+                        "</loop>" +
                         "<loop Id=\"N1\">" +
                         "<segment Id=\"N1\"><element Id=\"N101\">BY</element><element Id=\"N102\">DLA TROOP SUPPORT</element><element Id=\"N103\">10</element><element Id=\"N104\">SPE1C1</element></segment>" +
                         "<segment Id=\"N2\"><element Id=\"N201\">C AND T SUPPLY CHAIN</element></segment><segment Id=\"N3\"><element Id=\"N301\">800 SNOWBALL AVENUE</element></segment>" +
@@ -177,7 +175,7 @@ public class PluginControllerImplTest {
                         "</group>" +
                         "</interchange>" +
                         "</ediroot>",
-                xmlText);
+                writer.toString());
     }
 
     private void assertTransition(String segment, int nestingLevel, String loopEntered, String loopStack, int closedCount, boolean resumed) throws EDISyntaxException {

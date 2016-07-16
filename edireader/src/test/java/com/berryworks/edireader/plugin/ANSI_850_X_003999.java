@@ -14,7 +14,7 @@ public class ANSI_850_X_003999 extends CompositeAwarePlugin {
                 new LoopDescriptor("ADV", "ADV", 1, ANY_CONTEXT),
 
                 new LoopDescriptor("AMT-0790", "AMT", 2, "/PO1-0700"),
-                new LoopDescriptor(null, "AMT", 1, "/CTT"),
+//                new LoopDescriptor(null, "AMT", 1, "/CTT"),
                 new LoopDescriptor("AMT-0200", "AMT", 1, ANY_CONTEXT),
 
                 new LoopDescriptor(".", "BEG", 0, ANY_CONTEXT),
@@ -49,15 +49,15 @@ public class ANSI_850_X_003999 extends CompositeAwarePlugin {
                 new LoopDescriptor(null, "DTM", 3, "/PO1-0700/SLN/N9"),
                 new LoopDescriptor(null, "DTM", 2, "/SPI/CB1"),
                 new LoopDescriptor(null, "DTM", 1, "/PO1-0700"),
-                new LoopDescriptor(null, "DTM", 1, "/AMT"),
+                new LoopDescriptor(null, "DTM", 1, "/AMT-0200"),
                 new LoopDescriptor(null, "DTM", 1, "/ADV"),
                 new LoopDescriptor(null, "DTM", 1, "/SPI"),
                 new LoopDescriptor(null, "DTM", 1, "/N9"),
                 new LoopDescriptor(".", "DTM", 0, ANY_CONTEXT),
 
-                new LoopDescriptor("FA1", "FA1", 2, "/AMT"),
+                new LoopDescriptor("FA1", "FA1", 2, "/AMT-0200"),
 
-                new LoopDescriptor(null, "FA2", 2, "/AMT/FA1"),
+                new LoopDescriptor(null, "FA2", 2, "/AMT-0200/FA1"),
 
                 new LoopDescriptor(null, "FOB", 2, "/PO1-0700/N1"),
                 new LoopDescriptor(null, "FOB", 1, "/PO1-0700"),
@@ -140,7 +140,7 @@ public class ANSI_850_X_003999 extends CompositeAwarePlugin {
 
                 new LoopDescriptor(null, "PCT", 2, "/PO1-0700/AMT"),
                 new LoopDescriptor(null, "PCT", 1, "/PO1-0700"),
-                new LoopDescriptor(null, "PCT", 1, "/AMT"),
+                new LoopDescriptor(null, "PCT", 1, "/AMT-0200"),
                 new LoopDescriptor(".", "PCT", 0, ANY_CONTEXT),
 
                 new LoopDescriptor(null, "PER", 3, "/PO1-0700/SLN/N1"),
@@ -179,7 +179,7 @@ public class ANSI_850_X_003999 extends CompositeAwarePlugin {
                 new LoopDescriptor(null, "REF", 2, "/SPI/N1"),
                 new LoopDescriptor(null, "REF", 1, "/SPI"),
                 new LoopDescriptor(null, "REF", 1, "/PO1-0700"),
-                new LoopDescriptor(null, "REF", 1, "/AMT"),
+                new LoopDescriptor(null, "REF", 1, "/AMT-0200"),
                 new LoopDescriptor(null, "REF", 1, "/N1"),
                 new LoopDescriptor(".", "REF", 0, ANY_CONTEXT),
 
