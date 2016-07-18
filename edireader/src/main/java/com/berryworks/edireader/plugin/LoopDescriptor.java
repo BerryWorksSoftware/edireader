@@ -361,11 +361,12 @@ public class LoopDescriptor {
 
         LoopDescriptor sld = (LoopDescriptor) target;
         return equalsOrBothNull(getName(), sld.getName())
-                && equalsOrBothNull(getFirstSegment(), sld
-                .getFirstSegment())
+                && equalsOrBothNull(getFirstSegment(), sld.getFirstSegment())
                 && getNestingLevel() == sld.getNestingLevel()
                 && getLoopContext().equals(sld.getLoopContext())
-                && getLevelContext() == sld.getLevelContext();
+                && getLevelContext() == sld.getLevelContext()
+                && getResultFlags().equals(sld.getResultFlags())
+                && getConditionFlags().equals(sld.getConditionFlags());
     }
 
     public int hashCode() {

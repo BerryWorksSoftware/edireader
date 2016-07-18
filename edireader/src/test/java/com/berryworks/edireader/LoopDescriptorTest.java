@@ -148,12 +148,16 @@ public class LoopDescriptorTest {
         LoopDescriptor d4 = new LoopDescriptor("name", "firstSegmentx", 1, INITIAL_CONTEXT);
         LoopDescriptor d5 = new LoopDescriptor("name", "firstSegment", 2, INITIAL_CONTEXT);
         LoopDescriptor d6 = new LoopDescriptor("name", "firstSegment", 1, "contextx");
+        LoopDescriptor d7 = new LoopDescriptor("name", "firstSegment", 1, ANY_CONTEXT + "?flag");
+        LoopDescriptor d8 = new LoopDescriptor("name+flag", "firstSegment", 1, "contextx");
 
         assertEquals(loopDescriptor, d2);
         assertNotEquals(loopDescriptor, d3);
         assertNotEquals(loopDescriptor, d4);
         assertNotEquals(loopDescriptor, d5);
         assertNotEquals(loopDescriptor, d6);
+        assertNotEquals(loopDescriptor, d7);
+        assertNotEquals(loopDescriptor, d8);
     }
 
     @Test
