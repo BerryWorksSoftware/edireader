@@ -132,8 +132,8 @@
                 <version>${maven.jacoco.plugin.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/plugin/ANSI_*</exclude>
-                        <exclude>**/plugin/EDIFACT_*</exclude>
+                        <exclude>**/ANSI_*</exclude>
+                        <exclude>**/EDIFACT_*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
