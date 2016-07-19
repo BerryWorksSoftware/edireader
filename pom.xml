@@ -6,7 +6,7 @@
 
     <groupId>com.berryworks</groupId>
     <artifactId>EDIReaderCommunityEdition</artifactId>
-    <version>5.4.0</version>
+    <version>5.4.1-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>EDIReader Community Edition</name>
@@ -130,6 +130,12 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${maven.jacoco.plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>com/berryworks/edireader/plugin/A*.*</exclude>
+                        <exclude>com/berryworks/edireader/plugin/E*.*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
