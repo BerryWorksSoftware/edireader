@@ -132,8 +132,8 @@
                 <version>${maven.jacoco.plugin.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>com/berryworks/edireader/plugin/A*.*</exclude>
-                        <exclude>com/berryworks/edireader/plugin/E*.*</exclude>
+                        <exclude>**/plugin/ANSI_*</exclude>
+                        <exclude>**/plugin/EDIFACT_*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
