@@ -28,7 +28,7 @@ import com.berryworks.edireader.Plugin;
 public class ANSI_872 extends Plugin {
 
     public ANSI_872() {
-        super("827", "Residential Mortgage Insurance Application");
+        super("872", "Residential Mortgage Insurance Application");
         loops = new LoopDescriptor[]{new LoopDescriptor("LX", "LX", 1),
                 new LoopDescriptor("LRQ", "LRQ", 2, "LX"),
                 new LoopDescriptor("LRQ.SCM", "SCM", 3, "LRQ"),
