@@ -23,9 +23,10 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canParse110() throws EDISyntaxException {
+    public void canLoadPluginFor110() throws EDISyntaxException {
         plugin = new ANSI_110();
         plugin.prepare();
+        assertEquals(8, plugin.getLoopDescriptors().length);
         controller.setPlugin(plugin);
         assertSame(plugin, controller.getPlugin());
         controller.setEnabled(true);
@@ -37,9 +38,10 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canParse210() throws EDISyntaxException {
+    public void canLoadPluginFor210() throws EDISyntaxException {
         plugin = new ANSI_210();
         plugin.prepare();
+        assertEquals(38, plugin.getLoopDescriptors().length);
         controller.setPlugin(plugin);
         assertSame(plugin, controller.getPlugin());
         controller.setEnabled(true);
@@ -51,9 +53,10 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canParse277() throws EDISyntaxException {
+    public void canLoadPluginFor277() throws EDISyntaxException {
         plugin = new ANSI_277();
         plugin.prepare();
+        assertEquals(16, plugin.getLoopDescriptors().length);
         controller.setPlugin(plugin);
         assertSame(plugin, controller.getPlugin());
         controller.setEnabled(true);
@@ -65,9 +68,10 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canParse810() throws EDISyntaxException {
+    public void canLoadPluginFor810() throws EDISyntaxException {
         plugin = new ANSI_810();
         plugin.prepare();
+        assertEquals(85, plugin.getLoopDescriptors().length);
         controller.setPlugin(plugin);
         assertSame(plugin, controller.getPlugin());
         controller.setEnabled(true);
@@ -79,9 +83,10 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canParse856() throws EDISyntaxException {
+    public void canLoadPluginFor856() throws EDISyntaxException {
         plugin = new ANSI_856();
         plugin.prepare();
+        assertEquals(3, plugin.getLoopDescriptors().length);
         controller.setPlugin(plugin);
         assertSame(plugin, controller.getPlugin());
         controller.setEnabled(true);
@@ -93,9 +98,10 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canParse870() throws EDISyntaxException {
+    public void canLoadPluginFor870() throws EDISyntaxException {
         plugin = new ANSI_870();
         plugin.prepare();
+        assertEquals(53, plugin.getLoopDescriptors().length);
         controller.setPlugin(plugin);
         assertSame(plugin, controller.getPlugin());
         controller.setEnabled(true);
@@ -107,9 +113,10 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canParse872() throws EDISyntaxException {
+    public void canLoadPluginFor872() throws EDISyntaxException {
         plugin = new ANSI_872();
         plugin.prepare();
+        assertEquals(19, plugin.getLoopDescriptors().length);
         controller.setPlugin(plugin);
         assertSame(plugin, controller.getPlugin());
         controller.setEnabled(true);
