@@ -60,6 +60,7 @@ public interface ErrorMessages {
     String MISMATCHED_UNP_LENGTH = "UNP segment contains length field that does not match length field in UNO";
     String MISMATCHED_PACKAGE_REF = "UNP segment contains package reference that does not match corresponding reference in UNO";
     String MISSING_UNO_LENGTH = "UNO segment missing mandatory length field";
+    String MISSING_BIN_LENGTH = "BIN segment missing mandatory length field";
     String TRADACOMS_MISSING_STX = "TRADACOMS interchange must begin with STX";
     String SEQUENCE_MHD = "Message sequence error in MHD segment";
     String COUNT_MTR = "Segment count error in MTR segment";

@@ -517,7 +517,7 @@ public class AnsiReader extends StandardReader {
             lengthField = parseStringFromNextElement();
             length = Integer.parseInt(lengthField);
         } catch (EDISyntaxException e) {
-            throw new EDISyntaxException(ErrorMessages.MISSING_UNO_LENGTH, getTokenizer());
+            throw new EDISyntaxException(ErrorMessages.MISSING_BIN_LENGTH, getTokenizer());
         } catch (NumberFormatException e) {
             throw new EDISyntaxException("BIN object length must be numeric instead of " + lengthField, getTokenizer());
         }
