@@ -23,7 +23,21 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void basics() throws EDISyntaxException {
+    public void canParse110() throws EDISyntaxException {
+        plugin = new ANSI_110();
+        plugin.prepare();
+        controller.setPlugin(plugin);
+        assertSame(plugin, controller.getPlugin());
+        controller.setEnabled(true);
+        assertTrue(controller.isEnabled());
+        assertEquals("Air Freight Details and Invoice", controller.getDocumentName());
+        assertNull(controller.getDocumentType());
+        controller.setDocumentType("Document Type");
+        assertEquals("Document Type", controller.getDocumentType());
+    }
+
+    @Test
+    public void canParse210() throws EDISyntaxException {
         plugin = new ANSI_210();
         plugin.prepare();
         controller.setPlugin(plugin);
@@ -31,6 +45,76 @@ public class PluginControllerImplTest {
         controller.setEnabled(true);
         assertTrue(controller.isEnabled());
         assertEquals("Motor Carrier Freight Details and Invoice", controller.getDocumentName());
+        assertNull(controller.getDocumentType());
+        controller.setDocumentType("Document Type");
+        assertEquals("Document Type", controller.getDocumentType());
+    }
+
+    @Test
+    public void canParse277() throws EDISyntaxException {
+        plugin = new ANSI_277();
+        plugin.prepare();
+        controller.setPlugin(plugin);
+        assertSame(plugin, controller.getPlugin());
+        controller.setEnabled(true);
+        assertTrue(controller.isEnabled());
+        assertEquals("Health Care Claim Status Notification", controller.getDocumentName());
+        assertNull(controller.getDocumentType());
+        controller.setDocumentType("Document Type");
+        assertEquals("Document Type", controller.getDocumentType());
+    }
+
+    @Test
+    public void canParse810() throws EDISyntaxException {
+        plugin = new ANSI_810();
+        plugin.prepare();
+        controller.setPlugin(plugin);
+        assertSame(plugin, controller.getPlugin());
+        controller.setEnabled(true);
+        assertTrue(controller.isEnabled());
+        assertEquals("Invoice", controller.getDocumentName());
+        assertNull(controller.getDocumentType());
+        controller.setDocumentType("Document Type");
+        assertEquals("Document Type", controller.getDocumentType());
+    }
+
+    @Test
+    public void canParse856() throws EDISyntaxException {
+        plugin = new ANSI_856();
+        plugin.prepare();
+        controller.setPlugin(plugin);
+        assertSame(plugin, controller.getPlugin());
+        controller.setEnabled(true);
+        assertTrue(controller.isEnabled());
+        assertEquals("Advance Ship Notice", controller.getDocumentName());
+        assertNull(controller.getDocumentType());
+        controller.setDocumentType("Document Type");
+        assertEquals("Document Type", controller.getDocumentType());
+    }
+
+    @Test
+    public void canParse870() throws EDISyntaxException {
+        plugin = new ANSI_870();
+        plugin.prepare();
+        controller.setPlugin(plugin);
+        assertSame(plugin, controller.getPlugin());
+        controller.setEnabled(true);
+        assertTrue(controller.isEnabled());
+        assertEquals("Order Status Report", controller.getDocumentName());
+        assertNull(controller.getDocumentType());
+        controller.setDocumentType("Document Type");
+        assertEquals("Document Type", controller.getDocumentType());
+    }
+
+    @Test
+    public void canParse872() throws EDISyntaxException {
+        plugin = new ANSI_872();
+        plugin.prepare();
+        controller.setPlugin(plugin);
+        assertSame(plugin, controller.getPlugin());
+        controller.setEnabled(true);
+        assertTrue(controller.isEnabled());
+        assertEquals("Residential Mortgage Insurance Application", controller.getDocumentName());
         assertNull(controller.getDocumentType());
         controller.setDocumentType("Document Type");
         assertEquals("Document Type", controller.getDocumentType());
