@@ -881,7 +881,7 @@ public class TestEDITokenizer {
     @Test
     public void testRepeatSeparator() throws Exception {
 
-        tokenizer = new EDITokenizer(new StringReader("abc-def*ghi-j*j2*j3-k*l*m1:m2*:n2*:o2-p:*q!"));
+        tokenizer = new EDITokenizer(new StringReader("abc-def*ghi-j*j2*j3-k*l*m1:m2*:n2*:o2-p:*q**r1:r2-s!"));
         assertNotNull(tokenizer);
         tokenizer.setTerminator('!');
         tokenizer.setRelease('=');
@@ -897,6 +897,7 @@ public class TestEDITokenizer {
         assertEquals(Token.TokenType.SEGMENT_START, token.getType());
         assertEquals("abc00", token.getElementId());
         assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("abc", token.getValue());
         assertEquals("abc", token.getSegmentType());
 
@@ -907,6 +908,7 @@ public class TestEDITokenizer {
         assertEquals(Token.TokenType.SIMPLE, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("def", token.getValue());
         assertEquals("abc", token.getSegmentType());
 
@@ -916,6 +918,7 @@ public class TestEDITokenizer {
         assertNotNull(token);
         assertEquals(Token.TokenType.SIMPLE, token.getType());
         assertEquals(1, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("abc01", token.getElementId());
         assertEquals("ghi", token.getValue());
         assertEquals("abc", token.getSegmentType());
@@ -926,6 +929,7 @@ public class TestEDITokenizer {
         assertNotNull(token);
         assertEquals(Token.TokenType.SIMPLE, token.getType());
         assertEquals(2, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("abc02", token.getElementId());
         assertEquals("j", token.getValue());
         assertEquals("abc", token.getSegmentType());
@@ -936,6 +940,7 @@ public class TestEDITokenizer {
         assertNotNull(token);
         assertEquals(Token.TokenType.SIMPLE, token.getType());
         assertEquals(2, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("abc02", token.getElementId());
         assertEquals("j2", token.getValue());
         assertEquals("abc", token.getSegmentType());
@@ -946,6 +951,7 @@ public class TestEDITokenizer {
         assertNotNull(token);
         assertEquals(Token.TokenType.SIMPLE, token.getType());
         assertEquals(2, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("abc02", token.getElementId());
         assertEquals("j3", token.getValue());
         assertEquals("abc", token.getSegmentType());
@@ -957,6 +963,7 @@ public class TestEDITokenizer {
         assertEquals(Token.TokenType.SIMPLE, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("k", token.getValue());
         assertEquals("abc", token.getSegmentType());
 
@@ -967,6 +974,7 @@ public class TestEDITokenizer {
         assertEquals(Token.TokenType.SIMPLE, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("l", token.getValue());
         assertEquals("abc", token.getSegmentType());
 
@@ -999,6 +1007,7 @@ public class TestEDITokenizer {
         assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("", token.getValue());
         assertEquals("abc", token.getSegmentType());
 
@@ -1009,60 +1018,110 @@ public class TestEDITokenizer {
         assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(1, token.getSubIndex());
         assertEquals("n2", token.getValue());
         assertEquals("abc", token.getSegmentType());
 
-        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2!
+        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2
         //                            ^
         token = tokenizer.nextToken();
         assertNotNull(token);
         assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("", token.getValue());
         assertEquals("abc", token.getSegmentType());
 
-        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2!
+        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2
         //                              ^
         token = tokenizer.nextToken();
         assertNotNull(token);
         assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(1, token.getSubIndex());
         assertEquals("o2", token.getValue());
         assertEquals("abc", token.getSegmentType());
 
-        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q!
+        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q**r1:r2-s!!
         //                                 ^
         token = tokenizer.nextToken();
         assertNotNull(token);
         assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
         assertEquals("abc04", token.getElementId());
         assertEquals(4, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("p", token.getValue());
         assertEquals("abc", token.getSegmentType());
 
-        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q!
+        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q**r1:r2-s!!
         //                                  ^
         token = tokenizer.nextToken();
         assertNotNull(token);
         assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
         assertEquals("abc04", token.getElementId());
         assertEquals(4, token.getIndex());
+        assertEquals(1, token.getSubIndex());
         assertEquals("", token.getValue());
         assertEquals("abc", token.getSegmentType());
 
-        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q!
+        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q**r1:r2-s!!
         //                                    ^
         token = tokenizer.nextToken();
         assertNotNull(token);
         assertEquals(Token.TokenType.SIMPLE, token.getType());
         assertEquals("abc04", token.getElementId());
         assertEquals(4, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("q", token.getValue());
         assertEquals("abc", token.getSegmentType());
 
-        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q!
+        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q**r1:r2-s!!
+        //                                      ^
+        token = tokenizer.nextToken();
+        assertNotNull(token);
+        assertEquals(Token.TokenType.EMPTY, token.getType());
+        assertEquals("abc04", token.getElementId());
+        assertEquals(4, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("", token.getValue());
+        assertEquals("abc", token.getSegmentType());
+
+        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q**r1:r2-s!!
+        //                                       ^
+        token = tokenizer.nextToken();
+        assertNotNull(token);
+        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals("abc04", token.getElementId());
+        assertEquals(4, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("r1", token.getValue());
+        assertEquals("abc", token.getSegmentType());
+
+        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q**r1:r2-s!!
+        //                                          ^
+        token = tokenizer.nextToken();
+        assertNotNull(token);
+        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals("abc04", token.getElementId());
+        assertEquals(4, token.getIndex());
+        assertEquals(1, token.getSubIndex());
+        assertEquals("r2", token.getValue());
+        assertEquals("abc", token.getSegmentType());
+
+        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q**r1:r2-s!!
+        //                                             ^
+        token = tokenizer.nextToken();
+        assertNotNull(token);
+        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals("abc05", token.getElementId());
+        assertEquals(5, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("s", token.getValue());
+        assertEquals("abc", token.getSegmentType());
+
+        // abc-def*ghi-j-k*l*m1:m2*:n2*:o2-p:*q**r1:r2-s!!
         //                                     ^
         token = tokenizer.nextToken();
         assertNotNull(token);
@@ -1563,7 +1622,7 @@ public class TestEDITokenizer {
 
         returnValue = tokenizer.getBuffered();
         // Now the entire string has been buffered
-        assertEquals(str.length() -1, returnValue.length);
+        assertEquals(str.length() - 1, returnValue.length);
         assertEquals('b', returnValue[0]);
         assertEquals('z', returnValue[str.length() - 2]);
 

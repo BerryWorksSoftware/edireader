@@ -565,7 +565,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
     /**
      * Advances to the next token. Sets tokenReady, currentToken, and state.
      *
-     * @throws IOException for problem reading EDI data
+     * @throws IOException                                 for problem reading EDI data
      * @throws com.berryworks.edireader.EDISyntaxException if invalid EDI is detected
      */
     protected void advance() throws IOException, EDISyntaxException {
@@ -691,7 +691,9 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         break;
                     case IN_SEGMENT:
                         // return an empty element
-                        currentToken.incrementIndex();
+                        if (!repetition) {
+                            currentToken.incrementIndex();
+                        }
                         currentToken.resetSubElementIndex();
                         currentToken.setLast(false);
                         currentToken.setType(Token.TokenType.EMPTY);

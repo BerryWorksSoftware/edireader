@@ -56,7 +56,7 @@ public abstract class StandardReader extends EDIReader {
     private ReplyGenerator alternateAckGenerator;
     private RecoverableSyntaxException syntaxException;
     private PluginControllerFactoryInterface pluginControllerFactory;
-    private PluginController segmentPluginController;
+    protected PluginController segmentPluginController;
 
     protected abstract Token recognizeBeginning() throws IOException, SAXException;
 
