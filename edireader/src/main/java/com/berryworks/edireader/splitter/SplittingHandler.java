@@ -91,19 +91,20 @@ public class SplittingHandler extends DefaultHandler {
     @Override
     public void endDocument() throws SAXException {
         contentHandler.endDocument();
+        ClosingDetails closingDetails = new ClosingDetails();
+        closingDetails.setSenderQualifier(senderAttributes.getValue(xmlTags.getQualifierAttribute()));
+        closingDetails.setSenderId(senderAttributes.getValue(xmlTags.getIdAttribute()));
+        closingDetails.setReceiverQualifier(receiverAttributes.getValue(xmlTags.getQualifierAttribute()));
+        closingDetails.setReceiverId(receiverAttributes.getValue(xmlTags.getIdAttribute()));
+        closingDetails.setInterchangeControlNumber(interchangeAttributes.getValue(xmlTags.getControl()));
+        closingDetails.setGroupSender(groupAttributes.getValue(xmlTags.getApplSender()));
+        closingDetails.setGroupReceiver(groupAttributes.getValue(xmlTags.getApplReceiver()));
+        closingDetails.setGroupControlNumber(groupAttributes.getValue(xmlTags.getControl()));
+        closingDetails.setDocumentControlNumber(documentAttributes.getValue(xmlTags.getControl()));
+        closingDetails.setDocumentType(documentAttributes.getValue(xmlTags.getDocumentType()));
+        closingDetails.setVersion(groupAttributes.getValue(xmlTags.getStandardVersion()));
         try {
-            handlerFactory.closeDocument(
-                    senderAttributes.getValue(xmlTags.getQualifierAttribute()),
-                    senderAttributes.getValue(xmlTags.getIdAttribute()),
-                    receiverAttributes.getValue(xmlTags.getQualifierAttribute()),
-                    receiverAttributes.getValue(xmlTags.getIdAttribute()),
-                    interchangeAttributes.getValue(xmlTags.getControl()),
-                    groupAttributes.getValue(xmlTags.getApplSender()),
-                    groupAttributes.getValue(xmlTags.getApplReceiver()),
-                    groupAttributes.getValue(xmlTags.getControl()),
-                    documentAttributes.getValue(xmlTags.getControl()),
-                    documentAttributes.getValue(xmlTags.getDocumentType()),
-                    groupAttributes.getValue(xmlTags.getStandardVersion()));
+            handlerFactory.closeDocument(closingDetails);
         } catch (Exception e) {
             throw new SAXException(e);
         }

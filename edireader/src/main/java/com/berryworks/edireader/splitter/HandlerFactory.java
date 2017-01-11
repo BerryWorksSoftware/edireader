@@ -28,12 +28,7 @@ public interface HandlerFactory {
 
     ContentHandler createDocument() throws Exception;
 
-    void closeDocument(
-            String senderQualifier, String senderId,
-            String receiverQualifier, String receiverId,
-            String interchangeControlNumber,
-            String groupSender, String groupReceiver, String groupControlNumber,
-            String documentControlNumber, String documentType, String version) throws IOException;
+    void closeDocument(ClosingDetails closingDetails) throws IOException;
 
     void markEndOfStream() throws IOException;
 }

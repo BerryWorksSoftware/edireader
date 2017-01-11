@@ -20,6 +20,7 @@
 
 package com.berryworks.edireader.demo;
 
+import com.berryworks.edireader.splitter.ClosingDetails;
 import com.berryworks.edireader.splitter.HandlerFactory;
 import com.berryworks.edireader.splitter.SplittingHandler;
 import com.berryworks.edireader.util.CommandLine;
@@ -119,12 +120,7 @@ public class EDISplitter {
         }
 
         @Override
-        public void closeDocument(
-                String senderQualifier, String senderId,
-                String receiverQualifier, String receiverId,
-                String interchangeControlNumber,
-                String groupSender, String groupReceiver, String groupControlNumber,
-                String documentControlNumber, String documentType, String version) throws IOException {
+        public void closeDocument(ClosingDetails closingDetails) throws IOException {
             String xmlFilename = generateName();
 
 //            System.out.println("Generating XML into file " + xmlFilename);

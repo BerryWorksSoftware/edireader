@@ -9,6 +9,7 @@ import com.berryworks.edireader.EDIReaderFactory;
 import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.benchmark.EDITestData;
 import com.berryworks.edireader.demo.EDISplitter;
+import com.berryworks.edireader.splitter.ClosingDetails;
 import com.berryworks.edireader.splitter.HandlerFactory;
 import com.berryworks.edireader.splitter.SplittingHandler;
 import com.berryworks.edireader.util.dom.DocumentUtil;
@@ -221,12 +222,7 @@ public class SplitterTest extends VerboseTestCase {
         }
 
         @Override
-        public void closeDocument(
-                String senderQualifier, String senderId,
-                String receiverQualifier, String receiverId,
-                String interchangeControlNumber,
-                String groupSender, String groupReceiver, String groupControlNumber,
-                String documentControlNumber, String documentType, String version) throws IOException {
+        public void closeDocument(ClosingDetails closingDetails) throws IOException {
         }
 
         public int getCreateCalls() {
