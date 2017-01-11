@@ -98,6 +98,8 @@ public class SplittingHandler extends DefaultHandler {
                     receiverAttributes.getValue(xmlTags.getQualifierAttribute()),
                     receiverAttributes.getValue(xmlTags.getIdAttribute()),
                     interchangeAttributes.getValue(xmlTags.getControl()),
+                    groupAttributes.getValue(xmlTags.getApplSender()),
+                    groupAttributes.getValue(xmlTags.getApplReceiver()),
                     groupAttributes.getValue(xmlTags.getControl()),
                     documentAttributes.getValue(xmlTags.getControl()),
                     documentAttributes.getValue(xmlTags.getDocumentType()),

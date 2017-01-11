@@ -31,8 +31,9 @@ public interface HandlerFactory {
     void closeDocument(
             String senderQualifier, String senderId,
             String receiverQualifier, String receiverId,
-            String interchangeControlNumber, String groupControlNumber, String documentControlNumber,
-            String documentType, String version) throws IOException;
+            String interchangeControlNumber,
+            String groupSender, String groupReceiver, String groupControlNumber,
+            String documentControlNumber, String documentType, String version) throws IOException;
 
     void markEndOfStream() throws IOException;
 }
