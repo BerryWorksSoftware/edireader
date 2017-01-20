@@ -1,11 +1,11 @@
 package com.berryworks.edireader;
 
+import com.berryworks.edireader.util.sax.EDIReaderSAXAdapter;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -15,7 +15,7 @@ import static org.junit.Assert.fail;
 
 public class AnsiReaderTest {
 
-    public static final String EDI_SAMPLE =
+    private static final String EDI_SAMPLE =
             "ISA*00*          *00*          *ZZ*D00111         *ZZ*0055           *030603*1337*U*00401*000000121*0*T*:^\n" +
                     "GS*HP*D00111*0055*20030603*1337*1210001*X*004010X091A1^\n" +
                     "ST*870*0000001^\n" +
@@ -24,7 +24,7 @@ public class AnsiReaderTest {
                     "SE*4*0000001^\n" +
                     "GE*1*1210001^\n" +
                     "IEA*1*000000121^\n";
-    public static final String EDI_TA1_SAMPLE =
+    private static final String EDI_TA1_SAMPLE =
             "ISA*00*          *00*          *ZZ*D00111         *ZZ*0055           *030603*1337*U*00401*000000121*0*T*:$\n" +
                     "TA1*1*2*3*R*abc$\n" +
                     "GS*HP*D00111*0055*20030603*1337*1210001*X*004010X091A1$\n" +
@@ -34,7 +34,7 @@ public class AnsiReaderTest {
                     "SE*4*0000001$\n" +
                     "GE*1*1210001$\n" +
                     "IEA*1*000000121$\n";
-    public static final String EDI_BIN_SAMPLE =
+    private static final String EDI_BIN_SAMPLE =
             "ISA*00*          *00*          *ZZ*D00111         *ZZ*0055           *030603*1337*U*00401*000000121*0*T*:^\n" +
                     "GS*HP*D00111*0055*20030603*1337*1210001*X*004010X091A1^\n" +
                     "ST*870*0000001^\n" +
@@ -44,7 +44,6 @@ public class AnsiReaderTest {
                     "GE*1*1210001^\n" +
                     "IEA*1*000000121^\n";
 
-    //    BIN*10*1234567890
     private AnsiReader ansiReader;
     private CountingHandler countingHandler;
 
@@ -66,6 +65,7 @@ public class AnsiReaderTest {
         assertEquals('^', ansiReader.getTerminator());
         assertEquals("\n", ansiReader.getTerminatorSuffix());
         assertEquals(16, countingHandler.getElementCount());
+        assertEquals(2, countingHandler.getSegmentCountWithoutSTandSE());
     }
 
     @Test
@@ -79,6 +79,7 @@ public class AnsiReaderTest {
         assertEquals('$', ansiReader.getTerminator());
         assertEquals("\n", ansiReader.getTerminatorSuffix());
         assertEquals(17, countingHandler.getElementCount());
+        assertEquals(2, countingHandler.getSegmentCountWithoutSTandSE());
     }
 
     @Test
@@ -87,6 +88,7 @@ public class AnsiReaderTest {
 
         assertEquals(291, ansiReader.getCharCount());
         assertEquals(14, countingHandler.getElementCount());
+        assertEquals(2, countingHandler.getSegmentCountWithoutSTandSE());
     }
 
     @Test
@@ -252,12 +254,36 @@ public class AnsiReaderTest {
         }
     }
 
-    private class CountingHandler extends DefaultHandler {
-        private int elementCount;
+    private class CountingHandler extends EDIReaderSAXAdapter {
+        private int segmentCount, elementCount;
+
+        public CountingHandler() {
+            super(new DefaultXMLTags());
+        }
+
+        @Override
+        protected void beginFirstSegment(Attributes atts) {
+            segmentCount++;
+        }
+
+        @Override
+        protected void beginAnotherSegment(Attributes atts) {
+            segmentCount++;
+        }
+
+        @Override
+        protected void beginBinaryPackage(Attributes atts) {
+            segmentCount++;
+        }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            super.startElement(uri, localName, qName, attributes);
             elementCount++;
+        }
+
+        public int getSegmentCountWithoutSTandSE() {
+            return segmentCount;
         }
 
         public int getElementCount() {

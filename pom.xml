@@ -6,7 +6,7 @@
 
     <groupId>com.berryworks</groupId>
     <artifactId>EDIReaderCommunityEdition</artifactId>
-    <version>5.4.4</version>
+    <version>5.4.5-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <name>EDIReader Community Edition</name>

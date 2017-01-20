@@ -435,10 +435,9 @@ public class AnsiReader extends StandardReader {
 
             if ("BIN".equals(segmentType)) {
                 parseBINSequence();
-                continue;
+            } else {
+                parseSegment(pluginController, segmentType);
             }
-
-            parseSegment(pluginController, segmentType);
         }
 
         if (wrapped)

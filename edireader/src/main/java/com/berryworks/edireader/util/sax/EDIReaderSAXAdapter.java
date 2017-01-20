@@ -110,6 +110,9 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
                 loopName = atts.getValue(0);
             beginSegmentGroup(loopName, atts);
 
+        } else if (localName.startsWith(xmlTags.getPackageTag())) {
+            beginBinaryPackage(atts);
+
         } else if (localName.startsWith(xmlTags.getElementTag())) {
             elementString = "";
             beginSegmentElement(atts);
@@ -158,6 +161,8 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
                 endDocument(charCount, segmentCharCount);
         } else if (localName.startsWith(xmlTags.getSegTag())) {
             endSegment(charCount, segmentCharCount);
+        } else if (localName.startsWith(xmlTags.getPackageTag())) {
+            endBinaryPackage(charCount, segmentCharCount);
         } else if (localName.startsWith(xmlTags.getElementTag())) {
             endSegmentElement(elementString);
             elementString = null;
@@ -219,6 +224,9 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
     protected void beginAnotherSegment(Attributes atts) {
     }
 
+    protected void beginBinaryPackage(Attributes atts) {
+    }
+
     protected void beginDocument(int charCount, int segmentCharCount,
                                  Attributes attributes) {
     }
@@ -230,6 +238,9 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
     }
 
     protected void endSegment(int charCount, int segmentCharCount) {
+    }
+
+    private void endBinaryPackage(int charCount, int segmentCharCount) {
     }
 
     protected void endSegmentGroup() {
