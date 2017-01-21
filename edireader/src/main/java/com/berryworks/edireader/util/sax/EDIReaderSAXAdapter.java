@@ -240,7 +240,7 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
     protected void endSegment(int charCount, int segmentCharCount) {
     }
 
-    private void endBinaryPackage(int charCount, int segmentCharCount) {
+    protected void endBinaryPackage(int charCount, int segmentCharCount) {
     }
 
     protected void endSegmentGroup() {
