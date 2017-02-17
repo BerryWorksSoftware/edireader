@@ -67,7 +67,7 @@ public class EdifactReaderTest {
         InputSource inputSource = new InputSource(new StringReader(
                 "UNB+IATA:1+REUAIR08DLH:PIMA+REUAGT82AGENT/LHR01:PIMA+941027:1520+841F60UNZ+RREF+APR"
                         + "+L+1'"
-                        + "UNG+IFLIRR+1X:1+WXYMW:1+090812:0916+3+UN+D:3'\n"
+                        + "UNG+INVOIC+BTS-SENDER+RECEIVE-PARTNER+141024:2231+201410242231+UN+D:96A'"
                         + "UNH+1+DCQCKI:90:1:IA+841F60'"
                         + "LOR+SR:GVA'"
                         + "FDQ+DL+573+890701+ATL+MIA++SR+120+8907011300+8907011655+ZRH+ATL'"
@@ -76,7 +76,7 @@ public class EdifactReaderTest {
                         + "PSD+N'"
                         + "PBD+2:22'"
                         + "UNT+8+1'"
-                        + "UNE+1+3'"
+                        + "UNE+1+201410242231'"
                         + "UNZ+1+841F60UNZ+1+30077'"));
         SAXSource source = new SAXSource(edifactReader, inputSource);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -89,7 +89,7 @@ public class EdifactReaderTest {
                         "<interchange Standard=\"EDIFACT\" SyntaxId=\"IATA\" SyntaxVersion=\"1\" Date=\"941027\" Time=\"1520\" Control=\"841F60UNZ\" RecipientRef=\"RREF\" ApplRef=\"APR\" Priority=\"L\" AckRequest=\"1\" Decimal=\".\">" +
                         "<sender><address Id=\"REUAIR08DLH\" Qual=\"PIMA\"/></sender>" +
                         "<receiver><address Id=\"REUAGT82AGENT/LHR01\" Qual=\"PIMA\"/></receiver>" +
-                        "<group GroupType=\"IFLIRR\" Control=\"3\" StandardCode=\"UN\">" +
+                        "<group GroupType=\"INVOIC\" Control=\"201410242231\" StandardCode=\"UN\">" +
                         "<transaction Control=\"1\" DocType=\"DCQCKI\" Version=\"90\" Release=\"1\" Agency=\"IA\" AccessReference=\"841F60\">" +
                         "<segment Id=\"LOR\"><element Id=\"LOR01\" Composite=\"yes\"><subelement Sequence=\"1\">SR</subelement><subelement Sequence=\"2\">GVA</subelement></element></segment>" +
                         "<segment Id=\"FDQ\"><element Id=\"FDQ01\">DL</element><element Id=\"FDQ02\">573</element><element Id=\"FDQ03\">890701</element><element Id=\"FDQ04\">ATL</element><element Id=\"FDQ05\">MIA</element><element Id=\"FDQ07\">SR</element><element Id=\"FDQ08\">120</element><element Id=\"FDQ09\">8907011300</element><element Id=\"FDQ10\">8907011655</element><element Id=\"FDQ11\">ZRH</element><element Id=\"FDQ12\">ATL</element></segment>" +
