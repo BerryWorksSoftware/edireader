@@ -7,9 +7,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 
+import static com.berryworks.edireader.util.Conversion.ediToxml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -253,6 +256,31 @@ public class AnsiReaderTest {
                     e.getMessage());
         }
     }
+
+    @Test
+    public void producesXmlForSimpleCase() throws IOException, SAXException, TransformerException {
+        ansiReader = new AnsiReader();
+        StringReader reader = new StringReader(EDI_SAMPLE);
+        StringWriter writer = new StringWriter();
+        ediToxml(reader, writer, ansiReader);
+        assertEquals(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                        "<ediroot>" +
+                        "<interchange Standard=\"ANSI X.12\" AuthorizationQual=\"00\" Authorization=\"          \" SecurityQual=\"00\" Security=\"          \" Date=\"030603\" Time=\"1337\" StandardsId=\"U\" Version=\"00401\" Control=\"000000121\" AckRequest=\"0\" TestIndicator=\"T\">" +
+                        "<sender><address Id=\"D00111         \" Qual=\"ZZ\"/></sender>" +
+                        "<receiver><address Id=\"0055           \" Qual=\"ZZ\"/></receiver>" +
+                        "<group GroupType=\"HP\" ApplSender=\"D00111\" ApplReceiver=\"0055\" Date=\"20030603\" Time=\"1337\" Control=\"1210001\" StandardCode=\"X\" StandardVersion=\"004010X091A1\">" +
+                        "<transaction DocType=\"870\" Name=\"Order Status Report\" Control=\"0000001\">" +
+                        "<segment Id=\"BSR\"><element Id=\"BSR01\">4</element><element Id=\"BSR02\">PA</element><element Id=\"BSR03\">SUPPLIER CONFIRMATION NUMBER</element><element Id=\"BSR04\">CCYYMMDD</element></segment>" +
+                        "<segment Id=\"REF\"><element Id=\"REF01\">MR</element><element Id=\"REF02\">12345</element></segment>" +
+                        "</transaction>" +
+                        "</group>" +
+                        "</interchange>" +
+                        "</ediroot>",
+                writer.toString());
+
+    }
+
 
     private class CountingHandler extends EDIReaderSAXAdapter {
         private int segmentCount, elementCount;
