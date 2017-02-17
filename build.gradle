@@ -2,7 +2,7 @@ allprojects  {
   apply plugin: 'maven'
 
   group = 'com.berryworks'
-version = '5.3.4'
+  version = '5.4.6'
 }
 
 subprojects {
