@@ -248,6 +248,15 @@ public abstract class StandardReader extends EDIReader {
         }
     }
 
+    protected void checkTransactionCount(int segCount, int n, String errorMessage) throws TransactionCountException {
+        if (segCount != n) {
+            TransactionCountException exception = new TransactionCountException(errorMessage, segCount, n, getTokenizer());
+            setSyntaxException(exception);
+            if (!recover(exception))
+                throw exception;
+        }
+    }
+
     protected void checkSegmentCount(int segCount, int n, String errorMessage) throws SegmentCountException {
         if (segCount != n) {
             SegmentCountException exception = new SegmentCountException(errorMessage, segCount, n, getTokenizer());
@@ -260,6 +269,15 @@ public abstract class StandardReader extends EDIReader {
     protected void checkInterchangeControlNumber(String control, String s, String errorMessage) throws InterchangeControlNumberException {
         if (!s.equals(control)) {
             InterchangeControlNumberException exception = new InterchangeControlNumberException(errorMessage, control, s, getTokenizer());
+            setSyntaxException(exception);
+            if (!recover(exception))
+                throw exception;
+        }
+    }
+
+    protected void checkGroupControlNumber(String control, String s, String errorMessage) throws GroupControlNumberException {
+        if (!s.equals(control)) {
+            GroupControlNumberException exception = new GroupControlNumberException(errorMessage, control, s, getTokenizer());
             setSyntaxException(exception);
             if (!recover(exception))
                 throw exception;

@@ -341,8 +341,8 @@ public class AnsiReader extends StandardReader {
             }
         }
 
-        checkSegmentCount(docCount, getTokenizer().nextIntValue(), COUNT_GE);
-        checkTransactionControlNumber(getGroupControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_GE);
+        checkTransactionCount(docCount, getTokenizer().nextIntValue(), COUNT_GE);
+        checkGroupControlNumber(getGroupControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_GE);
         endElement(getXMLTags().getGroupTag());
         getAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
         getAlternateAckGenerator().generateGroupAcknowledgmentTrailer(docCount);

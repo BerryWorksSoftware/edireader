@@ -1,7 +1,11 @@
 package com.berryworks.edireader;
 
+import com.berryworks.edireader.benchmark.EDITestData;
+import com.berryworks.edireader.error.*;
 import org.junit.Test;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
@@ -10,9 +14,18 @@ import java.io.StringWriter;
 
 import static com.berryworks.edireader.util.Conversion.ediToxml;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class EdifactReaderTest {
 
+    public static final String EDIFACT_WITH_GROUP = "UNB+IATA:1+REUAIR08DLH:PIMA+REUAGT82AGENT/LHR01:PIMA+941027:1520+841F60UNZ+RREF+APR"
+            + "+L+1'"
+            + "UNG+INVOIC+BTS-SENDER+RECEIVE-PARTNER+141024:2231+201410242231+UN+D:96A'"
+            + "UNH+1+DCQCKI:90:1:IA+841F60'"
+            + "LOR+SR:GVA'"
+            + "UNT+3+1'"
+            + "UNE+1+201410242231'"
+            + "UNZ+1+841F60UNZ+1+30077'";
     private EdifactReader edifactReader;
 
     @Test
@@ -57,15 +70,7 @@ public class EdifactReaderTest {
     @Test
     public void producesXmlForFunctionalGroup() throws IOException, SAXException, TransformerException {
         edifactReader = new EdifactReader();
-        StringReader ediInput = new StringReader(
-                "UNB+IATA:1+REUAIR08DLH:PIMA+REUAGT82AGENT/LHR01:PIMA+941027:1520+841F60UNZ+RREF+APR"
-                        + "+L+1'"
-                        + "UNG+INVOIC+BTS-SENDER+RECEIVE-PARTNER+141024:2231+201410242231+UN+D:96A'"
-                        + "UNH+1+DCQCKI:90:1:IA+841F60'"
-                        + "LOR+SR:GVA'"
-                        + "UNT+3+1'"
-                        + "UNE+1+201410242231'"
-                        + "UNZ+1+841F60UNZ+1+30077'");
+        StringReader ediInput = new StringReader(EDIFACT_WITH_GROUP);
         StringWriter writer = new StringWriter();
         ediToxml(ediInput, writer, edifactReader);
         assertEquals(
@@ -83,4 +88,89 @@ public class EdifactReaderTest {
                         "</ediroot>",
                 writer.toString());
     }
+
+    @Test
+    public void detectsGroupCountError() throws IOException, SAXException {
+        String ediText = EDITestData.getEdifactInterchange().replace("UNZ+1+", "UNZ+11+");
+        edifactReader = new EdifactReader();
+        edifactReader.setContentHandler(new DefaultHandler());
+        try {
+            edifactReader.parse(new InputSource(new StringReader(ediText)));
+            fail("Functional group count error not detected");
+        } catch (GroupCountException e) {
+            assertEquals("Functional group count error in UNZ segment. Expected 1 instead of 11 at segment 10, field 2", e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsInterchangeControlNumberError() throws IOException, SAXException {
+        String ediText = EDITestData.getEdifactInterchange().replace("UNZ+1+841F60UNZ", "UNZ+1+not841F60UNZ");
+        edifactReader = new EdifactReader();
+        edifactReader.setContentHandler(new DefaultHandler());
+        try {
+            edifactReader.parse(new InputSource(new StringReader(ediText)));
+            fail("Interchange control number error not detected");
+        } catch (InterchangeControlNumberException e) {
+            assertEquals(
+                    "Control number error in UNZ segment. Expected 841F60UNZ instead of not841F60UNZ at segment 10, field 3",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsTransactionCountError() throws IOException, SAXException {
+        String ediText = EDIFACT_WITH_GROUP.replace("UNE+1+", "UNE+111+");
+        edifactReader = new EdifactReader();
+        edifactReader.setContentHandler(new DefaultHandler());
+        try {
+            edifactReader.parse(new InputSource(new StringReader(ediText)));
+            fail("Transaction count error not detected");
+        } catch (TransactionCountException e) {
+            assertEquals("Message count error in UNE segment. Expected 1 instead of 111 at segment 6, field 2", e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsGroupControlNumberError() throws IOException, SAXException {
+        String ediText = EDIFACT_WITH_GROUP.replace("UNE+1+201410242231", "UNE+1+10242231");
+        edifactReader = new EdifactReader();
+        edifactReader.setContentHandler(new DefaultHandler());
+        try {
+            edifactReader.parse(new InputSource(new StringReader(ediText)));
+            fail("Group control number error not detected");
+        } catch (GroupControlNumberException e) {
+            assertEquals(
+                    "Control number error in UNE segment. Expected 201410242231 instead of 10242231 at segment 6, field 3",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsSegmentCountError() throws IOException, SAXException {
+        String ediText = EDITestData.getEdifactInterchange().replace("UNT+8+", "UNT+88+");
+        edifactReader = new EdifactReader();
+        edifactReader.setContentHandler(new DefaultHandler());
+        try {
+            edifactReader.parse(new InputSource(new StringReader(ediText)));
+            fail("Segment count error not detected");
+        } catch (SegmentCountException e) {
+            assertEquals("Segment count error in UNT segment. Expected 8 instead of 88 at segment 9, field 2", e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsTransactionControlNumberError() throws IOException, SAXException {
+        String ediText = EDITestData.getEdifactInterchange().replace("UNT+8+1'", "UNT+8+11'");
+        edifactReader = new EdifactReader();
+        edifactReader.setContentHandler(new DefaultHandler());
+        try {
+            edifactReader.parse(new InputSource(new StringReader(ediText)));
+            fail("Transaction control number error not detected");
+        } catch (TransactionControlNumberException e) {
+            assertEquals(
+                    "Control number error in UNT segment. Expected 1 instead of 11 at segment 9, field 3",
+                    e.getMessage());
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.berryworks.edireader;
 
+import com.berryworks.edireader.error.*;
 import com.berryworks.edireader.util.sax.EDIReaderSAXAdapter;
 import org.junit.Before;
 import org.junit.Test;
@@ -95,23 +96,23 @@ public class AnsiReaderTest {
     }
 
     @Test
-    public void detectsGroupCountError() throws IOException {
+    public void detectsGroupCountError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("IEA*1*", "IEA*44*");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Functional group count error not detected");
-        } catch (SAXException e) {
+        } catch (GroupCountException e) {
             assertEquals("Functional group count error in IEA segment. Expected 1 instead of 44 at segment 8, field 2", e.getMessage());
         }
     }
 
     @Test
-    public void detectsInterchangeControlNumberError() throws IOException {
+    public void detectsInterchangeControlNumberError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("IEA*1*000000121", "IEA*1*000000921");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Interchange control number error not detected");
-        } catch (SAXException e) {
+        } catch (InterchangeControlNumberException e) {
             assertEquals(
                     "Control number error in IEA segment. Expected 000000121 instead of 000000921 at segment 8, field 3",
                     e.getMessage());
@@ -119,23 +120,23 @@ public class AnsiReaderTest {
     }
 
     @Test
-    public void detectsTransactionCountError() throws IOException {
+    public void detectsTransactionCountError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("GE*1*", "GE*44*");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Transaction count error not detected");
-        } catch (SAXException e) {
+        } catch (TransactionCountException e) {
             assertEquals("Transaction count error in GE segment. Expected 1 instead of 44 at segment 7, field 2", e.getMessage());
         }
     }
 
     @Test
-    public void detectsGroupControlNumberError() throws IOException {
+    public void detectsGroupControlNumberError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("GE*1*1210001^", "GE*1*9210001^");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Group control number error not detected");
-        } catch (SAXException e) {
+        } catch (GroupControlNumberException e) {
             assertEquals(
                     "Control number error in GE segment. Expected 1210001 instead of 9210001 at segment 7, field 3",
                     e.getMessage());
@@ -143,23 +144,23 @@ public class AnsiReaderTest {
     }
 
     @Test
-    public void detectsSegmentCountError() throws IOException {
+    public void detectsSegmentCountError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("SE*4*", "SE*44*");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Segment count error not detected");
-        } catch (SAXException e) {
+        } catch (SegmentCountException e) {
             assertEquals("Segment count error in SE segment. Expected 4 instead of 44 at segment 6, field 2", e.getMessage());
         }
     }
 
     @Test
-    public void detectsTransactionControlNumberError() throws IOException {
+    public void detectsTransactionControlNumberError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("SE*4*0000001", "SE*4*1111111");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Transaction control number error not detected");
-        } catch (SAXException e) {
+        } catch (TransactionControlNumberException e) {
             assertEquals(
                     "Control number error in SE segment. Expected 0000001 instead of 1111111 at segment 6, field 3",
                     e.getMessage());

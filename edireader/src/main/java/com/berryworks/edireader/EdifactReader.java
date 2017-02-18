@@ -282,20 +282,8 @@ public class EdifactReader extends StandardReader {
             }
         }
 
-        int n;
-        if (docCount != (n = getTokenizer().nextIntValue())) {
-            throw new EDISyntaxException(
-                    "Transaction set count error in UNE segment. Expected "
-                            + docCount + " instead of " + n, getTokenizer());
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(getGroupControlNumber())) {
-            throw new EDISyntaxException(
-                    "Control number error in UNE segment. Expected "
-                            + getGroupControlNumber() + " instead of " + s,
-                    getTokenizer());
-        }
-
+        checkTransactionCount(docCount, getTokenizer().nextIntValue(), COUNT_UNE);
+        checkGroupControlNumber(getGroupControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNE);
         endElement(getXMLTags().getGroupTag());
         return getTokenizer().skipSegment();
     }
