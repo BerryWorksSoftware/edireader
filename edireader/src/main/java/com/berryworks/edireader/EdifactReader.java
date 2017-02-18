@@ -23,7 +23,6 @@ package com.berryworks.edireader;
 import com.berryworks.edireader.error.ErrorMessages;
 import com.berryworks.edireader.error.GroupCountException;
 import com.berryworks.edireader.error.InterchangeControlNumberException;
-import com.berryworks.edireader.error.TransactionControlNumberException;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import org.xml.sax.SAXException;
@@ -449,14 +448,7 @@ public class EdifactReader extends StandardReader {
         }
 
         checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_UNT);
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(control)) {
-            TransactionControlNumberException transactionControlNumberException =
-                    new TransactionControlNumberException(CONTROL_NUMBER_UNT, control, s, getTokenizer());
-            setSyntaxException(transactionControlNumberException);
-            if (!recover(transactionControlNumberException))
-                throw transactionControlNumberException;
-        }
+        checkControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNT);
         endElement(getXMLTags().getDocumentTag());
 
         /*

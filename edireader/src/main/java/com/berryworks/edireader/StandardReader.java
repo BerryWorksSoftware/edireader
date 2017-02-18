@@ -23,6 +23,7 @@ package com.berryworks.edireader;
 import com.berryworks.edireader.error.ErrorMessages;
 import com.berryworks.edireader.error.RecoverableSyntaxException;
 import com.berryworks.edireader.error.SegmentCountException;
+import com.berryworks.edireader.error.TransactionControlNumberException;
 import com.berryworks.edireader.plugin.PluginControllerFactory;
 import com.berryworks.edireader.plugin.PluginControllerFactoryInterface;
 import com.berryworks.edireader.tokenizer.Token;
@@ -247,6 +248,15 @@ public abstract class StandardReader extends EDIReader {
             setSyntaxException(countException);
             if (!recover(countException))
                 throw countException;
+        }
+    }
+
+    protected void checkControlNumber(String control, String s, String errorMessage) throws TransactionControlNumberException {
+        if (!s.equals(control)) {
+            TransactionControlNumberException transactionControlNumberException = new TransactionControlNumberException(errorMessage, control, s, getTokenizer());
+            setSyntaxException(transactionControlNumberException);
+            if (!recover(transactionControlNumberException))
+                throw transactionControlNumberException;
         }
     }
 

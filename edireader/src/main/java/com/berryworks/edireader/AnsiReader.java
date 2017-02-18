@@ -448,14 +448,7 @@ public class AnsiReader extends StandardReader {
             endElement(getXMLTags().getLoopTag());
 
         checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_SE);
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(control)) {
-            TransactionControlNumberException transactionControlNumberException = new TransactionControlNumberException(CONTROL_NUMBER_SE, control, s, getTokenizer());
-            setSyntaxException(transactionControlNumberException);
-            if (!recover(transactionControlNumberException))
-                throw transactionControlNumberException;
-        }
-
+        checkControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_SE);
         getAckGenerator().generateTransactionAcknowledgment(documentType, control);
         getAlternateAckGenerator().generateTransactionAcknowledgment(documentType, control);
         endElement(getXMLTags().getDocumentTag());
