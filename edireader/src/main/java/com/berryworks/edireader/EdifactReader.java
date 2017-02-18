@@ -20,7 +20,10 @@
 
 package com.berryworks.edireader;
 
-import com.berryworks.edireader.error.*;
+import com.berryworks.edireader.error.ErrorMessages;
+import com.berryworks.edireader.error.GroupCountException;
+import com.berryworks.edireader.error.InterchangeControlNumberException;
+import com.berryworks.edireader.error.TransactionControlNumberException;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import org.xml.sax.SAXException;
@@ -248,10 +251,16 @@ public class EdifactReader extends StandardReader {
         getGroupAttributes().clear();
         // Group type. For example: INVOIC
         getGroupAttributes().addCDATA("GroupType", getTokenizer().nextSimpleValue());
-        getTokenizer().nextCompositeElement();
-        getTokenizer().nextCompositeElement();
-        // Date and time
         List<String> compositeList;
+        // Application sender
+        compositeList = getTokenizer().nextCompositeElement();
+        String sender = getSubElement(compositeList, 0);
+        getGroupAttributes().addCDATA(getXMLTags().getApplSender(), sender);
+        // Application receiver
+        compositeList = getTokenizer().nextCompositeElement();
+        String receiver = getSubElement(compositeList, 0);
+        getGroupAttributes().addCDATA(getXMLTags().getApplReceiver(), receiver);
+        // Date and time
         compositeList = getTokenizer().nextCompositeElement();
         String date = getSubElement(compositeList, 0);
         String time = getSubElement(compositeList, 1);
@@ -439,13 +448,7 @@ public class EdifactReader extends StandardReader {
 
         }
 
-        int n;
-        if (segCount != (n = getTokenizer().nextIntValue())) {
-            SegmentCountException countException = new SegmentCountException(COUNT_UNT, segCount, n, getTokenizer());
-            setSyntaxException(countException);
-            if (!recover(countException))
-                throw countException;
-        }
+        checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_UNT);
         String s;
         if (!(s = getTokenizer().nextSimpleValue()).equals(control)) {
             TransactionControlNumberException transactionControlNumberException =

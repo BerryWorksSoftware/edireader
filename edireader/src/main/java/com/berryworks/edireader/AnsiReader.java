@@ -447,14 +447,7 @@ public class AnsiReader extends StandardReader {
         for (; toClose > 0; toClose--)
             endElement(getXMLTags().getLoopTag());
 
-        int n;
-        if (segCount != (n = getTokenizer().nextIntValue())) {
-            SegmentCountException countException = new SegmentCountException(COUNT_SE, segCount, n, getTokenizer());
-            setSyntaxException(countException);
-            if (!recover(countException))
-                throw countException;
-        }
-
+        checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_SE);
         String s;
         if (!(s = getTokenizer().nextSimpleValue()).equals(control)) {
             TransactionControlNumberException transactionControlNumberException = new TransactionControlNumberException(CONTROL_NUMBER_SE, control, s, getTokenizer());

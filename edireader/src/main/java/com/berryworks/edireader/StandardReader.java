@@ -22,6 +22,7 @@ package com.berryworks.edireader;
 
 import com.berryworks.edireader.error.ErrorMessages;
 import com.berryworks.edireader.error.RecoverableSyntaxException;
+import com.berryworks.edireader.error.SegmentCountException;
 import com.berryworks.edireader.plugin.PluginControllerFactory;
 import com.berryworks.edireader.plugin.PluginControllerFactoryInterface;
 import com.berryworks.edireader.tokenizer.Token;
@@ -238,6 +239,15 @@ public abstract class StandardReader extends EDIReader {
                 return obj;
         }
         throw new EDISyntaxException(ErrorMessages.MANDATORY_ELEMENT_MISSING, getTokenizer());
+    }
+
+    protected void checkSegmentCount(int segCount, int n, String errorMessage) throws SegmentCountException {
+        if (segCount != n) {
+            SegmentCountException countException = new SegmentCountException(errorMessage, segCount, n, getTokenizer());
+            setSyntaxException(countException);
+            if (!recover(countException))
+                throw countException;
+        }
     }
 
     public ReplyGenerator getAckGenerator() {
