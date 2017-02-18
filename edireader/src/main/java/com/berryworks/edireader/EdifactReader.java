@@ -246,14 +246,21 @@ public class EdifactReader extends StandardReader {
         int docCount = 0;
 
         getGroupAttributes().clear();
+        // Group type. For example: INVOIC
         getGroupAttributes().addCDATA("GroupType", getTokenizer().nextSimpleValue());
-
         getTokenizer().nextCompositeElement();
         getTokenizer().nextCompositeElement();
-        getTokenizer().nextCompositeElement();
-
+        // Date and time
+        List<String> compositeList;
+        compositeList = getTokenizer().nextCompositeElement();
+        String date = getSubElement(compositeList, 0);
+        String time = getSubElement(compositeList, 1);
+        getGroupAttributes().addCDATA(getXMLTags().getDate(), date);
+        getGroupAttributes().addCDATA(getXMLTags().getTime(), time);
+        // Control number
         setGroupControlNumber(getTokenizer().nextSimpleValue());
         getGroupAttributes().addCDATA(getXMLTags().getControl(), getGroupControlNumber());
+        // "UN"
         getGroupAttributes().addCDATA("StandardCode", getTokenizer().nextSimpleValue());
 
         getTokenizer().nextCompositeElement();
