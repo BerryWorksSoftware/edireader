@@ -447,7 +447,7 @@ public class EdifactReader extends StandardReader {
 
         }
 
-        checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_UNT);
+        checkCount(segCount, getTokenizer().nextIntValue(), COUNT_UNT);
         checkControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNT);
         endElement(getXMLTags().getDocumentTag());
 

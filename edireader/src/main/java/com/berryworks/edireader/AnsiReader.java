@@ -20,7 +20,10 @@
 
 package com.berryworks.edireader;
 
-import com.berryworks.edireader.error.*;
+import com.berryworks.edireader.error.ErrorMessages;
+import com.berryworks.edireader.error.GroupCountException;
+import com.berryworks.edireader.error.InterchangeControlNumberException;
+import com.berryworks.edireader.error.MissingMandatoryElementException;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import com.berryworks.edireader.util.FixedLength;
@@ -354,22 +357,8 @@ public class AnsiReader extends StandardReader {
             }
         }
 
-        int n;
-        if (docCount != (n = getTokenizer().nextIntValue())) {
-            TransactionCountException countException = new TransactionCountException(COUNT_GE, docCount, n, getTokenizer());
-            setSyntaxException(countException);
-            if (!recover(countException))
-                throw countException;
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(getGroupControlNumber())) {
-            GroupControlNumberException groupControlNumberException = new GroupControlNumberException(
-                    CONTROL_NUMBER_GE, getGroupControlNumber(), s, getTokenizer());
-            setSyntaxException(groupControlNumberException);
-            if (!recover(groupControlNumberException))
-                throw groupControlNumberException;
-        }
-
+        checkCount(docCount, getTokenizer().nextIntValue(), COUNT_GE);
+        checkControlNumber(getGroupControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_GE);
         endElement(getXMLTags().getGroupTag());
         getAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
         getAlternateAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
@@ -447,7 +436,7 @@ public class AnsiReader extends StandardReader {
         for (; toClose > 0; toClose--)
             endElement(getXMLTags().getLoopTag());
 
-        checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_SE);
+        checkCount(segCount, getTokenizer().nextIntValue(), COUNT_SE);
         checkControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_SE);
         getAckGenerator().generateTransactionAcknowledgment(documentType, control);
         getAlternateAckGenerator().generateTransactionAcknowledgment(documentType, control);

@@ -242,7 +242,7 @@ public abstract class StandardReader extends EDIReader {
         throw new EDISyntaxException(ErrorMessages.MANDATORY_ELEMENT_MISSING, getTokenizer());
     }
 
-    protected void checkSegmentCount(int segCount, int n, String errorMessage) throws SegmentCountException {
+    protected void checkCount(int segCount, int n, String errorMessage) throws SegmentCountException {
         if (segCount != n) {
             SegmentCountException countException = new SegmentCountException(errorMessage, segCount, n, getTokenizer());
             setSyntaxException(countException);
