@@ -20,10 +20,7 @@
 
 package com.berryworks.edireader;
 
-import com.berryworks.edireader.error.ErrorMessages;
-import com.berryworks.edireader.error.RecoverableSyntaxException;
-import com.berryworks.edireader.error.SegmentCountException;
-import com.berryworks.edireader.error.TransactionControlNumberException;
+import com.berryworks.edireader.error.*;
 import com.berryworks.edireader.plugin.PluginControllerFactory;
 import com.berryworks.edireader.plugin.PluginControllerFactoryInterface;
 import com.berryworks.edireader.tokenizer.Token;
@@ -242,21 +239,39 @@ public abstract class StandardReader extends EDIReader {
         throw new EDISyntaxException(ErrorMessages.MANDATORY_ELEMENT_MISSING, getTokenizer());
     }
 
-    protected void checkCount(int segCount, int n, String errorMessage) throws SegmentCountException {
-        if (segCount != n) {
-            SegmentCountException countException = new SegmentCountException(errorMessage, segCount, n, getTokenizer());
-            setSyntaxException(countException);
-            if (!recover(countException))
-                throw countException;
+    protected void checkGroupCount(int groupCount, int n, String errorMessage) throws GroupCountException {
+        if (groupCount != n) {
+            GroupCountException exception = new GroupCountException(errorMessage, groupCount, n, getTokenizer());
+            setSyntaxException(exception);
+            if (!recover(exception))
+                throw exception;
         }
     }
 
-    protected void checkControlNumber(String control, String s, String errorMessage) throws TransactionControlNumberException {
+    protected void checkSegmentCount(int segCount, int n, String errorMessage) throws SegmentCountException {
+        if (segCount != n) {
+            SegmentCountException exception = new SegmentCountException(errorMessage, segCount, n, getTokenizer());
+            setSyntaxException(exception);
+            if (!recover(exception))
+                throw exception;
+        }
+    }
+
+    protected void checkInterchangeControlNumber(String control, String s, String errorMessage) throws InterchangeControlNumberException {
         if (!s.equals(control)) {
-            TransactionControlNumberException transactionControlNumberException = new TransactionControlNumberException(errorMessage, control, s, getTokenizer());
-            setSyntaxException(transactionControlNumberException);
-            if (!recover(transactionControlNumberException))
-                throw transactionControlNumberException;
+            InterchangeControlNumberException exception = new InterchangeControlNumberException(errorMessage, control, s, getTokenizer());
+            setSyntaxException(exception);
+            if (!recover(exception))
+                throw exception;
+        }
+    }
+
+    protected void checkTransactionControlNumber(String control, String s, String errorMessage) throws TransactionControlNumberException {
+        if (!s.equals(control)) {
+            TransactionControlNumberException exception = new TransactionControlNumberException(errorMessage, control, s, getTokenizer());
+            setSyntaxException(exception);
+            if (!recover(exception))
+                throw exception;
         }
     }
 

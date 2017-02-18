@@ -21,8 +21,6 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.error.ErrorMessages;
-import com.berryworks.edireader.error.GroupCountException;
-import com.berryworks.edireader.error.InterchangeControlNumberException;
 import com.berryworks.edireader.error.MissingMandatoryElementException;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
@@ -201,22 +199,8 @@ public class AnsiReader extends StandardReader {
             }
         }
 
-        int n;
-        if (getGroupCount() != (n = getTokenizer().nextIntValue())) {
-            GroupCountException countException = new GroupCountException(COUNT_IEA, getGroupCount(), n, getTokenizer());
-            setSyntaxException(countException);
-            if (!recover(countException))
-                throw countException;
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(getInterchangeControlNumber())) {
-            InterchangeControlNumberException interchangeControlNumberException =
-                    new InterchangeControlNumberException(CONTROL_NUMBER_IEA, getInterchangeControlNumber(), s, getTokenizer());
-            setSyntaxException(interchangeControlNumberException);
-            if (!recover(interchangeControlNumberException))
-                throw interchangeControlNumberException;
-        }
-
+        checkGroupCount(getGroupCount(), getTokenizer().nextIntValue(), COUNT_IEA);
+        checkInterchangeControlNumber(getInterchangeControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_IEA);
         getAckGenerator().generateAcknowledgementWrapup();
         getAlternateAckGenerator().generateAcknowledgementWrapup();
         endInterchange();
@@ -357,8 +341,8 @@ public class AnsiReader extends StandardReader {
             }
         }
 
-        checkCount(docCount, getTokenizer().nextIntValue(), COUNT_GE);
-        checkControlNumber(getGroupControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_GE);
+        checkSegmentCount(docCount, getTokenizer().nextIntValue(), COUNT_GE);
+        checkTransactionControlNumber(getGroupControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_GE);
         endElement(getXMLTags().getGroupTag());
         getAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
         getAlternateAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
@@ -436,8 +420,8 @@ public class AnsiReader extends StandardReader {
         for (; toClose > 0; toClose--)
             endElement(getXMLTags().getLoopTag());
 
-        checkCount(segCount, getTokenizer().nextIntValue(), COUNT_SE);
-        checkControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_SE);
+        checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_SE);
+        checkTransactionControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_SE);
         getAckGenerator().generateTransactionAcknowledgment(documentType, control);
         getAlternateAckGenerator().generateTransactionAcknowledgment(documentType, control);
         endElement(getXMLTags().getDocumentTag());

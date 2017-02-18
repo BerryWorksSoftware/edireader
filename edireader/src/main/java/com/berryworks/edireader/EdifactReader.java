@@ -21,8 +21,6 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.error.ErrorMessages;
-import com.berryworks.edireader.error.GroupCountException;
-import com.berryworks.edireader.error.InterchangeControlNumberException;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import org.xml.sax.SAXException;
@@ -183,22 +181,8 @@ public class EdifactReader extends StandardReader {
             }
         }
 
-        int n;
-        if (getGroupCount() != (n = getTokenizer().nextIntValue())) {
-            GroupCountException groupCountException = new GroupCountException(COUNT_UNZ, getGroupCount(), n, getTokenizer());
-            setSyntaxException(groupCountException);
-            if (!recover(groupCountException))
-                throw groupCountException;
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(getInterchangeControlNumber())) {
-            InterchangeControlNumberException interchangeControlNumberException =
-                    new InterchangeControlNumberException(CONTROL_NUMBER_UNZ, getInterchangeControlNumber(), s, getTokenizer());
-            setSyntaxException(interchangeControlNumberException);
-            if (!recover(interchangeControlNumberException))
-                throw interchangeControlNumberException;
-        }
-
+        checkGroupCount(getGroupCount(), getTokenizer().nextIntValue(), COUNT_UNZ);
+        checkInterchangeControlNumber(getInterchangeControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNZ);
         endInterchange();
 
         return getTokenizer().skipSegment();
@@ -447,8 +431,8 @@ public class EdifactReader extends StandardReader {
 
         }
 
-        checkCount(segCount, getTokenizer().nextIntValue(), COUNT_UNT);
-        checkControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNT);
+        checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_UNT);
+        checkTransactionControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNT);
         endElement(getXMLTags().getDocumentTag());
 
         /*
