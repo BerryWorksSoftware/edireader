@@ -252,10 +252,13 @@ public class EdifactReader extends StandardReader {
         // Control number
         setGroupControlNumber(getTokenizer().nextSimpleValue());
         getGroupAttributes().addCDATA(getXMLTags().getControl(), getGroupControlNumber());
-        // "UN"
+        // Standard Code. For example: UN
         getGroupAttributes().addCDATA("StandardCode", getTokenizer().nextSimpleValue());
-
-        getTokenizer().nextCompositeElement();
+        // Standard Version. For example: D02B
+        compositeList = getTokenizer().nextCompositeElement();
+        String version = getSubElement(compositeList, 0);
+        String release = getSubElement(compositeList, 1);
+        getGroupAttributes().addCDATA(getXMLTags().getStandardVersion(), version + release);
         startElement(getXMLTags().getGroupTag(), getGroupAttributes());
         getTokenizer().skipSegment();
 

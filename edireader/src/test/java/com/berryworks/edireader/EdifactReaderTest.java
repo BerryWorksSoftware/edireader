@@ -79,7 +79,7 @@ public class EdifactReaderTest {
                         "<interchange Standard=\"EDIFACT\" SyntaxId=\"IATA\" SyntaxVersion=\"1\" Date=\"941027\" Time=\"1520\" Control=\"841F60UNZ\" RecipientRef=\"RREF\" ApplRef=\"APR\" Priority=\"L\" AckRequest=\"1\" Decimal=\".\">" +
                         "<sender><address Id=\"REUAIR08DLH\" Qual=\"PIMA\"/></sender>" +
                         "<receiver><address Id=\"REUAGT82AGENT/LHR01\" Qual=\"PIMA\"/></receiver>" +
-                        "<group GroupType=\"INVOIC\" ApplSender=\"BTS-SENDER\" ApplReceiver=\"RECEIVE-PARTNER\" Date=\"141024\" Time=\"2231\" Control=\"201410242231\" StandardCode=\"UN\">" +
+                        "<group GroupType=\"INVOIC\" ApplSender=\"BTS-SENDER\" ApplReceiver=\"RECEIVE-PARTNER\" Date=\"141024\" Time=\"2231\" Control=\"201410242231\" StandardCode=\"UN\" StandardVersion=\"D96A\">" +
                         "<transaction Control=\"1\" DocType=\"DCQCKI\" Version=\"90\" Release=\"1\" Agency=\"IA\" AccessReference=\"841F60\">" +
                         "<segment Id=\"LOR\"><element Id=\"LOR01\" Composite=\"yes\"><subelement Sequence=\"1\">SR</subelement><subelement Sequence=\"2\">GVA</subelement></element></segment>" +
                         "</transaction>" +
