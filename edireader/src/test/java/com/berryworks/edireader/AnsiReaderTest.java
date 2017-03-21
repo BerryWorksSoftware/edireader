@@ -259,6 +259,21 @@ public class AnsiReaderTest {
     }
 
     @Test
+    public void detectsSegmentTerminatorProblem() throws IOException {
+        //                ISA*00*          *00*          *ZZ*D00111         *ZZ*0055           *030603*1337*U*00401*000000121*0*T*:$
+        String ediText = "ISA*00*          *00*          *ZZ*ENS_EDI        *ZZ*UB920128       *161208*1130*^*00501*014684581*1*P*:\n" +
+                "GS*HP*ENS_EDI*UB920128*20161208*1130*014684581*X*005010X221A1";
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("Invalid segment start not detected");
+        } catch (SAXException e) {
+            assertEquals(
+                    "Invalid beginning of segment at segment 2",
+                    e.getMessage());
+        }
+    }
+
+    @Test
     public void producesXmlForSimpleCase() throws IOException, SAXException, TransformerException {
         ansiReader = new AnsiReader();
         StringReader reader = new StringReader(EDI_SAMPLE);
