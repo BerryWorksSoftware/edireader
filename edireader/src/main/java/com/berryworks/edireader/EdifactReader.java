@@ -20,7 +20,7 @@
 
 package com.berryworks.edireader;
 
-import com.berryworks.edireader.error.*;
+import com.berryworks.edireader.error.ErrorMessages;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import org.xml.sax.SAXException;
@@ -181,22 +181,8 @@ public class EdifactReader extends StandardReader {
             }
         }
 
-        int n;
-        if (getGroupCount() != (n = getTokenizer().nextIntValue())) {
-            GroupCountException groupCountException = new GroupCountException(COUNT_UNZ, getGroupCount(), n, getTokenizer());
-            setSyntaxException(groupCountException);
-            if (!recover(groupCountException))
-                throw groupCountException;
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(getInterchangeControlNumber())) {
-            InterchangeControlNumberException interchangeControlNumberException =
-                    new InterchangeControlNumberException(CONTROL_NUMBER_UNZ, getInterchangeControlNumber(), s, getTokenizer());
-            setSyntaxException(interchangeControlNumberException);
-            if (!recover(interchangeControlNumberException))
-                throw interchangeControlNumberException;
-        }
-
+        checkGroupCount(getGroupCount(), getTokenizer().nextIntValue(), COUNT_UNZ);
+        checkInterchangeControlNumber(getInterchangeControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNZ);
         endInterchange();
 
         return getTokenizer().skipSegment();
@@ -246,17 +232,33 @@ public class EdifactReader extends StandardReader {
         int docCount = 0;
 
         getGroupAttributes().clear();
+        // Group type. For example: INVOIC
         getGroupAttributes().addCDATA("GroupType", getTokenizer().nextSimpleValue());
-
-        getTokenizer().nextCompositeElement();
-        getTokenizer().nextCompositeElement();
-        getTokenizer().nextCompositeElement();
-
+        List<String> compositeList;
+        // Application sender
+        compositeList = getTokenizer().nextCompositeElement();
+        String sender = getSubElement(compositeList, 0);
+        getGroupAttributes().addCDATA(getXMLTags().getApplSender(), sender);
+        // Application receiver
+        compositeList = getTokenizer().nextCompositeElement();
+        String receiver = getSubElement(compositeList, 0);
+        getGroupAttributes().addCDATA(getXMLTags().getApplReceiver(), receiver);
+        // Date and time
+        compositeList = getTokenizer().nextCompositeElement();
+        String date = getSubElement(compositeList, 0);
+        String time = getSubElement(compositeList, 1);
+        getGroupAttributes().addCDATA(getXMLTags().getDate(), date);
+        getGroupAttributes().addCDATA(getXMLTags().getTime(), time);
+        // Control number
         setGroupControlNumber(getTokenizer().nextSimpleValue());
         getGroupAttributes().addCDATA(getXMLTags().getControl(), getGroupControlNumber());
+        // Standard Code. For example: UN
         getGroupAttributes().addCDATA("StandardCode", getTokenizer().nextSimpleValue());
-
-        getTokenizer().nextCompositeElement();
+        // Standard Version. For example: D02B
+        compositeList = getTokenizer().nextCompositeElement();
+        String version = getSubElement(compositeList, 0);
+        String release = getSubElement(compositeList, 1);
+        getGroupAttributes().addCDATA(getXMLTags().getStandardVersion(), version + release);
         startElement(getXMLTags().getGroupTag(), getGroupAttributes());
         getTokenizer().skipSegment();
 
@@ -283,20 +285,8 @@ public class EdifactReader extends StandardReader {
             }
         }
 
-        int n;
-        if (docCount != (n = getTokenizer().nextIntValue())) {
-            throw new EDISyntaxException(
-                    "Transaction set count error in UNE segment. Expected "
-                            + docCount + " instead of " + n, getTokenizer());
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(getGroupControlNumber())) {
-            throw new EDISyntaxException(
-                    "Control number error in UNE segment. Expected "
-                            + getGroupControlNumber() + " instead of " + s,
-                    getTokenizer());
-        }
-
+        checkTransactionCount(docCount, getTokenizer().nextIntValue(), COUNT_UNE);
+        checkGroupControlNumber(getGroupControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNE);
         endElement(getXMLTags().getGroupTag());
         return getTokenizer().skipSegment();
     }
@@ -432,21 +422,8 @@ public class EdifactReader extends StandardReader {
 
         }
 
-        int n;
-        if (segCount != (n = getTokenizer().nextIntValue())) {
-            SegmentCountException countException = new SegmentCountException(COUNT_UNT, segCount, n, getTokenizer());
-            setSyntaxException(countException);
-            if (!recover(countException))
-                throw countException;
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(control)) {
-            TransactionControlNumberException transactionControlNumberException =
-                    new TransactionControlNumberException(CONTROL_NUMBER_UNT, control, s, getTokenizer());
-            setSyntaxException(transactionControlNumberException);
-            if (!recover(transactionControlNumberException))
-                throw transactionControlNumberException;
-        }
+        checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_UNT);
+        checkTransactionControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNT);
         endElement(getXMLTags().getDocumentTag());
 
         /*

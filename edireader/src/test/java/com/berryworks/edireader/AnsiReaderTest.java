@@ -1,5 +1,6 @@
 package com.berryworks.edireader;
 
+import com.berryworks.edireader.error.*;
 import com.berryworks.edireader.util.sax.EDIReaderSAXAdapter;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,9 +8,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 
+import static com.berryworks.edireader.util.Conversion.ediToxml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -92,23 +96,23 @@ public class AnsiReaderTest {
     }
 
     @Test
-    public void detectsGroupCountError() throws IOException {
+    public void detectsGroupCountError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("IEA*1*", "IEA*44*");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Functional group count error not detected");
-        } catch (SAXException e) {
+        } catch (GroupCountException e) {
             assertEquals("Functional group count error in IEA segment. Expected 1 instead of 44 at segment 8, field 2", e.getMessage());
         }
     }
 
     @Test
-    public void detectsInterchangeControlNumberError() throws IOException {
+    public void detectsInterchangeControlNumberError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("IEA*1*000000121", "IEA*1*000000921");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Interchange control number error not detected");
-        } catch (SAXException e) {
+        } catch (InterchangeControlNumberException e) {
             assertEquals(
                     "Control number error in IEA segment. Expected 000000121 instead of 000000921 at segment 8, field 3",
                     e.getMessage());
@@ -116,23 +120,23 @@ public class AnsiReaderTest {
     }
 
     @Test
-    public void detectsTransactionCountError() throws IOException {
+    public void detectsTransactionCountError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("GE*1*", "GE*44*");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Transaction count error not detected");
-        } catch (SAXException e) {
+        } catch (TransactionCountException e) {
             assertEquals("Transaction count error in GE segment. Expected 1 instead of 44 at segment 7, field 2", e.getMessage());
         }
     }
 
     @Test
-    public void detectsGroupControlNumberError() throws IOException {
+    public void detectsGroupControlNumberError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("GE*1*1210001^", "GE*1*9210001^");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Group control number error not detected");
-        } catch (SAXException e) {
+        } catch (GroupControlNumberException e) {
             assertEquals(
                     "Control number error in GE segment. Expected 1210001 instead of 9210001 at segment 7, field 3",
                     e.getMessage());
@@ -140,23 +144,23 @@ public class AnsiReaderTest {
     }
 
     @Test
-    public void detectsSegmentCountError() throws IOException {
+    public void detectsSegmentCountError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("SE*4*", "SE*44*");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Segment count error not detected");
-        } catch (SAXException e) {
+        } catch (SegmentCountException e) {
             assertEquals("Segment count error in SE segment. Expected 4 instead of 44 at segment 6, field 2", e.getMessage());
         }
     }
 
     @Test
-    public void detectsTransactionControlNumberError() throws IOException {
+    public void detectsTransactionControlNumberError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("SE*4*0000001", "SE*4*1111111");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Transaction control number error not detected");
-        } catch (SAXException e) {
+        } catch (TransactionControlNumberException e) {
             assertEquals(
                     "Control number error in SE segment. Expected 0000001 instead of 1111111 at segment 6, field 3",
                     e.getMessage());
@@ -253,6 +257,31 @@ public class AnsiReaderTest {
                     e.getMessage());
         }
     }
+
+    @Test
+    public void producesXmlForSimpleCase() throws IOException, SAXException, TransformerException {
+        ansiReader = new AnsiReader();
+        StringReader reader = new StringReader(EDI_SAMPLE);
+        StringWriter writer = new StringWriter();
+        ediToxml(reader, writer, ansiReader);
+        assertEquals(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                        "<ediroot>" +
+                        "<interchange Standard=\"ANSI X.12\" AuthorizationQual=\"00\" Authorization=\"          \" SecurityQual=\"00\" Security=\"          \" Date=\"030603\" Time=\"1337\" StandardsId=\"U\" Version=\"00401\" Control=\"000000121\" AckRequest=\"0\" TestIndicator=\"T\">" +
+                        "<sender><address Id=\"D00111         \" Qual=\"ZZ\"/></sender>" +
+                        "<receiver><address Id=\"0055           \" Qual=\"ZZ\"/></receiver>" +
+                        "<group GroupType=\"HP\" ApplSender=\"D00111\" ApplReceiver=\"0055\" Date=\"20030603\" Time=\"1337\" Control=\"1210001\" StandardCode=\"X\" StandardVersion=\"004010X091A1\">" +
+                        "<transaction DocType=\"870\" Name=\"Order Status Report\" Control=\"0000001\">" +
+                        "<segment Id=\"BSR\"><element Id=\"BSR01\">4</element><element Id=\"BSR02\">PA</element><element Id=\"BSR03\">SUPPLIER CONFIRMATION NUMBER</element><element Id=\"BSR04\">CCYYMMDD</element></segment>" +
+                        "<segment Id=\"REF\"><element Id=\"REF01\">MR</element><element Id=\"REF02\">12345</element></segment>" +
+                        "</transaction>" +
+                        "</group>" +
+                        "</interchange>" +
+                        "</ediroot>",
+                writer.toString());
+
+    }
+
 
     private class CountingHandler extends EDIReaderSAXAdapter {
         private int segmentCount, elementCount;

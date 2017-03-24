@@ -47,7 +47,9 @@ public interface ErrorMessages {
     String CONTROL_NUMBER_UNZ = "Control number error in UNZ segment";
     String CONTROL_NUMBER_UNT = "Control number error in UNT segment";
     String COUNT_UNZ = "Functional group count error in UNZ segment";
+    String CONTROL_NUMBER_UNE = "Control number error in UNE segment";
     String COUNT_UNT = "Segment count error in UNT segment";
+    String COUNT_UNE = "Message count error in UNE segment";
     String FIRST_SEGMENT_MUST_BE_UNA_OR_UNB = "First segment must be UNA or UNB";
     String NO_HL7_PARSER = "Data begins with MSH indicating HL7 data, but no HL7 parser is available";
     String INCOMPLETE_HL7_MESSAGE = "Incomplete HL7 message";

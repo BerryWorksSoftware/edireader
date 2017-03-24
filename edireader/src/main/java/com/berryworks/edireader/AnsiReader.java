@@ -20,7 +20,8 @@
 
 package com.berryworks.edireader;
 
-import com.berryworks.edireader.error.*;
+import com.berryworks.edireader.error.ErrorMessages;
+import com.berryworks.edireader.error.MissingMandatoryElementException;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import com.berryworks.edireader.util.FixedLength;
@@ -198,22 +199,8 @@ public class AnsiReader extends StandardReader {
             }
         }
 
-        int n;
-        if (getGroupCount() != (n = getTokenizer().nextIntValue())) {
-            GroupCountException countException = new GroupCountException(COUNT_IEA, getGroupCount(), n, getTokenizer());
-            setSyntaxException(countException);
-            if (!recover(countException))
-                throw countException;
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(getInterchangeControlNumber())) {
-            InterchangeControlNumberException interchangeControlNumberException =
-                    new InterchangeControlNumberException(CONTROL_NUMBER_IEA, getInterchangeControlNumber(), s, getTokenizer());
-            setSyntaxException(interchangeControlNumberException);
-            if (!recover(interchangeControlNumberException))
-                throw interchangeControlNumberException;
-        }
-
+        checkGroupCount(getGroupCount(), getTokenizer().nextIntValue(), COUNT_IEA);
+        checkInterchangeControlNumber(getInterchangeControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_IEA);
         getAckGenerator().generateAcknowledgementWrapup();
         getAlternateAckGenerator().generateAcknowledgementWrapup();
         endInterchange();
@@ -354,22 +341,8 @@ public class AnsiReader extends StandardReader {
             }
         }
 
-        int n;
-        if (docCount != (n = getTokenizer().nextIntValue())) {
-            TransactionCountException countException = new TransactionCountException(COUNT_GE, docCount, n, getTokenizer());
-            setSyntaxException(countException);
-            if (!recover(countException))
-                throw countException;
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(getGroupControlNumber())) {
-            GroupControlNumberException groupControlNumberException = new GroupControlNumberException(
-                    CONTROL_NUMBER_GE, getGroupControlNumber(), s, getTokenizer());
-            setSyntaxException(groupControlNumberException);
-            if (!recover(groupControlNumberException))
-                throw groupControlNumberException;
-        }
-
+        checkTransactionCount(docCount, getTokenizer().nextIntValue(), COUNT_GE);
+        checkGroupControlNumber(getGroupControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_GE);
         endElement(getXMLTags().getGroupTag());
         getAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
         getAlternateAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
@@ -447,22 +420,8 @@ public class AnsiReader extends StandardReader {
         for (; toClose > 0; toClose--)
             endElement(getXMLTags().getLoopTag());
 
-        int n;
-        if (segCount != (n = getTokenizer().nextIntValue())) {
-            SegmentCountException countException = new SegmentCountException(COUNT_SE, segCount, n, getTokenizer());
-            setSyntaxException(countException);
-            if (!recover(countException))
-                throw countException;
-        }
-
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(control)) {
-            TransactionControlNumberException transactionControlNumberException = new TransactionControlNumberException(CONTROL_NUMBER_SE, control, s, getTokenizer());
-            setSyntaxException(transactionControlNumberException);
-            if (!recover(transactionControlNumberException))
-                throw transactionControlNumberException;
-        }
-
+        checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_SE);
+        checkTransactionControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_SE);
         getAckGenerator().generateTransactionAcknowledgment(documentType, control);
         getAlternateAckGenerator().generateTransactionAcknowledgment(documentType, control);
         endElement(getXMLTags().getDocumentTag());
