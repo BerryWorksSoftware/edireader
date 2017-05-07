@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2017 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -31,12 +31,13 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.*;
 
+import static com.berryworks.edireader.demo.EDItoXML.NEW_LINE;
+
 public class Splitter {
     private static int count;
     private final InputSource inputSource;
     private EDIReader parser;
     private final FileSequenceNameGenerator handlerFactory;
-    private final String newLine = System.getProperty("line.separator");
 
 
     public Splitter(Reader inputReader, String outputFileNamePattern) {
@@ -52,7 +53,7 @@ public class Splitter {
         char[] leftOver = null;
         while ((parser = EDIReaderFactory.createEDIReader(inputSource, leftOver)) != null) {
             String outputFilename = handlerFactory.generateName();
-            System.out.println(newLine + "EDI interchange written to: " + outputFilename);
+            System.out.println(NEW_LINE + "EDI interchange written to: " + outputFilename);
             parser.setContentHandler(new ScanningHandler());
             try (Writer writer = new FileWriter(outputFilename)) {
                 parser.setCopyWriter(writer);

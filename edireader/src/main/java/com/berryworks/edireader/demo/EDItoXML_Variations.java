@@ -21,20 +21,28 @@
 package com.berryworks.edireader.demo;
 
 import com.berryworks.edireader.EDIReader;
+import com.berryworks.edireader.EDIReaderFactory;
+import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.error.EDISyntaxExceptionHandler;
 import com.berryworks.edireader.error.RecoverableSyntaxException;
 import com.berryworks.edireader.util.CommandLine;
 import com.berryworks.edireader.util.XmlFormatter;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+
+import static com.berryworks.edireader.demo.EDItoXML.establishInput;
+import static com.berryworks.edireader.demo.EDItoXML.establishOutput;
 
 /**
  * Converts EDI input to XML output using the default XSLT transformer.
@@ -47,15 +55,14 @@ import java.io.*;
  * If an input-file is not specified, System.in is used; if an output-file is
  * not specified, System.out is used.
  */
-public class EDItoXML {
+public class EDItoXML_Variations {
     private final InputSource inputSource;
     private Writer generatedOutput;
     private final Reader inputReader;
     private boolean namespaceEnabled;
     private boolean recover;
-    public final static String NEW_LINE = System.getProperty("line.separator");
 
-    public EDItoXML(Reader inputReader, Writer outputWriter) {
+    public EDItoXML_Variations(Reader inputReader, Writer outputWriter) {
         this.inputReader = inputReader;
         inputSource = new InputSource(inputReader);
         generatedOutput = outputWriter;
@@ -107,29 +114,96 @@ public class EDItoXML {
         }
     }
 
-    /**
-     * Main for EDItoXML.
-     *
-     * @param args command line arguments
-     */
+
+    public void run_alternate1() {
+
+        try {
+            // Establish an EDIReader.
+            EDIReader ediReader = EDIReaderFactory.createEDIReader(inputSource);
+
+            // Tell the ediReader if an xmlns="http://..." is desired
+            if (namespaceEnabled) {
+                ediReader.setNamespaceEnabled(namespaceEnabled);
+            }
+
+            // Tell the ediReader to handle EDI syntax errors instead of aborting
+            if (recover) {
+                ediReader.setSyntaxExceptionHandler(new IgnoreSyntaxExceptions());
+            }
+
+            // Establish the SAXSource
+            SAXSource source = new SAXSource(ediReader, inputSource);
+
+            // Establish a Transformer
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+
+            // Use a StreamResult to capture the generated XML output
+            StreamResult result = new StreamResult(generatedOutput);
+
+            // Call the Transformer to generate XML output from the parsed input
+            transformer.transform(source, result);
+        } catch (EDISyntaxException e) {
+            System.err.println("\nSyntax error while parsing EDI: " + e);
+        } catch (IOException e) {
+            System.err.println("\nException attempting to read EDI data: " + e);
+        } catch (TransformerConfigurationException e) {
+            System.err.println("\nUnable to create Transformer: " + e);
+        } catch (TransformerException e) {
+            System.err.println("\nFailure to transform: " + e);
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void run_alternate2() {
+
+        try {
+            // Establish an XMLReader which is actually an EDIReader.
+            System.setProperty("javax.xml.parsers.SAXParserFactory",
+                    "com.berryworks.edireader.EDIParserFactory");
+            SAXParserFactory sFactory = SAXParserFactory.newInstance();
+            SAXParser sParser = sFactory.newSAXParser();
+            XMLReader ediReader = sParser.getXMLReader();
+
+            // Tell the ediReader if an xmlns="http://..." is desired
+            if (namespaceEnabled) {
+                ((EDIReader) ediReader).setNamespaceEnabled(namespaceEnabled);
+            }
+
+            // Tell the ediReader to handle EDI syntax errors instead of aborting
+            if (recover) {
+                ((EDIReader) ediReader).setSyntaxExceptionHandler(new IgnoreSyntaxExceptions());
+            }
+
+            // Establish the SAXSource
+            SAXSource source = new SAXSource(ediReader, inputSource);
+
+            // Establish a Transformer
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+
+            // Use a StreamResult to capture the generated XML output
+            StreamResult result = new StreamResult(generatedOutput);
+
+            transformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+
+            // Call the Transformer to generate XML output from the parsed input
+            transformer.transform(source, result);
+        } catch (SAXException | ParserConfigurationException e) {
+            System.err.println("\nUnable to create EDIReader: " + e);
+        } catch (TransformerConfigurationException e) {
+            System.err.println("\nUnable to create Transformer: " + e);
+        } catch (TransformerException e) {
+            System.err.println("\nFailure to transform: " + e);
+            System.err.println(e.getMessage());
+        }
+    }
+
     public static void main(String args[]) {
         CommandLine commandLine = new CommandLine(args) {
             @Override
             public String usage() {
-                String text = NEW_LINE + "EDItoXML [ediInputFile] [-o xmlOutputFile] [-a acknowledgmentFile]" +
-                        " [-n true|false] [-r true|false] [-i true|false]";
-                text += NEW_LINE + "options:";
-                text += NEW_LINE + "   -n   XML includes namespace declaration. Defaults to false.";
-                text += NEW_LINE + "   -r   Recover and continue parsing after an error is detected in EDI input. Defaults to false.";
-                text += NEW_LINE + "   -i   Indent XML output for readability. Defaults to false.";
-                return text;
+                return "EDItoXML [inputfile] [-o outputfile] [-n true|false] [-r true|false] [-i true|false]";
             }
         };
-
-        if (!commandLine.isValid()) {
-            return;
-        }
-
         String inputFileName = commandLine.getPosition(0);
         String outputFileName = commandLine.getOption("o");
         boolean namespaceEnabled = "true".equals(commandLine.getOption("n"));
@@ -139,44 +213,13 @@ public class EDItoXML {
         Reader inputReader = establishInput(inputFileName);
         Writer generatedOutput = establishOutput(outputFileName);
 
-        EDItoXML theObject = new EDItoXML(inputReader, generatedOutput);
+        EDItoXML_Variations theObject = new EDItoXML_Variations(inputReader, generatedOutput);
         theObject.setNamespaceEnabled(namespaceEnabled);
         theObject.setRecover(recover);
         theObject.setIndent(indent);
         theObject.run();
-    }
-
-    static Writer establishOutput(String outputFileName) {
-        Writer generatedOutput;
-        if (outputFileName == null) {
-            generatedOutput = new OutputStreamWriter(System.out);
-        } else {
-            try {
-                generatedOutput = new OutputStreamWriter(new FileOutputStream(
-                        outputFileName), "ISO-8859-1");
-                System.out.println("Output file " + outputFileName + " opened");
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-        return generatedOutput;
-    }
-
-    static Reader establishInput(String inputFileName) {
-        Reader inputReader;
-        if (inputFileName == null) {
-            inputReader = new InputStreamReader(System.in);
-        } else {
-            try {
-                inputReader = new InputStreamReader(
-                        new FileInputStream(inputFileName), "ISO-8859-1");
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-        return inputReader;
+        String s = System.getProperty("line.separator");
+        System.out.print(s + "Transformation complete" + s);
     }
 
     public boolean isNamespaceEnabled() {
