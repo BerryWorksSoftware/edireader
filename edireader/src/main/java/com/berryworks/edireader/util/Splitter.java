@@ -29,9 +29,13 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
 import static com.berryworks.edireader.demo.EDItoXML.NEW_LINE;
+import static com.berryworks.edireader.demo.EDItoXML.establishInput;
 
 public class Splitter {
     private static int count;
@@ -70,20 +74,7 @@ public class Splitter {
 
         if (outputFileNamePattern == null) badArgs();
 
-        // Establish input
-        Reader inputReader;
-        if (inputFileName == null) {
-            inputReader = new InputStreamReader(System.in);
-        } else {
-            try {
-                inputReader = new InputStreamReader(
-                        new FileInputStream(inputFileName), "ISO-8859-1");
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-
+        Reader inputReader = establishInput(inputFileName);
         Splitter ediSplitter = new Splitter(inputReader, outputFileNamePattern);
         try {
             ediSplitter.run();

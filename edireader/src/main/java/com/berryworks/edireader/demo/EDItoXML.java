@@ -26,7 +26,6 @@ import com.berryworks.edireader.error.RecoverableSyntaxException;
 import com.berryworks.edireader.util.CommandLine;
 import com.berryworks.edireader.util.XmlFormatter;
 import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -50,6 +49,7 @@ import java.io.*;
 public class EDItoXML {
     private final InputSource inputSource;
     private Writer generatedOutput;
+    private Writer acknowledgmentWriter;
     private final Reader inputReader;
     private boolean namespaceEnabled;
     private boolean recover;
@@ -67,16 +67,21 @@ public class EDItoXML {
     public void run() {
 
         try {
-            XMLReader ediReader = new EDIReader();
+            EDIReader ediReader = new EDIReader();
 
             // Tell the ediReader if an xmlns="http://..." is desired
             if (namespaceEnabled) {
-                ((EDIReader) ediReader).setNamespaceEnabled(namespaceEnabled);
+                ediReader.setNamespaceEnabled(namespaceEnabled);
             }
 
             // Tell the ediReader to handle EDI syntax errors instead of aborting
             if (recover) {
-                ((EDIReader) ediReader).setSyntaxExceptionHandler(new IgnoreSyntaxExceptions());
+                ediReader.setSyntaxExceptionHandler(new IgnoreSyntaxExceptions());
+            }
+
+            // Give the ediReader a Writer to use for acknowledgment output if needed
+            if (acknowledgmentWriter != null) {
+                ediReader.setAcknowledgment(acknowledgmentWriter);
             }
 
             // Establish the SAXSource
@@ -132,6 +137,7 @@ public class EDItoXML {
 
         String inputFileName = commandLine.getPosition(0);
         String outputFileName = commandLine.getOption("o");
+        String acknowledgmentFileName = commandLine.getOption("a");
         boolean namespaceEnabled = "true".equals(commandLine.getOption("n"));
         boolean recover = "true".equals(commandLine.getOption("r"));
         boolean indent = "true".equals(commandLine.getOption("i"));
@@ -143,6 +149,9 @@ public class EDItoXML {
         theObject.setNamespaceEnabled(namespaceEnabled);
         theObject.setRecover(recover);
         theObject.setIndent(indent);
+        if (acknowledgmentFileName != null) {
+            theObject.setAcknowledgmentWriter(establishOutput(acknowledgmentFileName));
+        }
         theObject.run();
     }
 
@@ -163,7 +172,7 @@ public class EDItoXML {
         return generatedOutput;
     }
 
-    static Reader establishInput(String inputFileName) {
+    public static Reader establishInput(String inputFileName) {
         Reader inputReader;
         if (inputFileName == null) {
             inputReader = new InputStreamReader(System.in);
@@ -200,6 +209,14 @@ public class EDItoXML {
                 generatedOutput = new XmlFormatter(generatedOutput);
             }
         }
+    }
+
+    public void setAcknowledgmentWriter(Writer acknowledgmentWriter) {
+        this.acknowledgmentWriter = acknowledgmentWriter;
+    }
+
+    public Writer getAcknowledgmentWriter() {
+        return acknowledgmentWriter;
     }
 
     static class IgnoreSyntaxExceptions implements EDISyntaxExceptionHandler {
