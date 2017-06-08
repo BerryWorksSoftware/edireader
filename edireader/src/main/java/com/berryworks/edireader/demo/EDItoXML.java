@@ -27,7 +27,6 @@ import com.berryworks.edireader.util.CommandLine;
 import com.berryworks.edireader.util.XmlFormatter;
 import org.xml.sax.InputSource;
 
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -47,18 +46,18 @@ import java.io.*;
  * not specified, System.out is used.
  */
 public class EDItoXML {
-    private final InputSource inputSource;
-    private Writer generatedOutput;
-    private Writer acknowledgmentWriter;
-    private final Reader inputReader;
-    private boolean namespaceEnabled;
-    private boolean recover;
     public final static String NEW_LINE = System.getProperty("line.separator");
 
-    public EDItoXML(Reader inputReader, Writer outputWriter) {
-        this.inputReader = inputReader;
-        inputSource = new InputSource(inputReader);
-        generatedOutput = outputWriter;
+    private Writer generatedOutput;
+    private Writer acknowledgmentWriter;
+    private Reader inputReader;
+    private boolean namespaceEnabled;
+    private boolean recover;
+
+    public static void main(String args[]) {
+        EDItoXML theObject = new EDItoXML();
+        if (!configure(args, theObject)) return;
+        theObject.run();
     }
 
     /**
@@ -67,11 +66,11 @@ public class EDItoXML {
     public void run() {
 
         try {
-            EDIReader ediReader = new EDIReader();
+            EDIReader ediReader = createEDIReader();
 
             // Tell the ediReader if an xmlns="http://..." is desired
             if (namespaceEnabled) {
-                ediReader.setNamespaceEnabled(namespaceEnabled);
+                ediReader.setNamespaceEnabled(true);
             }
 
             // Tell the ediReader to handle EDI syntax errors instead of aborting
@@ -85,16 +84,13 @@ public class EDItoXML {
             }
 
             // Establish the SAXSource
-            SAXSource source = new SAXSource(ediReader, inputSource);
-
-            // Establish a Transformer
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            SAXSource source = new SAXSource(ediReader, new InputSource(inputReader));
 
             // Use a StreamResult to capture the generated XML output
             StreamResult result = new StreamResult(generatedOutput);
 
-            // Call the Transformer to generate XML output from the parsed input
-            transformer.transform(source, result);
+            // Use a Transformer to generate XML output from the parsed input
+            TransformerFactory.newInstance().newTransformer().transform(source, result);
         } catch (TransformerConfigurationException e) {
             System.err.println("\nUnable to create Transformer: " + e);
         } catch (TransformerException e) {
@@ -112,12 +108,11 @@ public class EDItoXML {
         }
     }
 
-    /**
-     * Main for EDItoXML.
-     *
-     * @param args command line arguments
-     */
-    public static void main(String args[]) {
+    protected EDIReader createEDIReader() {
+        return new EDIReader();
+    }
+
+    static boolean configure(final String[] args, EDItoXML theObject) {
         CommandLine commandLine = new CommandLine(args) {
             @Override
             public String usage() {
@@ -132,7 +127,7 @@ public class EDItoXML {
         };
 
         if (!commandLine.isValid()) {
-            return;
+            return false;
         }
 
         String inputFileName = commandLine.getPosition(0);
@@ -145,14 +140,15 @@ public class EDItoXML {
         Reader inputReader = establishInput(inputFileName);
         Writer generatedOutput = establishOutput(outputFileName);
 
-        EDItoXML theObject = new EDItoXML(inputReader, generatedOutput);
+        theObject.setInputReader(inputReader);
+        theObject.setXmlOutputWriter(generatedOutput);
         theObject.setNamespaceEnabled(namespaceEnabled);
         theObject.setRecover(recover);
         theObject.setIndent(indent);
         if (acknowledgmentFileName != null) {
             theObject.setAcknowledgmentWriter(establishOutput(acknowledgmentFileName));
         }
-        theObject.run();
+        return true;
     }
 
     static Writer establishOutput(String outputFileName) {
@@ -188,19 +184,15 @@ public class EDItoXML {
         return inputReader;
     }
 
-    public boolean isNamespaceEnabled() {
-        return namespaceEnabled;
-    }
-
-    public void setNamespaceEnabled(boolean namespaceEnabled) {
+    private void setNamespaceEnabled(boolean namespaceEnabled) {
         this.namespaceEnabled = namespaceEnabled;
     }
 
-    public void setRecover(boolean recover) {
+    private void setRecover(boolean recover) {
         this.recover = recover;
     }
 
-    public void setIndent(boolean indent) {
+    void setIndent(boolean indent) {
         if (indent) {
             if (generatedOutput instanceof XmlFormatter) {
                 // The output Writer is already wrapper in an indenting filter, so do not do it again
@@ -211,12 +203,16 @@ public class EDItoXML {
         }
     }
 
-    public void setAcknowledgmentWriter(Writer acknowledgmentWriter) {
-        this.acknowledgmentWriter = acknowledgmentWriter;
+    public void setInputReader(Reader inputReader) {
+        this.inputReader = inputReader;
     }
 
-    public Writer getAcknowledgmentWriter() {
-        return acknowledgmentWriter;
+    public void setXmlOutputWriter(Writer xmlOutputWriter) {
+        generatedOutput = xmlOutputWriter;
+    }
+
+    private void setAcknowledgmentWriter(Writer acknowledgmentWriter) {
+        this.acknowledgmentWriter = acknowledgmentWriter;
     }
 
     static class IgnoreSyntaxExceptions implements EDISyntaxExceptionHandler {
