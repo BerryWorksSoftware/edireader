@@ -27,7 +27,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -80,10 +79,9 @@ public class DocumentUtil {
         if (factory != null) {
             ediReader.setPluginControllerFactory(factory);
         }
-        XMLReader xmlReader = ediReader;
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         DOMResult domResult = new DOMResult();
-        transformer.transform(new SAXSource(xmlReader, inputSource), domResult);
+        transformer.transform(new SAXSource(ediReader, inputSource), domResult);
         Document document = (Document) domResult.getNode();
         if (document == null)
             throw new RuntimeException("transform produced null document");
