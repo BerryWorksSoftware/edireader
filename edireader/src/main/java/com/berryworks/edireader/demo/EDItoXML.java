@@ -184,15 +184,15 @@ public class EDItoXML {
         return inputReader;
     }
 
-    private void setNamespaceEnabled(boolean namespaceEnabled) {
+    public void setNamespaceEnabled(boolean namespaceEnabled) {
         this.namespaceEnabled = namespaceEnabled;
     }
 
-    private void setRecover(boolean recover) {
+    public void setRecover(boolean recover) {
         this.recover = recover;
     }
 
-    void setIndent(boolean indent) {
+    public void setIndent(boolean indent) {
         if (indent) {
             if (generatedOutput instanceof XmlFormatter) {
                 // The output Writer is already wrapper in an indenting filter, so do not do it again
@@ -211,11 +211,11 @@ public class EDItoXML {
         generatedOutput = xmlOutputWriter;
     }
 
-    private void setAcknowledgmentWriter(Writer acknowledgmentWriter) {
+    public void setAcknowledgmentWriter(Writer acknowledgmentWriter) {
         this.acknowledgmentWriter = acknowledgmentWriter;
     }
 
-    static class IgnoreSyntaxExceptions implements EDISyntaxExceptionHandler {
+    public static class IgnoreSyntaxExceptions implements EDISyntaxExceptionHandler {
 
         public boolean process(RecoverableSyntaxException syntaxException) {
             System.out.println("Syntax Exception. class: " + syntaxException.getClass().getName() + "  message:" + syntaxException.getMessage());
