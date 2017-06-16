@@ -28,7 +28,7 @@ import java.io.Writer;
 
 public class EDITestData implements Runnable {
 
-    private static final String ISA_FRAGMENT = "ISA~00~          ~00~          ~ZZ~04000          ~ZZ~58401          ~040714~1003~U~00204~000038449~0~P~<$";
+    private static final String ISA_FRAGMENT = "ISA~00~          ~00~          ~ZZ~04000          ~ZZ~58401          ~040714~1003~U~00204~000038449~1~P~<$";
 
     private static final String GS_FRAGMENT = "GS~AG~04000~58401~040714~1003~38327~X~002040CHRY$";
 

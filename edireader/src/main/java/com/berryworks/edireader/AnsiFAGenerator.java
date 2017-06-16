@@ -51,7 +51,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
     public AnsiFAGenerator(final StandardReader ansiReader, final BranchingWriter ackStream) {
         this.standardReader = ansiReader;
         this.ackStream = ackStream;
-        thisGroupControlNumber = "12345";
+        thisGroupControlNumber = CONTROL_NUMBER_997;
     }
 
     @Override
@@ -200,7 +200,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
                 FixedLength.valueOf(isaFields[11], 1) + delimiter +
                 FixedLength.valueOf(isaFields[12], 5) + delimiter +
                 FixedLength.valueOf(isaFields[13], 9) + delimiter +
-                FixedLength.valueOf(isaFields[14], 1) + delimiter +
+                "0" + delimiter +
                 FixedLength.valueOf(isaFields[15], 1) + delimiter +
                 FixedLength.valueOf(isaFields[16], 1);
         thisInterchangeControlNumber = isaFields[13].trim();
