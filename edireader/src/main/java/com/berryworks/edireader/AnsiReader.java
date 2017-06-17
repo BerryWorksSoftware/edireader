@@ -462,7 +462,7 @@ public class AnsiReader extends StandardReader {
         }
     }
 
-    private boolean isEnvelopeSegment(String segmentType) {
+    public static boolean isEnvelopeSegment(String segmentType) {
         return "ISA".equals(segmentType) || "GS".equals(segmentType) || "ST".equals(segmentType) ||
                 "SE".equals(segmentType) || "GE".equals(segmentType) || "IEA".equals(segmentType) ||
                 "TA1".equals(segmentType);

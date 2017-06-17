@@ -14,8 +14,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import static com.berryworks.edireader.util.Conversion.ediToxml;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class AnsiReaderTest {
 
@@ -297,6 +296,17 @@ public class AnsiReaderTest {
 
     }
 
+    @Test
+    public void recognizesEnvelopeSegments() {
+        assertTrue(AnsiReader.isEnvelopeSegment("ISA"));
+        assertTrue(AnsiReader.isEnvelopeSegment("GS"));
+        assertTrue(AnsiReader.isEnvelopeSegment("ST"));
+        assertTrue(AnsiReader.isEnvelopeSegment("SE"));
+        assertTrue(AnsiReader.isEnvelopeSegment("GE"));
+        assertTrue(AnsiReader.isEnvelopeSegment("IEA"));
+        assertTrue(AnsiReader.isEnvelopeSegment("TA1"));
+        assertFalse(AnsiReader.isEnvelopeSegment("REF"));
+    }
 
     private class CountingHandler extends EDIReaderSAXAdapter {
         private int segmentCount, elementCount;
