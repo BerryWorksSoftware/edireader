@@ -10,7 +10,7 @@ public class QueuedStartItem extends QueuedItem {
     private final EDIAttributes attributes;
     private String data;
 
-    QueuedStartItem(String uri, String localName, String qName, Attributes attributes, int charCount, int segmentCharCount) {
+    public QueuedStartItem(String uri, String localName, String qName, Attributes attributes, int charCount, int segmentCharCount) {
         super(uri, localName, qName, charCount, segmentCharCount);
         this.attributes = new EDIAttributes(attributes);
     }

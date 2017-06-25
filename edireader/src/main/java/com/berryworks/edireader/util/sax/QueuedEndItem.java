@@ -7,7 +7,7 @@ import org.xml.sax.SAXException;
 
 public class QueuedEndItem extends QueuedItem {
 
-    QueuedEndItem(String uri, String localName, String qName, int charCount, int segmentCharCount) {
+    public QueuedEndItem(String uri, String localName, String qName, int charCount, int segmentCharCount) {
         super(uri, localName, qName, charCount, segmentCharCount);
     }
 
