@@ -50,10 +50,18 @@ public class QueuedStartItem extends QueuedItem {
         if (handler instanceof SourcePosition) {
             ((SourcePosition) handler).setCharCounts(getCharCount(), getSegmentCharCount());
         }
-        handler.startElement(uri, name, qname, attributes1);
-        if (getData() != null) {
-            char[] ca = getData().toCharArray();
-            handler.characters(ca, 0, ca.length);
+
+        if (handler instanceof StartWithDataContentHandler) {
+            // If the handler is prepared to accept a startElement with the data at the same time, then do that.
+            StartWithDataContentHandler startWithDataContentHandler = (StartWithDataContentHandler) handler;
+            startWithDataContentHandler.startElement(uri, name, qname, attributes1, getData());
+        } else {
+            // Otherwise, we have to pas the data separately.
+            handler.startElement(uri, name, qname, attributes1);
+            if (getData() != null) {
+                char[] ca = getData().toCharArray();
+                handler.characters(ca, 0, ca.length);
+            }
         }
     }
 
