@@ -1,6 +1,7 @@
 package com.berryworks.edireader.util;
 
 import com.berryworks.edireader.EDIReader;
+import com.berryworks.edireader.EDISyntaxException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -41,6 +42,8 @@ public class StandardRecognizer implements Runnable {
             MyContentHandler handler = new MyContentHandler();
             ediReader.setContentHandler(handler);
             ediReader.parse(new InputSource(fileReader));
+        } catch (EDISyntaxException e) {
+            standard = "Binary";
         } catch (Exception e) {
             throw new RuntimeException("Unable to parse EDI input", e);
         }
