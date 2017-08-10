@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2017 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -33,7 +33,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+
+import static com.berryworks.edireader.demo.EDItoXML.establishInput;
 
 /**
  * Converts EDI input into a series of XML output files
@@ -66,19 +70,7 @@ public class EDISplitter {
 
         if (outputFileNamePattern == null) badArgs();
 
-        // Establish input
-        Reader inputReader;
-        if (inputFileName == null) {
-            inputReader = new InputStreamReader(System.in);
-        } else {
-            try {
-                inputReader = new InputStreamReader(
-                        new FileInputStream(inputFileName), "ISO-8859-1");
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                throw new RuntimeException(e.getMessage());
-            }
-        }
+        Reader inputReader = establishInput(inputFileName);
 
         EDISplitter ediSplitter = new EDISplitter(inputReader, outputFileNamePattern);
         try {
@@ -122,9 +114,6 @@ public class EDISplitter {
         @Override
         public void closeDocument(ClosingDetails closingDetails) throws IOException {
             String xmlFilename = generateName();
-
-//            System.out.println("Generating XML into file " + xmlFilename);
-
             DOMSource source = new DOMSource(saxHandler.getDocument());
 
             try (FileWriter writer = new FileWriter(xmlFilename)) {

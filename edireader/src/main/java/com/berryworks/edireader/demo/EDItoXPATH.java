@@ -35,10 +35,10 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
+
+import static com.berryworks.edireader.demo.EDItoXML.establishInput;
 
 public class EDItoXPATH {
     private final InputSource inputSource;
@@ -97,20 +97,7 @@ public class EDItoXPATH {
         else
             badArgs();
 
-        // Establish input
-        Reader inputReader;
-        if (inputFileName == null) {
-            inputReader = new InputStreamReader(System.in);
-        } else {
-            try {
-                inputReader = new InputStreamReader(
-                        new FileInputStream(inputFileName), "ISO-8859-1");
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-
+        Reader inputReader = establishInput(inputFileName);
         EDItoXPATH theObject = new EDItoXPATH(inputReader);
         theObject.run();
     }

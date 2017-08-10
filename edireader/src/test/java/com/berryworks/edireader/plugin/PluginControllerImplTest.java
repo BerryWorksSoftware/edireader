@@ -231,8 +231,12 @@ public class PluginControllerImplTest {
                         "GE*1*38327$" +
                         "IEA*1*000038449$";
 
+        EDItoXML ediToXml = new EDItoXML();
         StringWriter writer = new StringWriter();
-        new EDItoXML(new StringReader(TINY_850), writer).run();
+        StringReader reader = new StringReader(TINY_850);
+        ediToXml.setInputReader(reader);
+        ediToXml.setXmlOutputWriter(writer);
+        ediToXml.run();
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                         "<ediroot>" +
                         "<interchange Standard=\"ANSI X.12\" AuthorizationQual=\"00\" Authorization=\"          \" SecurityQual=\"00\" Security=\"          \" Date=\"040714\" Time=\"1003\" StandardsId=\"U\" Version=\"00204\" Control=\"000038449\" AckRequest=\"0\" TestIndicator=\"P\">" +

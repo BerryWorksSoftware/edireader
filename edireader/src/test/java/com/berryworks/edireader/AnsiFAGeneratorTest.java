@@ -18,12 +18,12 @@ import static org.junit.Assert.assertTrue;
 public class AnsiFAGeneratorTest {
 
     public static final String TEST_DATA_997 = "ISA~00~          ~00~          ~ZZ~58401          ~ZZ~04000          ~999999~9999~U~00204~000038449~0~P~<$" +
-            "GS~FA~58401~04000~999999~9999~12345~X~002040CHRY$" +
+            "GS~FA~58401~04000~999999~9999~0001~X~002040CHRY$" +
             "ST~997~0001$" +
             "AK1~AG~38327$" +
             "AK2~824~000042460$AK5~A$" +
             "AK9~A~1~1~1$SE~6~0001$" +
-            "GE~1~12345$" +
+            "GE~1~0001$" +
             "IEA~1~000038449$";
     private MyAnsiFAGenerator generator;
     private StringWriter output;

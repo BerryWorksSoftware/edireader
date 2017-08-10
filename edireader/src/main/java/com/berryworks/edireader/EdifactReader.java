@@ -92,8 +92,8 @@ public class EdifactReader extends StandardReader {
         setGroupCount(0);
         List<String> compositeList;
 
-        /**
-         * Syntax identifier : version (example: UNOA:2 )
+        /*
+          Syntax identifier : version (example: UNOA:2 )
          */
         compositeList = getTokenizer().nextCompositeElement();
         String syntaxIdentifier = getSubElement(compositeList, 0);
@@ -107,24 +107,24 @@ public class EdifactReader extends StandardReader {
             }
         }
 
-        /**
-         * Sender address
+        /*
+          Sender address
          */
         compositeList = getTokenizer().nextCompositeElement();
         String fromId = getSubElement(compositeList, 0);
         String fromQual = getSubElement(compositeList, 1);
         String fromExtra = getSubElement(compositeList, 2);
 
-        /**
-         * Receiver address
+        /*
+          Receiver address
          */
         compositeList = getTokenizer().nextCompositeElement();
         String toId = getSubElement(compositeList, 0);
         String toQual = getSubElement(compositeList, 1);
         String toExtra = getSubElement(compositeList, 2);
 
-        /**
-         * Date and time (UNB0401 and UNB0402)
+        /*
+          Date and time (UNB0401 and UNB0402)
          */
         compositeList = getTokenizer().nextCompositeElement();
         String date = getSubElement(compositeList, 0);
@@ -132,21 +132,21 @@ public class EdifactReader extends StandardReader {
         getInterchangeAttributes().addCDATA(getXMLTags().getDate(), date);
         getInterchangeAttributes().addCDATA(getXMLTags().getTime(), time);
 
-        /**
-         * Control number (UNB05)
+        /*
+          Control number (UNB05)
          */
         setInterchangeControlNumber(getTokenizer().nextSimpleValue());
         getInterchangeAttributes().addCDATA(getXMLTags().getControl(), getInterchangeControlNumber());
 
         remainderOfUNB();
 
-        /**
-         * Decimal notation
-         *
-         * The character used for decimal notation in numbers.
-         * For example, the value 3.14159 is expressed using "."
-         * for decimal notation. Another character sometimes used
-         * for this purpose is "," (comma).
+        /*
+          Decimal notation
+
+          The character used for decimal notation in numbers.
+          For example, the value 3.14159 is expressed using "."
+          for decimal notation. Another character sometimes used
+          for this purpose is "," (comma).
          */
         getInterchangeAttributes().addCDATA(
                 getXMLTags().getDecimal(),
