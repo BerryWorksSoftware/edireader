@@ -109,7 +109,7 @@ public class SplittingHandler extends DefaultHandler {
             // If there was no version available from the group, such as 005010 from the GS,
             // then this may be an EDIFACT scenario and the most interesting version is from
             // the UNH, such as 97A.
-            version = groupAttributes.getValue(xmlTags.getRelease());
+            version = documentAttributes.getValue(xmlTags.getRelease());
         }
         closingDetails.setVersion(version);
         try {
