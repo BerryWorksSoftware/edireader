@@ -88,7 +88,7 @@ public class EdifactReader extends StandardReader {
     protected Token parseInterchange(Token token) throws SAXException,
             IOException {
         getInterchangeAttributes().clear();
-        getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), "EDIFACT");
+        getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), EDIStandard.EDIFACT.getDisplayName());
         setGroupCount(0);
         List<String> compositeList;
 
@@ -396,7 +396,7 @@ public class EdifactReader extends StandardReader {
         }
 
         PluginController pluginController =
-                getPluginControllerFactory().create("EDIFACT", messageType, messageVersion, messageRelease, getTokenizer());
+                getPluginControllerFactory().create(EDIStandard.EDIFACT.name(), messageType, messageVersion, messageRelease, getTokenizer());
 
         if (pluginController.isEnabled())
             getDocumentAttributes().addCDATA(getXMLTags().getName(), pluginController.getDocumentName());
@@ -427,8 +427,8 @@ public class EdifactReader extends StandardReader {
         endElement(getXMLTags().getDocumentTag());
 
         /*
-        * Skip over this UNT segment and return the SEGMENT_END token
-        */
+         * Skip over this UNT segment and return the SEGMENT_END token
+         */
         return getTokenizer().skipSegment();
     }
 

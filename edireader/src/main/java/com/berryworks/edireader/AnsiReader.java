@@ -84,12 +84,11 @@ public class AnsiReader extends StandardReader {
      * Parse ANSI Interchange (ISA ...)
      */
     @Override
-    protected Token parseInterchange(Token token) throws SAXException,
-            IOException {
+    protected Token parseInterchange(Token token) throws SAXException, IOException {
         setGroupCount(0);
 
         getInterchangeAttributes().clear();
-        getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), "ANSI X.12");
+        getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), EDIStandard.ANSI.getDisplayName());
 
         String authQual = getFixedLengthISAField(2);
         String authInfo = getFixedLengthISAField(10);
