@@ -1,7 +1,14 @@
 package com.berryworks.edireader;
 
 public enum EDIStandard {
-    ANSI("ANSI X.12"), EDIFACT("EDIFACT"), HL7("HL7"), AL3("AL7"), CARGO("CARGO"), TRADACOMS("TRADACOMS"), TELCO("TELCO");
+    ANSI("ANSI X.12"),
+    EDIFACT("EDIFACT"),
+    HL7("HL7"),
+    NCPDP("NCPDP"),
+    AL3("AL7"),
+    CARGO("CARGO"),
+    TRADACOMS("TRADACOMS"),
+    TELCO("TELCO");
 
     private final String displayName;
 

@@ -8,7 +8,7 @@ public class EDIStandardTest {
 
     @Test
     public void correctNumberOfValues() {
-        assertEquals(7, EDIStandard.values().length);
+        assertEquals(8, EDIStandard.values().length);
     }
 
     @Test
