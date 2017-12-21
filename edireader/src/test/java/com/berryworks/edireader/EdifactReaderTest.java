@@ -78,7 +78,7 @@ public class EdifactReaderTest {
                         "<interchange Standard=\"EDIFACT\" SyntaxId=\"IATA\" SyntaxVersion=\"1\" Date=\"941027\" Time=\"1520\" Control=\"841F60UNZ\" RecipientRef=\"RREF\" ApplRef=\"APR\" Priority=\"L\" AckRequest=\"1\" Decimal=\".\">" +
                         "<sender><address Id=\"REUAIR08DLH\" Qual=\"PIMA\"/></sender>" +
                         "<receiver><address Id=\"REUAGT82AGENT/LHR01\" Qual=\"PIMA\"/></receiver>" +
-                        "<group GroupType=\"INVOIC\" ApplSender=\"LOCK\" ApplReceiver=\"CBP-ACE-TEST\" Date=\"041013\" Time=\"1901\" Control=\"16\" StandardCode=\"UN\" StandardVersion=\"D98A\">" +
+                        "<group GroupType=\"INVOIC\" ApplSender=\"LOCK\" ApplSenderQual=\"02\" ApplReceiver=\"CBP-ACE-TEST\" ApplReceiverQual=\"02\" Date=\"041013\" Time=\"1901\" Control=\"16\" StandardCode=\"UN\" StandardVersion=\"D98A\">" +
                         "<transaction Control=\"1\" DocType=\"DCQCKI\" Version=\"90\" Release=\"1\" Agency=\"IA\" AccessReference=\"841F60\">" +
                         "<segment Id=\"LOR\"><element Id=\"LOR01\" Composite=\"yes\"><subelement Sequence=\"1\">SR</subelement><subelement Sequence=\"2\">GVA</subelement></element></segment>" +
                         "</transaction>" +

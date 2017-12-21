@@ -191,8 +191,18 @@ public class DefaultXMLTags implements XMLTags {
     }
 
     @Override
+    public String getApplReceiverQualifier() {
+        return "ApplReceiverQual";
+    }
+
+    @Override
     public String getApplSender() {
         return "ApplSender";
+    }
+
+    @Override
+    public String getApplSenderQualifier() {
+        return "ApplSenderQual";
     }
 
     @Override
