@@ -4,23 +4,34 @@
 
 package com.berryworks.edireader;
 
-import com.berryworks.edireader.benchmark.EDITestData;
-import com.berryworks.edireader.error.ErrorMessages;
-import com.berryworks.edireader.util.BranchingWriter;
-import com.berryworks.edireader.util.VerboseTestCase;
-import org.junit.Before;
-import org.junit.Test;
-import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
-public class EDIAbstractReaderTest extends VerboseTestCase {
+import com.berryworks.edireader.benchmark.EDITestData;
+import com.berryworks.edireader.error.ErrorMessages;
+import com.berryworks.edireader.util.BranchingWriter;
+
+public class EDIAbstractReaderTest {
 
     EDIReader reader;
 
@@ -68,8 +79,6 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
         // We call them mainly for path coverage purposes.
         reader.getSubSubDelimiter();
         reader.getRepetitionSeparator();
-
-        if (verbose) System.out.println(reader.toString());
     }
 
     @Test

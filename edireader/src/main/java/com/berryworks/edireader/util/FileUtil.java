@@ -36,8 +36,8 @@ public class FileUtil {
         return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(encoded)).toString();
     }
 
-    public static void stringToFile(String data, String filename) throws IOException {
-        try (Writer writer = new FileWriter(filename)) {
+    public static void stringToFile(String data, String filename) throws IOException {    	
+        try(Writer writer = new FileWriter(filename)) {
             writer.write(data);
         }
     }

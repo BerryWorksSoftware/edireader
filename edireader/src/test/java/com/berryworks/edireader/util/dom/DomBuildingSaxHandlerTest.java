@@ -4,27 +4,34 @@
 
 package com.berryworks.edireader.util.dom;
 
-import com.berryworks.edireader.EDIReader;
-import com.berryworks.edireader.EDIReaderFactory;
-import com.berryworks.edireader.benchmark.EDITestData;
-import com.berryworks.edireader.util.VerboseTestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.junit.Assert.*;
+import com.berryworks.edireader.EDIReader;
+import com.berryworks.edireader.EDIReaderFactory;
+import com.berryworks.edireader.benchmark.EDITestData;
 
 
-public class DomBuildingSaxHandlerTest extends VerboseTestCase {
+public class DomBuildingSaxHandlerTest {
     private InputSource inputSource;
     private ContentHandler saxHandler;
-    private InputStream inputStream;
+    //private InputStream inputStream;
 
     @Before
     public void setUp() throws IOException, ParserConfigurationException {
@@ -64,7 +71,7 @@ public class DomBuildingSaxHandlerTest extends VerboseTestCase {
     }
 
     private void compareElements(Element baseline, Element element) {
-        if (verbose) trace("comparing " + baseline.getNodeName() + " with " + element.getNodeName());
+        //System.out.println("comparing " + baseline.getNodeName() + " with " + element.getNodeName());
         assertEquals("Node names do not match", baseline.getNodeName(), element.getNodeName());
 
         NodeList childNodes = element.getChildNodes();
@@ -87,12 +94,12 @@ public class DomBuildingSaxHandlerTest extends VerboseTestCase {
         assertEquals("Nodes do not have the same number of attributes", baselineAttributes.getLength(), attributes.getLength());
         for (int i = 0; i < baselineAttributes.getLength(); i++) {
             Node baselineNode = baselineAttributes.item(i);
-            Node childNode = attributes.item(i);
+            //Node childNode = attributes.item(i);
 
             Attr attr = (Attr) baselineNode;
             String name = attr.getName();
             String value = attr.getValue();
-            if (verbose) trace("attribute " + name + " has value " + value);
+            //System.out.println("attribute " + name + " has value " + value);
 
             Node node = attributes.getNamedItem(name);
             assertNotNull("Missing attribute: " + name, node);

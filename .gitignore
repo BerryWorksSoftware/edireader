@@ -1,3 +1,11 @@
+\.settings/
+\.project
+testresults/
+edireader/target/
+edireader/\.settings/
+edireader/\.classpath
+edireader/\.project
+
 *.class
 
 # Mobile Tools for Java (J2ME)
