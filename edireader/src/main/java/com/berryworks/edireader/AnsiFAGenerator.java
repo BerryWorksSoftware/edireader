@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2017 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -22,9 +22,10 @@ package com.berryworks.edireader;
 
 import com.berryworks.edireader.util.BranchingWriter;
 import com.berryworks.edireader.util.DateTimeGenerator;
-import com.berryworks.edireader.util.FixedLength;
 
 import java.io.IOException;
+
+import static com.berryworks.edireader.util.FixedLength.valueOf;
 
 /**
  * A delegate for generating an interchange containing some number of 997
@@ -33,12 +34,12 @@ import java.io.IOException;
 public class AnsiFAGenerator extends ReplyGenerator {
 
     public static final String REGEX_CHARS_NEEDING_ESCAPE = "\\.[{(*+?^$|";
-    public static final String REGEX_ESCAPE = "\\";
+    public static final String REGEX_PREFIX = "\\";
 
     protected final BranchingWriter ackStream;
     protected boolean preambleGenerated, skipFA;
     protected String thisInterchangeControlNumber;
-    protected final String thisGroupControlNumber;
+    protected String thisGroupControlNumber;
     protected int thisDocumentCount;
     protected String referencedISA;
     protected boolean headerGenerated;
@@ -51,7 +52,6 @@ public class AnsiFAGenerator extends ReplyGenerator {
     public AnsiFAGenerator(final StandardReader ansiReader, final BranchingWriter ackStream) {
         this.standardReader = ansiReader;
         this.ackStream = ackStream;
-        thisGroupControlNumber = CONTROL_NUMBER_997;
     }
 
     @Override
@@ -187,23 +187,24 @@ public class AnsiFAGenerator extends ReplyGenerator {
         if (isaFields.length < 17) {
             throw new RuntimeException("*** Internal Error: Unable to interpret input ISA when forming ISA for acknowledgement. " + referencedISA);
         }
+        thisInterchangeControlNumber = valueOf(isaFields[13], 9);
         String faHeader = isaFields[0] + delimiter +
-                FixedLength.valueOf(isaFields[1], 2) + delimiter +
-                FixedLength.valueOf(isaFields[2], 10) + delimiter +
-                FixedLength.valueOf(isaFields[3], 2) + delimiter +
-                FixedLength.valueOf(isaFields[4], 10) + delimiter +
-                FixedLength.valueOf(isaFields[7], 2) + delimiter +
-                FixedLength.valueOf(isaFields[8], 15) + delimiter +
-                FixedLength.valueOf(isaFields[5], 2) + delimiter +
-                FixedLength.valueOf(isaFields[6], 15) + delimiter +
+                valueOf(isaFields[1], 2) + delimiter +
+                valueOf(isaFields[2], 10) + delimiter +
+                valueOf(isaFields[3], 2) + delimiter +
+                valueOf(isaFields[4], 10) + delimiter +
+                valueOf(isaFields[7], 2) + delimiter +
+                valueOf(isaFields[8], 15) + delimiter +
+                valueOf(isaFields[5], 2) + delimiter +
+                valueOf(isaFields[6], 15) + delimiter +
                 DateTimeGenerator.generate(delimiter) + delimiter +
-                FixedLength.valueOf(isaFields[11], 1) + delimiter +
-                FixedLength.valueOf(isaFields[12], 5) + delimiter +
-                FixedLength.valueOf(isaFields[13], 9) + delimiter +
+                valueOf(isaFields[11], 1) + delimiter +
+                valueOf(isaFields[12], 5) + delimiter +
+                thisInterchangeControlNumber + delimiter +
                 "0" + delimiter +
-                FixedLength.valueOf(isaFields[15], 1) + delimiter +
-                FixedLength.valueOf(isaFields[16], 1);
-        thisInterchangeControlNumber = isaFields[13].trim();
+                valueOf(isaFields[15], 1) + delimiter +
+                valueOf(isaFields[16], 1);
+        thisInterchangeControlNumber = thisInterchangeControlNumber.trim();
 
         char senderDelimiter = standardReader.getDelimiter();
         if (senderDelimiter != delimiter)
@@ -213,16 +214,22 @@ public class AnsiFAGenerator extends ReplyGenerator {
         ackStream.write(terminatorWithSuffix);
 
         if (standardReader.isInterchangeAcknowledgment()) {
-            // TODO these need to avoid using fixed length assumptions
             ackStream.write("TA1" + delimiter +
-                    firstSegment.substring(90, 99) + delimiter +
-                    firstSegment.substring(70, 76) + delimiter +
-                    firstSegment.substring(77, 81) + delimiter);
+                    thisInterchangeControlNumber + delimiter +
+                    valueOf(isaFields[9], 6) + delimiter +
+                    valueOf(isaFields[10], 4) + delimiter);
             ackStream.writeTrunk("A" + delimiter + "000");
             ackStream.writeBranch("R" + delimiter + "022");
             ackStream.write(terminatorWithSuffix);
         }
 
+        // There are several ways we could select a control number for the GS/GE segments.
+        // It needs to be only digits, and no more than 9.
+        // It could be a constant, such as "0001". It could be generated from a timestamp.
+        // Here, we simply use the control number that came in the ISA of the original interchange.
+        thisGroupControlNumber = thisInterchangeControlNumber;
+
+        // Write the GS segment
         ackStream.write("GS" + delimiter + "FA" + delimiter + groupReceiver
                 + delimiter + groupSender + delimiter
                 + controlDateAndTime(groupDateLength, delimiter) + delimiter
@@ -235,7 +242,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
 
     private String[] splitOnDelimiter() {
         final String delimiterAsString = String.valueOf(referencedISA.charAt(3));
-        final String delimiterPattern = REGEX_CHARS_NEEDING_ESCAPE.contains(delimiterAsString) ? REGEX_ESCAPE + delimiter : delimiterAsString;
+        final String delimiterPattern = REGEX_CHARS_NEEDING_ESCAPE.contains(delimiterAsString) ? REGEX_PREFIX + delimiter : delimiterAsString;
         return referencedISA.split(delimiterPattern);
     }
 

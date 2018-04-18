@@ -87,7 +87,11 @@ public interface XMLTags {
 
     String getApplReceiver();
 
+    String getApplReceiverQualifier();
+
     String getApplSender();
+
+    String getApplSenderQualifier();
 
     String getGroupType();
 

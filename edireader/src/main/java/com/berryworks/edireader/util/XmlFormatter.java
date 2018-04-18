@@ -53,7 +53,7 @@ public class XmlFormatter extends FilterWriter {
         }
     }
 
-    private void process(char c) throws IOException {
+    protected void process(char c) throws IOException {
 
         switch (state) {
             case NORMAL_TEXT:

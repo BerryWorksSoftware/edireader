@@ -18,13 +18,12 @@ import static org.junit.Assert.fail;
 
 public class EdifactReaderTest {
 
-    public static final String EDIFACT_WITH_GROUP = "UNB+IATA:1+REUAIR08DLH:PIMA+REUAGT82AGENT/LHR01:PIMA+941027:1520+841F60UNZ+RREF+APR"
-            + "+L+1'"
-            + "UNG+INVOIC+BTS-SENDER+RECEIVE-PARTNER+141024:2231+201410242231+UN+D:96A'"
+    public static final String EDIFACT_WITH_GROUP = "UNB+IATA:1+REUAIR08DLH:PIMA+REUAGT82AGENT/LHR01:PIMA+941027:1520+841F60UNZ+RREF+APR+L+1'"
+            + "UNG+INVOIC+LOCK:02+CBP-ACE-TEST:02+041013:1901+16+UN+D:98A:'"
             + "UNH+1+DCQCKI:90:1:IA+841F60'"
             + "LOR+SR:GVA'"
             + "UNT+3+1'"
-            + "UNE+1+201410242231'"
+            + "UNE+1+16'"
             + "UNZ+1+841F60UNZ+1+30077'";
     private EdifactReader edifactReader;
 
@@ -79,7 +78,7 @@ public class EdifactReaderTest {
                         "<interchange Standard=\"EDIFACT\" SyntaxId=\"IATA\" SyntaxVersion=\"1\" Date=\"941027\" Time=\"1520\" Control=\"841F60UNZ\" RecipientRef=\"RREF\" ApplRef=\"APR\" Priority=\"L\" AckRequest=\"1\" Decimal=\".\">" +
                         "<sender><address Id=\"REUAIR08DLH\" Qual=\"PIMA\"/></sender>" +
                         "<receiver><address Id=\"REUAGT82AGENT/LHR01\" Qual=\"PIMA\"/></receiver>" +
-                        "<group GroupType=\"INVOIC\" ApplSender=\"BTS-SENDER\" ApplReceiver=\"RECEIVE-PARTNER\" Date=\"141024\" Time=\"2231\" Control=\"201410242231\" StandardCode=\"UN\" StandardVersion=\"D96A\">" +
+                        "<group GroupType=\"INVOIC\" ApplSender=\"LOCK\" ApplSenderQual=\"02\" ApplReceiver=\"CBP-ACE-TEST\" ApplReceiverQual=\"02\" Date=\"041013\" Time=\"1901\" Control=\"16\" StandardCode=\"UN\" StandardVersion=\"D98A\">" +
                         "<transaction Control=\"1\" DocType=\"DCQCKI\" Version=\"90\" Release=\"1\" Agency=\"IA\" AccessReference=\"841F60\">" +
                         "<segment Id=\"LOR\"><element Id=\"LOR01\" Composite=\"yes\"><subelement Sequence=\"1\">SR</subelement><subelement Sequence=\"2\">GVA</subelement></element></segment>" +
                         "</transaction>" +
@@ -132,7 +131,7 @@ public class EdifactReaderTest {
 
     @Test
     public void detectsGroupControlNumberError() throws IOException, SAXException {
-        String ediText = EDIFACT_WITH_GROUP.replace("UNE+1+201410242231", "UNE+1+10242231");
+        String ediText = EDIFACT_WITH_GROUP.replace("UNE+1+16", "UNE+1+99");
         edifactReader = new EdifactReader();
         edifactReader.setContentHandler(new DefaultHandler());
         try {
@@ -140,7 +139,7 @@ public class EdifactReaderTest {
             fail("Group control number error not detected");
         } catch (GroupControlNumberException e) {
             assertEquals(
-                    "Control number error in UNE segment. Expected 201410242231 instead of 10242231 at segment 6, field 3",
+                    "Control number error in UNE segment. Expected 16 instead of 99 at segment 6, field 3",
                     e.getMessage());
         }
     }

@@ -46,7 +46,7 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
     private boolean implicitInterchangeTermination;
     private boolean senderAddress;
 
-    protected String elementString, subElementString;
+    protected String elementString;
 
     public EDIReaderSAXAdapter(XMLTags xmlTags) {
         this.xmlTags = xmlTags;
@@ -118,7 +118,7 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
             beginSegmentElement(atts);
 
         } else if (localName.startsWith(xmlTags.getSubElementTag())) {
-            subElementString = "";
+            elementString = "";
             beginSegmentSubElement(atts);
         }
     }
@@ -167,8 +167,8 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
             endSegmentElement(elementString);
             elementString = null;
         } else if (localName.startsWith(xmlTags.getSubElementTag())) {
-            endSegmentSubElement(subElementString);
-            subElementString = null;
+            endSegmentSubElement(elementString);
+            elementString = null;
         } else if (localName.startsWith(xmlTags.getLoopTag())) {
             endSegmentGroup();
         }

@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.berryworks.edireader.util.FixedLength.emptyIfNull;
+import static com.berryworks.edireader.util.FixedLength.isPresent;
 
 /**
  * Reads and parses EDIFACT EDI interchanges. This class is not normally
@@ -88,7 +89,7 @@ public class EdifactReader extends StandardReader {
     protected Token parseInterchange(Token token) throws SAXException,
             IOException {
         getInterchangeAttributes().clear();
-        getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), "EDIFACT");
+        getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), EDIStandard.EDIFACT.getDisplayName());
         setGroupCount(0);
         List<String> compositeList;
 
@@ -239,10 +240,18 @@ public class EdifactReader extends StandardReader {
         compositeList = getTokenizer().nextCompositeElement();
         String sender = getSubElement(compositeList, 0);
         getGroupAttributes().addCDATA(getXMLTags().getApplSender(), sender);
+        String senderQualifier = getSubElement(compositeList, 1);
+        if (isPresent(senderQualifier)) {
+            getGroupAttributes().addCDATA(getXMLTags().getApplSenderQualifier(), senderQualifier);
+        }
         // Application receiver
         compositeList = getTokenizer().nextCompositeElement();
         String receiver = getSubElement(compositeList, 0);
         getGroupAttributes().addCDATA(getXMLTags().getApplReceiver(), receiver);
+        String receiverQualifier = getSubElement(compositeList, 1);
+        if (isPresent(receiverQualifier)) {
+            getGroupAttributes().addCDATA(getXMLTags().getApplReceiverQualifier(), receiverQualifier);
+        }
         // Date and time
         compositeList = getTokenizer().nextCompositeElement();
         String date = getSubElement(compositeList, 0);
@@ -355,37 +364,32 @@ public class EdifactReader extends StandardReader {
             Object obj = v.get(0);
             if (obj != null) {
                 messageType = (String) obj;
-                getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(),
-                        messageType);
+                getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(), messageType);
             }
             if (n > 1) {
                 obj = v.get(1);
                 if (obj != null) {
                     messageVersion = (String) obj;
-                    getDocumentAttributes().addCDATA(getXMLTags()
-                            .getMessageVersion(), messageVersion);
+                    getDocumentAttributes().addCDATA(getXMLTags().getMessageVersion(), messageVersion);
                 }
             }
             if (n > 2) {
                 obj = v.get(2);
                 if (obj != null) {
                     messageRelease = (String) obj;
-                    getDocumentAttributes().addCDATA(getXMLTags()
-                            .getMessageRelease(), messageRelease);
+                    getDocumentAttributes().addCDATA(getXMLTags().getMessageRelease(), messageRelease);
                 }
             }
             if (n > 3) {
                 obj = v.get(3);
                 if (obj != null) {
-                    getDocumentAttributes().addCDATA(getXMLTags().getAgency(),
-                            (String) obj);
+                    getDocumentAttributes().addCDATA(getXMLTags().getAgency(), (String) obj);
                 }
             }
             if (n > 4) {
                 obj = v.get(4);
                 if (obj != null) {
-                    getDocumentAttributes().addCDATA(getXMLTags().getAssociation(),
-                            (String) obj);
+                    getDocumentAttributes().addCDATA(getXMLTags().getAssociation(), (String) obj);
                 }
             }
         }
@@ -396,7 +400,7 @@ public class EdifactReader extends StandardReader {
         }
 
         PluginController pluginController =
-                getPluginControllerFactory().create("EDIFACT", messageType, messageVersion, messageRelease, getTokenizer());
+                getPluginControllerFactory().create(EDIStandard.EDIFACT.name(), messageType, messageVersion, messageRelease, getTokenizer());
 
         if (pluginController.isEnabled())
             getDocumentAttributes().addCDATA(getXMLTags().getName(), pluginController.getDocumentName());
@@ -427,8 +431,8 @@ public class EdifactReader extends StandardReader {
         endElement(getXMLTags().getDocumentTag());
 
         /*
-        * Skip over this UNT segment and return the SEGMENT_END token
-        */
+         * Skip over this UNT segment and return the SEGMENT_END token
+         */
         return getTokenizer().skipSegment();
     }
 
