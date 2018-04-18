@@ -6,7 +6,7 @@
 
     <groupId>com.berryworks</groupId>
     <artifactId>EDIReaderCommunityEdition</artifactId>
-    <version>5.4.5</version>
+    <version>5.4.12</version>
 
     <packaging>pom</packaging>
     <name>EDIReader Community Edition</name>
@@ -32,7 +32,7 @@
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <maven.surefire.plugin.version>2.12</maven.surefire.plugin.version>
         <maven.surefire.report.plugin.version>2.18.1</maven.surefire.report.plugin.version>
-        <maven.jacoco.plugin.version>0.7.7.201606060606</maven.jacoco.plugin.version>
+        <maven.jacoco.plugin.version>0.7.9</maven.jacoco.plugin.version>
         <maven.project.info.reports.plugin.version>2.8</maven.project.info.reports.plugin.version>
         <junit.version>4.12</junit.version>
         <junit.addons.version>1.4</junit.addons.version>
@@ -132,8 +132,8 @@
                 <version>${maven.jacoco.plugin.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/ANSI_*</exclude>
-                        <exclude>**/EDIFACT_*</exclude>
+                        <exclude>com/berryworks/edireader/plugin/ANSI*</exclude>
+                        <exclude>com/berryworks/edireader/plugin/EDIFACT*</exclude>
                     </excludes>
                 </configuration>
                 <executions>

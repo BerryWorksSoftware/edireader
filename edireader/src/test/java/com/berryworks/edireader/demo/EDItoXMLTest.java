@@ -25,6 +25,7 @@ public class EDItoXMLTest {
 
     @Before
     public void setUp() {
+        ediToXml = new EDItoXML();
     }
 
     @Test
@@ -32,7 +33,8 @@ public class EDItoXMLTest {
         String ansiInterchange = EDITestData.getAnsiInterchange();
         StringReader reader = new StringReader(ansiInterchange);
         StringWriter writer = new StringWriter();
-        ediToXml = new EDItoXML(reader, writer);
+        ediToXml.setInputReader(reader);
+        ediToXml.setXmlOutputWriter(writer);
         ediToXml.run();
     }
 
@@ -40,7 +42,8 @@ public class EDItoXMLTest {
     public void withLeadingSpacesInData() {
         StringReader reader = new StringReader(TINY_INTERCHANGE);
         StringWriter writer = new StringWriter();
-        ediToXml = new EDItoXML(reader, writer);
+        ediToXml.setInputReader(reader);
+        ediToXml.setXmlOutputWriter(writer);
         ediToXml.run();
 
         String xmlText = writer.toString();
@@ -51,7 +54,9 @@ public class EDItoXMLTest {
         // Do it again, with the indenting option enabled
         reader = new StringReader(TINY_INTERCHANGE);
         writer = new StringWriter();
-        ediToXml = new EDItoXML(reader, writer);
+        ediToXml = new EDItoXML();
+        ediToXml.setInputReader(reader);
+        ediToXml.setXmlOutputWriter(writer);
         ediToXml.setIndent(true);
         ediToXml.run();
 
@@ -65,8 +70,8 @@ public class EDItoXMLTest {
     public void canIndent() {
         StringReader reader = new StringReader(TINY_INTERCHANGE);
         StringWriter writer = new StringWriter();
-
-        ediToXml = new EDItoXML(reader, writer);
+        ediToXml.setInputReader(reader);
+        ediToXml.setXmlOutputWriter(writer);
         ediToXml.setIndent(true);
         ediToXml.run();
 

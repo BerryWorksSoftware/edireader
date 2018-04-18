@@ -47,10 +47,10 @@ public class SAXObjectReader implements XMLReader {
     }
 
     public void parse(InputSource input) throws IOException, SAXException {
-        /**
-         * Parse may be called multiple times, so establish the inputStream
-         * only on the first call. Thereafter, just read further into the inputStream
-         * used on the previous call.
+        /*
+          Parse may be called multiple times, so establish the inputStream
+          only on the first call. Thereafter, just read further into the inputStream
+          used on the previous call.
          */
         if (inputStream == null) {
             inputStream = new ObjectInputStream(input.getByteStream());

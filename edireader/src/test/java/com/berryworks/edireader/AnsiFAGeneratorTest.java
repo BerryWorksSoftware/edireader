@@ -17,13 +17,24 @@ import static org.junit.Assert.assertTrue;
 
 public class AnsiFAGeneratorTest {
 
-    public static final String TEST_DATA_997 = "ISA~00~          ~00~          ~ZZ~58401          ~ZZ~04000          ~999999~9999~U~00204~000038449~0~P~<$" +
-            "GS~FA~58401~04000~999999~9999~12345~X~002040CHRY$" +
+    public static final String TEST_DATA_997 = "" +
+            "ISA~00~          ~00~          ~ZZ~58401          ~ZZ~04000          ~999999~9999~U~00204~000038449~0~P~<$" +
+            "GS~FA~58401~04000~999999~9999~000038449~X~002040CHRY$" +
             "ST~997~0001$" +
             "AK1~AG~38327$" +
             "AK2~824~000042460$AK5~A$" +
             "AK9~A~1~1~1$SE~6~0001$" +
-            "GE~1~12345$" +
+            "GE~1~000038449$" +
+            "IEA~1~000038449$";
+    public static final String TEST_DATA_997_WITH_TA1 = "" +
+            "ISA~00~          ~00~          ~ZZ~58401          ~ZZ~04000          ~999999~9999~U~00204~000038449~0~P~<$" +
+            "TA1~000038449~040714~1003~A~000$" +
+            "GS~FA~58401~04000~999999~9999~000038449~X~002040CHRY$" +
+            "ST~997~0001$" +
+            "AK1~AG~38327$" +
+            "AK2~824~000042460$AK5~A$" +
+            "AK9~A~1~1~1$SE~6~0001$" +
+            "GE~1~000038449$" +
             "IEA~1~000038449$";
     private MyAnsiFAGenerator generator;
     private StringWriter output;
@@ -48,8 +59,17 @@ public class AnsiFAGeneratorTest {
         ansiReader.setContentHandler(new DefaultHandler());
         ansiReader.setAcknowledgment(ackStream);
         ansiReader.parse(EDITestData.getAnsiInputSource());
-//        assertEquals(TEST_DATA_997, output.toString());
         assertLikeness(TEST_DATA_997, output.toString());
+    }
+
+    @Test
+    public void canGenerate997WithTA1() throws IOException, SAXException {
+        ansiReader = new AnsiReader();
+        ansiReader.setContentHandler(new DefaultHandler());
+        ansiReader.setAcknowledgment(ackStream);
+        ansiReader.setInterchangeAcknowledgment(true);
+        ansiReader.parse(EDITestData.getAnsiInputSource());
+        assertLikeness(TEST_DATA_997_WITH_TA1, output.toString());
     }
 
     @Test
@@ -124,7 +144,7 @@ public class AnsiFAGeneratorTest {
     }
 
     private void assertLikeness(String expected, String actual) {
-        assertEquals(expected.length(), actual.length());
+        assertEquals("Wrong length", expected.length(), actual.length());
         for (int i = 0; i < expected.length(); i++) {
             final char expectedChar = expected.charAt(i);
             final char actualChar = actual.charAt(i);

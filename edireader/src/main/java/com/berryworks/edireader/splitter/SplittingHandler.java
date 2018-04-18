@@ -32,6 +32,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 
+import static com.berryworks.edireader.util.FixedLength.isPresent;
+
 /**
  * Splits an EDI interchange containing multiple
  * documents into a series of interchanges containing one document each.
@@ -102,7 +104,14 @@ public class SplittingHandler extends DefaultHandler {
         closingDetails.setGroupControlNumber(groupAttributes.getValue(xmlTags.getControl()));
         closingDetails.setDocumentControlNumber(documentAttributes.getValue(xmlTags.getControl()));
         closingDetails.setDocumentType(documentAttributes.getValue(xmlTags.getDocumentType()));
-        closingDetails.setVersion(groupAttributes.getValue(xmlTags.getStandardVersion()));
+        String version = groupAttributes.getValue(xmlTags.getStandardVersion());
+        if (!isPresent(version)) {
+            // If there was no version available from the group, such as 005010 from the GS,
+            // then this may be an EDIFACT scenario and the most interesting version is from
+            // the UNH, such as 97A.
+            version = documentAttributes.getValue(xmlTags.getRelease());
+        }
+        closingDetails.setVersion(version);
         try {
             handlerFactory.closeDocument(closingDetails);
         } catch (Exception e) {

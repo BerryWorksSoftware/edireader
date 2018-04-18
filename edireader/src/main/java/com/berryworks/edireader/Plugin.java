@@ -200,10 +200,7 @@ public abstract class Plugin {
                 Set<String> conditions = descriptor.getConditionFlags();
                 boolean satisfied = true;
                 for (String condition : conditions) {
-                    if (resultFlags.contains(condition)) {
-                        // The condition is satified.
-                        continue;
-                    } else {
+                    if (!resultFlags.contains(condition)) {
                         satisfied = false;
                         break;
                     }

@@ -31,6 +31,15 @@ public class EDIReaderSAXAdapterTest {
         adapter.startElement("", "segment", "segment", attributes);
         adapter.startElement("", "element", "element", attributes);
         assertEquals("Interchange.Group.Transaction.FirstSegment.Element.", adapter.getTrace());
+
+        adapter.characters("abc".toCharArray(), 0, 3);
+        adapter.endElement("", "element", "element");
+        assertEquals("Interchange.Group.Transaction.FirstSegment.Element.e:abc.", adapter.getTrace());
+
+        adapter.startElement("", "subelement", "subelement", attributes);
+        adapter.characters("def".toCharArray(), 0, 3);
+        adapter.endElement("", "subelement", "subelement");
+        assertEquals("Interchange.Group.Transaction.FirstSegment.Element.e:abc.SubElement.s:def.", adapter.getTrace());
     }
 
     class MyAdapater extends EDIReaderSAXAdapter {
@@ -64,8 +73,27 @@ public class EDIReaderSAXAdapterTest {
         @Override
         protected void beginSegmentElement(Attributes atts) {
             builder.append("Element.");
-            ;
         }
+
+        @Override
+        protected void endSegmentElement(String elementString) {
+            builder.append("e:").append(elementString).append('.');
+        }
+
+        @Override
+        protected void beginSegmentSubElement(Attributes atts) {
+            builder.append("SubElement.");
+        }
+
+        @Override
+        protected void endSegmentSubElement(String subElementString) {
+            builder.append("s:").append(subElementString).append('.');
+        }
+
+//        @Override
+//        public void characters(char[] ch, int start, int length) throws SAXException {
+//            builder.append("e:").append(ch, start, length).append('.');
+//        }
 
         public String getTrace() {
             return builder.toString();

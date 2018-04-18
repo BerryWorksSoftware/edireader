@@ -38,11 +38,11 @@ public abstract class DecoderFrontEnd extends AbstractEncoderDecoder {
     @Override
     public void consume(byte b) {
 
-        /**
-         * First map the A-Z, a-z. 0-9, +/ ASCII chars into
-         * the corresponding 6-bit binary values.
-         * If we encounter something other than one of these, just return.
-         * Note that the "=" used as padding is also deliberately ignored.
+        /*
+          First map the A-Z, a-z. 0-9, +/ ASCII chars into
+          the corresponding 6-bit binary values.
+          If we encounter something other than one of these, just return.
+          Note that the "=" used as padding is also deliberately ignored.
          */
         int unsignedInt = b & 127;
         if (unsignedInt >= capitalA) {
@@ -58,9 +58,9 @@ public abstract class DecoderFrontEnd extends AbstractEncoderDecoder {
         else if (unsignedInt == slash) unsignedInt = 63;
         else return;
 
-        /**
-         * Now emit this result as a single byte or as two bytes
-         * depending upon what state we are in.
+        /*
+          Now emit this result as a single byte or as two bytes
+          depending upon what state we are in.
          */
         switch (state) {
             default:

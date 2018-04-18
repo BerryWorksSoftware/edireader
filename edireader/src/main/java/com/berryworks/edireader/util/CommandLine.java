@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2017 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -37,6 +37,7 @@ public class CommandLine {
     private final Map<String, String> optionMap = new HashMap<>();
     private final List<String> positionalArgs = new ArrayList<>();
     private PrintStream errStream = System.err;
+    private boolean valid = true;
 
     public CommandLine(String[] args) {
 
@@ -60,6 +61,7 @@ public class CommandLine {
     }
 
     public void badArgs(String msg) {
+        valid = false;
         if (errStream != null) {
             errStream.println("Invalid command line argument(s): " + msg);
             errStream.println("");
@@ -129,4 +131,9 @@ public class CommandLine {
             throw new RuntimeException(msg);
         }
     }
+
+    public boolean isValid() {
+        return valid;
+    }
+
 }

@@ -20,7 +20,7 @@
 
 package com.berryworks.edireader;
 
-import com.berryworks.edireader.error.*;
+import com.berryworks.edireader.error.ErrorMessages;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import org.xml.sax.SAXException;
@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.berryworks.edireader.util.FixedLength.emptyIfNull;
+import static com.berryworks.edireader.util.FixedLength.isPresent;
 
 /**
  * Reads and parses EDIFACT EDI interchanges. This class is not normally
@@ -88,12 +89,12 @@ public class EdifactReader extends StandardReader {
     protected Token parseInterchange(Token token) throws SAXException,
             IOException {
         getInterchangeAttributes().clear();
-        getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), "EDIFACT");
+        getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), EDIStandard.EDIFACT.getDisplayName());
         setGroupCount(0);
         List<String> compositeList;
 
-        /**
-         * Syntax identifier : version (example: UNOA:2 )
+        /*
+          Syntax identifier : version (example: UNOA:2 )
          */
         compositeList = getTokenizer().nextCompositeElement();
         String syntaxIdentifier = getSubElement(compositeList, 0);
@@ -107,24 +108,24 @@ public class EdifactReader extends StandardReader {
             }
         }
 
-        /**
-         * Sender address
+        /*
+          Sender address
          */
         compositeList = getTokenizer().nextCompositeElement();
         String fromId = getSubElement(compositeList, 0);
         String fromQual = getSubElement(compositeList, 1);
         String fromExtra = getSubElement(compositeList, 2);
 
-        /**
-         * Receiver address
+        /*
+          Receiver address
          */
         compositeList = getTokenizer().nextCompositeElement();
         String toId = getSubElement(compositeList, 0);
         String toQual = getSubElement(compositeList, 1);
         String toExtra = getSubElement(compositeList, 2);
 
-        /**
-         * Date and time (UNB0401 and UNB0402)
+        /*
+          Date and time (UNB0401 and UNB0402)
          */
         compositeList = getTokenizer().nextCompositeElement();
         String date = getSubElement(compositeList, 0);
@@ -132,21 +133,21 @@ public class EdifactReader extends StandardReader {
         getInterchangeAttributes().addCDATA(getXMLTags().getDate(), date);
         getInterchangeAttributes().addCDATA(getXMLTags().getTime(), time);
 
-        /**
-         * Control number (UNB05)
+        /*
+          Control number (UNB05)
          */
         setInterchangeControlNumber(getTokenizer().nextSimpleValue());
         getInterchangeAttributes().addCDATA(getXMLTags().getControl(), getInterchangeControlNumber());
 
         remainderOfUNB();
 
-        /**
-         * Decimal notation
-         *
-         * The character used for decimal notation in numbers.
-         * For example, the value 3.14159 is expressed using "."
-         * for decimal notation. Another character sometimes used
-         * for this purpose is "," (comma).
+        /*
+          Decimal notation
+
+          The character used for decimal notation in numbers.
+          For example, the value 3.14159 is expressed using "."
+          for decimal notation. Another character sometimes used
+          for this purpose is "," (comma).
          */
         getInterchangeAttributes().addCDATA(
                 getXMLTags().getDecimal(),
@@ -181,22 +182,8 @@ public class EdifactReader extends StandardReader {
             }
         }
 
-        int n;
-        if (getGroupCount() != (n = getTokenizer().nextIntValue())) {
-            GroupCountException groupCountException = new GroupCountException(COUNT_UNZ, getGroupCount(), n, getTokenizer());
-            setSyntaxException(groupCountException);
-            if (!recover(groupCountException))
-                throw groupCountException;
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(getInterchangeControlNumber())) {
-            InterchangeControlNumberException interchangeControlNumberException =
-                    new InterchangeControlNumberException(CONTROL_NUMBER_UNZ, getInterchangeControlNumber(), s, getTokenizer());
-            setSyntaxException(interchangeControlNumberException);
-            if (!recover(interchangeControlNumberException))
-                throw interchangeControlNumberException;
-        }
-
+        checkGroupCount(getGroupCount(), getTokenizer().nextIntValue(), COUNT_UNZ);
+        checkInterchangeControlNumber(getInterchangeControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNZ);
         endInterchange();
 
         return getTokenizer().skipSegment();
@@ -246,17 +233,41 @@ public class EdifactReader extends StandardReader {
         int docCount = 0;
 
         getGroupAttributes().clear();
+        // Group type. For example: INVOIC
         getGroupAttributes().addCDATA("GroupType", getTokenizer().nextSimpleValue());
-
-        getTokenizer().nextCompositeElement();
-        getTokenizer().nextCompositeElement();
-        getTokenizer().nextCompositeElement();
-
+        List<String> compositeList;
+        // Application sender
+        compositeList = getTokenizer().nextCompositeElement();
+        String sender = getSubElement(compositeList, 0);
+        getGroupAttributes().addCDATA(getXMLTags().getApplSender(), sender);
+        String senderQualifier = getSubElement(compositeList, 1);
+        if (isPresent(senderQualifier)) {
+            getGroupAttributes().addCDATA(getXMLTags().getApplSenderQualifier(), senderQualifier);
+        }
+        // Application receiver
+        compositeList = getTokenizer().nextCompositeElement();
+        String receiver = getSubElement(compositeList, 0);
+        getGroupAttributes().addCDATA(getXMLTags().getApplReceiver(), receiver);
+        String receiverQualifier = getSubElement(compositeList, 1);
+        if (isPresent(receiverQualifier)) {
+            getGroupAttributes().addCDATA(getXMLTags().getApplReceiverQualifier(), receiverQualifier);
+        }
+        // Date and time
+        compositeList = getTokenizer().nextCompositeElement();
+        String date = getSubElement(compositeList, 0);
+        String time = getSubElement(compositeList, 1);
+        getGroupAttributes().addCDATA(getXMLTags().getDate(), date);
+        getGroupAttributes().addCDATA(getXMLTags().getTime(), time);
+        // Control number
         setGroupControlNumber(getTokenizer().nextSimpleValue());
         getGroupAttributes().addCDATA(getXMLTags().getControl(), getGroupControlNumber());
+        // Standard Code. For example: UN
         getGroupAttributes().addCDATA("StandardCode", getTokenizer().nextSimpleValue());
-
-        getTokenizer().nextCompositeElement();
+        // Standard Version. For example: D02B
+        compositeList = getTokenizer().nextCompositeElement();
+        String version = getSubElement(compositeList, 0);
+        String release = getSubElement(compositeList, 1);
+        getGroupAttributes().addCDATA(getXMLTags().getStandardVersion(), version + release);
         startElement(getXMLTags().getGroupTag(), getGroupAttributes());
         getTokenizer().skipSegment();
 
@@ -283,20 +294,8 @@ public class EdifactReader extends StandardReader {
             }
         }
 
-        int n;
-        if (docCount != (n = getTokenizer().nextIntValue())) {
-            throw new EDISyntaxException(
-                    "Transaction set count error in UNE segment. Expected "
-                            + docCount + " instead of " + n, getTokenizer());
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(getGroupControlNumber())) {
-            throw new EDISyntaxException(
-                    "Control number error in UNE segment. Expected "
-                            + getGroupControlNumber() + " instead of " + s,
-                    getTokenizer());
-        }
-
+        checkTransactionCount(docCount, getTokenizer().nextIntValue(), COUNT_UNE);
+        checkGroupControlNumber(getGroupControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNE);
         endElement(getXMLTags().getGroupTag());
         return getTokenizer().skipSegment();
     }
@@ -365,37 +364,32 @@ public class EdifactReader extends StandardReader {
             Object obj = v.get(0);
             if (obj != null) {
                 messageType = (String) obj;
-                getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(),
-                        messageType);
+                getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(), messageType);
             }
             if (n > 1) {
                 obj = v.get(1);
                 if (obj != null) {
                     messageVersion = (String) obj;
-                    getDocumentAttributes().addCDATA(getXMLTags()
-                            .getMessageVersion(), messageVersion);
+                    getDocumentAttributes().addCDATA(getXMLTags().getMessageVersion(), messageVersion);
                 }
             }
             if (n > 2) {
                 obj = v.get(2);
                 if (obj != null) {
                     messageRelease = (String) obj;
-                    getDocumentAttributes().addCDATA(getXMLTags()
-                            .getMessageRelease(), messageRelease);
+                    getDocumentAttributes().addCDATA(getXMLTags().getMessageRelease(), messageRelease);
                 }
             }
             if (n > 3) {
                 obj = v.get(3);
                 if (obj != null) {
-                    getDocumentAttributes().addCDATA(getXMLTags().getAgency(),
-                            (String) obj);
+                    getDocumentAttributes().addCDATA(getXMLTags().getAgency(), (String) obj);
                 }
             }
             if (n > 4) {
                 obj = v.get(4);
                 if (obj != null) {
-                    getDocumentAttributes().addCDATA(getXMLTags().getAssociation(),
-                            (String) obj);
+                    getDocumentAttributes().addCDATA(getXMLTags().getAssociation(), (String) obj);
                 }
             }
         }
@@ -406,7 +400,7 @@ public class EdifactReader extends StandardReader {
         }
 
         PluginController pluginController =
-                getPluginControllerFactory().create("EDIFACT", messageType, messageVersion, messageRelease, getTokenizer());
+                getPluginControllerFactory().create(EDIStandard.EDIFACT.name(), messageType, messageVersion, messageRelease, getTokenizer());
 
         if (pluginController.isEnabled())
             getDocumentAttributes().addCDATA(getXMLTags().getName(), pluginController.getDocumentName());
@@ -432,26 +426,13 @@ public class EdifactReader extends StandardReader {
 
         }
 
-        int n;
-        if (segCount != (n = getTokenizer().nextIntValue())) {
-            SegmentCountException countException = new SegmentCountException(COUNT_UNT, segCount, n, getTokenizer());
-            setSyntaxException(countException);
-            if (!recover(countException))
-                throw countException;
-        }
-        String s;
-        if (!(s = getTokenizer().nextSimpleValue()).equals(control)) {
-            TransactionControlNumberException transactionControlNumberException =
-                    new TransactionControlNumberException(CONTROL_NUMBER_UNT, control, s, getTokenizer());
-            setSyntaxException(transactionControlNumberException);
-            if (!recover(transactionControlNumberException))
-                throw transactionControlNumberException;
-        }
+        checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_UNT);
+        checkTransactionControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNT);
         endElement(getXMLTags().getDocumentTag());
 
         /*
-        * Skip over this UNT segment and return the SEGMENT_END token
-        */
+         * Skip over this UNT segment and return the SEGMENT_END token
+         */
         return getTokenizer().skipSegment();
     }
 
