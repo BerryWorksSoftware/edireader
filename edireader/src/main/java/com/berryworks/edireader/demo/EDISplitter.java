@@ -20,6 +20,8 @@
 
 package com.berryworks.edireader.demo;
 
+import com.berryworks.edireader.filter.EdiReaderFilter;
+import com.berryworks.edireader.plugin.AbstractPluginControllerFactory;
 import com.berryworks.edireader.splitter.ClosingDetails;
 import com.berryworks.edireader.splitter.HandlerFactory;
 import com.berryworks.edireader.splitter.SplittingHandler;
@@ -49,6 +51,10 @@ public class EDISplitter {
     private static int count;
     private final InputSource inputSource;
     private HandlerFactory handlerFactory;
+    private int transactionCountLimit;
+    private int segmentCountLimit;
+    private AbstractPluginControllerFactory pluginControllerFactory;
+    private EdiReaderFilter filter;
 
     public EDISplitter(Reader inputReader, String outputFileNamePattern) {
         inputSource = new InputSource(inputReader);
@@ -56,7 +62,24 @@ public class EDISplitter {
     }
 
     public void run() throws IOException, SAXException {
-        new SplittingHandler(handlerFactory).split(inputSource);
+        final SplittingHandler splittingHandler = new SplittingHandler(handlerFactory);
+        splittingHandler.setFilter(filter);
+        splittingHandler.setPluginControllerFactory(pluginControllerFactory);
+        splittingHandler.setTransactionCountLimit(transactionCountLimit);
+        splittingHandler.setSegmentCountLimit(segmentCountLimit);
+        splittingHandler.split(inputSource);
+    }
+
+    public AbstractPluginControllerFactory getPluginControllerFactory() {
+        return pluginControllerFactory;
+    }
+
+    public void setPluginControllerFactory(AbstractPluginControllerFactory pluginControllerFactory) {
+        this.pluginControllerFactory = pluginControllerFactory;
+    }
+
+    public void setFilter(EdiReaderFilter filter) {
+        this.filter = filter;
     }
 
     public void setHandlerFactory(HandlerFactory handlerFactory) {
@@ -95,7 +118,20 @@ public class EDISplitter {
         return count;
     }
 
-    static class FileSequenceHandlerFactory implements HandlerFactory {
+    public static void resetCount() {
+        count = 0;
+    }
+
+    public void setTransactionCountLimit(int limit) {
+        transactionCountLimit = limit;
+    }
+
+    public void setSegmentCountLimit(int limit) {
+        segmentCountLimit = limit;
+    }
+
+
+    protected static class FileSequenceHandlerFactory implements HandlerFactory {
         private String filenameSuffix, filenamePrefix;
         private int sequenceNumberLength;
         private DomBuildingSaxHandler saxHandler;
