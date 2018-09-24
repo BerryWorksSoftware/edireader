@@ -120,12 +120,12 @@ public class EDITokenizer extends AbstractTokenizer {
             cChar = charBuffer.get();
             if (cChar == delimiter)
                 cClass = CharacterClass.DELIMITER;
+            else if (cChar == terminator)
+                cClass = CharacterClass.TERMINATOR;
             else if (cChar == subDelimiter)
                 cClass = CharacterClass.SUB_DELIMITER;
             else if (cChar == release)
                 cClass = CharacterClass.RELEASE;
-            else if (cChar == terminator)
-                cClass = CharacterClass.TERMINATOR;
             else if (cChar == repetitionSeparator)
                 cClass = CharacterClass.REPEAT_DELIMITER;
             else
