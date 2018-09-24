@@ -29,6 +29,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.LinkedList;
 
+import static com.berryworks.edireader.util.FixedLength.isPresent;
+
 /**
  * This implementation of a SAX ContentHandler passes SAX events it receives
  * to a delegate ContentHandler with the added value of buffering these events
@@ -112,6 +114,7 @@ public class QueuedContentHandler extends DefaultHandler {
     }
 
     public void putAttribute(String tag, String attributeName, String data) {
+        if (!isPresent(data)) return;
         for (int i = queue.size() - 1; i >= 0; i--) {
             QueuedItem queuedItem = queue.get(i);
             if (tag.equals(queuedItem.getLocalName())) {
