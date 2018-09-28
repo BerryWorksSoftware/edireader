@@ -272,6 +272,9 @@ public class SplittingHandler extends DefaultHandler {
         return filter;
     }
 
+    public HandlerFactory getHandlerFactory() {
+        return handlerFactory;
+    }
 
     private class MyErrorHandler implements EDISyntaxExceptionHandler {
 
