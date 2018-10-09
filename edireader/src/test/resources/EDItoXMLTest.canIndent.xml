@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ediroot>
+	<interchange Standard="ANSI X.12" AuthorizationQual="00" Authorization="          " SecurityQual="00" Security="          " Date="040714" Time="1003" StandardsId="U" Version="00204" Control="000038449" AckRequest="0" TestIndicator="P">
+		<sender>
+			<address Id="04000          " Qual="ZZ"/>
+		</sender>
+		<receiver>
+			<address Id="58401          " Qual="ZZ"/>
+		</receiver>
+		<group GroupType="AG" ApplSender="04000" ApplReceiver="58401" Date="040714" Time="1003" Control="38327" StandardCode="X" StandardVersion="002040CHRY">
+			<transaction DocType="824" Name="Application Advice" Control="000042460">
+				<segment Id="BGN">
+					<element Id="BGN01">11</element>
+					<element Id="BGN02"> 07141005162 </element>
+					<element Id="BGN03">040714</element>
+					<element Id="BGN04">1003</element>
+				</segment>
+			</transaction>
+		</group>
+	</interchange>
+</ediroot>

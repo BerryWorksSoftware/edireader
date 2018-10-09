@@ -1,14 +1,19 @@
 package com.berryworks.edireader.demo;
 
-import com.berryworks.edireader.benchmark.EDITestData;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import com.berryworks.edireader.benchmark.EDITestData;
+import com.berryworks.edireader.test.utils.TestResources;
 
 public class EDItoXMLTest {
 
@@ -67,7 +72,7 @@ public class EDItoXMLTest {
     }
 
     @Test
-    public void canIndent() {
+    public void canIndent() throws Exception {
         StringReader reader = new StringReader(TINY_INTERCHANGE);
         StringWriter writer = new StringWriter();
         ediToXml.setInputReader(reader);
@@ -76,27 +81,10 @@ public class EDItoXMLTest {
         ediToXml.run();
 
         String xmlText = writer.toString();
-        Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<ediroot>\n" +
-                "    <interchange Standard=\"ANSI X.12\" AuthorizationQual=\"00\" Authorization=\"          \" SecurityQual=\"00\" Security=\"          \" Date=\"040714\" Time=\"1003\" StandardsId=\"U\" Version=\"00204\" Control=\"000038449\" AckRequest=\"0\" TestIndicator=\"P\">\n" +
-                "        <sender>\n" +
-                "            <address Id=\"04000          \" Qual=\"ZZ\"/>\n" +
-                "        </sender>\n" +
-                "        <receiver>\n" +
-                "            <address Id=\"58401          \" Qual=\"ZZ\"/>\n" +
-                "        </receiver>\n" +
-                "        <group GroupType=\"AG\" ApplSender=\"04000\" ApplReceiver=\"58401\" Date=\"040714\" Time=\"1003\" Control=\"38327\" StandardCode=\"X\" StandardVersion=\"002040CHRY\">\n" +
-                "            <transaction DocType=\"824\" Name=\"Application Advice\" Control=\"000042460\">\n" +
-                "                <segment Id=\"BGN\">\n" +
-                "                    <element Id=\"BGN01\">11</element>\n" +
-                "                    <element Id=\"BGN02\"> 07141005162 </element>\n" +
-                "                    <element Id=\"BGN03\">040714</element>\n" +
-                "                    <element Id=\"BGN04\">1003</element>\n" +
-                "                </segment>\n" +
-                "            </transaction>\n" +
-                "        </group>\n" +
-                "    </interchange>\n" +
-                "</ediroot>", xmlText);
+        String benchmark = TestResources.getAsString("EDItoXMLTest.canIndent.xml");
+               
+        assertTrue(xmlText.length() == benchmark.length());
+        assertEquals(benchmark, xmlText);
     }
 
 }

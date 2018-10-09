@@ -12,11 +12,14 @@ import com.berryworks.edireader.demo.EDISplitter;
 import com.berryworks.edireader.splitter.ClosingDetails;
 import com.berryworks.edireader.splitter.HandlerFactory;
 import com.berryworks.edireader.splitter.SplittingHandler;
+import com.berryworks.edireader.test.utils.TestResources;
 import com.berryworks.edireader.util.dom.DocumentUtil;
 import com.berryworks.edireader.util.sax.SAXObjectHandler;
 import com.berryworks.edireader.util.sax.SAXObjectReader;
 import org.custommonkey.xmlunit.Diff;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.*;
@@ -31,8 +34,10 @@ import java.io.*;
 
 import static org.junit.Assert.*;
 
-public class SplitterTest extends VerboseTestCase {
+public class SplitterTest {
 
+	@Rule public TemporaryFolder tmp = new TemporaryFolder();
+	
     private Reader inputReader;
 
     @Test
@@ -146,24 +151,25 @@ public class SplitterTest extends VerboseTestCase {
 
     @Test
     public void testMain() throws Exception {
+    	File testFile = TestResources.getAsFile("SplitterTest.testMain.edi");
+    	File outputFile = new File(testFile.getParentFile(), "split-0000.xml");
+    	outputFile.deleteOnExit();
 
         PrintStream systemOut = System.out;
         final ByteArrayOutputStream redirectedOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(redirectedOut));
+        System.setOut(new PrintStream(redirectedOut)); 
 
-
-        FileUtil.stringToFile(EDITestData.getAnsiInterchange(2), "toSplit.edi");
-
-        String args[] = new String[]{"toSplit.edi", "-o", getTestresultsPath() + "x12/split-0000.xml"};
+        String args[] = new String[]{testFile.getAbsolutePath(), "-o", outputFile.getAbsolutePath()};
         EDISplitter.main(args);
 
         System.setOut(systemOut);
-
-        assertEquals("\nEDI input parsed into 2 XML output files\n", redirectedOut.toString());
+        
+        String sep = System.getProperty("line.separator");
+        assertEquals(sep + "EDI input parsed into 2 XML output files" + sep, redirectedOut.toString());
 
         assertEquals(2, EDISplitter.getCount());
 
-        File file = new File(getTestresultsPath() + "x12/split-0002.xml");
+        File file = new File(outputFile.getParentFile(), "split-0002.xml");
         assertNotNull(file);
         assertTrue(file.exists());
 
@@ -312,7 +318,7 @@ public class SplitterTest extends VerboseTestCase {
             } catch (IOException | SAXException e) {
                 System.err.println(getClass().getName() + " caught " + e);
             }
-            if (verbose) trace(getClass().getName() + " run() complete");
+            System.out.println(getClass().getName() + " run() complete");
         }
 
         public int getSAXEventsWritten() {
@@ -334,18 +340,18 @@ public class SplitterTest extends VerboseTestCase {
 
             try {
                 while (!shutdown) {
-                    if (verbose) trace("available in transformer input stream: " + inputStream.available());
+                	System.out.println("Available in transformer input stream: " + inputStream.available());
                     DOMResult domResult = new DOMResult();
                     SAXSource source = new SAXSource(reader, inputSource);
-                    if (verbose) trace("calling transform");
+                    System.out.println("Calling transform");
                     TransformerFactory.newInstance().newTransformer().transform(source, domResult);
-                    if (verbose) trace("return from transform");
+                    System.out.println("Return from transform");
                     if (document == null)
                         document = (Document) domResult.getNode();
                 }
             } catch (Exception e) {
-                if (verbose) trace(getClass().getName() + " caught " + e);
-                if (verbose) trace(getClass().getName() + " run() complete");
+            	System.out.println(getClass().getName() + " caught " + e);
+            	System.out.println(getClass().getName() + " run() complete");
             }
         }
 

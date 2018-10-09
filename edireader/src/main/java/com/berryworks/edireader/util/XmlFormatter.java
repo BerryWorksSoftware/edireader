@@ -26,8 +26,7 @@ import java.io.Writer;
 
 public class XmlFormatter extends FilterWriter {
     private final static String SEPARATOR = System.getProperty("line.separator");
-
-    private final static String INDENT = "    ";
+    private final static String INDENT = "\t";
     private char mostRecentCharOfInterest;
     private String currentIndent = "";
 
