@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import static com.berryworks.edireader.demo.EDItoXML.NEW_LINE;
+
 public class EDItoXMLTest {
 
     private static final String TINY_INTERCHANGE =
@@ -76,26 +78,27 @@ public class EDItoXMLTest {
         ediToXml.run();
 
         String xmlText = writer.toString();
-        Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<ediroot>\n" +
-                "    <interchange Standard=\"ANSI X.12\" AuthorizationQual=\"00\" Authorization=\"          \" SecurityQual=\"00\" Security=\"          \" Date=\"040714\" Time=\"1003\" StandardsId=\"U\" Version=\"00204\" Control=\"000038449\" AckRequest=\"0\" TestIndicator=\"P\">\n" +
-                "        <sender>\n" +
-                "            <address Id=\"04000          \" Qual=\"ZZ\"/>\n" +
-                "        </sender>\n" +
-                "        <receiver>\n" +
-                "            <address Id=\"58401          \" Qual=\"ZZ\"/>\n" +
-                "        </receiver>\n" +
-                "        <group GroupType=\"AG\" ApplSender=\"04000\" ApplReceiver=\"58401\" Date=\"040714\" Time=\"1003\" Control=\"38327\" StandardCode=\"X\" StandardVersion=\"002040CHRY\">\n" +
-                "            <transaction DocType=\"824\" Name=\"Application Advice\" Control=\"000042460\">\n" +
-                "                <segment Id=\"BGN\">\n" +
-                "                    <element Id=\"BGN01\">11</element>\n" +
-                "                    <element Id=\"BGN02\"> 07141005162 </element>\n" +
-                "                    <element Id=\"BGN03\">040714</element>\n" +
-                "                    <element Id=\"BGN04\">1003</element>\n" +
-                "                </segment>\n" +
-                "            </transaction>\n" +
-                "        </group>\n" +
-                "    </interchange>\n" +
+        xmlText = xmlText.replaceFirst("encoding=\".*\"", "encoding=\"ignored\"");
+        Assert.assertEquals("<?xml version=\"1.0\" encoding=\"ignored\"?>" + NEW_LINE +
+                "<ediroot>" + NEW_LINE +
+                "    <interchange Standard=\"ANSI X.12\" AuthorizationQual=\"00\" Authorization=\"          \" SecurityQual=\"00\" Security=\"          \" Date=\"040714\" Time=\"1003\" StandardsId=\"U\" Version=\"00204\" Control=\"000038449\" AckRequest=\"0\" TestIndicator=\"P\">" + NEW_LINE +
+                "        <sender>" + NEW_LINE +
+                "            <address Id=\"04000          \" Qual=\"ZZ\"/>" + NEW_LINE +
+                "        </sender>" + NEW_LINE +
+                "        <receiver>" + NEW_LINE +
+                "            <address Id=\"58401          \" Qual=\"ZZ\"/>" + NEW_LINE +
+                "        </receiver>" + NEW_LINE +
+                "        <group GroupType=\"AG\" ApplSender=\"04000\" ApplReceiver=\"58401\" Date=\"040714\" Time=\"1003\" Control=\"38327\" StandardCode=\"X\" StandardVersion=\"002040CHRY\">" + NEW_LINE +
+                "            <transaction DocType=\"824\" Name=\"Application Advice\" Control=\"000042460\">" + NEW_LINE +
+                "                <segment Id=\"BGN\">" + NEW_LINE +
+                "                    <element Id=\"BGN01\">11</element>" + NEW_LINE +
+                "                    <element Id=\"BGN02\"> 07141005162 </element>" + NEW_LINE +
+                "                    <element Id=\"BGN03\">040714</element>" + NEW_LINE +
+                "                    <element Id=\"BGN04\">1003</element>" + NEW_LINE +
+                "                </segment>" + NEW_LINE +
+                "            </transaction>" + NEW_LINE +
+                "        </group>" + NEW_LINE +
+                "    </interchange>" + NEW_LINE +
                 "</ediroot>", xmlText);
     }
 
