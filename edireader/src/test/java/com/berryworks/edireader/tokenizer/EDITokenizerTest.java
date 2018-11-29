@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2018 by BerryWorks Software, LLC. All rights reserved.
  */
 package com.berryworks.edireader.tokenizer;
 
@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class TestEDITokenizer {
+public class EDITokenizerTest {
 
     private Tokenizer tokenizer;
 
@@ -458,6 +458,67 @@ public class TestEDITokenizer {
         assertNotNull(token = tokenizer.nextToken());
         assertEquals(Token.TokenType.END_OF_DATA, token.getType());
         assertEquals(43, tokenizer.getCharCount());
+    }
+
+    @Test
+    public void segmentTerminatorPrecedenceOverSubElementDelimiter() throws Exception {
+
+        tokenizer = new EDITokenizer(new StringReader(
+                "abc-def!ghij!"));
+        assertNotNull(tokenizer);
+        tokenizer.setTerminator('!');
+        tokenizer.setDelimiter('-');
+        tokenizer.setSubDelimiter('!'); // Same as the segment terminator
+        Token token;
+
+        // abc-def!ghij!!
+        // ^
+        assertNotNull(token = tokenizer.nextToken());
+        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(0, token.getIndex());
+        assertEquals(0, token.getIndex());
+        assertEquals("abc", token.getValue());
+        assertEquals(4, tokenizer.getCharCount());
+        assertEquals(4, tokenizer.getSegmentCharCount());
+
+        // abc-def!ghij!!
+        //     ^
+        assertNotNull(token = tokenizer.nextToken());
+        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals("abc01", token.getElementId());
+        assertEquals(1, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("def", token.getValue());
+        assertEquals("abc", token.getSegmentType());
+        assertTrue(token.isFirst());
+        assertFalse(token.isLast());
+        assertEquals(0, token.getSubIndex());
+        assertEquals(7, tokenizer.getCharCount());
+        assertEquals(7, tokenizer.getSegmentCharCount());
+
+        // abc-def!ghij!
+        //         ^
+        assertNotNull(token = tokenizer.nextToken());
+        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals("abc01", token.getElementId());
+        assertEquals(1, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("def", token.getValue());
+        assertTrue(token.isFirst());
+        assertFalse(token.isLast());
+        assertEquals(8, tokenizer.getCharCount());
+        assertEquals(8, tokenizer.getSegmentCharCount());
+
+        // abc-def!ghij!
+        //              ^
+        assertNotNull(token = tokenizer.nextToken());
+        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertTrue(token.isFirst());
+        assertFalse(token.isLast());
+        assertEquals(12, tokenizer.getCharCount());
+        assertEquals(4, tokenizer.getSegmentCharCount());
     }
 
     @Test

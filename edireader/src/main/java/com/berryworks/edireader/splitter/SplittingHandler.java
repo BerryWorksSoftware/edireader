@@ -23,6 +23,8 @@ package com.berryworks.edireader.splitter;
 import com.berryworks.edireader.*;
 import com.berryworks.edireader.error.EDISyntaxExceptionHandler;
 import com.berryworks.edireader.error.RecoverableSyntaxException;
+import com.berryworks.edireader.filter.EdiReaderFilter;
+import com.berryworks.edireader.plugin.AbstractPluginControllerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -60,8 +62,13 @@ public class SplittingHandler extends DefaultHandler {
     private Attributes groupAttributes;
     private Attributes documentAttributes;
     private final Attributes emptyAttributes = new AttributesImpl();
-    private int transactionCountLimit;
+    private int transactionsInInterchangeCount;
     private int transactionsInGroupCount;
+    private int segmentCount;
+    private int transactionCountLimit;
+    private int segmentCountLimit;
+    private AbstractPluginControllerFactory pluginControllerFactory;
+    private EdiReaderFilter filter;
 
 
     public SplittingHandler(HandlerFactory handlerFactory) {
@@ -74,7 +81,15 @@ public class SplittingHandler extends DefaultHandler {
         while ((parser = EDIReaderFactory.createEDIReader(inputSource, leftOver)) != null) {
             parser.setContentHandler(this);
             parser.setSyntaxExceptionHandler(new MyErrorHandler());
-            parser.parse(inputSource);
+            if (pluginControllerFactory != null) {
+                parser.setPluginControllerFactory(pluginControllerFactory);
+            }
+            if (filter != null) {
+                final EDIReader f = filter.filter(parser);
+                f.parse(inputSource);
+            } else {
+                parser.parse(inputSource);
+            }
             leftOver = parser.getTokenizer().getBuffered();
         }
         handlerFactory.markEndOfStream();
@@ -123,6 +138,8 @@ public class SplittingHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
         if (xmlTags.getInterchangeTag().equals(localName)) {
+            transactionsInInterchangeCount = 0;
+            segmentCount = 0;
             interchangeAttributes = new EDIAttributes(attributes);
 
         } else if (xmlTags.getSenderTag().equals(localName)) {
@@ -154,6 +171,9 @@ public class SplittingHandler extends DefaultHandler {
                 pendingDocumentClose = false;
             }
             documentAttributes = new EDIAttributes(attributes);
+
+        } else if (xmlTags.getSegTag().equals(localName)) {
+            segmentCount++;
         }
 
         contentHandler.startElement(uri, localName, qName, attributes);
@@ -202,11 +222,16 @@ public class SplittingHandler extends DefaultHandler {
         contentHandler.endElement(uri, localName, qName);
 
         if (xmlTags.getDocumentTag().equals(localName)) {
+            transactionsInInterchangeCount++;
             transactionsInGroupCount++;
-            if (transactionsInGroupCount >= transactionCountLimit) {
+
+            if (transactionsInInterchangeCount >= transactionCountLimit) {
+                // The default transaction count limit is 1
+                pendingDocumentClose = true;
+            } else if (segmentCountLimit > 0 && segmentCount >= segmentCountLimit) {
+                // The default segment count limit is infinity (unlimited)
                 pendingDocumentClose = true;
             }
-
 
         } else if (xmlTags.getInterchangeTag().equals(localName)) {
             pendingDocumentClose = false;
@@ -227,6 +252,29 @@ public class SplittingHandler extends DefaultHandler {
         this.transactionCountLimit = transactionCountLimit;
     }
 
+    public void setSegmentCountLimit(int limit) {
+        this.segmentCountLimit = limit;
+    }
+
+    public void setPluginControllerFactory(AbstractPluginControllerFactory pluginControllerFactory) {
+        this.pluginControllerFactory = pluginControllerFactory;
+    }
+
+    public AbstractPluginControllerFactory getPluginControllerFactory() {
+        return pluginControllerFactory;
+    }
+
+    public void setFilter(EdiReaderFilter filter) {
+        this.filter = filter;
+    }
+
+    public EdiReaderFilter getFilter() {
+        return filter;
+    }
+
+    public HandlerFactory getHandlerFactory() {
+        return handlerFactory;
+    }
 
     private class MyErrorHandler implements EDISyntaxExceptionHandler {
 

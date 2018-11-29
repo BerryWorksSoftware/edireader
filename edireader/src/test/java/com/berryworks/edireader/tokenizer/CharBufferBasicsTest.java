@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2018 by BerryWorks Software, LLC. All rights reserved.
  */
 
 package com.berryworks.edireader.tokenizer;
@@ -11,7 +11,7 @@ import java.nio.CharBuffer;
 import static org.junit.Assert.assertEquals;
 
 
-public class TestCharBufferBasics {
+public class CharBufferBasicsTest {
 
     CharBuffer buffer;
 

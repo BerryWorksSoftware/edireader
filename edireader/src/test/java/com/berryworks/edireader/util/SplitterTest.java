@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2018 by BerryWorks Software, LLC. All rights reserved.
  */
 
 package com.berryworks.edireader.util;
@@ -29,6 +29,7 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXSource;
 import java.io.*;
 
+import static com.berryworks.edireader.demo.EDItoXML.NEW_LINE;
 import static org.junit.Assert.*;
 
 public class SplitterTest extends VerboseTestCase {
@@ -151,7 +152,6 @@ public class SplitterTest extends VerboseTestCase {
         final ByteArrayOutputStream redirectedOut = new ByteArrayOutputStream();
         System.setOut(new PrintStream(redirectedOut));
 
-
         FileUtil.stringToFile(EDITestData.getAnsiInterchange(2), "toSplit.edi");
 
         String args[] = new String[]{"toSplit.edi", "-o", getTestresultsPath() + "x12/split-0000.xml"};
@@ -159,26 +159,28 @@ public class SplitterTest extends VerboseTestCase {
 
         System.setOut(systemOut);
 
-        assertEquals("\nEDI input parsed into 2 XML output files\n", redirectedOut.toString());
+        assertEquals("Did not produce expected System.out",
+                NEW_LINE + "EDI input parsed into 2 XML output files" + NEW_LINE,
+                redirectedOut.toString());
 
-        assertEquals(2, EDISplitter.getCount());
+        assertEquals("Did not produce expected number of output files", 2, EDISplitter.getCount());
 
         File file = new File(getTestresultsPath() + "x12/split-0002.xml");
-        assertNotNull(file);
-        assertTrue(file.exists());
+        assertNotNull("Could not form expected output file name", file);
+        assertTrue("Expected output file does not exist", file.exists());
 
         InputSource inputSource = new InputSource(new FileReader(file));
         DocumentUtil util = DocumentUtil.getInstance();
         Document dom = util.buildDocumentFromXml(inputSource);
-        assertNotNull(dom);
+        assertNotNull("Could not build DOM from XML output", dom);
 
         Element element = DocumentUtil.position(dom.getDocumentElement(), new String[]{"interchange"});
         String controlAttribute = element.getAttribute("Control");
-        assertEquals("000038449", controlAttribute);
+        assertEquals("Interchange control number is wrong in XML output", "000038449", controlAttribute);
 
         element = DocumentUtil.position(element, new String[]{"sender", "address"});
         String qualAttribute = element.getAttribute("Qual");
-        assertEquals("ZZ", qualAttribute);
+        assertEquals("Sender qualifier is wrong in XML output", "ZZ", qualAttribute);
     }
 
 
@@ -404,6 +406,4 @@ public class SplitterTest extends VerboseTestCase {
         }
 
     }
-
-
 }

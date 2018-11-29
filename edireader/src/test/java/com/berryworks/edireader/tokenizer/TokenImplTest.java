@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2011 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2018 by BerryWorks Software, LLC. All rights reserved.
  */
 
 package com.berryworks.edireader.tokenizer;
@@ -12,7 +12,7 @@ import java.io.StringReader;
 
 import static org.junit.Assert.*;
 
-public class TestTokenImpl {
+public class TokenImplTest {
 
     Token token;
 

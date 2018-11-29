@@ -73,7 +73,14 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
             pendingData = null;
         }
         end(uri, localName);
-        context.remove(context.size() - 1);
+
+        if (context.size() > 0) {
+            final int indexOfLast = context.size() - 1;
+            final String lastOne = context.get(indexOfLast);
+            if (localName.equals(lastOne)) {
+                context.remove(indexOfLast);
+            }
+        }
     }
 
     @Override
