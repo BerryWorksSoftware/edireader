@@ -46,15 +46,25 @@ public class AnsiReaderTest {
                     "SE*4*0000001^\n" +
                     "GE*1*1210001^\n" +
                     "IEA*1*000000121^\n";
+    private static final String EDI_SAMPLE_5010 =
+            "ISA*00*          *00*          *ZZ*D00111         *ZZ*0055           *030603*1337*~*00501*000000121*0*T*:^\n" +
+                    "GS*HP*D00111*0055*20030603*1337*1210001*X*005010X091A1^\n" +
+                    "ST*870*0000001^\n" +
+                    "BSR*4*PA*SUPPLIER CONFIRMATION NUMBER*CCYYMMDD^\n" +
+                    "REF*MR*12345^\n" +
+                    "SE*4*0000001^\n" +
+                    "GE*1*1210001^\n" +
+                    "IEA*1*000000121^\n";
+
 
     private AnsiReader ansiReader;
-    private CountingHandler countingHandler;
+    private MyContentHandler myContentHandler;
 
     @Before
     public void setUp() {
         ansiReader = new AnsiReader();
-        countingHandler = new CountingHandler();
-        ansiReader.setContentHandler(countingHandler);
+        myContentHandler = new MyContentHandler();
+        ansiReader.setContentHandler(myContentHandler);
     }
 
     @Test
@@ -67,8 +77,37 @@ public class AnsiReaderTest {
         assertEquals(':', ansiReader.getSubDelimiter());
         assertEquals('^', ansiReader.getTerminator());
         assertEquals("\n", ansiReader.getTerminatorSuffix());
-        assertEquals(16, countingHandler.getElementCount());
-        assertEquals(2, countingHandler.getSegmentCountWithoutSTandSE());
+        assertEquals(16, myContentHandler.getElementCount());
+        assertEquals(2, myContentHandler.getSegmentCountWithoutSTandSE());
+    }
+
+    @Test
+    public void supportsOptionToObserveSyntaxCharacters() throws IOException, SAXException {
+        // Baseline: default behavior, without the option
+        assertFalse(ansiReader.isIncludeSyntaxCharacters());
+        ansiReader.parse(new InputSource(new StringReader(EDI_SAMPLE)));
+        assertNull(myContentHandler.getInterchangeAttributes().getValue("SegmentTerminator"));
+        assertNull(myContentHandler.getInterchangeAttributes().getValue("ElementDelimiter"));
+        assertNull(myContentHandler.getInterchangeAttributes().getValue("SubElementDelimiter"));
+        assertNull(myContentHandler.getInterchangeAttributes().getValue("RepetitionSeparator"));
+
+        // Now with the option enabled, for a version 4010 interchange without a repetition separator
+        setUp();
+        ansiReader.setIncludeSyntaxCharacters(true);
+        ansiReader.parse(new InputSource(new StringReader(EDI_SAMPLE)));
+        assertEquals("^", myContentHandler.getInterchangeAttributes().getValue("SegmentTerminator"));
+        assertEquals("*", myContentHandler.getInterchangeAttributes().getValue("ElementDelimiter"));
+        assertEquals(":", myContentHandler.getInterchangeAttributes().getValue("SubElementDelimiter"));
+        assertNull(myContentHandler.getInterchangeAttributes().getValue("RepetitionSeparator"));
+
+        // Again with the option enabled, for a version 5010 interchange with a repetition separator
+        setUp();
+        ansiReader.setIncludeSyntaxCharacters(true);
+        ansiReader.parse(new InputSource(new StringReader(EDI_SAMPLE_5010)));
+        assertEquals("^", myContentHandler.getInterchangeAttributes().getValue("SegmentTerminator"));
+        assertEquals("*", myContentHandler.getInterchangeAttributes().getValue("ElementDelimiter"));
+        assertEquals(":", myContentHandler.getInterchangeAttributes().getValue("SubElementDelimiter"));
+        assertEquals("~", myContentHandler.getInterchangeAttributes().getValue("RepetitionSeparator"));
     }
 
     @Test
@@ -81,8 +120,8 @@ public class AnsiReaderTest {
         assertEquals(':', ansiReader.getSubDelimiter());
         assertEquals('$', ansiReader.getTerminator());
         assertEquals("\n", ansiReader.getTerminatorSuffix());
-        assertEquals(17, countingHandler.getElementCount());
-        assertEquals(2, countingHandler.getSegmentCountWithoutSTandSE());
+        assertEquals(17, myContentHandler.getElementCount());
+        assertEquals(2, myContentHandler.getSegmentCountWithoutSTandSE());
     }
 
     @Test
@@ -90,8 +129,8 @@ public class AnsiReaderTest {
         ansiReader.parse(new InputSource(new StringReader(EDI_BIN_SAMPLE)));
 
         assertEquals(291, ansiReader.getCharCount());
-        assertEquals(14, countingHandler.getElementCount());
-        assertEquals(2, countingHandler.getSegmentCountWithoutSTandSE());
+        assertEquals(14, myContentHandler.getElementCount());
+        assertEquals(2, myContentHandler.getSegmentCountWithoutSTandSE());
     }
 
     @Test
@@ -308,11 +347,17 @@ public class AnsiReaderTest {
         assertFalse(AnsiReader.isEnvelopeSegment("REF"));
     }
 
-    private class CountingHandler extends EDIReaderSAXAdapter {
+    private class MyContentHandler extends EDIReaderSAXAdapter {
         private int segmentCount, elementCount;
+        private Attributes interchangeAttributes;
 
-        public CountingHandler() {
+        public MyContentHandler() {
             super(new DefaultXMLTags());
+        }
+
+        @Override
+        protected void beginInterchange(int charCount, int segmentCharCount, Attributes attributes) {
+            interchangeAttributes = new EDIAttributes(attributes);
         }
 
         @Override
@@ -336,11 +381,15 @@ public class AnsiReaderTest {
             elementCount++;
         }
 
-        public int getSegmentCountWithoutSTandSE() {
+        Attributes getInterchangeAttributes() {
+            return interchangeAttributes;
+        }
+
+        int getSegmentCountWithoutSTandSE() {
             return segmentCount;
         }
 
-        public int getElementCount() {
+        int getElementCount() {
             return elementCount;
         }
     }

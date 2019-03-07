@@ -153,7 +153,16 @@ public abstract class EDIAbstractReader implements XMLReader {
 
     private boolean externalXmlDocumentStart;
 
+    /**
+     * The generated XML will declare a namespace if true
+     */
     private boolean namespaceEnabled;
+
+    /**
+     * If true, the generated XML will include attributes expressing syntax characters used in the
+     * EDI input (delimiter, terminator, etc.)
+     */
+    private boolean includeSyntaxCharacters;
 
     private SyntaxDescriptor acknowledgmentSyntaxDescriptor;
 
@@ -440,6 +449,14 @@ public abstract class EDIAbstractReader implements XMLReader {
 
     public void setNamespaceEnabled(boolean namespaceEnabled) {
         this.namespaceEnabled = namespaceEnabled;
+    }
+
+    public boolean isIncludeSyntaxCharacters() {
+        return includeSyntaxCharacters;
+    }
+
+    public void setIncludeSyntaxCharacters(boolean includeSyntaxCharacters) {
+        this.includeSyntaxCharacters = includeSyntaxCharacters;
     }
 
     public boolean isExternalXmlDocumentStart() {

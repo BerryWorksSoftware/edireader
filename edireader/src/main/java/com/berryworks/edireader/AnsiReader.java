@@ -154,6 +154,17 @@ public class AnsiReader extends StandardReader {
             if (getTokenizer().getElementInSegmentCount() > 30)
                 throw new EDISyntaxException(TOO_MANY_ISA_FIELDS, getTokenizer());
 
+        if (isIncludeSyntaxCharacters()) {
+            // Provide critical syntax characters as attributes
+            final char repetitionSeparator = getRepetitionSeparator();
+            if (repetitionSeparator > 0) {
+                getInterchangeAttributes().addCDATA(getXMLTags().getRepetitionSeparator(), String.valueOf(repetitionSeparator));
+            }
+            getInterchangeAttributes().addCDATA(getXMLTags().getElementDelimiter(), String.valueOf(getDelimiter()));
+            getInterchangeAttributes().addCDATA(getXMLTags().getSubElementDelimiter(), String.valueOf(getSubDelimiter()));
+            getInterchangeAttributes().addCDATA(getXMLTags().getSegmentTerminator(), String.valueOf(getTerminator()));
+        }
+
         // Now make the the callbacks to the ContentHandler
         startInterchange(getInterchangeAttributes());
 

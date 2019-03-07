@@ -1,7 +1,10 @@
 package com.berryworks.edireader;
 
+import com.berryworks.edireader.util.sax.EDIReaderSAXAdapter;
 import org.junit.Test;
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -15,7 +18,9 @@ public class EDIReaderTest {
     @Test
     public void isAwareOfSyntaxCharacters_X12_5010() throws IOException, SAXException {
         ediReader = new EDIReader();
-        ediReader.setContentHandler(new MyContentHandler());
+        final MyContentHandler contentHandler = new MyContentHandler();
+        ediReader.setContentHandler(contentHandler);
+        ediReader.setIncludeSyntaxCharacters(true);
 
         // X12 version 5010 and later having repetition separator in ISA11
         ediReader.parse(new InputSource(new StringReader("" +
@@ -32,6 +37,11 @@ public class EDIReaderTest {
         assertEquals(':', ediReader.getRepetitionSeparator());
         assertEquals('~', ediReader.getTerminator());
         assertEquals("\n", ediReader.getTerminatorSuffix());
+        assertEquals("~", contentHandler.getInterchangeAttributes().getValue("SegmentTerminator"));
+        assertEquals("*", contentHandler.getInterchangeAttributes().getValue("ElementDelimiter"));
+        assertEquals(">", contentHandler.getInterchangeAttributes().getValue("SubElementDelimiter"));
+        assertEquals(":", contentHandler.getInterchangeAttributes().getValue("RepetitionSeparator"));
+
     }
 
     @Test
@@ -127,49 +137,50 @@ public class EDIReaderTest {
         assertEquals("", ediReader.getTerminatorSuffix());
     }
 
-    private class MyContentHandler implements ContentHandler {
-        @Override
-        public void setDocumentLocator(Locator locator) {
+    private class MyContentHandler extends EDIReaderSAXAdapter {
+        private int segmentCount, elementCount;
+        private Attributes interchangeAttributes;
+
+        public MyContentHandler() {
+            super(new DefaultXMLTags());
         }
 
         @Override
-        public void startDocument() throws SAXException {
+        protected void beginInterchange(int charCount, int segmentCharCount, Attributes attributes) {
+            interchangeAttributes = new EDIAttributes(attributes);
         }
 
         @Override
-        public void endDocument() throws SAXException {
+        protected void beginFirstSegment(Attributes atts) {
+            segmentCount++;
         }
 
         @Override
-        public void startPrefixMapping(String prefix, String uri) throws SAXException {
+        protected void beginAnotherSegment(Attributes atts) {
+            segmentCount++;
         }
 
         @Override
-        public void endPrefixMapping(String prefix) throws SAXException {
+        protected void beginBinaryPackage(Attributes atts) {
+            segmentCount++;
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            super.startElement(uri, localName, qName, attributes);
+            elementCount++;
         }
 
-        @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException {
+        Attributes getInterchangeAttributes() {
+            return interchangeAttributes;
         }
 
-        @Override
-        public void characters(char[] ch, int start, int length) throws SAXException {
+        int getSegmentCountWithoutSTandSE() {
+            return segmentCount;
         }
 
-        @Override
-        public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
-        }
-
-        @Override
-        public void processingInstruction(String target, String data) throws SAXException {
-        }
-
-        @Override
-        public void skippedEntity(String name) throws SAXException {
+        int getElementCount() {
+            return elementCount;
         }
     }
 }
