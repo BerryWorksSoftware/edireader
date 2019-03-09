@@ -1,13 +1,13 @@
-## EDIReader
+## EDIReader Community Edition
 
-## Introduction
+#### Introduction
 
 EDIReader is a flexible and lightweight EDI parser, written in pure Java using the SAX API
-allowing for many integration options. Released as open source (GPL) in 2004 and enhanced steadily since then,
+allowing for many integration options. Released as open source (GPL3) in 2004 and enhanced steadily since then,
 it has handled millions of transactions in a wide variety of products, services, industries, platforms,
 and custom integrations.
 
-## Features Summary
+#### Features Summary
 
 The EDI parser supports:
 * Automatic detection of EDI standard and syntax characters (terminators, delimiters, separators)
@@ -40,13 +40,26 @@ The EDI parser supports:
     - BIN segment (X12)
     - UNO/UNP (EDIFACT)
 
-## Primary Interfaces
+
+#### Primary Interfaces
 
 EDIReader may be easily integrated using:
 * Command line interface tools accepting filename arguments
 * Java API for embedding in your own Java system
 
-## License and Ownership
+
+#### Technical Notes
+
+* Pure Java, with no dependence on third-party libraries.
+    - avoids dependency version issues
+    - avoids licensing issues
+    - compatible with a wide variety of Java platforms, including Android
+* Thread safe, used in multi-threading applications
+* Compatible with Java 7 syntax
+* Runnable with Java 7 and later
+
+
+#### License and Ownership
 
 * Intellectual property of BerryWorks Software
 * Published as open source software under the GPL
@@ -55,10 +68,11 @@ EDIReader may be easily integrated using:
     - including support/maintenance agreement
     - for either End Users or Service Providers
 
-## EDIReader Framework
+#### The EDIReader Framework
 
-The EDIReader Framework (not released as open source) provides a number of valued-added modules
-providing features such as:
+The EDIReader Framework is a set of Java modules built on top of the Community Edition.
+Unlike the Community Edition, it is not released as open source but may be licensed from BerryWorks Software.
+It adds many additional EDI features such as:
 
 * EDIWriter, producing EDI output from XML of the style produced by EDIReader
 * EDI Annotations, augmenting the XML from EDIReader with
@@ -70,7 +84,7 @@ providing features such as:
     - 270, 271, 276, 277, 278, 834, 835, 837
     - Loop qualifiers included in XML (for example: 1000A, 2010AB)
     - HL hierarchies reflected via nested XML elements
-* Extensive library of version-specific plugins
+* Segment loop awareness via an extensive library of version-specific plugins
 * EDI validation and compliance checking, using XSDs purchased from X12
 * Support for additional EDI and EDI-like formats:
     - HL7
@@ -79,20 +93,11 @@ providing features such as:
 * JSON support
     - EDI to JSON, analogous to EDI to XML
     - JSON to EDI, analogous to EDIWriter
+    - see the edi-json project also at GitHub
 * YAML support
     - EDI to YAML, annotated for human readability
 * Splitting EDI input containing many transactions into many single-transaction EDI output files
 * Includes EDI samples for many transactions/versions
 * Includes suite of JUnit test cases
-* Available with full Java source code as Maven project 
-
-## Technical Notes
-
-* Pure Java, with no dependency on third-party libraries.
-    - avoids dependency version issues
-    - avoids licensing issues
-    - compatible with a wide variety of Java platforms, including Android
-* Thread safe, used in multi-threading applications
-* Compatible with Java 7 syntax
-* Runnable with Java 7 and later
+* Available with full Java source code as Maven project
 
