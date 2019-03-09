@@ -3,36 +3,42 @@
 ## Introduction
 
 EDIReader is a flexible and lightweight EDI parser, written in pure Java using the SAX API
-allowing for many integration options. Released as open source (GPL) originally in 2004, it has
-handled millions of transactions in a wide variety of products, services, industries, platforms,
+allowing for many integration options. Released as open source (GPL) in 2004 and enhanced steadily since then,
+it has handled millions of transactions in a wide variety of products, services, industries, platforms,
 and custom integrations.
 
 ## Features Summary
 
 The EDI parser supports:
 * Automatic detection of EDI standard and syntax characters (terminators, delimiters, separators)
-* Native support for both X12 and EDIFACT
-* Support for segment loops
+* X12 and EDIFACT
+* Segment loops:
     - detects segment loops/groups within a transaction/message
     - using EDIReader plugins
     - reflected in XML as nested <loop> elements
 * Handles multiple:
     - interchanges per input stream
     - functional groups per interchange
-    - transactions/messages per function group
-* Command line tools for
+    - transactions/messages per functional group
+* Command line tools:
     - EDI to XML
-    - Splitting EDI input into multiple XML single-transaction output files
-    - Scanning EDI input producing summary of transactions
+    - splitting EDI input into multiple XML single-transaction output files
+    - scanning EDI input to produce a summary of transactions
+* Java API
+    - based on XML push-parser patterns
+    - can be configured with custom SAX content handlers 
 * Detailed error messages for EDI syntax issues
     - for example: *Segment count error in UNT segment. Expected 8 instead of 88 at segment 9, field 2*
-    - option to terminate or continue for recoverable errors
+    - option to continue parsing after recoverable errors
 * High performance
-* Generation of acknowledgments as a by-product of parsing
-    - 997 (X12)
-    - 999 (X12)
+    - parses arbitrarily large input streams
+    - without growing in-memory data structures or file I/O
+* Acknowledgments as a by-product of parsing
+    - 997, 999 (X12)
     - CONTRL (EDIFACT)
-* Support for X12 binary sequences via the BIN segment
+* Binary sequences
+    - BIN segment (X12)
+    - UNO/UNP (EDIFACT)
 
 ## Primary Interfaces
 
@@ -70,6 +76,11 @@ providing features such as:
     - HL7
     - NCPDP
     - TRADACOMS
+* JSON support
+    - EDI to JSON, analogous to EDI to XML
+    - JSON to EDI, analogous to EDIWriter
+* YAML support
+    - EDI to YAML, annotated for human readability
 * Splitting EDI input containing many transactions into many single-transaction EDI output files
 * Includes EDI samples for many transactions/versions
 * Includes suite of JUnit test cases
@@ -77,7 +88,7 @@ providing features such as:
 
 ## Technical Notes
 
-* Pure Java. No dependency third-party libraries.
+* Pure Java, with no dependency on third-party libraries.
     - avoids dependency version issues
     - avoids licensing issues
     - compatible with a wide variety of Java platforms, including Android
