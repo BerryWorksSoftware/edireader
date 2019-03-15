@@ -55,6 +55,15 @@ public class AnsiReaderTest {
                     "SE*4*0000001^\n" +
                     "GE*1*1210001^\n" +
                     "IEA*1*000000121^\n";
+    private static final String EDI_SAMPLE_WITH_TRIMMED_ISA =
+            "ISA*00*NA*00*NA*ZZ*NA*ZZ*ABC*150415*1332*^*00701*000000001*0*T*:~\n" +
+                    "GS*HP*D00111*0055*20030603*1337*1210001*X*004010X091A1~\n" +
+                    "ST*870*0000001~\n" +
+                    "BSR*4*PA*SUPPLIER CONFIRMATION NUMBER*CCYYMMDD~\n" +
+                    "REF*MR*12345~\n" +
+                    "SE*4*0000001~\n" +
+                    "GE*1*1210001~\n" +
+                    "IEA*1*000000001~\n";
 
 
     private AnsiReader ansiReader;
@@ -210,7 +219,7 @@ public class AnsiReaderTest {
         String ediText = EDI_SAMPLE.replace("ISA*00*", "ISA*0000*");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
-            fail("ISA fiexed length field error not detected");
+            fail("ISA fixed length field error not detected");
         } catch (SAXException e) {
             assertEquals(
                     "Incorrect length of fixed-length ISA field. Expected 2 instead of 4 at segment 1, field 2",
@@ -251,9 +260,7 @@ public class AnsiReaderTest {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("BIN numeric length error not detected");
         } catch (SAXException e) {
-            assertEquals(
-                    "BIN object length must be numeric instead of xx at segment 5, field 2",
-                    e.getMessage());
+            assertEquals("BIN object length must be numeric instead of xx at segment 5, field 2", e.getMessage());
         }
     }
 
@@ -264,9 +271,7 @@ public class AnsiReaderTest {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Missing SE error not detected");
         } catch (SAXException e) {
-            assertEquals(
-                    "Transaction must be terminated with an SE segment at segment 7, field 1",
-                    e.getMessage());
+            assertEquals("Transaction must be terminated with an SE segment at segment 7, field 1", e.getMessage());
         }
     }
 
@@ -290,9 +295,7 @@ public class AnsiReaderTest {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Invalid segment start not detected");
         } catch (SAXException e) {
-            assertEquals(
-                    "Invalid beginning of segment at segment 1",
-                    e.getMessage());
+            assertEquals("Invalid beginning of segment at segment 1", e.getMessage());
         }
     }
 
@@ -305,14 +308,26 @@ public class AnsiReaderTest {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("Invalid segment start not detected");
         } catch (SAXException e) {
-            assertEquals(
-                    "Invalid beginning of segment at segment 2",
-                    e.getMessage());
+            assertEquals("Invalid beginning of segment at segment 2", e.getMessage());
         }
     }
 
     @Test
-    public void producesXmlForSimpleCase() throws IOException, SAXException, TransformerException {
+    public void allowsVariableLengthForSomeIsaElements() throws IOException, SAXException {
+        ansiReader.parse(new InputSource(new StringReader(EDI_SAMPLE_WITH_TRIMMED_ISA)));
+
+        assertEquals(245, ansiReader.getCharCount());
+        assertEquals(1, ansiReader.getGroupCount());
+        assertEquals('*', ansiReader.getDelimiter());
+        assertEquals(':', ansiReader.getSubDelimiter());
+        assertEquals('~', ansiReader.getTerminator());
+        assertEquals("\n", ansiReader.getTerminatorSuffix());
+        assertEquals(16, myContentHandler.getElementCount());
+        assertEquals(2, myContentHandler.getSegmentCountWithoutSTandSE());
+    }
+
+    @Test
+    public void producesXmlForSimpleCase() throws TransformerException {
         ansiReader = new AnsiReader();
         StringReader reader = new StringReader(EDI_SAMPLE);
         StringWriter writer = new StringWriter();
@@ -351,7 +366,7 @@ public class AnsiReaderTest {
         private int segmentCount, elementCount;
         private Attributes interchangeAttributes;
 
-        public MyContentHandler() {
+        MyContentHandler() {
             super(new DefaultXMLTags());
         }
 

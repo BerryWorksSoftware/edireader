@@ -1,5 +1,13 @@
 # Release Notes
 
+### 5.4.16 - March 15, 2019
+
+* Feature: Allow specific ISA elements to be variable length instead of the X12-specific fixed length. 
+    - ISA02 - authorization information
+    - ISA04 - security information
+    - ISA06 - sender ID
+    - ISA08 - receiver ID
+
 ### 5.4.15 - March 7, 2019
 
 * Feature: Added an option for X12 syntax characters to appear as attributes
