@@ -142,7 +142,7 @@ public class TokenImpl implements Token {
         if (n < 10) {
             return result + '0' + digits[n];
         } else
-            return result + String.valueOf(n);
+            return result + n;
     }
 
     @Override

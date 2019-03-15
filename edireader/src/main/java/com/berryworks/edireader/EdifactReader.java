@@ -700,7 +700,7 @@ public class EdifactReader extends StandardReader {
     }
 
     protected String scanForSuffix(char[] buffer, int index) {
-        StringBuilder suffix = new StringBuilder("");
+        StringBuilder suffix = new StringBuilder();
         for (int i = index; i < buffer.length; i++) {
             if (buffer[i] == getTerminator()) {
                 for (int j = 1; j < 3; j++) {

@@ -77,7 +77,7 @@ public abstract class AbstractEncoder extends AbstractEncoderDecoder {
      */
     public void encode(InputStream inputStream) throws IOException {
         reset();
-        byte buffer[] = new byte[BUFFER_SIZE];
+        byte[] buffer = new byte[BUFFER_SIZE];
 
         while (true) {
             int n = inputStream.read(buffer);

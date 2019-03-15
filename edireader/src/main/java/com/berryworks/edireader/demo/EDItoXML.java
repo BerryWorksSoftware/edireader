@@ -33,6 +33,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Converts EDI input to XML output using the default XSLT transformer.
@@ -54,7 +55,7 @@ public class EDItoXML {
     private boolean namespaceEnabled;
     private boolean recover;
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         EDItoXML theObject = new EDItoXML();
         if (!configure(args, theObject)) return;
         theObject.run();
@@ -158,7 +159,7 @@ public class EDItoXML {
         } else {
             try {
                 generatedOutput = new OutputStreamWriter(new FileOutputStream(
-                        outputFileName), "ISO-8859-1");
+                        outputFileName), StandardCharsets.ISO_8859_1);
                 System.out.println("Output file " + outputFileName + " opened");
             } catch (IOException e) {
                 System.out.println(e.getMessage());
@@ -175,7 +176,7 @@ public class EDItoXML {
         } else {
             try {
                 inputReader = new InputStreamReader(
-                        new FileInputStream(inputFileName), "ISO-8859-1");
+                        new FileInputStream(inputFileName), StandardCharsets.ISO_8859_1);
             } catch (IOException e) {
                 System.out.println(e.getMessage());
                 throw new RuntimeException(e.getMessage());

@@ -61,7 +61,7 @@ public class BranchingWriter extends FilterWriter {
     }
 
     @Override
-    public void write(char cbuf[], int off, int len) throws IOException {
+    public void write(char[] cbuf, int off, int len) throws IOException {
         if (branchActive) {
             trunk.write(cbuf, off, len);
             branch.write(cbuf, off, len);

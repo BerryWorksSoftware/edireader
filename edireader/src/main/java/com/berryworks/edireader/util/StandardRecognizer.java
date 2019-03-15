@@ -16,7 +16,7 @@ public class StandardRecognizer implements Runnable {
     private final File ediFile;
     private String standard;
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         if (args.length < 1) {
             throw new RuntimeException("A filename argument is required");
         }

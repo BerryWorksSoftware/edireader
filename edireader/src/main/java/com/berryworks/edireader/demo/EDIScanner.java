@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Scans EDI input to produce a summary report.
@@ -88,7 +89,7 @@ public class EDIScanner {
 
         } else {
             try {
-                inputSource = new InputSource(new InputStreamReader(new FileInputStream(input), "ISO-8859-1"));
+                inputSource = new InputSource(new InputStreamReader(new FileInputStream(input), StandardCharsets.ISO_8859_1));
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -145,7 +146,7 @@ public class EDIScanner {
         return result;
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         CommandLine commandLine = new CommandLine(args);
         String inputFileName = commandLine.getPosition(0);
         if (inputFileName == null) badArgs();
