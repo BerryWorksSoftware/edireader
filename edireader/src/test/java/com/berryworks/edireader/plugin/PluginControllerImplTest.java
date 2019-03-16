@@ -19,7 +19,7 @@ public class PluginControllerImplTest {
     @Before
     public void setUp() {
         controller = new PluginControllerImpl("TestStandard", null);
-        PluginControllerImpl.setDebug(true);
+//        PluginControllerImpl.setDebug(true);
     }
 
     @Test
