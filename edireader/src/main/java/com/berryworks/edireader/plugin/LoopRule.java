@@ -1,8 +1,9 @@
 package com.berryworks.edireader.plugin;
 
 import static com.berryworks.edireader.Plugin.ANY_CONTEXT;
+import static com.berryworks.edireader.Plugin.CURRENT;
 
-public class LoopRule {
+class LoopRule {
     private final String segmentName;
     private final String loopContext;
 
@@ -11,8 +12,12 @@ public class LoopRule {
         this.loopContext = loopContext;
     }
 
-    LoopDescriptor then(String current, int nestingLevel) {
-        return new LoopDescriptor(current, segmentName, nestingLevel, loopContext);
+    LoopDescriptor then(String loopName, int nestingLevel) {
+        return new LoopDescriptor(loopName, segmentName, nestingLevel, loopContext);
+    }
+
+    public LoopDescriptor then(int nestingLevel) {
+        return new LoopDescriptor(CURRENT, segmentName, nestingLevel, loopContext);
     }
 
     static LoopRule when(String segmentName) {
