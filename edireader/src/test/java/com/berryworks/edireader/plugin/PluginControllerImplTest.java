@@ -83,6 +83,21 @@ public class PluginControllerImplTest {
     }
 
     @Test
+    public void canLoadPluginFor837() throws EDISyntaxException {
+        plugin = new ANSI_837_X_005010();
+        plugin.prepare();
+        assertEquals(124, plugin.getLoopDescriptors().length);
+        controller.setPlugin(plugin);
+        assertSame(plugin, controller.getPlugin());
+        controller.setEnabled(true);
+        assertTrue(controller.isEnabled());
+        assertEquals("Health Care Claim", controller.getDocumentName());
+        assertNull(controller.getDocumentType());
+        controller.setDocumentType("Document Type");
+        assertEquals("Document Type", controller.getDocumentType());
+    }
+
+    @Test
     public void canLoadPluginFor856() throws EDISyntaxException {
         plugin = new ANSI_856();
         plugin.prepare();
