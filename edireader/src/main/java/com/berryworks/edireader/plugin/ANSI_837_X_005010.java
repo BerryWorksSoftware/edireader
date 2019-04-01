@@ -20,11 +20,9 @@
 
 package com.berryworks.edireader.plugin;
 
-import com.berryworks.edireader.Plugin;
-
 import static com.berryworks.edireader.plugin.LoopRule.when;
 
-public class ANSI_837_X_005010 extends Plugin {
+public class ANSI_837_X_005010 extends CompositeAwarePlugin {
     public ANSI_837_X_005010() {
         super("835", "Health Care Claim");
         loops = new LoopDescriptor[]{
@@ -151,45 +149,42 @@ public class ANSI_837_X_005010 extends Plugin {
                 when("SVD", "/HL-2000/CLM-2300/LX-2400/SVD-2430").then("SVD-2430", 4),
                 when("SVD", "/HL-2000/CLM-2300/LX-2400").then("SVD-2430", 4),
                 when("TOO", "/HL-2000/CLM-2300/LX-2400").then(3),
-                when("UR", "/HL-2000/CLM-2300").then(2),
-//
-//        composites:
-//        CLM-11
-//        CLM-5
-//        CTP-5
-//        DMG-5
-//        HI-1
-//        HI-10
-//        HI-11
-//        HI-12
-//        HI-2
-//        HI-3
-//        HI-4
-//        HI-5
-//        HI-6
-//        HI-7
-//        HI-8
-//        HI-9
-//        K3-3
-//        MEA-4
-//        PRV-5
-//        PWK-8
-//        QTY-3
-//        REF-4
-//        SV1-1
-//        SV1-7
-//        SV2-2
-//        SV3-1
-//        SV3-11
-//        SV3-4
-//        SV4-2
-//        SV5-1
-//        SV6-1
-//        SV6-5
-//        SVD-3
-//        TOO-3
+                when("UR", "/HL-2000/CLM-2300").then(2)
         };
+
+        composites.put("CLM-11", "");
+        composites.put("CLM-5", "");
+        composites.put("CTP-5", "");
+        composites.put("DMG-5", "");
+        composites.put("HI-1", "");
+        composites.put("HI-10", "");
+        composites.put("HI-11", "");
+        composites.put("HI-12", "");
+        composites.put("HI-2", "");
+        composites.put("HI-3", "");
+        composites.put("HI-4", "");
+        composites.put("HI-5", "");
+        composites.put("HI-6", "");
+        composites.put("HI-7", "");
+        composites.put("HI-8", "");
+        composites.put("HI-9", "");
+        composites.put("K3-3", "");
+        composites.put("MEA-4", "");
+        composites.put("PRV-5", "");
+        composites.put("PWK-8", "");
+        composites.put("QTY-3", "");
+        composites.put("REF-4", "");
+        composites.put("SV1-1", "");
+        composites.put("SV1-7", "");
+        composites.put("SV2-2", "");
+        composites.put("SV3-1", "");
+        composites.put("SV3-11", "");
+        composites.put("SV3-4", "");
+        composites.put("SV4-2", "");
+        composites.put("SV5-1", "");
+        composites.put("SV6-1", "");
+        composites.put("SV6-5", "");
+        composites.put("SVD-3", "");
+        composites.put("TOO-3", "");
     }
-
-
 }
