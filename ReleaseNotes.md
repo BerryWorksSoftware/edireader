@@ -1,5 +1,9 @@
 # Release Notes
 
+### 5.4.17 - April 2, 2019
+
+* Feature: Provide a plugin for 837 version 5010 in the Community Edition
+    
 ### 5.4.16 - March 15, 2019
 
 * Feature: Allow specific ISA elements to be variable length instead of the X12-specific fixed length. 
