@@ -114,7 +114,7 @@ public class SAXObjectReader implements XMLReader {
     public void parse(String systemId) throws IOException, SAXException {
     }
 
-    public static void main(String arg[]) {
+    public static void main(String[] arg) {
         XMLReader reader = new SAXObjectReader();
         reader.setContentHandler(new DefaultHandler());
         try {

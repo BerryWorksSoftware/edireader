@@ -84,7 +84,7 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
     }
 
     @Override
-    public void characters(char ch[], int start, int length) throws SAXException {
+    public void characters(char[] ch, int start, int length) throws SAXException {
         String fragment = new String(ch, start, length);
         if (pendingData == null)
             pendingData = fragment;

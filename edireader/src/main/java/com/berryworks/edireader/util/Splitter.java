@@ -67,7 +67,7 @@ public class Splitter {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         CommandLine commandLine = new CommandLine(args);
         String inputFileName = commandLine.getPosition(0);
         String outputFileNamePattern = commandLine.getOption("o");

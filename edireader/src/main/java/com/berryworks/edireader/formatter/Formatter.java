@@ -93,7 +93,7 @@ public class Formatter {
 
     protected int tee(Reader source, Writer destinationA, Writer destinationB)
             throws IOException {
-        char buffer[] = new char[1000];
+        char[] buffer = new char[1000];
         int count = 0;
         for (; ; ) {
             int n = source.read(buffer);
@@ -136,7 +136,7 @@ public class Formatter {
         ediFilename = filename;
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         String outputFileName = null;
         String inputFileName = null;
         for (int i = 0; i < args.length; i++) {

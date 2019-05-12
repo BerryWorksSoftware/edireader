@@ -209,4 +209,11 @@ public interface XMLTags {
 
     String getDescription();
 
+    String getRepetitionSeparator();
+
+    String getElementDelimiter();
+
+    String getSubElementDelimiter();
+
+    String getSegmentTerminator();
 }

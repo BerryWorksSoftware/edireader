@@ -172,7 +172,7 @@ public abstract class Plugin {
      * @param segment          type of segment encountered
      * @param currentLoopStack stack representing nested loops in current state
      * @param currentLevel     nesting level of current state
-     * @param resultFlags
+     * @param resultFlags      unused
      * @return descriptor matching query parameters, or null if none
      */
     public LoopDescriptor query(String segment, String currentLoopStack, int currentLevel, Set<String> resultFlags) {

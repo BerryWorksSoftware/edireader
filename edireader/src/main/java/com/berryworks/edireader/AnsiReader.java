@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -91,9 +91,9 @@ public class AnsiReader extends StandardReader {
         getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), EDIStandard.ANSI.getDisplayName());
 
         String authQual = getFixedLengthISAField(2);
-        String authInfo = getFixedLengthISAField(10);
+        String authInfo = getFixedLengthISAField(10, false);
         String securityQual = getFixedLengthISAField(2);
-        String securityInfo = getFixedLengthISAField(10);
+        String securityInfo = getFixedLengthISAField(10, false);
 
         getInterchangeAttributes().addCDATA(getXMLTags().getAuthorizationQual(), authQual);
         getInterchangeAttributes().addCDATA(getXMLTags().getAuthorization(), authInfo);
@@ -153,6 +153,17 @@ public class AnsiReader extends StandardReader {
         while (getTokenizer().nextToken().getType() != SEGMENT_END)
             if (getTokenizer().getElementInSegmentCount() > 30)
                 throw new EDISyntaxException(TOO_MANY_ISA_FIELDS, getTokenizer());
+
+        if (isIncludeSyntaxCharacters()) {
+            // Provide critical syntax characters as attributes
+            final char repetitionSeparator = getRepetitionSeparator();
+            if (repetitionSeparator > 0) {
+                getInterchangeAttributes().addCDATA(getXMLTags().getRepetitionSeparator(), String.valueOf(repetitionSeparator));
+            }
+            getInterchangeAttributes().addCDATA(getXMLTags().getElementDelimiter(), String.valueOf(getDelimiter()));
+            getInterchangeAttributes().addCDATA(getXMLTags().getSubElementDelimiter(), String.valueOf(getSubDelimiter()));
+            getInterchangeAttributes().addCDATA(getXMLTags().getSegmentTerminator(), String.valueOf(getTerminator()));
+        }
 
         // Now make the the callbacks to the ContentHandler
         startInterchange(getInterchangeAttributes());

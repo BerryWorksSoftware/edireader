@@ -152,7 +152,7 @@ public class Benchmark implements Runnable {
         this.numberOfThreads = numberOfThreads;
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         Benchmark controller = new Benchmark();
         setDefaults(controller);
         processArgs(args, controller);
@@ -208,7 +208,7 @@ public class Benchmark implements Runnable {
         System.err.println("  k<kcs>           where <kcs> is the interchange size in 1024-char units");
         System.err.println("  i<interchanges>  where <interchanges> is the number of interchanges to parse");
         System.err.println("  v                verbose output");
-        System.err.println("");
+        System.err.println();
         System.err.println("Notes:");
         System.err.println("  All arguments are optional. Default values:");
         System.err.println("    t  10");

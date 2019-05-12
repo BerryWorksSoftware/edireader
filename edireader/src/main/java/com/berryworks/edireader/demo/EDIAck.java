@@ -99,7 +99,7 @@ public class EDIAck {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         String outputFileName = null;
         String inputFileName = null;
         boolean debug = false;

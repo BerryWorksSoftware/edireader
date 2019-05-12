@@ -275,6 +275,16 @@ public class EDIReaderWrapper extends EDIReader {
     }
 
     @Override
+    public boolean isIncludeSyntaxCharacters() {
+        return wrappedEDIReader.isIncludeSyntaxCharacters();
+    }
+
+    @Override
+    public void setIncludeSyntaxCharacters(boolean includeSyntaxCharacters) {
+        wrappedEDIReader.setIncludeSyntaxCharacters(includeSyntaxCharacters);
+    }
+
+    @Override
     public void setLocale(Locale locale) throws SAXException {
         wrappedEDIReader.setLocale(locale);
     }

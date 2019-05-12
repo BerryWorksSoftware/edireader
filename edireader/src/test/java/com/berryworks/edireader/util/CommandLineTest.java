@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  */
 
 package com.berryworks.edireader.util;
@@ -7,12 +7,15 @@ package com.berryworks.edireader.util;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import static org.junit.Assert.*;
 
 public class CommandLineTest {
 
     private CommandLine commandLine;
-    private String args[];
+    private String[] args;
 
     @Before
     public void setUp() {
@@ -36,6 +39,7 @@ public class CommandLineTest {
     public void testPositionWithNullDefaultValue() {
 
         assertEquals("y", commandLine.getPosition(1, null));
+        commandLine.setErrorOutputStream(new PrintStream(new ByteArrayOutputStream()));
         try {
             commandLine.getPosition(3, null);
             fail();

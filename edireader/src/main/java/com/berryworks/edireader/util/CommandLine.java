@@ -64,7 +64,7 @@ public class CommandLine {
         valid = false;
         if (errStream != null) {
             errStream.println("Invalid command line argument(s): " + msg);
-            errStream.println("");
+            errStream.println();
             errStream.println(usage());
         }
     }

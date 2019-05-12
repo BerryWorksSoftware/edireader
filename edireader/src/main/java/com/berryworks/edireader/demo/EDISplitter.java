@@ -86,7 +86,7 @@ public class EDISplitter {
         this.handlerFactory = handlerFactory;
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         CommandLine commandLine = new CommandLine(args);
         String inputFileName = commandLine.getPosition(0);
         String outputFileNamePattern = commandLine.getOption("o");

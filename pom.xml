@@ -6,7 +6,7 @@
 
     <groupId>com.berryworks</groupId>
     <artifactId>EDIReaderCommunityEdition</artifactId>
-    <version>5.4.13</version>
+    <version>5.4.17</version>
 
     <packaging>pom</packaging>
     <name>EDIReader Community Edition</name>
@@ -25,23 +25,18 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.plugin.version>3.2</maven.compiler.plugin.version>
-        <maven.jar.plugin.version>2.5</maven.jar.plugin.version>
-        <maven.release.plugin.version>2.5.1</maven.release.plugin.version>
-        <maven.javadoc.plugin.version>2.10.1</maven.javadoc.plugin.version>
-        <maven.source.plugin.version>2.4</maven.source.plugin.version>
-        <maven.surefire.plugin.version>2.12</maven.surefire.plugin.version>
-        <maven.surefire.report.plugin.version>2.18.1</maven.surefire.report.plugin.version>
+        <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+        <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
+        <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
+        <maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
+        <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
+        <maven.surefire.plugin.version>2.21.0</maven.surefire.plugin.version>
+        <maven.surefire.report.plugin.version>2.20</maven.surefire.report.plugin.version>
         <maven.jacoco.plugin.version>0.7.9</maven.jacoco.plugin.version>
         <maven.project.info.reports.plugin.version>2.8</maven.project.info.reports.plugin.version>
         <junit.version>4.12</junit.version>
-        <junit.addons.version>1.4</junit.addons.version>
-        <findbugs.maven.plugin.version>3.0.0</findbugs.maven.plugin.version>
         <jquantify.version>4.1.3</jquantify.version>
         <xmlunit.version>1.6</xmlunit.version>
-        <servlet.api.version>2.5</servlet.api.version>
-        <jaxen.version>1.1</jaxen.version>
-        <jetty.version>4.2.12</jetty.version>
     </properties>
 
     <dependencies>
@@ -55,12 +50,6 @@
             <groupId>com.berryworks</groupId>
             <artifactId>jquantify</artifactId>
             <version>${jquantify.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>junit-addons</groupId>
-            <artifactId>junit-addons</artifactId>
-            <version>${junit.addons.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>xmlunit</groupId>
@@ -116,10 +105,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
-                <configuration>
-                    <!-- Sets the VM argument line used when unit tests are run. -->
-                    <!--<argLine>${surefireArgLine}</argLine>-->
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -170,18 +155,6 @@
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>${maven.project.info.reports.plugin.version}</version>
             </plugin>
-            <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>${findbugs.maven.plugin.version}</version>
-                <configuration>
-                    <effort>Max</effort>
-                    <threshold>Low</threshold>
-                    <xmlOutput>true</xmlOutput>
-                </configuration>
-            </plugin>
-            -->
         </plugins>
     </reporting>
 

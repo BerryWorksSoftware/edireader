@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -96,6 +96,7 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
                 theReader.setContentHandler(getContentHandler());
                 theReader.setSyntaxExceptionHandler(getSyntaxExceptionHandler());
                 theReader.setNamespaceEnabled(isNamespaceEnabled());
+                theReader.setIncludeSyntaxCharacters(isIncludeSyntaxCharacters());
             }
             theReader.setXMLTags(xmlTags);
             if (pluginControllerFactory != null) {
@@ -104,6 +105,10 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
             theReader.parse(source);
             setDelimiter(theReader.getDelimiter());
             setSubDelimiter(theReader.getSubDelimiter());
+            setSubSubDelimiter(theReader.getSubSubDelimiter());
+            setRepetitionSeparator(theReader.getRepetitionSeparator());
+            setRelease(theReader.getRelease());
+            setDecimalMark(theReader.getDecimalMark());
             setTerminator(theReader.getTerminator());
             setTerminatorSuffix(theReader.getTerminatorSuffix());
 
@@ -140,7 +145,7 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
             trace("Debug already on");
         } else if (!debug && d) {
             trace("Debug turned on");
-        } else if (debug && !d) {
+        } else if (debug) {
             trace("Debug turned off");
         }
         debug = d;

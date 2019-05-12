@@ -489,4 +489,24 @@ public class DefaultXMLTags implements XMLTags {
     public String getDescription() {
         return "Description";
     }
+
+    @Override
+    public String getRepetitionSeparator() {
+        return "RepetitionSeparator";
+    }
+
+    @Override
+    public String getElementDelimiter() {
+        return "ElementDelimiter";
+    }
+
+    @Override
+    public String getSubElementDelimiter() {
+        return "SubElementDelimiter";
+    }
+
+    @Override
+    public String getSegmentTerminator() {
+        return "SegmentTerminator";
+    }
 }

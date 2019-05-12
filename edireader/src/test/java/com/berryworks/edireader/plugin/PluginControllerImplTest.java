@@ -19,11 +19,11 @@ public class PluginControllerImplTest {
     @Before
     public void setUp() {
         controller = new PluginControllerImpl("TestStandard", null);
-        PluginControllerImpl.setDebug(true);
+//        PluginControllerImpl.setDebug(true);
     }
 
     @Test
-    public void canLoadPluginFor110() throws EDISyntaxException {
+    public void canLoadPluginFor110() {
         plugin = new ANSI_110();
         plugin.prepare();
         assertEquals(8, plugin.getLoopDescriptors().length);
@@ -38,7 +38,7 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canLoadPluginFor210() throws EDISyntaxException {
+    public void canLoadPluginFor210() {
         plugin = new ANSI_210();
         plugin.prepare();
         assertEquals(38, plugin.getLoopDescriptors().length);
@@ -53,7 +53,7 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canLoadPluginFor277() throws EDISyntaxException {
+    public void canLoadPluginFor277() {
         plugin = new ANSI_277();
         plugin.prepare();
         assertEquals(16, plugin.getLoopDescriptors().length);
@@ -68,7 +68,7 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canLoadPluginFor810() throws EDISyntaxException {
+    public void canLoadPluginFor810() {
         plugin = new ANSI_810();
         plugin.prepare();
         assertEquals(85, plugin.getLoopDescriptors().length);
@@ -83,7 +83,23 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canLoadPluginFor856() throws EDISyntaxException {
+    public void canLoadPluginFor837() {
+        plugin = new ANSI_837_X_005010();
+        plugin.prepare();
+        assertEquals(124, plugin.getLoopDescriptors().length);
+        assertEquals(34, ((CompositeAwarePlugin) plugin).getComposites().size());
+        controller.setPlugin(plugin);
+        assertSame(plugin, controller.getPlugin());
+        controller.setEnabled(true);
+        assertTrue(controller.isEnabled());
+        assertEquals("Health Care Claim", controller.getDocumentName());
+        assertNull(controller.getDocumentType());
+        controller.setDocumentType("Document Type");
+        assertEquals("Document Type", controller.getDocumentType());
+    }
+
+    @Test
+    public void canLoadPluginFor856() {
         plugin = new ANSI_856();
         plugin.prepare();
         assertEquals(3, plugin.getLoopDescriptors().length);
@@ -98,7 +114,7 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canLoadPluginFor870() throws EDISyntaxException {
+    public void canLoadPluginFor870() {
         plugin = new ANSI_870();
         plugin.prepare();
         assertEquals(53, plugin.getLoopDescriptors().length);
@@ -113,7 +129,7 @@ public class PluginControllerImplTest {
     }
 
     @Test
-    public void canLoadPluginFor872() throws EDISyntaxException {
+    public void canLoadPluginFor872() {
         plugin = new ANSI_872();
         plugin.prepare();
         assertEquals(19, plugin.getLoopDescriptors().length);
@@ -203,7 +219,7 @@ public class PluginControllerImplTest {
         assertFalse(controller.transition("AMT"));
     }
 
-//    @Ignore
+    //    @Ignore
     @Test
     public void canProduceCorrectXmlFor850WithDifficultAMT() {
         String TINY_850 =

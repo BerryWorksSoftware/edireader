@@ -89,7 +89,7 @@ public class EDItoXPATH {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         String inputFileName = null;
 
         if (args.length == 1)

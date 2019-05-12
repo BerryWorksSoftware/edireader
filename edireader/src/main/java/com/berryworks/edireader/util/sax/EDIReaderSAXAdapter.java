@@ -175,7 +175,7 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
     }
 
     @Override
-    public void characters(char ch[], int start, int length) throws SAXException {
+    public void characters(char[] ch, int start, int length) throws SAXException {
         String s = new String(ch, start, length);
         if (elementString != null) elementString += s;
     }

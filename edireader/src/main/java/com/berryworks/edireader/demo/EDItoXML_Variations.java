@@ -197,7 +197,7 @@ public class EDItoXML_Variations {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         CommandLine commandLine = new CommandLine(args) {
             @Override
             public String usage() {

@@ -158,7 +158,7 @@ public class EDITransform {
      *
      * @param args command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         String outputFileName = null;
         String stylesheetFileName = null;
         String inputFileName = null;

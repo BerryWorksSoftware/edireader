@@ -317,36 +317,36 @@ public class LoopDescriptor {
      */
     @Override
     public String toString() {
-        String result = "loop " + getName() + " at nesting level " + getNestingLevel()
-                + ": encountering segment " + getFirstSegment();
+        StringBuilder result = new StringBuilder("loop " + getName() + " at nesting level " + getNestingLevel()
+                + ": encountering segment " + getFirstSegment());
         String context = getLoopContext();
         switch (context) {
             case "*":
-                result += " anytime";
+                result.append(" anytime");
                 break;
             case "/":
-                result += " while outside any loop";
+                result.append(" while outside any loop");
                 break;
             default:
-                result += " while currently in loop " + context;
+                result.append(" while currently in loop ").append(context);
                 break;
         }
         if (levelContext > -1)
-            result += " while current at nesting level " + levelContext;
+            result.append(" while current at nesting level ").append(levelContext);
         if (!resultFlags.isEmpty()) {
-            result += ", setting";
+            result.append(", setting");
             for (String flagName : resultFlags) {
-                result += " " + flagName;
+                result.append(" ").append(flagName);
             }
         }
         if (!conditionFlags.isEmpty()) {
-            result += ", conditional based on";
+            result.append(", conditional based on");
             for (String flagName : conditionFlags) {
-                result += " " + flagName;
+                result.append(" ").append(flagName);
             }
         }
 
-        return result;
+        return result.toString();
     }
 
     /**

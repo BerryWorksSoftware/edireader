@@ -221,16 +221,16 @@ public class SerializableAttributes extends AttributesImpl implements Serializab
 
     @Override
     public String toString() {
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         int n = getLength();
         for (int i = 0; i < n; i++) {
             String name = getQName(i);
             String value = getValue(i);
             if (result.length() > 0) {
-                result += ", ";
+                result.append(", ");
             }
-            result += name + "=" + value;
+            result.append(name).append("=").append(value);
         }
 
         return "SerializableAttribute(" + n + "): " + result;
