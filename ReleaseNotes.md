@@ -1,5 +1,11 @@
 # Release Notes
 
+### 5.4.18 - June 2, 2019
+
+* Fix: A bug that resulted in an incorrect Id attribute on elements within a segment in a particular 
+combination of repeating elements, composite elements, and empty elements. The situation was not observed
+with X12 or EDIFACT documents, but in the HL7 parser available in the premium edition.
+
 ### 5.4.17 - April 2, 2019
 
 * Feature: Provide a plugin for 837 version 5010 in the Community Edition

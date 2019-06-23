@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2018 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  */
 package com.berryworks.edireader.tokenizer;
 
@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.io.*;
 import java.util.List;
 
+import static com.berryworks.edireader.tokenizer.Token.TokenType.*;
 import static org.junit.Assert.*;
 
 public class EDITokenizerTest {
@@ -31,7 +32,7 @@ public class EDITokenizerTest {
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals("abc00", token.getElementId());
         assertEquals(0, token.getIndex());
         assertEquals("abc", token.getValue());
@@ -44,7 +45,7 @@ public class EDITokenizerTest {
         //     ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals("def", token.getValue());
@@ -56,7 +57,7 @@ public class EDITokenizerTest {
         //         ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("abc02", token.getElementId());
         assertEquals(2, token.getIndex());
         assertEquals("ghi", token.getValue());
@@ -68,7 +69,7 @@ public class EDITokenizerTest {
         //            ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals("abc", token.getSegmentType());
         assertEquals(12, tokenizer.getCharCount());
@@ -78,7 +79,7 @@ public class EDITokenizerTest {
         //             ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
         assertEquals("j00", token.getElementId());
         assertEquals("j", token.getValue());
@@ -90,7 +91,7 @@ public class EDITokenizerTest {
         //              ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.EMPTY, token.getType());
+        assertEquals(EMPTY, token.getType());
         assertEquals("j01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals("j", token.getSegmentType());
@@ -101,7 +102,7 @@ public class EDITokenizerTest {
         //                ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("j02", token.getElementId());
         assertEquals(2, token.getIndex());
         assertEquals("kl", token.getValue());
@@ -113,7 +114,7 @@ public class EDITokenizerTest {
         //                   ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("j03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals("mnop", token.getValue());
@@ -125,7 +126,7 @@ public class EDITokenizerTest {
         //                       ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
         assertEquals(3, token.getIndex());
         assertEquals("j", token.getSegmentType());
         assertEquals(23, tokenizer.getCharCount());
@@ -135,7 +136,7 @@ public class EDITokenizerTest {
         //                        ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals("q00", token.getElementId());
         assertEquals(0, token.getIndex());
         assertEquals("q", token.getValue());
@@ -164,7 +165,7 @@ public class EDITokenizerTest {
         //                                  ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
         assertEquals("q", token.getSegmentType());
         assertEquals(34, tokenizer.getCharCount());
         assertEquals(11, tokenizer.getSegmentCharCount());
@@ -174,7 +175,7 @@ public class EDITokenizerTest {
         //                                   ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.END_OF_DATA, token.getType());
+        assertEquals(END_OF_DATA, token.getType());
         assertEquals(36, tokenizer.getCharCount());
         assertFalse(tokenizer.hasMoreTokens());
     }
@@ -193,7 +194,7 @@ public class EDITokenizerTest {
         // abc-def.ghij..k-l.m! ...
         // ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
         assertEquals(0, token.getIndex());
         assertEquals("abc", token.getValue());
@@ -203,7 +204,7 @@ public class EDITokenizerTest {
         // abc-def.ghij..k-l.m! ...
         //     ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -218,7 +219,7 @@ public class EDITokenizerTest {
         // abc-def.ghij..k-l.m! ...
         //         ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals(1, token.getSubIndex());
@@ -231,7 +232,7 @@ public class EDITokenizerTest {
         // abc-def.ghij..k-l.m! ...
         //              ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals(1, token.getIndex());
         assertEquals(2, token.getSubIndex());
         assertFalse(token.isFirst());
@@ -242,7 +243,7 @@ public class EDITokenizerTest {
         // abc-def.ghij..k-l.m! ...
         //               ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals(1, token.getIndex());
         assertEquals(3, token.getSubIndex());
         assertEquals("k", token.getValue());
@@ -255,7 +256,7 @@ public class EDITokenizerTest {
         // abc-def.ghij..k-l.m! ...
         //                 ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("l", token.getValue());
@@ -268,7 +269,7 @@ public class EDITokenizerTest {
         // ... -l.m!abc-..n.o-p-q...-r...!
         //        ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals(1, token.getSubIndex());
         assertEquals("m", token.getValue());
@@ -281,7 +282,7 @@ public class EDITokenizerTest {
         // ... -l.m!abc-..n.o-p-q...-r...!
         //         ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals(20, tokenizer.getCharCount());
         assertEquals(20, tokenizer.getSegmentCharCount());
@@ -289,7 +290,7 @@ public class EDITokenizerTest {
         // ... -l.m!abc-..n.o-p-q...-r...!
         //          ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc", token.getValue());
@@ -299,7 +300,7 @@ public class EDITokenizerTest {
         // ... -l.m!abc-..n.o-p-q...-r...!
         //              ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals(1, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertTrue(token.isFirst());
@@ -310,7 +311,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //          ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals(1, token.getIndex());
         assertEquals(1, token.getSubIndex());
         assertFalse(token.isFirst());
@@ -321,7 +322,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //           ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals(1, token.getIndex());
         assertEquals(2, token.getSubIndex());
         assertEquals("n", token.getValue());
@@ -334,7 +335,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //             ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals(1, token.getIndex());
         assertEquals(3, token.getSubIndex());
         assertEquals("o", token.getValue());
@@ -347,7 +348,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //               ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("p", token.getValue());
@@ -357,7 +358,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //                 ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals(3, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("q", token.getValue());
@@ -370,7 +371,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //                  ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals(3, token.getIndex());
         assertEquals(1, token.getSubIndex());
         assertFalse(token.isFirst());
@@ -381,7 +382,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //                   ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals(3, token.getIndex());
         assertEquals(2, token.getSubIndex());
         assertFalse(token.isFirst());
@@ -392,7 +393,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //                    ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals(3, token.getIndex());
         assertEquals(3, token.getSubIndex());
         assertFalse(token.isFirst());
@@ -403,7 +404,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //                      ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals(4, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("r", token.getValue());
@@ -416,7 +417,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //                       ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals(4, token.getIndex());
         assertEquals(1, token.getSubIndex());
         assertFalse(token.isFirst());
@@ -427,7 +428,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //                        ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals(4, token.getIndex());
         assertEquals(2, token.getSubIndex());
         assertFalse(token.isFirst());
@@ -438,7 +439,7 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //                         ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals(4, token.getIndex());
         assertEquals(3, token.getSubIndex());
         assertFalse(token.isFirst());
@@ -449,14 +450,14 @@ public class EDITokenizerTest {
         // ... abc-..n.o-p-q...-r...!
         //                          ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
         assertEquals(42, tokenizer.getCharCount());
         assertEquals(22, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
         //                           ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.END_OF_DATA, token.getType());
+        assertEquals(END_OF_DATA, token.getType());
         assertEquals(43, tokenizer.getCharCount());
     }
 
@@ -474,7 +475,7 @@ public class EDITokenizerTest {
         // abc-def!ghij!!
         // ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
         assertEquals(0, token.getIndex());
         assertEquals("abc", token.getValue());
@@ -484,7 +485,7 @@ public class EDITokenizerTest {
         // abc-def!ghij!!
         //     ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -499,7 +500,7 @@ public class EDITokenizerTest {
         // abc-def!ghij!
         //         ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -512,7 +513,7 @@ public class EDITokenizerTest {
         // abc-def!ghij!
         //              ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertTrue(token.isFirst());
@@ -535,7 +536,7 @@ public class EDITokenizerTest {
         // SEG|S1||S2||S2a||S3a^S3b|S4$
         // ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
         assertEquals("SEG", token.getValue());
 
@@ -628,7 +629,7 @@ public class EDITokenizerTest {
         // ID:ZZ+970101:1050+00000000000916++ORDERS'
         // ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
         assertEquals("UNB", token.getValue());
 
@@ -669,7 +670,7 @@ public class EDITokenizerTest {
         // ID:ZZ+970101:1050+00000000000916++ORDERS'
         // ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals(5, token.getIndex());
         assertEquals("00000000000916", token.getValue());
 
@@ -677,14 +678,14 @@ public class EDITokenizerTest {
         // ID:ZZ+970101:1050+00000000000916++ORDERS'
         // ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.EMPTY, token.getType());
+        assertEquals(EMPTY, token.getType());
         assertEquals(6, token.getIndex());
 
         // UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER
         // ID:ZZ+970101:1050+00000000000916++ORDERS'
         // ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals(7, token.getIndex());
         assertEquals("ORDERS", token.getValue());
 
@@ -692,13 +693,13 @@ public class EDITokenizerTest {
         // ID:ZZ+970101:1050+00000000000916++ORDERS'
         // ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
 
         // UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER
         // ID:ZZ+970101:1050+00000000000916++ORDERS'
         // ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.END_OF_DATA, token.getType());
+        assertEquals(END_OF_DATA, token.getType());
 
         // Now try a different style
 
@@ -712,7 +713,7 @@ public class EDITokenizerTest {
         // SEG|C1^^|C2^^|C3^^|C4||C5^\n
         // ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
         assertEquals("SEG", token.getValue());
         assertEquals("SEG00", token.getElementId());
@@ -769,12 +770,12 @@ public class EDITokenizerTest {
         // SEG|C1^^|C2^^|C3^^|C4||C5^\n
         // ^.
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
 
         // SEG|C1^^|C2^^|C3^^|C4||C5^\n
         // ^
         assertNotNull(token = tokenizer.nextToken());
-        assertEquals(Token.TokenType.END_OF_DATA, token.getType());
+        assertEquals(END_OF_DATA, token.getType());
     }
 
     /**
@@ -798,7 +799,7 @@ public class EDITokenizerTest {
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(token.getElementId(), "abc00");
         assertEquals(token.getIndex(), 0);
         assertEquals(token.getValue(), "abc");
@@ -808,7 +809,7 @@ public class EDITokenizerTest {
         // ^......
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals("def-ghi", token.getValue());
@@ -818,14 +819,14 @@ public class EDITokenizerTest {
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
         assertEquals(token.getSegmentType(), "abc");
 
         // abc-def=-ghi!j-=-kl-=!!q-123!
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(token.getIndex(), 0);
         assertEquals("j00", token.getElementId());
         assertEquals("j", token.getValue());
@@ -835,7 +836,7 @@ public class EDITokenizerTest {
         // ^....
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("j01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals("-kl", token.getValue());
@@ -845,7 +846,7 @@ public class EDITokenizerTest {
         // ^.
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("j02", token.getElementId());
         assertEquals(2, token.getIndex());
         assertEquals("!", token.getValue());
@@ -855,14 +856,14 @@ public class EDITokenizerTest {
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
         assertEquals(token.getSegmentType(), "j");
 
         // abc-def=-ghi!j-=-kl-=!!q-123!
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals("q00", token.getElementId());
         assertEquals(token.getIndex(), 0);
         assertEquals(token.getValue(), "q");
@@ -877,14 +878,14 @@ public class EDITokenizerTest {
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
         assertEquals(token.getSegmentType(), "q");
 
         // abc-def-ghi!j--kl-mnop!q-123-123x!
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.END_OF_DATA, token.getType());
+        assertEquals(END_OF_DATA, token.getType());
     }
 
     /**
@@ -908,7 +909,7 @@ public class EDITokenizerTest {
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(token.getElementId(), "abc00");
         assertEquals(token.getIndex(), 0);
         assertEquals(token.getValue(), "abc");
@@ -918,7 +919,7 @@ public class EDITokenizerTest {
         // ^.......
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals("def=F=ghi", token.getValue());
@@ -928,14 +929,14 @@ public class EDITokenizerTest {
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
         assertEquals("abc", token.getSegmentType());
 
         // abc-def=F=ghi!
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.END_OF_DATA, token.getType());
+        assertEquals(END_OF_DATA, token.getType());
 
     }
 
@@ -955,7 +956,7 @@ public class EDITokenizerTest {
         // ^..
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals("abc00", token.getElementId());
         assertEquals(0, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -966,7 +967,7 @@ public class EDITokenizerTest {
         //     ^..
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -977,7 +978,7 @@ public class EDITokenizerTest {
         //         ^..
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals(1, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc01", token.getElementId());
@@ -988,7 +989,7 @@ public class EDITokenizerTest {
         //             ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc02", token.getElementId());
@@ -999,7 +1000,7 @@ public class EDITokenizerTest {
         //               ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc02", token.getElementId());
@@ -1010,7 +1011,7 @@ public class EDITokenizerTest {
         //                  ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc02", token.getElementId());
@@ -1021,7 +1022,7 @@ public class EDITokenizerTest {
         //                     ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1032,7 +1033,7 @@ public class EDITokenizerTest {
         //                       ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1043,7 +1044,7 @@ public class EDITokenizerTest {
         //                   ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1054,7 +1055,7 @@ public class EDITokenizerTest {
         //                      ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(1, token.getSubIndex());
@@ -1065,7 +1066,7 @@ public class EDITokenizerTest {
         //                         ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1076,7 +1077,7 @@ public class EDITokenizerTest {
         //                          ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(1, token.getSubIndex());
@@ -1087,7 +1088,7 @@ public class EDITokenizerTest {
         //                            ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1098,7 +1099,7 @@ public class EDITokenizerTest {
         //                              ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(1, token.getSubIndex());
@@ -1109,7 +1110,7 @@ public class EDITokenizerTest {
         //                                 ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc04", token.getElementId());
         assertEquals(4, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1120,7 +1121,7 @@ public class EDITokenizerTest {
         //                                  ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals("abc04", token.getElementId());
         assertEquals(4, token.getIndex());
         assertEquals(1, token.getSubIndex());
@@ -1131,7 +1132,7 @@ public class EDITokenizerTest {
         //                                    ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("abc04", token.getElementId());
         assertEquals(4, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1142,7 +1143,7 @@ public class EDITokenizerTest {
         //                                      ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.EMPTY, token.getType());
+        assertEquals(EMPTY, token.getType());
         assertEquals("abc04", token.getElementId());
         assertEquals(4, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1153,7 +1154,7 @@ public class EDITokenizerTest {
         //                                       ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc04", token.getElementId());
         assertEquals(4, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1164,7 +1165,7 @@ public class EDITokenizerTest {
         //                                          ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc04", token.getElementId());
         assertEquals(4, token.getIndex());
         assertEquals(1, token.getSubIndex());
@@ -1175,7 +1176,7 @@ public class EDITokenizerTest {
         //                                             ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("abc05", token.getElementId());
         assertEquals(5, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1186,14 +1187,14 @@ public class EDITokenizerTest {
         //                                     ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
         assertEquals(token.getSegmentType(), "abc");
 
         // abc-def*ghi-j-k*l*m1:m2*:n2*:o2!
         //                                ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.END_OF_DATA, token.getType());
+        assertEquals(END_OF_DATA, token.getType());
 
     }
 
@@ -1213,7 +1214,7 @@ public class EDITokenizerTest {
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals("PID00", token.getElementId());
         assertEquals(0, token.getIndex());
         assertEquals("PID", token.getValue());
@@ -1223,7 +1224,7 @@ public class EDITokenizerTest {
         //    ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("PID01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals("1", token.getValue());
@@ -1233,7 +1234,7 @@ public class EDITokenizerTest {
         //           ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals("PID02", token.getElementId());
         assertEquals("HNE9133073356", token.getValue());
@@ -1245,7 +1246,7 @@ public class EDITokenizerTest {
         //                   ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals("PID02", token.getElementId());
         assertEquals("", token.getValue());
@@ -1257,7 +1258,7 @@ public class EDITokenizerTest {
         //                    ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals("PID02", token.getElementId());
         assertEquals("", token.getValue());
@@ -1269,7 +1270,7 @@ public class EDITokenizerTest {
         //                      ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals(2, token.getIndex());
         assertEquals("PID02", token.getElementId());
         assertEquals("NE", token.getValue());
@@ -1281,7 +1282,7 @@ public class EDITokenizerTest {
         //                         ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("PID02", token.getElementId());
         assertEquals(2, token.getIndex());
         assertEquals("PE", token.getValue());
@@ -1293,7 +1294,7 @@ public class EDITokenizerTest {
         //                            ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.EMPTY, token.getType());
+        assertEquals(EMPTY, token.getType());
         assertEquals("PID03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1306,7 +1307,7 @@ public class EDITokenizerTest {
         //                                 ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("PID03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(0, token.getSubIndex());
@@ -1319,7 +1320,7 @@ public class EDITokenizerTest {
         //                                      ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals("PID03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(1, token.getSubIndex());
@@ -1332,7 +1333,7 @@ public class EDITokenizerTest {
         //                                       ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals("PID03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals(2, token.getSubIndex());
@@ -1345,7 +1346,7 @@ public class EDITokenizerTest {
         //                                           ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("PID03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals("ST01K", token.getValue());
@@ -1357,7 +1358,7 @@ public class EDITokenizerTest {
         //                                               ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("PID03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals("MR", token.getValue());
@@ -1370,7 +1371,7 @@ public class EDITokenizerTest {
         //                                                     ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("PID03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals("00456789", token.getValue());
@@ -1382,7 +1383,7 @@ public class EDITokenizerTest {
         //                                                          ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals("PID03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals("", token.getValue());
@@ -1394,7 +1395,7 @@ public class EDITokenizerTest {
         //                                                           ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals(SUB_EMPTY, token.getType());
         assertEquals("PID03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals("", token.getValue());
@@ -1406,7 +1407,7 @@ public class EDITokenizerTest {
         //                                                              ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("PID03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals("ST01", token.getValue());
@@ -1418,7 +1419,7 @@ public class EDITokenizerTest {
         //                                                                  ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("PID03", token.getElementId());
         assertEquals(3, token.getIndex());
         assertEquals("PI", token.getValue());
@@ -1430,7 +1431,243 @@ public class EDITokenizerTest {
         //                                                                    ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_END, token.getType());
+        assertEquals(SEGMENT_END, token.getType());
+
+    }
+
+    @Test
+    public void testMoreRepetitionSpecialCases() throws Exception {
+
+        tokenizer = new EDITokenizer(new StringReader("PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||\n"));
+        assertNotNull(tokenizer);
+        tokenizer.setTerminator('\n');
+        tokenizer.setRelease('=');
+        tokenizer.setRepetitionSeparator('~');
+        tokenizer.setDelimiter('|');
+        tokenizer.setSubDelimiter('^');
+        Token token;
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        // ^
+        token = tokenizer.nextToken();
+        assertEquals(SEGMENT_START, token.getType());
+        assertEquals("PID00", token.getElementId());
+        assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("PID", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertTrue(token.isFirst());
+        assertFalse(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //    ^
+        token = tokenizer.nextToken();
+        assertEquals(SIMPLE, token.getType());
+        assertEquals("PID01", token.getElementId());
+        assertEquals(1, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("1", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertTrue(token.isFirst());
+        assertFalse(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //      ^
+        token = tokenizer.nextToken();
+        assertEquals(EMPTY, token.getType());
+        assertEquals(2, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("PID02", token.getElementId());
+        assertEquals("", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertTrue(token.isFirst());
+        assertTrue(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //       ^
+        token = tokenizer.nextToken();
+        assertEquals(SIMPLE, token.getType());
+        assertEquals(3, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("PID03", token.getElementId());
+        assertEquals("MN00708088", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertTrue(token.isFirst());
+        assertTrue(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                  ^
+        token = tokenizer.nextToken();
+        assertEquals(EMPTY, token.getType());
+        assertEquals(4, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("PID04", token.getElementId());
+        assertEquals("", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertTrue(token.isFirst());
+        assertTrue(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                   ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_ELEMENT, token.getType());
+        assertEquals(5, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("PID05", token.getElementId());
+        assertEquals("HOWL", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertTrue(token.isFirst());
+        assertFalse(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                        ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_ELEMENT, token.getType());
+        assertEquals("PID05", token.getElementId());
+        assertEquals(5, token.getIndex());
+        assertEquals(1, token.getSubIndex());
+        assertEquals("JOE", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertFalse(token.isFirst());
+        assertFalse(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                            ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_EMPTY, token.getType());
+        assertEquals("PID05", token.getElementId());
+        assertEquals(5, token.getIndex());
+        assertEquals(2, token.getSubIndex());
+        assertEquals("", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertFalse(token.isFirst());
+        assertFalse(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                             ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_EMPTY, token.getType());
+        assertEquals("PID05", token.getElementId());
+        assertEquals(5, token.getIndex());
+        assertEquals(3, token.getSubIndex());
+        assertEquals("", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertFalse(token.isFirst());
+        assertFalse(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                              ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_EMPTY, token.getType());
+        assertEquals("PID05", token.getElementId());
+        assertEquals(5, token.getIndex());
+        assertEquals(4, token.getSubIndex());
+        assertEquals("", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertFalse(token.isFirst());
+        assertFalse(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                               ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_EMPTY, token.getType());
+        assertEquals("PID05", token.getElementId());
+        assertEquals(5, token.getIndex());
+        assertEquals(5, token.getSubIndex());
+        assertEquals("", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertFalse(token.isFirst());
+        assertFalse(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                                ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_ELEMENT, token.getType());
+        assertEquals("PID05", token.getElementId());
+        assertEquals(5, token.getIndex());
+        assertEquals(6, token.getSubIndex());
+        assertEquals("L", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertFalse(token.isFirst());
+        assertTrue(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                                  ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_ELEMENT, token.getType());
+        assertEquals("PID05", token.getElementId());
+        assertEquals(5, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("I", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertTrue(token.isFirst());
+        assertFalse(token.isLast());
+
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                                    ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_ELEMENT, token.getType());
+        assertEquals("PID05", token.getElementId());
+        assertEquals(5, token.getIndex());
+        assertEquals(1, token.getSubIndex());
+        assertEquals("J", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertFalse(token.isFirst());
+        assertFalse(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                                     ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_EMPTY, token.getType());
+        assertEquals("PID05", token.getElementId());
+        assertEquals(5, token.getIndex());
+        assertEquals(2, token.getSubIndex());
+        assertEquals("", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertFalse(token.isFirst());
+        assertTrue(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                                       ^
+        token = tokenizer.nextToken();
+        assertEquals(EMPTY, token.getType());
+        assertEquals("PID06", token.getElementId());
+        assertEquals(6, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertTrue(token.isFirst());
+        assertTrue(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                                        ^
+        token = tokenizer.nextToken();
+        assertEquals(SIMPLE, token.getType());
+        assertEquals("PID07", token.getElementId());
+        assertEquals(7, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("19860522", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertTrue(token.isFirst());
+        assertTrue(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                                                 ^
+        token = tokenizer.nextToken();
+        assertEquals(SIMPLE, token.getType());
+        assertEquals("PID08", token.getElementId());
+        assertEquals(8, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals("F", token.getValue());
+        assertEquals("PID", token.getSegmentType());
+        assertTrue(token.isFirst());
+        assertTrue(token.isLast());
+
+        //PID|1||MN00708088||HOWL^JOE^^^^^L~I^J^||19860522|F||
+        //                                                                    ^
+        token = tokenizer.nextToken();
+        assertEquals(EMPTY, token.getType());
 
     }
 
@@ -1455,7 +1692,7 @@ public class EDITokenizerTest {
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SEGMENT_START, token.getType());
+        assertEquals(SEGMENT_START, token.getType());
         assertEquals(token.getElementId(), "abc00");
         assertEquals(token.getIndex(), 0);
         assertEquals(token.getValue(), "abc");
@@ -1467,7 +1704,7 @@ public class EDITokenizerTest {
         // ^
         token = tokenizer.nextToken();
         assertNotNull(token);
-        assertEquals(Token.TokenType.SIMPLE, token.getType());
+        assertEquals(SIMPLE, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals("def", token.getValue());

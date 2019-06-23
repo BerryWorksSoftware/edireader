@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -658,6 +658,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         currentToken.resetSubElementIndex();
                         currentToken.setType(Token.TokenType.EMPTY);
                 }
+                repetition = false;
                 currentToken.setLast(true);
                 currentToken.resetValue();
                 break;
