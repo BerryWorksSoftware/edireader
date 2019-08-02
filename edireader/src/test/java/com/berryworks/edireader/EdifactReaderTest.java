@@ -63,7 +63,77 @@ public class EdifactReaderTest {
                         "</interchange>" +
                         "</ediroot>",
                 writer.toString());
+    }
 
+    @Test
+    public void producesXmlForAnORDRSP_EANCOM_example() throws IOException, SAXException, TransformerException {
+        edifactReader = new EdifactReader();
+        StringReader reader = new StringReader(
+                "UNB+UNOB:1+SENDER1:16:ZZUK+RECEIVER1:01:ZZUK+071101:1701+131++ORDRSP++1++1'\n" +
+                        "UNH+ME000001+ORDRSP:D:01B:UN:EAN009'\n" +
+                        "BGM+231+ORSP12856+4'\n" +
+                        "DTM+137:20020330:102'\n" +
+                        "RFF+ON:652744'\n" +
+                        "DTM+171:20020325:102'\n" +
+                        "NAD+BY+5412345000013::9'\n" +
+                        "RFF+VA:452282'\n" +
+                        "NAD+SU+4012345500004::9'\n" +
+                        "RFF+VA:87765432'\n" +
+                        "LIN+1+5+3312345501102:SRV'\n" +
+                        "LIN+2+3+3312345501003:SRV'\n" +
+                        "PIA+1+ABC1234:SA'\n" +
+                        "IMD+C++TU::9'\n" +
+                        "QTY+21:48'\n" +
+                        "DTM+2:20020910:102'\n" +
+                        "MOA+203:26400'\n" +
+                        "PRI+AAA:550:CT:AAA'\n" +
+                        "PAC+4+1+CS'\n" +
+                        "TAX+7+VAT+++:::17.5+S'\n" +
+                        "MOA+124:4620'\n" +
+                        "TDT+20++30++31'\n" +
+                        "LIN+3+7+3312345501096:SRV'\n" +
+                        "UNS+S'\n" +
+                        "CNT+2:3'\n" +
+                        "UNT+25+ME000001'\n" +
+                        "UNZ+1+131'");
+        StringWriter writer = new StringWriter();
+        ediToxml(reader, writer, edifactReader);
+        assertEquals(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                        "<ediroot>" +
+                        "<interchange Standard=\"EDIFACT\" SyntaxId=\"UNOB\" SyntaxVersion=\"1\" Date=\"071101\" Time=\"1701\" Control=\"131\" ApplRef=\"ORDRSP\" AckRequest=\"1\" TestIndicator=\"1\" Decimal=\".\">" +
+                        "<sender><address Id=\"SENDER1\" Qual=\"16\" Extra=\"ZZUK\"/></sender>" +
+                        "<receiver><address Id=\"RECEIVER1\" Qual=\"01\" Extra=\"ZZUK\"/></receiver>" +
+                        "<group>" +
+                        "<transaction Control=\"ME000001\" DocType=\"ORDRSP\" Version=\"D\" Release=\"01B\" Agency=\"UN\" Association=\"EAN009\">" +
+                        "<segment Id=\"BGM\"><element Id=\"BGM01\">231</element><element Id=\"BGM02\">ORSP12856</element><element Id=\"BGM03\">4</element></segment>" +
+                        "<segment Id=\"DTM\"><element Id=\"DTM01\" Composite=\"yes\"><subelement Sequence=\"1\">137</subelement><subelement Sequence=\"2\">20020330</subelement><subelement Sequence=\"3\">102</subelement></element></segment>" +
+                        "<segment Id=\"RFF\"><element Id=\"RFF01\" Composite=\"yes\"><subelement Sequence=\"1\">ON</subelement><subelement Sequence=\"2\">652744</subelement></element></segment>" +
+                        "<segment Id=\"DTM\"><element Id=\"DTM01\" Composite=\"yes\"><subelement Sequence=\"1\">171</subelement><subelement Sequence=\"2\">20020325</subelement><subelement Sequence=\"3\">102</subelement></element></segment>" +
+                        "<segment Id=\"NAD\"><element Id=\"NAD01\">BY</element><element Id=\"NAD02\" Composite=\"yes\"><subelement Sequence=\"1\">5412345000013</subelement><subelement Sequence=\"3\">9</subelement></element></segment>" +
+                        "<segment Id=\"RFF\"><element Id=\"RFF01\" Composite=\"yes\"><subelement Sequence=\"1\">VA</subelement><subelement Sequence=\"2\">452282</subelement></element></segment>" +
+                        "<segment Id=\"NAD\"><element Id=\"NAD01\">SU</element><element Id=\"NAD02\" Composite=\"yes\"><subelement Sequence=\"1\">4012345500004</subelement><subelement Sequence=\"3\">9</subelement></element></segment>" +
+                        "<segment Id=\"RFF\"><element Id=\"RFF01\" Composite=\"yes\"><subelement Sequence=\"1\">VA</subelement><subelement Sequence=\"2\">87765432</subelement></element></segment>" +
+                        "<segment Id=\"LIN\"><element Id=\"LIN01\">1</element><element Id=\"LIN02\">5</element><element Id=\"LIN03\" Composite=\"yes\"><subelement Sequence=\"1\">3312345501102</subelement><subelement Sequence=\"2\">SRV</subelement></element></segment>" +
+                        "<segment Id=\"LIN\"><element Id=\"LIN01\">2</element><element Id=\"LIN02\">3</element><element Id=\"LIN03\" Composite=\"yes\"><subelement Sequence=\"1\">3312345501003</subelement><subelement Sequence=\"2\">SRV</subelement></element></segment>" +
+                        "<segment Id=\"PIA\"><element Id=\"PIA01\">1</element><element Id=\"PIA02\" Composite=\"yes\"><subelement Sequence=\"1\">ABC1234</subelement><subelement Sequence=\"2\">SA</subelement></element></segment>" +
+                        "<segment Id=\"IMD\"><element Id=\"IMD01\">C</element><element Id=\"IMD03\" Composite=\"yes\"><subelement Sequence=\"1\">TU</subelement><subelement Sequence=\"3\">9</subelement></element></segment>" +
+                        "<segment Id=\"QTY\"><element Id=\"QTY01\" Composite=\"yes\"><subelement Sequence=\"1\">21</subelement><subelement Sequence=\"2\">48</subelement></element></segment>" +
+                        "<segment Id=\"DTM\"><element Id=\"DTM01\" Composite=\"yes\"><subelement Sequence=\"1\">2</subelement><subelement Sequence=\"2\">20020910</subelement><subelement Sequence=\"3\">102</subelement></element></segment>" +
+                        "<segment Id=\"MOA\"><element Id=\"MOA01\" Composite=\"yes\"><subelement Sequence=\"1\">203</subelement><subelement Sequence=\"2\">26400</subelement></element></segment>" +
+                        "<segment Id=\"PRI\"><element Id=\"PRI01\" Composite=\"yes\"><subelement Sequence=\"1\">AAA</subelement><subelement Sequence=\"2\">550</subelement><subelement Sequence=\"3\">CT</subelement><subelement Sequence=\"4\">AAA</subelement></element></segment>" +
+                        "<segment Id=\"PAC\"><element Id=\"PAC01\">4</element><element Id=\"PAC02\">1</element><element Id=\"PAC03\">CS</element></segment>" +
+                        "<segment Id=\"TAX\"><element Id=\"TAX01\">7</element><element Id=\"TAX02\">VAT</element><element Id=\"TAX05\" Composite=\"yes\"><subelement Sequence=\"4\">17.5</subelement></element><element Id=\"TAX06\">S</element></segment>" +
+                        "<segment Id=\"MOA\"><element Id=\"MOA01\" Composite=\"yes\"><subelement Sequence=\"1\">124</subelement><subelement Sequence=\"2\">4620</subelement></element></segment>" +
+                        "<segment Id=\"TDT\"><element Id=\"TDT01\">20</element><element Id=\"TDT03\">30</element><element Id=\"TDT05\">31</element></segment>" +
+                        "<segment Id=\"LIN\"><element Id=\"LIN01\">3</element><element Id=\"LIN02\">7</element><element Id=\"LIN03\" Composite=\"yes\"><subelement Sequence=\"1\">3312345501096</subelement><subelement Sequence=\"2\">SRV</subelement></element></segment>" +
+                        "<segment Id=\"UNS\"><element Id=\"UNS01\">S</element></segment>" +
+                        "<segment Id=\"CNT\"><element Id=\"CNT01\" Composite=\"yes\"><subelement Sequence=\"1\">2</subelement><subelement Sequence=\"2\">3</subelement></element></segment>" +
+                        "</transaction>" +
+                        "</group>" +
+                        "</interchange>" +
+                        "</ediroot>",
+                writer.toString());
     }
 
     @Test
