@@ -13,8 +13,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import static com.berryworks.edireader.util.Conversion.ediToxml;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class EdifactReaderTest {
 
@@ -134,6 +133,23 @@ public class EdifactReaderTest {
                         "</interchange>" +
                         "</ediroot>",
                 writer.toString());
+    }
+
+    @Test
+    public void acceptsAnyLetterAsSyntaxIdentifierInUNO() throws IOException, SAXException, TransformerException {
+        edifactReader = new EdifactReader();
+        StringReader reader = new StringReader(
+                "UNB+UNOL:1+SENDER1:16:ZZUK+RECEIVER1:01:ZZUK+071101:1701+131++ORDRSP++1++1'\n" +
+                        "UNH+ME000001+ORDRSP:D:01B:UN:EAN009'\n" +
+                        "BGM+231+ORSP12856+4'\n" +
+                        "UNT+3+ME000001'\n" +
+                        "UNZ+1+131'");
+        StringWriter writer = new StringWriter();
+        ediToxml(reader, writer, edifactReader);
+        assertTrue(writer.toString().startsWith(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                        "<ediroot>" +
+                        "<interchange Standard=\"EDIFACT\" SyntaxId=\"UNOL\" SyntaxVersion=\"1\""));
     }
 
     @Test

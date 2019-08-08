@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -361,35 +361,35 @@ public class EdifactReader extends StandardReader {
         List<String> v = getTokenizer().nextCompositeElement();
         if (v != null) {
             int n = v.size();
-            Object obj = v.get(0);
-            if (obj != null) {
-                messageType = (String) obj;
+            String s = v.get(0);
+            if (s != null) {
+                messageType = s;
                 getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(), messageType);
             }
             if (n > 1) {
-                obj = v.get(1);
-                if (obj != null) {
-                    messageVersion = (String) obj;
+                s = v.get(1);
+                if (s != null) {
+                    messageVersion = s;
                     getDocumentAttributes().addCDATA(getXMLTags().getMessageVersion(), messageVersion);
                 }
             }
             if (n > 2) {
-                obj = v.get(2);
-                if (obj != null) {
-                    messageRelease = (String) obj;
+                s = v.get(2);
+                if (s != null) {
+                    messageRelease = s;
                     getDocumentAttributes().addCDATA(getXMLTags().getMessageRelease(), messageRelease);
                 }
             }
             if (n > 3) {
-                obj = v.get(3);
-                if (obj != null) {
-                    getDocumentAttributes().addCDATA(getXMLTags().getAgency(), (String) obj);
+                s = v.get(3);
+                if (s != null) {
+                    getDocumentAttributes().addCDATA(getXMLTags().getAgency(), s);
                 }
             }
             if (n > 4) {
-                obj = v.get(4);
-                if (obj != null) {
-                    getDocumentAttributes().addCDATA(getXMLTags().getAssociation(), (String) obj);
+                s = v.get(4);
+                if (s != null) {
+                    getDocumentAttributes().addCDATA(getXMLTags().getAssociation(), s);
                 }
             }
         }
@@ -619,8 +619,8 @@ public class EdifactReader extends StandardReader {
             throw new EDISyntaxException(
                     "Required UNB segment not found in EDIFACT interchange");
 
-        switch (buf[7]) {
-
+        char syntaxIdentifier = buf[7];
+        switch (syntaxIdentifier) {
             case 'B':
                 if (!delimiterDetermined && buf[3] == '+') {
                     // Strange data. It seems that there was no UNA to determine the syntax characters, and
@@ -653,22 +653,16 @@ public class EdifactReader extends StandardReader {
                     setRepetitionSeparator('\u0019');
                 }
                 // Deliberately fall into the sequence below
-            case 'A':
-            case 'C':
-            case 'D':
-            case 'E':
-            case 'F':
-            case 'G':
-            case 'H':
-            case 'I':
-            case 'J':
-            case 'K':
+            default:
+                if (!Character.isLetter(syntaxIdentifier)) {
+                    throw new EDISyntaxException("Unknown Syntax Identifier in UNB segment: " + new String(buf, 4, 4));
+                }
+
                 if (!delimiterDetermined)
                     setDelimiter('+');
 
                 if (buf[3] != getDelimiter())
-                    throw new EDISyntaxException(
-                            "Expected data element separator after UNB segment tag");
+                    throw new EDISyntaxException("Expected data element separator after UNB segment tag");
 
                 if (!terminatorDetermined)
                     setTerminator('\'');
@@ -683,11 +677,6 @@ public class EdifactReader extends StandardReader {
                     setRelease('?');
 
                 break;
-
-            default:
-                throw new EDISyntaxException(
-                        "Unknown Syntax Identifier in UNB segment: "
-                                + new String(buf, 4, 4));
         }
 
         if (!terminatorSuffixDetermined)
