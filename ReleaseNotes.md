@@ -1,5 +1,10 @@
 # Release Notes
 
+### 5.4.19 - August 8, 2019
+
+* Fix: With this change, the EDIFACT UNB interchange header segment allows the syntax identifier to contain
+any letter after the UNO instead of restricting to A-K. For example, UNB+UNOL:1+... is allowed.
+
 ### 5.4.18 - June 2, 2019
 
 * Fix: A bug that resulted in an incorrect Id attribute on elements within a segment in a particular 

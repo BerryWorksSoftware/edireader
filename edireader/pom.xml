@@ -11,7 +11,7 @@
     <parent>
         <groupId>com.berryworks</groupId>
         <artifactId>EDIReaderCommunityEdition</artifactId>
-        <version>5.4.18</version>
+        <version>5.4.19</version>
     </parent>
 
     <build>
