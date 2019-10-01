@@ -1,5 +1,11 @@
 # Release Notes
 
+### 5.4.20 - September 30, 2019
+
+* Feature: Support reset() on a PluginController to restore the internal state to its initial condition, allowing
+a controller to be reused for multiple documents of the same type. This is not used with X12 or EDIFACT, but comes
+in handy with TRADACOMS available with the premium edition.
+
 ### 5.4.19 - August 8, 2019
 
 * Fix: With this change, the EDIFACT UNB interchange header segment allows the syntax identifier to contain

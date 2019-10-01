@@ -57,20 +57,19 @@ public class PluginControllerImpl extends PluginController {
     protected final String standard;
     protected String documentType;
     protected Plugin plugin;
-    protected final LoopStack loopStack = new LoopStack();
+    protected LoopStack loopStack;
     protected final Tokenizer tokenizer;
 
     /**
      * Name of the current loop. The implicit outer loop is represented by the
      * name "/".
      */
-    protected String currentLoopName = "/";
+    protected String currentLoopName;
 
     /**
      * Descriptor that caused us to enter the loop we are now in.
      */
-    protected LoopDescriptor loopDescriptor = new LoopDescriptor(
-            currentLoopName, "", 0, "/");
+    protected LoopDescriptor loopDescriptor;
 
     /**
      * Number of loops that were closed as the result of the most recent
@@ -89,6 +88,19 @@ public class PluginControllerImpl extends PluginController {
     public PluginControllerImpl(String standard, Tokenizer tokenizer) {
         this.standard = standard;
         this.tokenizer = tokenizer;
+        reset();
+    }
+
+    /**
+     * Initialize the state.
+     *
+     * Also used to reset the state so that the same controller and plugin be used with another document
+     * of the same type.
+     */
+    public void reset() {
+        loopStack = new LoopStack();
+        currentLoopName = "/";
+        loopDescriptor = new LoopDescriptor(currentLoopName, "", 0, "/");
     }
 
     /**
