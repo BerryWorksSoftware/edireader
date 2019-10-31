@@ -39,11 +39,8 @@ public class UNHReader extends EdifactReader {
     }
 
     @Override
-    protected Token parseInterchange(Token token) throws SAXException,
-            IOException {
-        if (debug) {
-            trace("entering parseInterchange for the UNH variety (UNB/UNZ are omitted) of EDIFACT interchange");
-        }
+    protected Token parseInterchange(Token token) throws SAXException, IOException {
+        trace("entering parseInterchange for the UNH variety (UNB/UNZ are omitted) of EDIFACT interchange");
         getInterchangeAttributes().clear();
         getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), "EDIFACT-UNH");
         setGroupCount(0);
@@ -82,8 +79,7 @@ public class UNHReader extends EdifactReader {
     }
 
     @Override
-    protected Token impliedFunctionalGroup(Token token) throws SAXException,
-            IOException {
+    protected Token impliedFunctionalGroup(Token token) throws SAXException, IOException {
         getGroupAttributes().clear();
         startElement(getXMLTags().getGroupTag(), getGroupAttributes());
         while (true) {
@@ -109,6 +105,4 @@ public class UNHReader extends EdifactReader {
         endElement(getXMLTags().getGroupTag());
         return (token);
     }
-
-
 }

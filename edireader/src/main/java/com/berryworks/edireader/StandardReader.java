@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -24,10 +24,13 @@ import com.berryworks.edireader.error.*;
 import com.berryworks.edireader.plugin.PluginControllerFactory;
 import com.berryworks.edireader.plugin.PluginControllerFactoryInterface;
 import com.berryworks.edireader.tokenizer.Token;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 import static com.berryworks.edireader.util.FixedLength.isPresent;
@@ -38,6 +41,7 @@ import static com.berryworks.edireader.util.FixedLength.isPresent;
  * to factor and share common concepts and logic.
  */
 public abstract class StandardReader extends EDIReader {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
     /**
      * Interchange Control Number
@@ -328,8 +332,8 @@ public abstract class StandardReader extends EDIReader {
             // First close off any loops that were closed as the result of
             // the transition
             int toClose = pluginController.closedCount();
-            if (debug)
-                trace("closing " + toClose + " loops");
+
+            logger.debug("closing {} loops", toClose);
             for (; toClose > 0; toClose--)
                 endElement(getXMLTags().getLoopTag());
 

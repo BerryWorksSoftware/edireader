@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2017 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -22,8 +22,11 @@ package com.berryworks.edireader;
 
 import com.berryworks.edireader.util.BranchingWriter;
 import com.berryworks.edireader.util.DateTimeGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 import static com.berryworks.edireader.util.FixedLength.valueOf;
 
@@ -32,7 +35,7 @@ import static com.berryworks.edireader.util.FixedLength.valueOf;
  * transactions acknowledging the functional groups parsed by AnsiReader.
  */
 public class AnsiFAGenerator extends ReplyGenerator {
-
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     public static final String REGEX_CHARS_NEEDING_ESCAPE = "\\.[{(*+?^$|";
     public static final String REGEX_PREFIX = "\\";
 
@@ -69,12 +72,12 @@ public class AnsiFAGenerator extends ReplyGenerator {
         }
         skipFA = false;
 
-        if (EDIReader.debug) EDIReader.trace("generating FA envelope");
+        logger.debug("generating FA envelope");
         generateAcknowledgementPreamble(firstSegment, groupSender,
                 groupReceiver, groupDateLength, groupVersion);
 
         // Generate the ST 997
-        if (EDIReader.debug) EDIReader.trace("generating first part of 997");
+        logger.debug("generating first part of 997");
         thisDocumentCount++;
         ackStream.write("ST" + delimiter + "997" + delimiter + CONTROL_NUMBER_997);
         ackStream.write(terminatorWithSuffix);
@@ -96,7 +99,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
     }
 
     protected void generateTransactionAcknowledgmentUsing(String transactionCode, String controlNumber) {
-        if (EDIReader.debug) EDIReader.trace("generating AK2/AK5");
+        logger.debug("generating AK2/AK5");
         // Generate the AK2 segment to identify the transaction set
         ackStream.writeTrunk("AK2" + delimiter + transactionCode + delimiter
                 + controlNumber);
@@ -113,7 +116,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
         if (ackStream == null || skipFA)
             return;
 
-        if (EDIReader.debug) EDIReader.trace("generating AK9, SE");
+        logger.debug("generating AK9, SE");
         // For the trunk, generate the AK9 segment to designate acceptance of the entire
         // functional group.
         ackStream.writeTrunk("AK9" + delimiter + "A" + delimiter + docCount
@@ -137,7 +140,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
         if (ackStream == null || skipFA || !headerGenerated)
             return;
 
-        if (EDIReader.debug) EDIReader.trace("recasting 997 as negative");
+        logger.debug("recasting 997 as negative");
         if (!groupTrailerGenerated)
             generateGroupAcknowledgmentTrailer(0);
         generateAcknowledgementWrapup(false);
@@ -152,7 +155,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
         if (ackStream == null || skipFA)
             return;
 
-        if (EDIReader.debug) EDIReader.trace("generating GE, IEA");
+        logger.debug("generating GE, IEA");
         // Generate the GE to match the GS
         ackStream.write("GE" + delimiter + thisDocumentCount + delimiter + thisGroupControlNumber);
         ackStream.write(terminatorWithSuffix);

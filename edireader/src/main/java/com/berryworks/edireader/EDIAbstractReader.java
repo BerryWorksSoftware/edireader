@@ -580,6 +580,7 @@ public abstract class EDIAbstractReader implements XMLReader {
      *
      * @param msg to appear in trace
      */
+    @Deprecated
     public static void trace(String msg) {
         System.err.println(msg);
     }
@@ -589,6 +590,7 @@ public abstract class EDIAbstractReader implements XMLReader {
      *
      * @param e Exception to appear in trace
      */
+    @Deprecated
     protected static void trace(Exception e) {
         System.err.println(e.toString());
     }

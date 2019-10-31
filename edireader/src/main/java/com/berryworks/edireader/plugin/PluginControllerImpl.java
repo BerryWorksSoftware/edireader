@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2016 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -24,7 +24,10 @@ import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.Plugin;
 import com.berryworks.edireader.PluginController;
 import com.berryworks.edireader.tokenizer.Tokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,7 +55,7 @@ import static com.berryworks.edireader.Plugin.CURRENT;
  * @see com.berryworks.edireader.plugin.LoopDescriptor
  */
 public class PluginControllerImpl extends PluginController {
-
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     protected boolean enabled;
     protected final String standard;
     protected String documentType;
@@ -93,7 +96,7 @@ public class PluginControllerImpl extends PluginController {
 
     /**
      * Initialize the state.
-     *
+     * <p>
      * Also used to reset the state so that the same controller and plugin be used with another document
      * of the same type.
      */
@@ -118,9 +121,8 @@ public class PluginControllerImpl extends PluginController {
             return false;
 
         if (debug)
-            trace("considering segment " + segmentName + " while in loop "
-                    + loopDescriptor.getName() + " with stack "
-                    + loopStack.toString());
+            logger.debug("considering segment {} while in loop {} with stack {}",
+                    segmentName, loopDescriptor.getName(), loopStack.toString());
 
         boolean result = false;
 
@@ -131,7 +133,7 @@ public class PluginControllerImpl extends PluginController {
                 resultFlags);
 
         if (debug)
-            trace("considering segment " + segmentName + " using descriptor " + newDescriptor);
+            logger.debug("considering segment {} using descriptor {}", segmentName, newDescriptor);
 
         if (!validateDescriptor(newDescriptor, segmentName, tokenizer))
             return false;
@@ -139,15 +141,15 @@ public class PluginControllerImpl extends PluginController {
         // Set flags related to this descriptor.
         Set<String> flags = newDescriptor.getResultFlags();
         for (String flagName : flags) {
-            if (debug) trace("setting flag " + flagName);
+            logger.debug("setting flag {}", flagName);
             resultFlags.add(flagName);
         }
 
         String newLoopName = newDescriptor.getName();
         if (CURRENT.equals(newLoopName) && newDescriptor.getNestingLevel() == loopDescriptor.getNestingLevel()) {
-            if (debug) trace("resuming current loop without transition");
+            logger.debug("resuming current loop without transition");
         } else {
-            if (debug) trace("transitioning to level " + newDescriptor.getNestingLevel());
+            logger.debug("transitioning to level {}", newDescriptor.getNestingLevel());
             result = true;
 
             numberOfLoopsClosed = loopDescriptor.getNestingLevel() - newDescriptor.getNestingLevel();
@@ -167,7 +169,7 @@ public class PluginControllerImpl extends PluginController {
                 resumeLoop = false;
             }
 
-            if (debug) trace("closing " + numberOfLoopsClosed + " loops");
+            logger.debug("closing {} loops", numberOfLoopsClosed);
 
             if ((numberOfLoopsClosed < 0) || (numberOfLoopsClosed > loopDescriptor.getNestingLevel()))
                 throw new EDISyntaxException("Improper sequencing noted with segment " + segmentName, tokenizer);
@@ -177,22 +179,23 @@ public class PluginControllerImpl extends PluginController {
                 for (int i = 0; i < numberOfLoopsClosed; i++) {
                     LoopContext completedLoop = loopStack.pop();
                     validateCompletedLoop(completedLoop);
-                    if (debug) trace("popped " + completedLoop + " off the stack");
+                    logger.debug("popped {} off the stack", completedLoop);
                 }
             }
             loopDescriptor = newDescriptor;
             if (resumeLoop) {
                 if (debug)
-                    trace("resuming loop at level " + loopDescriptor.getNestingLevel() + " with name " + loopDescriptor.getName());
+                    logger.debug("resuming loop at level {} with name {} ",
+                            loopDescriptor.getNestingLevel(), loopDescriptor.getName());
                 if (loopDescriptor.getNestingLevel() == 0
                         && loopDescriptor.getName().length() > 1
                         && loopDescriptor.getName().startsWith("/")) {
-                    if (debug) trace("special legacy case: " + loopDescriptor);
+                    logger.debug("special legacy case: {}", loopDescriptor);
                     loopStack.setBottom(new LoopContext(loopDescriptor.getName().substring(1)));
                 }
             } else {
                 loopStack.push(createLoopContext(loopDescriptor.getName(), plugin, loopStack.toString()));
-                if (debug) trace("pushed " + loopDescriptor.getName() + " onto the stack");
+                logger.debug("pushed {} onto the stack", loopDescriptor.getName());
             }
         }
 

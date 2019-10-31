@@ -26,10 +26,13 @@ import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import com.berryworks.edireader.util.FixedLength;
 import com.berryworks.edireader.util.sax.QueuedContentHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_END;
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_START;
@@ -44,6 +47,8 @@ import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_START;
  * with parsing.
  */
 public class AnsiReader extends StandardReader {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
+
     /**
      * Group-level function code (for example: PO)
      */
@@ -383,7 +388,8 @@ public class AnsiReader extends StandardReader {
         getDocumentAttributes().clear();
         getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(),
                 documentType = getTokenizer().nextSimpleValue());
-        PluginController.setDebug(debug);
+
+        logger.info("Parsing {} transaction", documentType);
 
         String version = groupVersion;
         if (version.length() > 6) version = version.substring(0, 6);

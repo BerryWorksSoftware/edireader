@@ -23,9 +23,12 @@ package com.berryworks.edireader;
 import com.berryworks.edireader.error.ErrorMessages;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 import static com.berryworks.edireader.util.FixedLength.emptyIfNull;
@@ -41,6 +44,7 @@ import static com.berryworks.edireader.util.FixedLength.isPresent;
  * with parsing.
  */
 public class EdifactReader extends StandardReader {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     protected static final int ELEMENTS_IN_SEGMENT_MAXIMUM = 50;
     protected static final int ELEMENTS_IN_UNB_MAXIMUM = 30;
 
@@ -364,6 +368,7 @@ public class EdifactReader extends StandardReader {
             String s = v.get(0);
             if (s != null) {
                 messageType = s;
+                logger.info("Parsing {} message", messageType);
                 getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(), messageType);
             }
             if (n > 1) {

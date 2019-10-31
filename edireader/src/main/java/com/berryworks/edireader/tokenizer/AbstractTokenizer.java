@@ -20,19 +20,21 @@
 
 package com.berryworks.edireader.tokenizer;
 
-import com.berryworks.edireader.EDIAbstractReader;
-import com.berryworks.edireader.EDIReader;
 import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.error.ErrorMessages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
     protected enum State {
         EXPECTING_SEGMENT, IN_SEGMENT, IN_COMPOSITE
@@ -523,16 +525,6 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
         return recording.toString();
     }
 
-
-    /**
-     * Shorthand for EDIReader.trace(String)
-     *
-     * @param string text message to appear in trace
-     */
-    protected void trace(String string) {
-        EDIAbstractReader.trace(string);
-    }
-
     /**
      * Used in conjunction with setWriter to temporarily suspend and then resume
      * copying parsed data to an output destination.
@@ -550,8 +542,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      */
     public void setRecorder(boolean b) {
         recorderOn = b;
-        if (EDIReader.debug)
-            trace("recorder turned " + (b ? "on" : "off"));
+        logger.debug("recorder turned {}", (b ? "on" : "off"));
     }
 
     public AbstractTokenizer(Reader source) {

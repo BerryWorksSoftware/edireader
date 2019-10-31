@@ -37,12 +37,9 @@ public class EDIAck {
     final String inputFileName;
     final String outputFileName;
 
-    public EDIAck(String input, String output, boolean debug) {
+    public EDIAck(String input, String output) {
         inputFileName = input;
         outputFileName = output;
-        if (debug) {
-            EDIReader.setDebug(true);
-        }
 
         // Establish output file
         if (outputFileName == null) {
@@ -102,16 +99,12 @@ public class EDIAck {
     public static void main(String[] args) {
         String outputFileName = null;
         String inputFileName = null;
-        boolean debug = false;
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
                 case "-o":
                     if ((++i) >= args.length)
                         badArgs();
                     outputFileName = args[i];
-                    break;
-                case "-d":
-                    debug = true;
                     break;
                 default:
                     inputFileName = args[i];
@@ -121,7 +114,7 @@ public class EDIAck {
 
         if (inputFileName == null) badArgs();
 
-        EDIAck demo = new EDIAck(inputFileName, outputFileName, debug);
+        EDIAck demo = new EDIAck(inputFileName, outputFileName);
         demo.run();
     }
 

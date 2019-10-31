@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -21,15 +21,18 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.util.BranchingWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 /**
  * A delegate for generating an interchange containing some number of 999
  * transactions acknowledging the functional groups parsed by AnsiReader.
  */
 public class Ansi999Generator extends AnsiFAGenerator {
-
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     private static final String CONTROL_NUMBER_999 = "0001";
 
     public Ansi999Generator(final StandardReader ansiReader, final BranchingWriter ackStream) {
@@ -51,12 +54,12 @@ public class Ansi999Generator extends AnsiFAGenerator {
         }
         skipFA = false;
 
-        if (EDIReader.debug) EDIReader.trace("generating FA envelope");
+        logger.debug("generating FA envelope");
         generateAcknowledgementPreamble(firstSegment, groupSender,
                 groupReceiver, groupDateLength, groupVersion);
 
         // Generate the ST 999
-        if (EDIReader.debug) EDIReader.trace("generating first part of 999");
+        logger.debug("generating first part of 999");
         thisDocumentCount++;
         ackStream.write("ST" + delimiter + "999" + delimiter + CONTROL_NUMBER_999 + delimiter + groupVersion);
         ackStream.write(terminatorWithSuffix);
@@ -70,7 +73,7 @@ public class Ansi999Generator extends AnsiFAGenerator {
 
     @Override
     protected void generateTransactionAcknowledgmentUsing(String transactionCode, String controlNumber) {
-        if (EDIReader.debug) EDIReader.trace("generating AK2/IK5");
+        logger.debug("generating AK2/IK5");
         // Generate the AK2 segment to identify the transaction set
         ackStream.writeTrunk("AK2" + delimiter + transactionCode + delimiter
                 + controlNumber);

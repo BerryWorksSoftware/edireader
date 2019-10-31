@@ -20,10 +20,12 @@
 
 package com.berryworks.edireader.tokenizer;
 
-import com.berryworks.edireader.EDIReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.invoke.MethodHandles;
 import java.nio.CharBuffer;
 
 /**
@@ -36,15 +38,14 @@ import java.nio.CharBuffer;
  * This implementation of Tokenizer uses CharBuffer instead of char[].
  */
 public class EDITokenizer extends AbstractTokenizer {
-
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     public static final int BUFFER_SIZE = 1000;
     private final CharBuffer charBuffer = CharBuffer.wrap(new char[BUFFER_SIZE]);
 
     public EDITokenizer(Reader source) {
         super(source);
         charBuffer.flip();
-        if (EDIReader.debug)
-            trace("Constructed a new EDITokenizer");
+        logger.debug("Constructed a new EDITokenizer");
     }
 
     public EDITokenizer(Reader source, char[] preRead) {
@@ -114,8 +115,7 @@ public class EDITokenizer extends AbstractTokenizer {
 
         if (endOfFile) {
             cClass = CharacterClass.EOF;
-            if (EDIReader.debug)
-                trace("end-of-file encountered");
+            logger.debug("end-of-file encountered");
         } else {
             cChar = charBuffer.get();
             if (cChar == delimiter)
@@ -140,7 +140,7 @@ public class EDITokenizer extends AbstractTokenizer {
      * and not returned by getChars(n) or equivalant. Chars previewed
      * by lookahead(n) are not considered to have been used and therefore
      * are included among the chars returned by getBuffered.
-     *
+     * <p>
      * The use of getBuffered() is intended for only very special situations.
      * For example, if an input stream contains multiple fully independent EDI
      * interchanges -- perhaps from different EDI standards -- it is useful to
@@ -184,9 +184,7 @@ public class EDITokenizer extends AbstractTokenizer {
      * @throws IOException for problem reading EDI data
      */
     public char[] lookahead(int n) throws IOException {
-        if (EDIReader.debug)
-            trace("EDITokenizer.lookahead(" + n + ")");
-
+        logger.debug("EDITokenizer.lookahead({})", n);
         char[] rval = new char[n];
 
         // The 1st char is grabbed using the tokenizer's built-in
@@ -198,8 +196,7 @@ public class EDITokenizer extends AbstractTokenizer {
 
         // The minus 1 is because we have already filled the first char of the return value, so we only need n-1 more
         if (charBuffer.remaining() < n - 1) {
-            if (EDIReader.debug)
-                trace("Buffering more data to satisfy lookahead(" + n + ")");
+            logger.debug("Buffering more data to satisfy lookahead({}})", n);
             readUntilBufferProvidesAtLeast(n - 1);
         }
 
@@ -222,9 +219,8 @@ public class EDITokenizer extends AbstractTokenizer {
 
         int remaining;
         while ((remaining = charBuffer.remaining()) < needed) {
-            if (EDIReader.debug)
-                trace("Reading from input stream because at least " + needed +
-                        " chars are needed and only " + remaining + " are avilalble");
+            logger.debug("Reading from input stream because at least {} chars are needed and only {} are available",
+                    needed, remaining);
             charBuffer.compact();
             int n;
             while ((n = inputReader.read(charBuffer)) == 0) {
@@ -232,13 +228,11 @@ public class EDITokenizer extends AbstractTokenizer {
             charBuffer.flip();
 
             if (n < 0) {
-                if (EDIReader.debug)
-                    trace("Hit end of file on the input stream");
+                logger.debug("Hit end of file on the input stream");
                 endOfFile = true;
                 break;
             } else {
-                if (EDIReader.debug)
-                    trace("Number of chars read from input stream: " + n);
+                logger.debug("Number of chars read from input stream: {}", n);
             }
         }
     }

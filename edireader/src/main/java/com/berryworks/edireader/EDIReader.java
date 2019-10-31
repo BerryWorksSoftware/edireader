@@ -22,6 +22,8 @@ package com.berryworks.edireader;
 
 import com.berryworks.edireader.error.ErrorMessages;
 import com.berryworks.edireader.plugin.PluginControllerFactoryInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -29,6 +31,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 /**
  * Reads and parses an EDI interchange in any of the supported EDI standards.
@@ -41,23 +44,10 @@ import java.io.IOException;
  * little impact.
  */
 public class EDIReader extends EDIAbstractReader implements ErrorMessages {
-
-    /**
-     * If debug is set to true, then a parser may emit diagnostic information to
-     * System.err
-     */
-    public static boolean debug;
-
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     private EDIReader theReader;
-
     private XMLTags xmlTags;
-
     private PluginControllerFactoryInterface pluginControllerFactory;
-
-    public EDIReader() {
-        if (Boolean.getBoolean("edireader.debug"))
-            setDebug(true);
-    }
 
     /**
      * Read enough of the EDI interchange to establish which characters are used
@@ -83,13 +73,10 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
             if (theReader == null) {
                 theReader = EDIReaderFactory.createEDIReader(source, leftOver);
                 if (theReader == null) {
-                    if (debug)
-                        trace("EDIReader.parse(InputSource) hit end of input");
+                    logger.debug("EDIReader.parse(InputSource) hit end of input");
                     break;
                 }
-                if (debug)
-                    trace("EDIReader.parse(InputSource) created an EDIReader of type "
-                            + theReader.getClass().getName());
+                logger.info("Created an EDIReader of type {}", theReader.getClass().getName());
                 theReader.setExternalXmlDocumentStart(true);
                 theReader.setAcknowledgment(getAckStream());
                 theReader.setAlternateAcknowledgment(getAlternateAckStream());
@@ -133,22 +120,6 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
 
     public void setPluginControllerFactory(PluginControllerFactoryInterface pluginControllerFactory) {
         this.pluginControllerFactory = pluginControllerFactory;
-    }
-
-    /**
-     * Sets debug on or off.
-     *
-     * @param d true to turn debug on, false to turn it off
-     */
-    public static void setDebug(boolean d) {
-        if (debug && d) {
-            trace("Debug already on");
-        } else if (!debug && d) {
-            trace("Debug turned on");
-        } else if (debug) {
-            trace("Debug turned off");
-        }
-        debug = d;
     }
 
     protected void startXMLDocument() throws SAXException {
