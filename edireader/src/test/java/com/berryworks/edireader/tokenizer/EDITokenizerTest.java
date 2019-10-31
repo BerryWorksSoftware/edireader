@@ -617,7 +617,7 @@ public class EDITokenizerTest {
     public void testNextCompositeElements() throws Exception {
 
         tokenizer = new EDITokenizer(new StringReader(
-                "UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER ID:ZZ+970101:1050+00000000000916++ORDERS\'"));
+            "UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER ID:ZZ+970101:1050+00000000000916++ORDERS'"));
         assertNotNull(tokenizer);
         tokenizer.setTerminator('\'');
         tokenizer.setDelimiter('+');
@@ -1949,7 +1949,7 @@ public class EDITokenizerTest {
         assertEquals(testData.length(), n);
     }
 
-    class Emitter implements Runnable {
+    static class Emitter implements Runnable {
         final Writer writer;
         final String testData;
 

@@ -137,7 +137,7 @@ public class EDIReaderTest {
         assertEquals("", ediReader.getTerminatorSuffix());
     }
 
-    private class MyContentHandler extends EDIReaderSAXAdapter {
+    private static class MyContentHandler extends EDIReaderSAXAdapter {
         private int segmentCount, elementCount;
         private Attributes interchangeAttributes;
 

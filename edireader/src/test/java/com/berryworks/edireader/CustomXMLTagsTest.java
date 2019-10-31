@@ -74,7 +74,7 @@ public class CustomXMLTagsTest {
         xmlReader.parse(inputSource);
     }
 
-    class CustomXMLTags extends DefaultXMLTags {
+    static class CustomXMLTags extends DefaultXMLTags {
         public String getRootTag() {
             return "xediroot";
         }

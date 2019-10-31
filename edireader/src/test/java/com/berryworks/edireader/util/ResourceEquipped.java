@@ -4,7 +4,7 @@ import java.io.File;
 
 public class ResourceEquipped {
 
-    private String prefix;
+    private final String prefix;
     private File testdataPath, testresultsPath;
 
     protected ResourceEquipped() {

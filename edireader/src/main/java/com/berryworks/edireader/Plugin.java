@@ -229,10 +229,7 @@ public abstract class Plugin {
         int levelContext = descriptor.getLevelContext();
         if (debug) trace("checking level context " + levelContext);
         if (levelContext > -1) {
-            if (levelContext == currentLevel) {
-                return true;
-            }
-            return false;
+          return levelContext == currentLevel;
         }
 
         String candidateContext = descriptor.getLoopContext();

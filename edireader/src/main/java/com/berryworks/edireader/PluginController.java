@@ -59,9 +59,9 @@ public class PluginController {
      * Reset the state so that the same controller and plugin be used with another document of the same type.
      */
     public void reset() {
-    };
+    }
 
-    /**
+  /**
      * Return the name of a loop that was entered as the result of the most
      * recent transition.
      *

@@ -17,7 +17,7 @@ public class EDItoXMLTestCase extends XMLTestCase {
     public void testNothing() {
     }
 
-    private class MyTestCase extends VerboseTestCase {
+    private static class MyTestCase extends VerboseTestCase {
 
     }
 }

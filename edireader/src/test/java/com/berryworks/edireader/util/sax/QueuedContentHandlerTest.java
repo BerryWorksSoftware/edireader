@@ -75,9 +75,9 @@ public class QueuedContentHandlerTest {
         assertEquals("(A.empty:data)(B.empty)", wrappedHandler.getImage());
     }
 
-    private class SimpleHandler extends DefaultHandler {
+    private static class SimpleHandler extends DefaultHandler {
         private int elementCount;
-        private StringBuilder image = new StringBuilder();
+        private final StringBuilder image = new StringBuilder();
         private boolean hasData;
 
         public int getElementCount() {

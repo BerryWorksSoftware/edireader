@@ -100,7 +100,7 @@ public abstract class FixedLength {
     public static String spaces(int n) {
         if (n > DEFAULT_SPACES.length())
             throw new RuntimeException("Unexpectedly large number of spaces to generate: " + n);
-        return DEFAULT_SPACES.substring(0, n > 0 ? n : 0);
+        return DEFAULT_SPACES.substring(0, Math.max(n, 0));
     }
 
     /**
@@ -112,7 +112,7 @@ public abstract class FixedLength {
     public static String zeroes(int n) {
         if (n > DEFAULT_ZEROES.length())
             throw new RuntimeException("Unexpectedly large number of zeroes to generate: " + n);
-        return DEFAULT_ZEROES.substring(0, n > 0 ? n : 0);
+        return DEFAULT_ZEROES.substring(0, Math.max(n, 0));
     }
 
     /**

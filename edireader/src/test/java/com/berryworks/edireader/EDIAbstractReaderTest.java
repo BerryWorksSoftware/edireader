@@ -209,7 +209,7 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
         reader.setCopyWriter(w);
     }
 
-    class AnErrorHandler implements ErrorHandler {
+    static class AnErrorHandler implements ErrorHandler {
         public void error(SAXParseException exception) throws SAXException {
         }
 
@@ -221,7 +221,7 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
 
     }
 
-    class AnEntityResolver implements EntityResolver {
+    static class AnEntityResolver implements EntityResolver {
         public InputSource resolveEntity(String publicId, String systemId)
                 throws SAXException, IOException {
             return null;

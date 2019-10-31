@@ -154,7 +154,7 @@ public class SplitterTest extends VerboseTestCase {
 
         FileUtil.stringToFile(EDITestData.getAnsiInterchange(2), "toSplit.edi");
 
-        String args[] = new String[]{"toSplit.edi", "-o", getTestresultsPath() + "x12/split-0000.xml"};
+        String[] args = new String[]{"toSplit.edi", "-o", getTestresultsPath() + "x12/split-0000.xml"};
         EDISplitter.main(args);
 
         System.setOut(systemOut);
@@ -296,7 +296,7 @@ public class SplitterTest extends VerboseTestCase {
         protected final XMLReader reader;
         protected final InputSource inputSource;
         protected final InputStream inputStream;
-        private MyHandler finalHandler;
+        private final MyHandler finalHandler;
 
         public MyReaderThread(MyHandlerFactory handlerFactory, InputStream inputStream) {
             reader = new SAXObjectReader();
@@ -396,7 +396,7 @@ public class SplitterTest extends VerboseTestCase {
             sAXEventsRead++;
         }
 
-        public void characters(char ch[], int start, int length) throws SAXException {
+        public void characters(char[] ch, int start, int length) throws SAXException {
             charCount += length;
             sAXEventsRead++;
         }

@@ -276,7 +276,7 @@ public class SplittingHandler extends DefaultHandler {
         return handlerFactory;
     }
 
-    private class MyErrorHandler implements EDISyntaxExceptionHandler {
+    private static class MyErrorHandler implements EDISyntaxExceptionHandler {
 
         @Override
         public boolean process(RecoverableSyntaxException syntaxException) {

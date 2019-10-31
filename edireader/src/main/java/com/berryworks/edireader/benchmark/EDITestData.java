@@ -194,7 +194,7 @@ public class EDITestData implements Runnable {
         // Finally figure out how many filler segments it takes to form this
         // number of needed chars
         int f = needed / FILLER_FRAGMENT.length();
-        setFillerSegments((f < 0) ? 0 : f);
+        setFillerSegments(Math.max(f, 0));
     }
 }
 

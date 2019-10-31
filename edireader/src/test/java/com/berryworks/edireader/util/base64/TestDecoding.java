@@ -159,8 +159,8 @@ public class TestDecoding {
             Object o = it.next();
             if (o instanceof Integer) {
                 Integer iValue = (int) bytes[i];
-                char c[] = Conversion.toCharArray(new byte[]{(byte) iValue.intValue()});
-                char d[] = Conversion.toCharArray(new byte[]{((Integer) o).byteValue()});
+                char[] c = Conversion.toCharArray(new byte[]{(byte) iValue.intValue()});
+                char[] d = Conversion.toCharArray(new byte[]{((Integer) o).byteValue()});
                 assertEquals("mismatched values at index " + i + ":  (expecting char " + d[0] + " instead of " + c[0] + "): ", iValue, o);
             } else {
                 throw new RuntimeException("Type " + o.getClass().getName() + " not supported in assertEqualsByteArra()");

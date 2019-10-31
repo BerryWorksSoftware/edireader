@@ -42,9 +42,9 @@ public class EDIReaderSAXAdapterTest {
         assertEquals("Interchange.Group.Transaction.FirstSegment.Element.e:abc.SubElement.s:def.", adapter.getTrace());
     }
 
-    class MyAdapater extends EDIReaderSAXAdapter {
+    static class MyAdapater extends EDIReaderSAXAdapter {
 
-        private StringBuilder builder = new StringBuilder();
+        private final StringBuilder builder = new StringBuilder();
 
         public MyAdapater(XMLTags xmlTags) {
             super(xmlTags);

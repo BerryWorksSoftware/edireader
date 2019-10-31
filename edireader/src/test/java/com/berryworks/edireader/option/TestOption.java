@@ -49,7 +49,7 @@ public class TestOption {
         assertFalse(options.isSelected(Option.OPTION_C));
     }
 
-    private class MyOptions extends Options {
+    private static class MyOptions extends Options {
     }
 
 }

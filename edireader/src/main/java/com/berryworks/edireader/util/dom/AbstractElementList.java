@@ -32,7 +32,7 @@ public abstract class AbstractElementList extends AbstractSequentialList<Element
         throw new RuntimeException("size() not supported");
     }
 
-    protected abstract class AbstractElementListIterator implements ListIterator<Element> {
+    protected abstract static class AbstractElementListIterator implements ListIterator<Element> {
 
         public boolean hasPrevious() {
             throw new RuntimeException("hasPrevious() not implemented");

@@ -65,13 +65,13 @@ public class HtmlExtractCodes implements Runnable {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         final String directoryName = "/Users/mayberry/Documents/X12_February_2009/X12_February_2009/de/";
         File directory = new File(directoryName);
         if (!(directory.exists() && directory.isDirectory())) {
             throw new RuntimeException("Cannot find directoryName " + directoryName);
         }
-        File htmlFiles[] = directory.listFiles(new FilenameFilter() {
+        File[] htmlFiles = directory.listFiles(new FilenameFilter() {
             public boolean accept(File directory, String name) {
                 return name.endsWith(".HTM");
             }

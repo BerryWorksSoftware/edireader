@@ -165,7 +165,7 @@ public class EDIReaderWrapperTest {
         new EDIReaderWrapper();
     }
 
-    class MockEDIReader extends EDIReader {
+    static class MockEDIReader extends EDIReader {
 
         private String called = "|";
 

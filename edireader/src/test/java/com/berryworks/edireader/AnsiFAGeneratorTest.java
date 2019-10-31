@@ -78,7 +78,7 @@ public class AnsiFAGeneratorTest {
         ansiReader.setContentHandler(new DefaultHandler());
         ansiReader.setAcknowledgment(ackStream);
         String ansiInterchange = EDITestData.getAnsiInterchange();
-        ansiInterchange = ansiInterchange.replaceAll("58401    ", "58401");
+        ansiInterchange = ansiInterchange.replaceAll("58401 {4}", "58401");
         final InputSource inputSource = new InputSource(new StringReader(ansiInterchange));
         ansiReader.parse(inputSource);
         assertLikeness(TEST_DATA_997, output.toString());
@@ -130,7 +130,7 @@ public class AnsiFAGeneratorTest {
         return firstPart + "999999" + delimiter + "9999" + lastPart;
     }
 
-    class MyAnsiFAGenerator extends AnsiFAGenerator {
+    static class MyAnsiFAGenerator extends AnsiFAGenerator {
 
         public MyAnsiFAGenerator(StandardReader ansiReader, BranchingWriter ackStream) {
             super(ansiReader, ackStream);
