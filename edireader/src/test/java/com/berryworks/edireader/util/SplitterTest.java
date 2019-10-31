@@ -194,8 +194,8 @@ public class SplitterTest extends VerboseTestCase {
 
         public MyHandlerFactory() {
             try {
-                OutputStream pipedOutputStream = new PipedOutputStream();
-                pipedInputStream = new PipedInputStream((PipedOutputStream) pipedOutputStream);
+                PipedOutputStream pipedOutputStream = new PipedOutputStream();
+                pipedInputStream = new PipedInputStream(pipedOutputStream);
 //                outputStream = new FileOutputStream("queue.ser");
                 handler = new SAXObjectHandler(pipedOutputStream);
 

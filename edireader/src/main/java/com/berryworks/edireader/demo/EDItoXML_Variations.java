@@ -74,16 +74,16 @@ public class EDItoXML_Variations {
     public void run() {
 
         try {
-            XMLReader ediReader = new EDIReader();
+            EDIReader ediReader = new EDIReader();
 
             // Tell the ediReader if an xmlns="http://..." is desired
             if (namespaceEnabled) {
-                ((EDIReader) ediReader).setNamespaceEnabled(namespaceEnabled);
+                ediReader.setNamespaceEnabled(namespaceEnabled);
             }
 
             // Tell the ediReader to handle EDI syntax errors instead of aborting
             if (recover) {
-                ((EDIReader) ediReader).setSyntaxExceptionHandler(new IgnoreSyntaxExceptions());
+                ediReader.setSyntaxExceptionHandler(new IgnoreSyntaxExceptions());
             }
 
             // Establish the SAXSource

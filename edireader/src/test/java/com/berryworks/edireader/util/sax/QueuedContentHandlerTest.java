@@ -87,10 +87,10 @@ public class QueuedContentHandlerTest {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             elementCount++;
-            image.append("(" + localName);
+            image.append("(").append(localName);
             hasData = false;
             if (attributes != null) {
-                image.append("." + attributes);
+                image.append(".").append(attributes);
             }
         }
 

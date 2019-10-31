@@ -47,12 +47,8 @@ public class PluginPreparation {
             return;
         for (LoopDescriptor loop : loops) {
             String segmentName = loop.getFirstSegment();
-            List<LoopDescriptor> descriptorList = segmentMap.get(segmentName);
-            if (descriptorList == null) {
-                descriptorList = new ArrayList<>();
-                segmentMap.put(segmentName, descriptorList);
-            }
-            descriptorList.add(loop);
+          List<LoopDescriptor> descriptorList = segmentMap.computeIfAbsent(segmentName, k -> new ArrayList<>());
+          descriptorList.add(loop);
         }
     }
 

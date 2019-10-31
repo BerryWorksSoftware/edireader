@@ -53,7 +53,7 @@ public class XPathElements extends AbstractElementList {
         return new ElementListIterator(nodeList);
     }
 
-    private class ElementListIterator extends AbstractElementListIterator {
+    private static class ElementListIterator extends AbstractElementListIterator {
 
         private final NodeList nodeList;
         private Element next;

@@ -30,18 +30,8 @@ import java.util.Date;
  */
 public class DateTimeGenerator {
 
-    private static final ThreadLocal<DateFormat> yymmdd = new ThreadLocal<DateFormat>() {
-        @Override
-        protected DateFormat initialValue() {
-            return new SimpleDateFormat("yyMMdd");
-        }
-    };
-    private static final ThreadLocal<DateFormat> hhmm = new ThreadLocal<DateFormat>() {
-        @Override
-        protected DateFormat initialValue() {
-            return new SimpleDateFormat("HHmm");
-        }
-    };
+    private static final ThreadLocal<DateFormat> yymmdd = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyMMdd"));
+    private static final ThreadLocal<DateFormat> hhmm = ThreadLocal.withInitial(() -> new SimpleDateFormat("HHmm"));
 
     private static String dateTestValue = null;
     private static String timeTestValue = null;

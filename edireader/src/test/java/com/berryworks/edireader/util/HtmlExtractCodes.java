@@ -71,11 +71,7 @@ public class HtmlExtractCodes implements Runnable {
         if (!(directory.exists() && directory.isDirectory())) {
             throw new RuntimeException("Cannot find directoryName " + directoryName);
         }
-        File[] htmlFiles = directory.listFiles(new FilenameFilter() {
-            public boolean accept(File directory, String name) {
-                return name.endsWith(".HTM");
-            }
-        });
+        File[] htmlFiles = directory.listFiles((directory1, name) -> name.endsWith(".HTM"));
 
         final PrintStream printStream;
         try {
