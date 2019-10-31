@@ -1,5 +1,9 @@
 # Release Notes
 
+### 5.5.0 - October 31, 2019
+
+* Update: Use Java 8 instead of Java 7
+
 ### 5.4.20 - September 30, 2019
 
 * Feature: Support reset() on a PluginController to restore the internal state to its initial condition, allowing
