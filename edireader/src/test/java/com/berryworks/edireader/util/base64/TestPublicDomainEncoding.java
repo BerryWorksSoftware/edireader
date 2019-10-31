@@ -26,32 +26,6 @@ public class TestPublicDomainEncoding {
     }
 
     @Test
-    public void testEncoding() {
-
-        String string;
-
-        byteArray = new byte[]{0, 1, 2};
-        string = PublicDomainBase64.encodeBytes(byteArray);
-        assertEquals("AAEC", string);
-        assertTrue(equalsByteArray(PublicDomainBase64.decode(string)));
-
-        byteArray = new byte[]{0, 1, 2, 3};
-        string = PublicDomainBase64.encodeBytes(byteArray);
-        assertEquals("AAECAw==", string);
-        assertTrue(equalsByteArray(PublicDomainBase64.decode(string)));
-
-        byteArray = new byte[]{0, 1, 2, 3, 4};
-        string = PublicDomainBase64.encodeBytes(byteArray);
-        assertEquals("AAECAwQ=", string);
-        assertTrue(equalsByteArray(PublicDomainBase64.decode(string)));
-
-        byteArray = toByteArray(new int[]{253, 254, 255, 254, 253});
-        string = PublicDomainBase64.encodeBytes(byteArray);
-        assertEquals("/f7//v0=", string);
-        assertTrue(equalsByteArray(PublicDomainBase64.decode(string)));
-    }
-
-    @Test
     public void testConversion() {
 
         char[] charArray = new char[]{'a', 'b', 'c'};
