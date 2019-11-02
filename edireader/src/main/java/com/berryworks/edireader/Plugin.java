@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2016 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -24,7 +24,10 @@ import com.berryworks.edireader.plugin.LoopDescriptor;
 import com.berryworks.edireader.plugin.PluginControllerImpl;
 import com.berryworks.edireader.plugin.PluginPreparation;
 import com.berryworks.edireader.tokenizer.Tokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Set;
 
@@ -94,7 +97,7 @@ import java.util.Set;
  * @see com.berryworks.edireader.plugin.PluginPreparation
  */
 public abstract class Plugin {
-
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     public static final String ANY_CONTEXT = "*";
     public static final String INITIAL_CONTEXT = "/";
     public static final String CURRENT = ".";
@@ -177,7 +180,7 @@ public abstract class Plugin {
      */
     public LoopDescriptor query(String segment, String currentLoopStack, int currentLevel, Set<String> resultFlags) {
         LoopDescriptor result = null;
-        if (debug) trace("plugin query for segment " + segment);
+        logger.debug("plugin query for segment {}", segment);
 
         if (loops == null)
             return null;
@@ -187,10 +190,10 @@ public abstract class Plugin {
 
         List<LoopDescriptor> descriptorList = optimizedForm.getList(segment);
         if (descriptorList == null) {
-            if (debug) trace("No descriptors found");
+            logger.debug("No descriptors found");
             return null;
         }
-        if (debug) trace("Number of descriptors found: " + descriptorList.size());
+        logger.debug("Number of descriptors found: {}", descriptorList.size());
 
         for (LoopDescriptor descriptor : descriptorList) {
             boolean candidate = matchesWithoutRegardToFlagConditionals(descriptor, segment, currentLoopStack, currentLevel);
@@ -227,9 +230,9 @@ public abstract class Plugin {
             throw new RuntimeException("Internal error: optimized plugin structure invalid");
         }
         int levelContext = descriptor.getLevelContext();
-        if (debug) trace("checking level context " + levelContext);
+        logger.debug("checking level context {}", levelContext);
         if (levelContext > -1) {
-          return levelContext == currentLevel;
+            return levelContext == currentLevel;
         }
 
         String candidateContext = descriptor.getLoopContext();
@@ -237,28 +240,20 @@ public abstract class Plugin {
         if (currentLoopStack == null)
             currentLoopStack = "*";
         if (debug)
-            trace("checking loop context " + candidateContext + " with current loop stack " + currentLoopStack);
+            logger.debug("checking loop context {} with current loop stack {}", candidateContext, currentLoopStack);
 
         if (ANY_CONTEXT.equals(candidateContext)) {
             return true;
         } else if (candidateContext.startsWith("/")
                 && candidateContext.length() > 1
                 && currentLoopStack.startsWith(candidateContext)) {
-            if (debug) trace("startsWith satisfied");
+            logger.debug("startsWith satisfied");
             return true;
         } else if (currentLoopStack.endsWith(candidateContext)) {
             return true;
         }
 
         return false;
-    }
-
-    private void trace(String s) {
-        EDIReader.trace(s);
-    }
-
-    public void debug(boolean d) {
-        this.debug = d;
     }
 
     public static int getCount() {

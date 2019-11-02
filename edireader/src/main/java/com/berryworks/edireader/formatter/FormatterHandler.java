@@ -113,7 +113,6 @@ public class FormatterHandler extends EDIReaderSAXAdapter {
 
     @Override
     protected void endDocument(int charCount, int segmentCharCount) {
-        // System.err.println("endDocument");
         indent = "      ";
         String segment = readSegment((charCount - segmentCharCount), segmentCharCount);
         output.println(indent + segment);

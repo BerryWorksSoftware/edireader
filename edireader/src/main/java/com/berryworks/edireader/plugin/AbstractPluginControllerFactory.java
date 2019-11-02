@@ -20,17 +20,20 @@
 
 package com.berryworks.edireader.plugin;
 
-import com.berryworks.edireader.EDIAbstractReader;
 import com.berryworks.edireader.Plugin;
 import com.berryworks.edireader.PluginController;
 import com.berryworks.edireader.tokenizer.Tokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.berryworks.edireader.util.FixedLength.isPresent;
 
 public abstract class AbstractPluginControllerFactory implements PluginControllerFactoryInterface {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
     protected static final Map<String, Plugin> pluginCache = new HashMap<>();
     protected static boolean debug;
@@ -73,7 +76,7 @@ public abstract class AbstractPluginControllerFactory implements PluginControlle
         String key = standard + "_" + docType + "_" + docVersion + "_" + docRelease;
         if (pluginCache.containsKey(key)) {
             if (debug)
-                trace("plugin for " + key + " found in cache");
+                logger.debug("plugin for {} found in cache", key);
             lastPluginLoaded = key;
             result = pluginCache.get(key);
 
@@ -103,15 +106,6 @@ public abstract class AbstractPluginControllerFactory implements PluginControlle
         }
 
         return result;
-    }
-
-    /**
-     * Shorthand for EDIReader.trace(String)
-     *
-     * @param text message to appear in trace
-     */
-    protected static void trace(String text) {
-        EDIAbstractReader.trace(text);
     }
 
     @Override

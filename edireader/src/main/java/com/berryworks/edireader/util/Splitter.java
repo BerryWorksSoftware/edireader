@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2017 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -22,8 +22,8 @@ package com.berryworks.edireader.util;
 
 import com.berryworks.edireader.EDIReader;
 import com.berryworks.edireader.EDIReaderFactory;
-import com.berryworks.edireader.error.EDISyntaxExceptionHandler;
-import com.berryworks.edireader.error.RecoverableSyntaxException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -33,11 +33,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.invoke.MethodHandles;
 
-import static com.berryworks.edireader.demo.EDItoXML.NEW_LINE;
 import static com.berryworks.edireader.demo.EDItoXML.establishInput;
 
 public class Splitter {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     private static int count;
     private final InputSource inputSource;
     private EDIReader parser;
@@ -57,7 +58,7 @@ public class Splitter {
         char[] leftOver = null;
         while ((parser = EDIReaderFactory.createEDIReader(inputSource, leftOver)) != null) {
             String outputFilename = handlerFactory.generateName();
-            System.out.println(NEW_LINE + "EDI interchange written to: " + outputFilename);
+            logger.info("EDI interchange written to {}", outputFilename);
             parser.setContentHandler(new ScanningHandler());
             try (Writer writer = new FileWriter(outputFilename)) {
                 parser.setCopyWriter(writer);
@@ -105,20 +106,19 @@ public class Splitter {
             if (localName.startsWith(parser.getXMLTags().getInterchangeTag())) {
                 indent = "   ";
             } else if (localName.startsWith(parser.getXMLTags().getSenderTag())) {
-                System.out.println("  +Sender");
+                logger.debug("  +Sender");
                 indent = "     ";
             } else if (localName.startsWith(parser.getXMLTags().getReceiverTag())) {
-                System.out.println("  +Recipient");
+                logger.debug("  +Recipient");
                 indent = "     ";
             } else if (localName.startsWith(parser.getXMLTags().getAddressTag())) {
-                System.out.println("    +Address");
+                logger.debug("    +Address");
                 indent = "       ";
             } else if (localName.startsWith(parser.getXMLTags().getGroupTag())) {
-                System.out.println("  +Group");
+                logger.debug("  +Group");
                 indent = "     ";
-            } else if (localName.startsWith(parser.getXMLTags()
-                    .getDocumentTag())) {
-                System.out.println("    +Document");
+            } else if (localName.startsWith(parser.getXMLTags().getDocumentTag())) {
+                logger.debug("    +Document");
                 indent = "       ";
             } else {
                 // indent = " ";
@@ -126,20 +126,7 @@ public class Splitter {
             }
 
             for (int i = 0; i < atts.getLength(); i++)
-                System.out.println(indent + atts.getLocalName(i) + "="
-                        + atts.getValue(i));
-        }
-
-    }
-
-    private static class SyntaxExceptionHandler implements EDISyntaxExceptionHandler {
-        public boolean process(RecoverableSyntaxException syntaxException) {
-            System.out.println();
-            System.out.println("Recoverable syntax exception: " +
-                    syntaxException.getClass().getCanonicalName() +
-                    " - " + syntaxException.getMessage());
-            return true;
+                logger.debug("{}{}={}", indent, atts.getLocalName(i), atts.getValue(i));
         }
     }
-
 }

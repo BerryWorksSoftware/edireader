@@ -575,26 +575,6 @@ public abstract class EDIAbstractReader implements XMLReader {
         this.firstSegment = firstSegment;
     }
 
-    /**
-     * Write a message to a diagnostic trace stream.
-     *
-     * @param msg to appear in trace
-     */
-    @Deprecated
-    public static void trace(String msg) {
-        System.err.println(msg);
-    }
-
-    /**
-     * Write a message to a diagnostic trace stream.
-     *
-     * @param e Exception to appear in trace
-     */
-    @Deprecated
-    protected static void trace(Exception e) {
-        System.err.println(e.toString());
-    }
-
     @Override
     public String toString() {
         String lineBreak = System.getProperty("line.separator");

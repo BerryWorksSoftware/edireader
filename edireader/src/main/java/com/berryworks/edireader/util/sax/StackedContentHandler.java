@@ -21,11 +21,14 @@
 package com.berryworks.edireader.util.sax;
 
 import com.berryworks.edireader.EDIAttributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +39,7 @@ import java.util.List;
  * situations for processing the SAX output from EDIReader.
  */
 public class StackedContentHandler extends DefaultHandler {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     private final ContentHandler wrappedHandler;
     private final List<StackedItem> stack = new ArrayList<>();
 
@@ -77,10 +81,10 @@ public class StackedContentHandler extends DefaultHandler {
     }
 
     private void displayStack(String msg) {
-        System.out.println(msg + ", stack size " + stack.size());
+        logger.info("{}, stack size {}", msg, stack.size());
 
         for (StackedItem stackedItem : stack) {
-            System.out.println("..." + stackedItem.getLocalName());
+            logger.info("...{}", stackedItem.getLocalName());
         }
     }
 
@@ -99,7 +103,7 @@ public class StackedContentHandler extends DefaultHandler {
             if (tag.equals(stackedItem.getLocalName())) {
                 EDIAttributes attributes = stackedItem.getAttributes();
                 attributes.addCDATA(attributeName, data);
-//                System.out.println("Added " + attributeName + "=" + data + " to " + tag);
+                logger.trace("Added {}={} to {}", attributeName, data, tag);
                 return;
             }
         }

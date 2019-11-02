@@ -61,7 +61,7 @@ public class PluginController {
     public void reset() {
     }
 
-  /**
+    /**
      * Return the name of a loop that was entered as the result of the most
      * recent transition.
      *
@@ -119,41 +119,12 @@ public class PluginController {
     }
 
     /**
-     * Shorthand for EDIReader.trace(String)
-     *
-     * @param text message to appear in trace
-     */
-    protected static void trace(String text) {
-        EDIAbstractReader.trace(text);
-    }
-
-    /**
      * Returns true if the most recent loop transition was to resume an outer loop.
      *
      * @return true if the transition was to an outer loop
      */
     public boolean isResumed() {
         return false;
-    }
-
-    /**
-     * Sets debugging on or off.
-     *
-     * @param d - true to turn debug on, false to turn if off
-     */
-    public static void setDebug(boolean d) {
-        if (d)
-            if (debug)
-                PluginController.trace("PluginController: debug already on");
-            else {
-                PluginController.trace("PluginController: debug turn on");
-                debug = true;
-            }
-        else if (debug) {
-            PluginController.trace("PluginController: debug turn off");
-            debug = false;
-        }
-        // If it's already off, leave it off but keep quiet about it
     }
 
     public boolean isQueuedContentHandlerRequired() {

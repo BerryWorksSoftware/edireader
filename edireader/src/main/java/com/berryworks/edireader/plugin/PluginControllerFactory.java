@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -21,9 +21,14 @@
 package com.berryworks.edireader.plugin;
 
 import com.berryworks.edireader.Plugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 public class PluginControllerFactory extends AbstractPluginControllerFactory {
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     public static final String DEFAULT_EDIREADER_PLUGIN_PACKAGE = "com.berryworks.edireader.plugin";
 
     /**
@@ -38,23 +43,15 @@ public class PluginControllerFactory extends AbstractPluginControllerFactory {
         Plugin pluginFound = null;
         try {
             pluginFound = getInstance(standard, docType);
-            if (debug) {
-                pluginFound.debug(true);
-                trace("plugin found for document type " + docType + ": "
-                        + pluginFound.getDocumentName());
-            }
+            logger.debug("plugin found for document type {}: {}", docType, pluginFound.getDocumentName());
         } catch (ClassNotFoundException e) {
-            if (debug)
-                trace("plugin for " + docType + " not available");
+            logger.debug("plugin for {} not available", docType);
         } catch (InstantiationException e) {
-            if (debug)
-                trace("plugin for " + docType + " could not be instantiated");
+            logger.debug("plugin for {} could not be instantiated", docType);
         } catch (IllegalAccessException e) {
-            if (debug)
-                trace("plugin for " + docType + " caused IllegalAccessException" + e);
+            logger.debug("plugin for {} caused IllegalAccessException {}", docType, e.getMessage());
         } catch (Exception e) {
-            if (debug)
-                trace("plugin for " + docType + " threw Exception" + e);
+            logger.debug("plugin for {} threw {}", docType, e.getMessage());
         }
 
         return pluginFound;
@@ -74,12 +71,11 @@ public class PluginControllerFactory extends AbstractPluginControllerFactory {
     protected Plugin getInstance(String standard, String docType) throws Exception {
         Plugin instance;
         String pluginName = pluginPackage() + "." + standard + "_" + docType;
-        if (debug)
-            trace("attempting to load a plugin named " + pluginName);
-        Class pluginClass = Class.forName(pluginName);
-        if (debug)
-            trace("plugin loaded");
-        instance = (Plugin) pluginClass.newInstance();
+        logger.debug("attempting to load a plugin named {}", pluginName);
+        Class<Plugin> pluginClass = (Class<Plugin>) Class.forName(pluginName);
+
+        logger.debug("plugin loaded");
+        instance = pluginClass.newInstance();
         instance.prepare();
         lastPluginLoaded = pluginName;
         return instance;
@@ -98,11 +94,9 @@ public class PluginControllerFactory extends AbstractPluginControllerFactory {
         String packageName = System.getProperty("EDIREADER_PLUGIN_PACKAGE");
         if (packageName == null) {
             packageName = DEFAULT_EDIREADER_PLUGIN_PACKAGE;
-            if (debug)
-                trace("Plugin package defaults to " + packageName);
+            logger.debug("Plugin package defaults to {}", packageName);
         } else {
-            if (debug)
-                trace("Plugin package set by property to " + packageName);
+            logger.debug("Plugin package set by property to {}", packageName);
         }
         return packageName;
     }

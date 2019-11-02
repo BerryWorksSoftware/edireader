@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -21,11 +21,15 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.tokenizer.Token;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 public class UNHReader extends EdifactReader {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
     @Override
     public void preview() throws EDISyntaxException, IOException {
@@ -40,7 +44,7 @@ public class UNHReader extends EdifactReader {
 
     @Override
     protected Token parseInterchange(Token token) throws SAXException, IOException {
-        trace("entering parseInterchange for the UNH variety (UNB/UNZ are omitted) of EDIFACT interchange");
+        logger.debug("parsing interchange of the UNH variety (UNB/UNZ are omitted) of EDIFACT");
         getInterchangeAttributes().clear();
         getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), "EDIFACT-UNH");
         setGroupCount(0);
