@@ -112,7 +112,6 @@ public class PluginTest {
         plugin.loops = LOOP_DESCRIPTORS;
         plugin.prepare();
 
-        plugin.debug(false);
         response = plugin.query("seg1", null, -1, resultFlags);
         assertNotNull(response);
         assertEquals("A", response.getName());
@@ -152,7 +151,6 @@ public class PluginTest {
                 new LoopDescriptor("C", "seg3", 3, 2),
         };
         plugin.prepare();
-        plugin.debug(false);
 
         response = plugin.query("seg1", null, 0, resultFlags);
         assertNotNull(response);
@@ -181,7 +179,6 @@ public class PluginTest {
                 new LoopDescriptor("C", "seg3", 3, "/A/B"),
         };
         plugin.prepare();
-        plugin.debug(false);
 
         response = plugin.query("seg1", null, 0, resultFlags);
         assertNotNull(response);
@@ -241,8 +238,6 @@ public class PluginTest {
     @Test
     public void queryWithNullLoopsReturnsNull() {
         plugin.prepare();
-        plugin.debug(false);
-
         assertNull(plugin.query("seg1", null, -1, resultFlags));
     }
 

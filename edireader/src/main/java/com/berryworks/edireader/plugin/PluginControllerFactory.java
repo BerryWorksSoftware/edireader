@@ -43,7 +43,7 @@ public class PluginControllerFactory extends AbstractPluginControllerFactory {
         Plugin pluginFound = null;
         try {
             pluginFound = getInstance(standard, docType);
-            logger.debug("plugin found for document type {}: {}", docType, pluginFound.getDocumentName());
+            logger.info("Plugin found for document type {}: {}", docType, pluginFound.getDocumentName());
         } catch (ClassNotFoundException e) {
             logger.debug("plugin for {} not available", docType);
         } catch (InstantiationException e) {
