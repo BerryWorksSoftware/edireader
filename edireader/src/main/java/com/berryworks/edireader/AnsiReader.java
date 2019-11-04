@@ -20,7 +20,6 @@
 
 package com.berryworks.edireader;
 
-import com.berryworks.edireader.error.ErrorMessages;
 import com.berryworks.edireader.error.MissingMandatoryElementException;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
@@ -76,10 +75,10 @@ public class AnsiReader extends StandardReader {
 
 
     @Override
-    protected Token recognizeBeginning() throws IOException,
-            EDISyntaxException {
+    protected Token recognizeBeginning() throws IOException, EDISyntaxException {
         Token t = getTokenizer().nextToken();
         if ((t.getType() != SEGMENT_START) || (!t.valueEquals("ISA"))) {
+            logger.warn(X12_MISSING_ISA);
             throw new EDISyntaxException(X12_MISSING_ISA);
         }
         return t;
@@ -156,8 +155,11 @@ public class AnsiReader extends StandardReader {
 
         // Go ahead and parse tokens until the end of the segment is reached
         while (getTokenizer().nextToken().getType() != SEGMENT_END)
-            if (getTokenizer().getElementInSegmentCount() > 30)
-                throw new EDISyntaxException(TOO_MANY_ISA_FIELDS, getTokenizer());
+            if (getTokenizer().getElementInSegmentCount() > 30) {
+                EDISyntaxException se = new EDISyntaxException(TOO_MANY_ISA_FIELDS, getTokenizer());
+                logger.warn(se.getMessage());
+                throw se;
+            }
 
         if (isIncludeSyntaxCharacters()) {
             // Provide critical syntax characters as attributes
@@ -194,9 +196,11 @@ public class AnsiReader extends StandardReader {
         label:
         while (true) {
             token = getTokenizer().nextToken();
-            if (token.getType() != SEGMENT_START)
-                throw new EDISyntaxException(INVALID_BEGINNING_OF_SEGMENT,
-                        getTokenizer().getSegmentCount());
+            if (token.getType() != SEGMENT_START) {
+                EDISyntaxException se = new EDISyntaxException(INVALID_BEGINNING_OF_SEGMENT, getTokenizer().getSegmentCount());
+                logger.warn(se.getMessage());
+                throw se;
+            }
             String sType = token.getValue();
             switch (sType) {
                 case "GS":
@@ -209,8 +213,9 @@ public class AnsiReader extends StandardReader {
                 case "IEA":
                     break label;
                 default:
-                    throw new EDISyntaxException(UNEXPECTED_SEGMENT_IN_CONTEXT,
-                            "IEA or GS", sType, getTokenizer());
+                    EDISyntaxException se = new EDISyntaxException(UNEXPECTED_SEGMENT_IN_CONTEXT, "IEA or GS", sType, getTokenizer());
+                    logger.warn(se.getMessage());
+                    throw se;
             }
         }
 
@@ -259,10 +264,11 @@ public class AnsiReader extends StandardReader {
         String field = getTokenizer().nextSimpleValue();
 
         if (field.length() != expectedLength) {
-            if (enforce)
-                throw new EDISyntaxException(ISA_FIELD_WIDTH, expectedLength, field
-                        .length(), getTokenizer());
-            else
+            if (enforce) {
+                EDISyntaxException se = new EDISyntaxException(ISA_FIELD_WIDTH, expectedLength, field.length(), getTokenizer());
+                logger.warn(se.getMessage());
+                throw se;
+            } else
                 field = FixedLength.valueOf(field, expectedLength);
         }
 
@@ -302,10 +308,14 @@ public class AnsiReader extends StandardReader {
                         new MissingMandatoryElementException(MANDATORY_ELEMENT_MISSING,
                                 "at least one non-space character", "(empty)", getTokenizer());
                 setSyntaxException(missingMandatoryElementException);
-                if (!recover(missingMandatoryElementException))
+                if (!recover(missingMandatoryElementException)) {
+                    logger.warn(missingMandatoryElementException.getMessage());
                     throw missingMandatoryElementException;
-            } else
+                }
+            } else {
+                logger.warn(e.getMessage());
                 throw e;
+            }
 
         }
         getGroupAttributes().addCDATA(getXMLTags().getTime(), value);
@@ -338,10 +348,11 @@ public class AnsiReader extends StandardReader {
         label:
         while (true) {
             token = getTokenizer().nextToken();
-            if (token.getType() != SEGMENT_START)
-                throw new EDISyntaxException(INVALID_BEGINNING_OF_SEGMENT,
-                        getTokenizer().getSegmentCount());
-
+            if (token.getType() != SEGMENT_START) {
+                EDISyntaxException se = new EDISyntaxException(INVALID_BEGINNING_OF_SEGMENT, getTokenizer().getSegmentCount());
+                logger.warn(se.getMessage());
+                throw se;
+            }
             String sType = token.getValue();
             switch (sType) {
                 case "ST":
@@ -351,8 +362,9 @@ public class AnsiReader extends StandardReader {
                 case "GE":
                     break label;
                 default:
-                    throw new EDISyntaxException(UNEXPECTED_SEGMENT_IN_CONTEXT,
-                            "GE or ST", sType, getTokenizer());
+                    EDISyntaxException se = new EDISyntaxException(UNEXPECTED_SEGMENT_IN_CONTEXT, "GE or ST", sType, getTokenizer());
+                    logger.warn(se.getMessage());
+                    throw se;
             }
         }
 
@@ -417,9 +429,11 @@ public class AnsiReader extends StandardReader {
 
         String segmentType;
         while (!(segmentType = getTokenizer().nextSegment()).equals("SE")) {
-            if (isEnvelopeSegment(segmentType))
-                throw new EDISyntaxException(ErrorMessages.SE_MISSING, getTokenizer());
-
+            if (isEnvelopeSegment(segmentType)) {
+                EDISyntaxException se = new EDISyntaxException(SE_MISSING, getTokenizer());
+                logger.warn(se.getMessage());
+                throw se;
+            }
             segCount++;
 
             if ("BIN".equals(segmentType)) {
@@ -491,9 +505,13 @@ public class AnsiReader extends StandardReader {
             lengthField = parseStringFromNextElement();
             length = Integer.parseInt(lengthField);
         } catch (EDISyntaxException e) {
-            throw new EDISyntaxException(ErrorMessages.MISSING_BIN_LENGTH, getTokenizer());
+            EDISyntaxException se = new EDISyntaxException(MISSING_BIN_LENGTH, getTokenizer());
+            logger.warn(se.getMessage());
+            throw se;
         } catch (NumberFormatException e) {
-            throw new EDISyntaxException("BIN object length must be numeric instead of " + lengthField, getTokenizer());
+            EDISyntaxException se = new EDISyntaxException("BIN object length must be numeric instead of " + lengthField, getTokenizer());
+            logger.warn(se.getMessage());
+            throw se;
         }
 
         char[] dataObject = getTokenizer().getChars(length);
@@ -517,18 +535,23 @@ public class AnsiReader extends StandardReader {
      */
     @Override
     public void preview() throws EDISyntaxException, IOException {
-        if (isPreviewed())
+        if (isPreviewed()) {
+            logger.warn(INTERNAL_ERROR_MULTIPLE_EOFS);
             throw new EDISyntaxException(INTERNAL_ERROR_MULTIPLE_EOFS);
-
+        }
         // No release character is supported for ANSI X.12
         setRelease(-1);
 
         char[] buf = getTokenizer().lookahead(128);
-        if ((buf == null) || (buf.length < 128))
+        if ((buf == null) || (buf.length < 128)) {
+            logger.warn(INCOMPLETE_X12);
             throw new EDISyntaxException(INCOMPLETE_X12);
+        }
 
-        if (!(buf[0] == 'I' && buf[1] == 'S' && buf[2] == 'A'))
+        if (!(buf[0] == 'I' && buf[1] == 'S' && buf[2] == 'A')) {
+            logger.warn(X12_MISSING_ISA);
             throw new EDISyntaxException(X12_MISSING_ISA);
+        }
 
         // ISA*
         // ...^ (offset 3)
@@ -536,16 +559,20 @@ public class AnsiReader extends StandardReader {
         setDelimiter(c);
 
         int indexOf16thFieldSeparator = indexOf(c, buf, 16);
-        if (indexOf16thFieldSeparator < 0)
+        if (indexOf16thFieldSeparator < 0) {
+            logger.warn(ISA_SEGMENT_HAS_TOO_FEW_FIELDS);
             throw new EDISyntaxException(ISA_SEGMENT_HAS_TOO_FEW_FIELDS);
+        }
         c = buf[indexOf16thFieldSeparator + 1];
         if (isAcceptable(c))
             setSubDelimiter(c);
         c = buf[indexOf16thFieldSeparator + 2];
         if (isAcceptable(c))
             setTerminator(c);
-        else
+        else {
+            logger.warn(INVALID_SEGMENT_TERMINATOR);
             throw new EDISyntaxException(INVALID_SEGMENT_TERMINATOR);
+        }
         setTerminatorSuffix(findTerminatorSuffix(buf, indexOf16thFieldSeparator + 3, 128));
 
         // Determine the repetition character. This changed in 4.6.5 to support repetition chars
