@@ -171,10 +171,11 @@ public class PluginControllerImpl extends PluginController {
 
             logger.debug("closing {} loops", numberOfLoopsClosed);
 
-            if ((numberOfLoopsClosed < 0) || (numberOfLoopsClosed > loopDescriptor.getNestingLevel()))
-                throw new EDISyntaxException("Improper sequencing noted with segment " + segmentName, tokenizer);
-
-            else if (numberOfLoopsClosed > 0) {
+            if ((numberOfLoopsClosed < 0) || (numberOfLoopsClosed > loopDescriptor.getNestingLevel())) {
+                EDISyntaxException se = new EDISyntaxException("Improper sequencing noted with segment " + segmentName, tokenizer);
+                logger.warn(se.getMessage());
+                throw se;
+            } else if (numberOfLoopsClosed > 0) {
                 // Pop that many off the tack
                 for (int i = 0; i < numberOfLoopsClosed; i++) {
                     LoopContext completedLoop = loopStack.pop();

@@ -203,22 +203,29 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
         Token t = nextToken();
         switch (t.getType()) {
             case EMPTY:
-                if (required)
-                    throw new EDISyntaxException("Mandatory element missing in "
+                if (required) {
+                    EDISyntaxException se = new EDISyntaxException("Mandatory element missing in "
                             + t.getSegmentType() + " segment", this);
+                    logger.warn(se.getMessage());
+                    throw se;
+                }
                 break;
             case SEGMENT_END:
-                if (required)
-                    throw new EDISyntaxException("Mandatory element missing in "
+                if (required) {
+                    EDISyntaxException se = new EDISyntaxException("Mandatory element missing in "
                             + t.getSegmentType() + " segment", this);
-                else if (returnNullAtSegmentEnd)
+                    logger.warn(se.getMessage());
+                    throw se;
+                } else if (returnNullAtSegmentEnd)
                     return null;
                 else
                     break;
             case SIMPLE:
                 break;
             default:
-                throw new EDISyntaxException(EXPECTED_SIMPLE_TOKEN, this);
+                EDISyntaxException se = new EDISyntaxException(EXPECTED_SIMPLE_TOKEN, this);
+                logger.warn(se.getMessage());
+                throw se;
         }
         return t.getValue();
     }
@@ -263,16 +270,18 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
         try {
             i = Integer.parseInt(nextSimpleValue());
         } catch (NumberFormatException e) {
-            throw new EDISyntaxException(DIGITS_ONLY, this);
+            EDISyntaxException se = new EDISyntaxException(DIGITS_ONLY, this);
+            logger.warn(se.getMessage());
+            throw se;
         }
         return i;
     }
 
     /**
      * Parses the next token expecting to find a composite element - one
-     * composed of subelements separated by the subElementDelimiter.
+     * composed of sub-elements separated by the subElementDelimiter.
      *
-     * @return subelements as a Vector of Strings
+     * @return sub-elements as a Vector of Strings
      * @throws IOException                                 for problem reading EDI data
      * @throws com.berryworks.edireader.EDISyntaxException if invalid EDI is detected
      */
@@ -314,7 +323,9 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         return null;
                     break loop;
                 default:
-                    throw new EDISyntaxException(INVALID_COMPOSITE, this);
+                    EDISyntaxException se = new EDISyntaxException(INVALID_COMPOSITE, this);
+                    logger.warn(se.getMessage());
+                    throw se;
             }
         }
         return result;
@@ -381,12 +392,18 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             Token.TokenType tokenType = t.getType();
             if (tokenType == Token.TokenType.SEGMENT_START)
                 break;
-            if (tokenType == Token.TokenType.END_OF_DATA)
-                throw new EDISyntaxException(UNEXPECTED_EOF, this);
-            if (++i > 30)
-                throw new EDISyntaxException("Too many fields for "
+            if (tokenType == Token.TokenType.END_OF_DATA) {
+                EDISyntaxException se = new EDISyntaxException(UNEXPECTED_EOF, this);
+                logger.warn(se.getMessage());
+                throw se;
+            }
+            if (++i > 30) {
+                EDISyntaxException se = new EDISyntaxException("Too many fields for "
                         + t.getSegmentType()
                         + " segment (Segment terminator problem?)", this);
+                logger.warn(se.getMessage());
+                throw se;
+            }
         }
         return t.getSegmentType();
     }
@@ -409,9 +426,11 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             Token.TokenType tokenType = t.getType();
             if ((tokenType == Token.TokenType.SEGMENT_END) || (tokenType == Token.TokenType.END_OF_DATA))
                 break;
-            if (++i > 30)
-                throw new EDISyntaxException("Too many fields in "
-                        + t.getSegmentType() + " segment", this);
+            if (++i > 30) {
+                EDISyntaxException se = new EDISyntaxException("Too many fields in " + t.getSegmentType() + " segment", this);
+                logger.warn(se.getMessage());
+                throw se;
+            }
         }
         return t;
     }
@@ -443,8 +462,11 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                     // that character would naturally be.
                     getChar();
                 case DATA:
-                    if (--limit == 0)
-                        throw new EDISyntaxException(ELEMENT_TOO_LONG, this);
+                    if (--limit == 0) {
+                        EDISyntaxException se = new EDISyntaxException(ELEMENT_TOO_LONG, this);
+                        logger.warn(se.getMessage());
+                        throw se;
+                    }
                     currentToken.append(cChar);
                     break;
                 case SUB_DELIMITER:
@@ -493,8 +515,12 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
         char[] result = new char[n];
         for (int i = 0; i < n; i++) {
             getChar();
-            if (cClass == CharacterClass.EOF)
-                throw new EDISyntaxException("Encountered end of data unexpectedly after reading " + i + " characters of an expected " + n + " character sequence");
+            if (cClass == CharacterClass.EOF) {
+                EDISyntaxException se = new EDISyntaxException("Encountered end of data unexpectedly after reading " +
+                        i + " characters of an expected " + n + " character sequence");
+                logger.warn(se.getMessage());
+                throw se;
+            }
             result[i] = cChar;
         }
         return result;
@@ -593,7 +619,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         currentToken.incrementSubElementIndex();
                         currentToken.setValue(cChar);
                         if (scanData() != CharacterClass.SUB_DELIMITER) {
-                            // We hit something that marks the end of a series of subelements
+                            // We hit something that marks the end of a series of sub-elements
                             state = State.IN_SEGMENT;
                             currentToken.setLast(true);
                         }
