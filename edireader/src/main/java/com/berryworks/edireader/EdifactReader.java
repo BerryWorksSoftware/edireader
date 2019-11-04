@@ -64,18 +64,23 @@ public class EdifactReader extends StandardReader {
                 if (t.getType() == Token.TokenType.SEGMENT_START) {
                     segType = t.getValue();
                 } else {
-                    throw new EDISyntaxException(INVALID_UNA, getTokenizer());
+                    EDISyntaxException se = new EDISyntaxException(INVALID_UNA, getTokenizer());
+                    logger.warn(se.getMessage());
+                    throw se;
                 }
             }
             if (!"UNB".equals(segType)) {
                 if (witnessedUNA) {
-                    throw new EDISyntaxException(
-                            "Mandatory UNB segment was not recognized after UNA. Terminator problem?");
+                    String msg = "Mandatory UNB segment was not recognized after UNA. Terminator problem?";
+                    logger.warn(msg);
+                    throw new EDISyntaxException(msg);
                 }
-                throw new EDISyntaxException(FIRST_SEGMENT_MUST_BE_UNA_OR_UNB,
-                        getTokenizer());
+                EDISyntaxException se = new EDISyntaxException(FIRST_SEGMENT_MUST_BE_UNA_OR_UNB, getTokenizer());
+                logger.warn(se.getMessage());
+                throw se;
             }
         } else {
+            logger.warn(FIRST_SEGMENT_MUST_BE_UNA_OR_UNB);
             throw new EDISyntaxException(FIRST_SEGMENT_MUST_BE_UNA_OR_UNB);
         }
         return t;
@@ -166,8 +171,9 @@ public class EdifactReader extends StandardReader {
             ungExplicit = true;
             token = getTokenizer().nextToken();
             if (token.getType() != Token.TokenType.SEGMENT_START) {
-                throw new EDISyntaxException(
-                        "Invalid beginning of UNG|UNH|UNZ segment", getTokenizer());
+                EDISyntaxException se = new EDISyntaxException("Invalid beginning of UNG|UNH|UNZ segment", getTokenizer());
+                logger.warn(se.getMessage());
+                throw se;
             }
             String sType = token.getValue();
             switch (sType) {
@@ -181,8 +187,9 @@ public class EdifactReader extends StandardReader {
                 case "UNZ":
                     break label;
                 default:
-                    throw new EDISyntaxException(UNEXPECTED_SEGMENT_IN_CONTEXT,
-                            "UNH, UNZ, or UNG", sType, getTokenizer());
+                    EDISyntaxException se = new EDISyntaxException(UNEXPECTED_SEGMENT_IN_CONTEXT, "UNH, UNZ, or UNG", sType, getTokenizer());
+                    logger.warn(se.getMessage());
+                    throw se;
             }
         }
 
@@ -205,10 +212,12 @@ public class EdifactReader extends StandardReader {
 
         while (getTokenizer().nextToken().getType() != Token.TokenType.SEGMENT_END) {
             if (getTokenizer().getElementInSegmentCount() > ELEMENTS_IN_UNB_MAXIMUM) {
-                throw new EDISyntaxException("Too many ("
+                EDISyntaxException se = new EDISyntaxException("Too many ("
                         + getTokenizer().getElementInSegmentCount()
                         + ") elements for a UNB. Segment terminator problem?",
                         getTokenizer());
+                logger.warn(se.getMessage());
+                throw se;
             }
         }
     }
@@ -279,9 +288,9 @@ public class EdifactReader extends StandardReader {
         while (true) {
             token = getTokenizer().nextToken();
             if (token.getType() != Token.TokenType.SEGMENT_START) {
-                throw new EDISyntaxException(
-                        "Invalid beginning of UNH|UNE segment",
-                        getTokenizer().getSegmentCount());
+                EDISyntaxException se = new EDISyntaxException("Invalid beginning of UNH|UNE segment", getTokenizer().getSegmentCount());
+                logger.warn(se.getMessage());
+                throw se;
             }
             String sType = token.getValue();
             switch (sType) {
@@ -292,9 +301,9 @@ public class EdifactReader extends StandardReader {
                 case "UNE":
                     break label;
                 default:
-                    throw new EDISyntaxException(
-                            "Expected UNE or UNH segment instead of " + sType,
-                            getTokenizer());
+                    EDISyntaxException se = new EDISyntaxException("Expected UNE or UNH segment instead of " + sType, getTokenizer());
+                    logger.warn(se.getMessage());
+                    throw se;
             }
         }
 
@@ -319,9 +328,10 @@ public class EdifactReader extends StandardReader {
         label:
         while (true) {
             if (token.getType() != Token.TokenType.SEGMENT_START) {
-                throw new EDISyntaxException(
-                        "Invalid beginning of UNH|UNZ segment",
+                EDISyntaxException se = new EDISyntaxException("Invalid beginning of UNH|UNZ segment",
                         getTokenizer().getSegmentCount());
+                logger.warn(se.getMessage());
+                throw se;
             }
             String sType = token.getValue();
             switch (sType) {
@@ -334,8 +344,10 @@ public class EdifactReader extends StandardReader {
                     getTokenizer().ungetToken();
                     break label;
                 default:
-                    throw new EDISyntaxException(UNEXPECTED_SEGMENT_IN_CONTEXT,
+                    EDISyntaxException se = new EDISyntaxException(UNEXPECTED_SEGMENT_IN_CONTEXT,
                             "UNH or UNZ", sType, getTokenizer());
+                    logger.warn(se.getMessage());
+                    throw se;
             }
         }
 
@@ -448,9 +460,13 @@ public class EdifactReader extends StandardReader {
             lengthField = parseStringFromNextElement();
             length = Integer.parseInt(lengthField);
         } catch (EDISyntaxException e) {
-            throw new EDISyntaxException(ErrorMessages.MISSING_UNO_LENGTH, getTokenizer());
+            EDISyntaxException se = new EDISyntaxException(ErrorMessages.MISSING_UNO_LENGTH, getTokenizer());
+            logger.warn(se.getMessage());
+            throw se;
         } catch (NumberFormatException e) {
-            throw new EDISyntaxException("UNO object length must be numeric instead of " + lengthField, getTokenizer());
+            EDISyntaxException se = new EDISyntaxException("UNO object length must be numeric instead of " + lengthField, getTokenizer());
+            logger.warn(se.getMessage());
+            throw se;
         }
 
         String packageReference = parseStringFromNextElement();
@@ -468,18 +484,28 @@ public class EdifactReader extends StandardReader {
             try {
                 unpLength = Integer.parseInt(unpLengthField);
             } catch (NumberFormatException e) {
-                throw new EDISyntaxException("UNP object length must be numeric instead of " + unpLengthField);
+                EDISyntaxException se = new EDISyntaxException("UNP object length must be numeric instead of " + unpLengthField);
+                logger.warn(se.getMessage());
+                throw se;
             }
-            if (length != unpLength)
-                throw new EDISyntaxException(ErrorMessages.MISMATCHED_UNP_LENGTH, length, unpLength, getTokenizer());
+            if (length != unpLength) {
+                EDISyntaxException se = new EDISyntaxException(ErrorMessages.MISMATCHED_UNP_LENGTH, length, unpLength, getTokenizer());
+                logger.warn(se.getMessage());
+                throw se;
+            }
 
             String unpPackageReference = parseStringFromNextElement();
-            if (unpPackageReference == null || !unpPackageReference.equals(packageReference))
-                throw new EDISyntaxException(ErrorMessages.MISMATCHED_PACKAGE_REF, packageReference, unpPackageReference, getTokenizer());
+            if (unpPackageReference == null || !unpPackageReference.equals(packageReference)) {
+                EDISyntaxException se = new EDISyntaxException(ErrorMessages.MISMATCHED_PACKAGE_REF, packageReference, unpPackageReference, getTokenizer());
+                logger.warn(se.getMessage());
+                throw se;
+            }
 
             getTokenizer().skipSegment();
         } else {
-            throw new EDISyntaxException(ErrorMessages.MISSING_UNP);
+            EDISyntaxException se = new EDISyntaxException(ErrorMessages.MISSING_UNP);
+            logger.warn(se.getMessage());
+            throw se;
         }
 
         getDocumentAttributes().clear();
@@ -503,13 +529,15 @@ public class EdifactReader extends StandardReader {
         char[] buf = getTokenizer().lookahead(128);
 
         if (!(buf[0] == 'U' && buf[1] == 'N')) {
-            throw new EDISyntaxException(
-                    "EDIFACT interchange must begin with UN");
+            EDISyntaxException se = new EDISyntaxException("EDIFACT interchange must begin with UN");
+            logger.warn(se.getMessage());
+            throw se;
         }
 
         if (isPreviewed()) {
-            throw new EDISyntaxException(
-                    "Internal error: EDIFACT interchange previewed more than once");
+            EDISyntaxException se = new EDISyntaxException("Internal error: EDIFACT interchange previewed more than once");
+            logger.warn(se.getMessage());
+            throw se;
         }
 
         // Now we establish subDelimiter, delimiter, release, and terminator.
@@ -620,9 +648,11 @@ public class EdifactReader extends StandardReader {
         // UNB+UNOA...
         // 01234567
 
-        if (buf[2] != 'B')
-            throw new EDISyntaxException(
-                    "Required UNB segment not found in EDIFACT interchange");
+        if (buf[2] != 'B') {
+            EDISyntaxException se = new EDISyntaxException("Required UNB segment not found in EDIFACT interchange");
+            logger.warn(se.getMessage());
+            throw se;
+        }
 
         char syntaxIdentifier = buf[7];
         switch (syntaxIdentifier) {
@@ -660,14 +690,19 @@ public class EdifactReader extends StandardReader {
                 // Deliberately fall into the sequence below
             default:
                 if (!Character.isLetter(syntaxIdentifier)) {
-                    throw new EDISyntaxException("Unknown Syntax Identifier in UNB segment: " + new String(buf, 4, 4));
+                    EDISyntaxException se = new EDISyntaxException("Unknown Syntax Identifier in UNB segment: " + new String(buf, 4, 4));
+                    logger.warn(se.getMessage());
+                    throw se;
                 }
 
                 if (!delimiterDetermined)
                     setDelimiter('+');
 
-                if (buf[3] != getDelimiter())
-                    throw new EDISyntaxException("Expected data element separator after UNB segment tag");
+                if (buf[3] != getDelimiter()) {
+                    EDISyntaxException se = new EDISyntaxException("Expected data element separator after UNB segment tag");
+                    logger.warn(se.getMessage());
+                    throw se;
+                }
 
                 if (!terminatorDetermined)
                     setTerminator('\'');
