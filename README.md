@@ -50,13 +50,17 @@ EDIReader may be easily integrated using:
 
 #### Technical Notes
 
-* Pure Java, with no dependence on third-party libraries.
+* Pure Java, with no dependence on third-party libraries
+    - except for SLF4J as described below
     - avoids dependency version issues
     - avoids licensing issues
     - compatible with a wide variety of Java platforms, including Android
+* Uses Simple Logging Facade for Java (SLF4J)
+    - an ultra-thin logging API
+    - allows deployment-time binding with log4j, java.util.logging, and other logging frameworks
 * Thread safe, used in multi-threading applications
-* Compatible with Java 7 syntax
-* Runnable with Java 7 and later
+* Compatible with Java 8 syntax
+* Runnable with Java 8 and later
 
 
 #### License and Ownership
@@ -85,6 +89,7 @@ It adds many additional EDI features such as:
     - Loop qualifiers included in XML (for example: 1000A, 2010AB)
     - HL hierarchies reflected via nested XML elements
 * Segment loop awareness via an extensive library of version-specific plugins
+* Splitting EDI input containing many transactions into many single-transaction EDI output files
 * EDI validation and compliance checking, using XSDs purchased from X12
 * Support for additional EDI and EDI-like formats:
     - HL7
@@ -96,7 +101,6 @@ It adds many additional EDI features such as:
     - see the edi-json project also at GitHub
 * YAML support
     - EDI to YAML, annotated for human readability
-* Splitting EDI input containing many transactions into many single-transaction EDI output files
 * Includes EDI samples for many transactions/versions
 * Includes suite of JUnit test cases
 * Available with full Java source code as Maven project

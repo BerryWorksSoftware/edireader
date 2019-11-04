@@ -1,5 +1,11 @@
 # Release Notes
 
+### 5.5.1 - November 4, 2019
+
+* Feature: Use SLF4J as a thin logging facade or abstraction for various logging frameworks,
+allowing the end user to plug in the desired logging framework at deployment time or to run with no
+logging framework at all.
+
 ### 5.5.0 - October 31, 2019
 
 * Update: Use Java 8 instead of Java 7
