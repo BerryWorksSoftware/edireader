@@ -8,7 +8,7 @@ build:
   tags:
     - docker
   script:
-    - 'mvn verify'
+    - 'mvn package'
   artifacts:
     paths:
       - target/*.jar
