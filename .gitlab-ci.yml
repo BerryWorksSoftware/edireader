@@ -1,0 +1,16 @@
+image: maven:3.6.0-jdk-8
+
+stages:
+  - build
+
+build:
+  stage: build
+  tags:
+    - docker
+  script:
+    - 'mvn verify'
+  artifacts:
+    paths:
+      - target/*.jar
+
+
