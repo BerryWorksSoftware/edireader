@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>edireader</artifactId>
     <packaging>jar</packaging>
-    <name>EDIReader Community Edition</name>
+    <name>EDIReader Core jar</name>
     <url>http://maven.apache.org</url>
 
     <parent>
