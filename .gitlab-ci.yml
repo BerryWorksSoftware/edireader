@@ -11,6 +11,6 @@ build:
     - 'mvn package'
   artifacts:
     paths:
-      - 'builds/*/edireader-core/edireader/target/*.jar'
+      - '/builds/canabrook/edireader-core/edireader/target/*.jar'
 
 
