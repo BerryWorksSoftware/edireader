@@ -37,7 +37,7 @@ public class StringBase64Decoder extends AbstractDecoder {
     protected void emit(byte b) {
         if (!byteBuffer.hasRemaining()) {
             feedStringBuffer();
-            byteBuffer.clear();
+            ((Buffer) byteBuffer).clear();
         }
         byteBuffer.put(b);
     }
@@ -76,7 +76,7 @@ public class StringBase64Decoder extends AbstractDecoder {
             if (coderResult.isUnderflow()) {
                 break;
             }
-            base64ByteBuffer.clear();
+            ((Buffer) base64ByteBuffer).clear();
         }
         endOfData();
         feedStringBuffer();

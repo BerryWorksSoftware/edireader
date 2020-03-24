@@ -62,7 +62,7 @@ public class ContentHandlerBase64Encoder extends AbstractEncoder {
             while (byteBuffer.hasRemaining())
                 consume(byteBuffer.get());
             if (coderResult.isUnderflow()) break;
-            byteBuffer.clear();
+            ((Buffer) byteBuffer).clear();
         }
         endOfData();
         feedContentHandler();
@@ -77,7 +77,7 @@ public class ContentHandlerBase64Encoder extends AbstractEncoder {
             // Whenever the CharBuffer gets full, give those chars
             // to the SAX ContentHandler.
             feedContentHandler();
-            base64Bytes.clear();
+            ((Buffer) base64Bytes).clear();
         }
         // Put the byte into a byteBuffer.
         base64Bytes.put(b);

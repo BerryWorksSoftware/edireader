@@ -189,7 +189,7 @@ public class TokenImpl implements Token {
 
     @Override
     public void resetValue() {
-        valueBuffer.clear();
+        ((Buffer) valueBuffer).clear();
         containsNonSpace = false;
     }
 

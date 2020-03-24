@@ -91,7 +91,7 @@ public class CharBufferBasicsTest {
         assertEquals(3, buffer.length());
         assertEquals(4, buffer.limit());
 
-        buffer.clear();
+        ((Buffer)buffer).clear();
         assertEquals(0, buffer.position());
         assertEquals(20, buffer.length());
         assertEquals(20, buffer.limit());

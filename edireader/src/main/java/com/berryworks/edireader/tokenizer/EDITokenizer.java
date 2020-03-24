@@ -57,7 +57,7 @@ public class EDITokenizer extends AbstractTokenizer {
         if (preRead.length > charBuffer.capacity())
             throw new RuntimeException("Attempt to create EDITokenizer with " + preRead.length +
                     " pre-read chars, which is greater than the internal buffer size of " + charBuffer.capacity());
-        charBuffer.clear();
+        ((Buffer) charBuffer).clear();
         charBuffer.put(preRead);
         ((Buffer) charBuffer).flip();
     }
