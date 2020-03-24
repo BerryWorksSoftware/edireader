@@ -6,10 +6,10 @@ package com.berryworks.edireader.tokenizer;
 
 import org.junit.Test;
 
+import java.nio.Buffer;
 import java.nio.CharBuffer;
 
 import static org.junit.Assert.assertEquals;
-
 
 public class CharBufferBasicsTest {
 
@@ -50,7 +50,7 @@ public class CharBufferBasicsTest {
         assertEquals(16, buffer.length());
         assertEquals(20, buffer.limit());
 
-        buffer.flip();
+        ((Buffer) buffer).flip();
         assertEquals(0, buffer.position());
         assertEquals(4, buffer.length());
         assertEquals(4, buffer.limit());
@@ -81,7 +81,7 @@ public class CharBufferBasicsTest {
         assertEquals(16, buffer.length());
         assertEquals(20, buffer.limit());
 
-        buffer.flip();
+        ((Buffer) buffer).flip();
         assertEquals(0, buffer.position());
         assertEquals(4, buffer.length());
         assertEquals(4, buffer.limit());
@@ -109,7 +109,7 @@ public class CharBufferBasicsTest {
         assertEquals(16, buffer.length());
         assertEquals(20, buffer.limit());
 
-        buffer.flip();
+        ((Buffer) buffer).flip();
         assertEquals(0, buffer.position());
         assertEquals(4, buffer.length());
         assertEquals(4, buffer.limit());
@@ -129,11 +129,9 @@ public class CharBufferBasicsTest {
         assertEquals(14, buffer.length());
         assertEquals(20, buffer.limit());
 
-        buffer.flip();
+        ((Buffer) buffer).flip();
         assertEquals(0, buffer.position());
         assertEquals(6, buffer.length());
         assertEquals(6, buffer.limit());
     }
-
-
 }

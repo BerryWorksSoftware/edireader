@@ -20,6 +20,7 @@
 
 package com.berryworks.edireader.util.base64;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetEncoder;
@@ -42,7 +43,7 @@ public class StringBase64Decoder extends AbstractDecoder {
     }
 
     private void feedStringBuffer() {
-        byteBuffer.flip();
+        ((Buffer) byteBuffer).flip();
         stringBuffer.append(charset.decode(byteBuffer));
     }
 
@@ -65,12 +66,16 @@ public class StringBase64Decoder extends AbstractDecoder {
         CharsetEncoder encoder = charset.newEncoder();
         while (true) {
             CoderResult coderResult = encoder.encode(charBuffer, base64ByteBuffer, true);
-            if (coderResult.isError())
+            if (coderResult.isError()) {
                 throw new RuntimeException("Unrecoverable failure in Base64 encoding");
-            base64ByteBuffer.flip();
-            while (base64ByteBuffer.hasRemaining())
+            }
+            ((Buffer) base64ByteBuffer).flip();
+            while (base64ByteBuffer.hasRemaining()) {
                 consume(base64ByteBuffer.get());
-            if (coderResult.isUnderflow()) break;
+            }
+            if (coderResult.isUnderflow()) {
+                break;
+            }
             base64ByteBuffer.clear();
         }
         endOfData();

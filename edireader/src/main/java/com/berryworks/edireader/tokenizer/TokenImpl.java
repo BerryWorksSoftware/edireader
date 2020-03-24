@@ -7,6 +7,7 @@ package com.berryworks.edireader.tokenizer;
 import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.error.ErrorMessages;
 
+import java.nio.Buffer;
 import java.nio.CharBuffer;
 
 public class TokenImpl implements Token {
@@ -96,7 +97,7 @@ public class TokenImpl implements Token {
      * Gets the data value of the token as a String.
      */
     public String getValue() {
-        valueBuffer.flip();
+        ((Buffer) valueBuffer).flip();
         String s = valueBuffer.toString();
         valueBuffer.compact();
         return s;

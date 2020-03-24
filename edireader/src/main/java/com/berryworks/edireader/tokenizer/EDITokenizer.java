@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.invoke.MethodHandles;
+import java.nio.Buffer;
 import java.nio.CharBuffer;
 
 /**
@@ -44,7 +45,7 @@ public class EDITokenizer extends AbstractTokenizer {
 
     public EDITokenizer(Reader source) {
         super(source);
-        charBuffer.flip();
+        ((Buffer) charBuffer).flip();
         logger.debug("Constructed a new EDITokenizer");
     }
 
@@ -58,7 +59,7 @@ public class EDITokenizer extends AbstractTokenizer {
                     " pre-read chars, which is greater than the internal buffer size of " + charBuffer.capacity());
         charBuffer.clear();
         charBuffer.put(preRead);
-        charBuffer.flip();
+        ((Buffer) charBuffer).flip();
     }
 
     /**
@@ -225,7 +226,7 @@ public class EDITokenizer extends AbstractTokenizer {
             int n;
             while ((n = inputReader.read(charBuffer)) == 0) {
             }
-            charBuffer.flip();
+            ((Buffer) charBuffer).flip();
 
             if (n < 0) {
                 logger.debug("Hit end of file on the input stream");
