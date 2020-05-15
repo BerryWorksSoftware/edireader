@@ -1,5 +1,15 @@
 # Release Notes
 
+### 5.5.3 - May 5, 2020
+
+* Feature: In the EDI splitter tool, let the test indicator, "P" or "T", be available as a component when
+naming the split files.
+
+### 5.5.2 - March 23, 2020
+
+* Fix: Use CharBuffer with compatibility for Java 11 a well as previous versions.
+Avoid NoSuchMethodError when using limit() or clear().
+
 ### 5.5.1 - November 4, 2019
 
 * Feature: Use SLF4J as a thin logging facade or abstraction for various logging frameworks,

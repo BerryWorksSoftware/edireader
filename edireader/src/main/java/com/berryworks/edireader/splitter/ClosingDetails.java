@@ -32,6 +32,7 @@ public class ClosingDetails {
     private String documentControlNumber;
     private String documentType;
     private String version;
+    private String testIndicator;
 
     public String getSenderQualifier() {
         return senderQualifier;
@@ -119,5 +120,13 @@ public class ClosingDetails {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getTestIndicator() {
+        return testIndicator;
+    }
+
+    public void setTestIndicator(String testIndicator) {
+        this.testIndicator = testIndicator;
     }
 }
