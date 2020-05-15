@@ -114,6 +114,7 @@ public class SplittingHandler extends DefaultHandler {
         closingDetails.setReceiverQualifier(receiverAttributes.getValue(xmlTags.getQualifierAttribute()));
         closingDetails.setReceiverId(receiverAttributes.getValue(xmlTags.getIdAttribute()));
         closingDetails.setInterchangeControlNumber(interchangeAttributes.getValue(xmlTags.getControl()));
+        closingDetails.setTestIndicator(interchangeAttributes.getValue(xmlTags.getTestIndicator()));
         closingDetails.setGroupSender(groupAttributes.getValue(xmlTags.getApplSender()));
         closingDetails.setGroupReceiver(groupAttributes.getValue(xmlTags.getApplReceiver()));
         closingDetails.setGroupControlNumber(groupAttributes.getValue(xmlTags.getControl()));

@@ -1,6 +1,6 @@
 # Release Notes
 
-### 5.5.3 - May 5, 2020
+### 5.5.3 - May 15, 2020
 
 * Feature: In the EDI splitter tool, let the test indicator, "P" or "T", be available as a component when
 naming the split files.
