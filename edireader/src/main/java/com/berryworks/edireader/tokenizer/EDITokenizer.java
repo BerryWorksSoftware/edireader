@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.invoke.MethodHandles;
+import java.nio.Buffer;
 import java.nio.CharBuffer;
 
 /**
@@ -44,7 +45,7 @@ public class EDITokenizer extends AbstractTokenizer {
 
     public EDITokenizer(Reader source) {
         super(source);
-        charBuffer.flip();
+        ((Buffer) charBuffer).flip();
         logger.debug("Constructed a new EDITokenizer");
     }
 
@@ -56,9 +57,9 @@ public class EDITokenizer extends AbstractTokenizer {
         if (preRead.length > charBuffer.capacity())
             throw new RuntimeException("Attempt to create EDITokenizer with " + preRead.length +
                     " pre-read chars, which is greater than the internal buffer size of " + charBuffer.capacity());
-        charBuffer.clear();
+        ((Buffer) charBuffer).clear();
         charBuffer.put(preRead);
-        charBuffer.flip();
+        ((Buffer) charBuffer).flip();
     }
 
     /**
@@ -75,7 +76,7 @@ public class EDITokenizer extends AbstractTokenizer {
         result += " segTokenCount=" + segTokenCount;
         result += " segCharCount=" + segCharCount;
         result += " currentToken=" + currentToken;
-        result += " buffer.limit=" + charBuffer.limit();
+        result += " buffer.limit=" + ((Buffer) charBuffer).limit();
         result += " buffer.position=" + charBuffer.position();
         return result;
     }
@@ -202,7 +203,7 @@ public class EDITokenizer extends AbstractTokenizer {
 
         // Move chars from the buffer into the return value
         int j = 1;
-        for (int i = charBuffer.position(); i < charBuffer.limit() && j < n; i++)
+        for (int i = charBuffer.position(); i < ((Buffer) charBuffer).limit() && j < n; i++)
             rval[j++] = charBuffer.get(i);
 
         // If more lookahead chars were requested than were satisfied for any reason,
@@ -225,7 +226,7 @@ public class EDITokenizer extends AbstractTokenizer {
             int n;
             while ((n = inputReader.read(charBuffer)) == 0) {
             }
-            charBuffer.flip();
+            ((Buffer) charBuffer).flip();
 
             if (n < 0) {
                 logger.debug("Hit end of file on the input stream");

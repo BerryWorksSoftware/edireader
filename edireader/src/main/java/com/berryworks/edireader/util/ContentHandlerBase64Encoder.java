@@ -24,6 +24,7 @@ import com.berryworks.edireader.util.base64.AbstractEncoder;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetEncoder;
@@ -57,11 +58,11 @@ public class ContentHandlerBase64Encoder extends AbstractEncoder {
             CoderResult coderResult = encoder.encode(charBuffer, byteBuffer, true);
             if (coderResult.isError())
                 throw new RuntimeException("Unrecoverable failure in Base64 encoding");
-            byteBuffer.flip();
+            ((Buffer) byteBuffer).flip();
             while (byteBuffer.hasRemaining())
                 consume(byteBuffer.get());
             if (coderResult.isUnderflow()) break;
-            byteBuffer.clear();
+            ((Buffer) byteBuffer).clear();
         }
         endOfData();
         feedContentHandler();
@@ -76,14 +77,14 @@ public class ContentHandlerBase64Encoder extends AbstractEncoder {
             // Whenever the CharBuffer gets full, give those chars
             // to the SAX ContentHandler.
             feedContentHandler();
-            base64Bytes.clear();
+            ((Buffer) base64Bytes).clear();
         }
         // Put the byte into a byteBuffer.
         base64Bytes.put(b);
     }
 
     private void feedContentHandler() {
-        base64Bytes.flip();
+        ((Buffer) base64Bytes).flip();
         CharBuffer charBuffer = charset.decode(base64Bytes);
         try {
             contentHandler.characters(charBuffer.array(), 0, charBuffer.length());
