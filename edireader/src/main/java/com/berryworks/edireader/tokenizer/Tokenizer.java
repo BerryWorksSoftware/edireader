@@ -64,6 +64,8 @@ public interface Tokenizer extends SourcePosition {
 
     int nextIntValue() throws SAXException, IOException;
 
+    int nextIntValue(boolean returnZeroIfEmpty) throws SAXException, IOException;
+
     String nextSegment() throws SAXException, IOException;
 
     String getRecording();
