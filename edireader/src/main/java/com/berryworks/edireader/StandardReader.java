@@ -190,7 +190,15 @@ public abstract class StandardReader extends EDIReader {
     }
 
     protected boolean recover(RecoverableSyntaxException e) {
-        return getSyntaxExceptionHandler() != null && getSyntaxExceptionHandler().process(e);
+        boolean result = false;
+        EDISyntaxExceptionHandler handler = getSyntaxExceptionHandler();
+        if (handler == null) {
+            logger.warn(e.getMessage());
+        } else {
+            // We'll let the handler do any logging it wants to do.
+            result = handler.process(e);
+        }
+        return result;
     }
 
     public int getGroupCount() {
@@ -248,7 +256,6 @@ public abstract class StandardReader extends EDIReader {
     protected void checkGroupCount(int groupCount, int n, String errorMessage) throws GroupCountException {
         if (groupCount != n) {
             GroupCountException se = new GroupCountException(errorMessage, groupCount, n, getTokenizer());
-            logger.warn(se.getMessage());
             setSyntaxException(se);
             if (!recover(se))
                 throw se;
@@ -258,7 +265,6 @@ public abstract class StandardReader extends EDIReader {
     protected void checkTransactionCount(int segCount, int n, String errorMessage) throws TransactionCountException {
         if (segCount != n) {
             TransactionCountException se = new TransactionCountException(errorMessage, segCount, n, getTokenizer());
-            logger.warn(se.getMessage());
             setSyntaxException(se);
             if (!recover(se))
                 throw se;
@@ -268,17 +274,18 @@ public abstract class StandardReader extends EDIReader {
     protected void checkSegmentCount(int segCount, int n, String errorMessage) throws SegmentCountException {
         if (segCount != n) {
             SegmentCountException se = new SegmentCountException(errorMessage, segCount, n, getTokenizer());
-            logger.warn(se.getMessage());
             setSyntaxException(se);
             if (!recover(se))
                 throw se;
         }
     }
 
-    protected void checkInterchangeControlNumber(String control, String s, String errorMessage) throws InterchangeControlNumberException {
-        if (!s.equals(control)) {
-            InterchangeControlNumberException se = new InterchangeControlNumberException(errorMessage, control, s, getTokenizer());
-            logger.warn(se.getMessage());
+    protected void checkInterchangeControlNumber(String expected, String actual, String errorMessage) throws InterchangeControlNumberException {
+        if (actual == null) {
+            actual = "(omitted)";
+        }
+        if (!actual.equals(expected)) {
+            InterchangeControlNumberException se = new InterchangeControlNumberException(errorMessage, expected, actual, getTokenizer());
             setSyntaxException(se);
             if (!recover(se))
                 throw se;
@@ -288,17 +295,18 @@ public abstract class StandardReader extends EDIReader {
     protected void checkGroupControlNumber(String control, String s, String errorMessage) throws GroupControlNumberException {
         if (!s.equals(control)) {
             GroupControlNumberException se = new GroupControlNumberException(errorMessage, control, s, getTokenizer());
-            logger.warn(se.getMessage());
             setSyntaxException(se);
             if (!recover(se))
                 throw se;
         }
     }
 
-    protected void checkTransactionControlNumber(String control, String s, String errorMessage) throws TransactionControlNumberException {
-        if (!s.equals(control)) {
-            TransactionControlNumberException se = new TransactionControlNumberException(errorMessage, control, s, getTokenizer());
-            logger.warn(se.getMessage());
+    protected void checkTransactionControlNumber(String expected, String actual, String errorMessage) throws TransactionControlNumberException {
+        if (actual == null) {
+            actual = "(omitted)";
+        }
+        if (!actual.equals(expected)) {
+            TransactionControlNumberException se = new TransactionControlNumberException(errorMessage, expected, actual, getTokenizer());
             setSyntaxException(se);
             if (!recover(se))
                 throw se;
