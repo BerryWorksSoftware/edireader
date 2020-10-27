@@ -49,29 +49,29 @@ public class AnsiReader extends StandardReader {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
     /**
-     * Group-level function code (for example: PO)
+     * Group-level function code (for example: PO) GS01
      */
     protected String groupFunctionCode;
 
     /**
-     * Group-level application sender
+     * Group-level application sender GS02
      */
     protected String groupSender;
 
     /**
-     * Group-level application receiver
+     * Group-level application receiver GS03
      */
     protected String groupReceiver;
+
+    /**
+     * Group-level date (for example: 20040410 or 040410) GS04
+     */
+    protected String groupDate;
 
     /**
      * Group-level version (for example: 003040)
      */
     protected String groupVersion;
-
-    /**
-     * Group-level date (for example: 20040410 or 040410)
-     */
-    protected String groupDate;
 
 
     @Override
@@ -219,8 +219,12 @@ public class AnsiReader extends StandardReader {
             }
         }
 
-        checkGroupCount(getGroupCount(), getTokenizer().nextIntValue(), COUNT_IEA);
-        checkInterchangeControlNumber(getInterchangeControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_IEA);
+        checkGroupCount(getGroupCount(), getTokenizer().nextIntValue(true), COUNT_IEA);
+        String ieaControlNumber = getTokenizer().nextSimpleValue(false, true);
+        if (ieaControlNumber == null) {
+            ieaControlNumber = "(omitted)";
+        }
+        checkInterchangeControlNumber(getInterchangeControlNumber(), ieaControlNumber, CONTROL_NUMBER_IEA);
         getAckGenerator().generateAcknowledgementWrapup();
         getAlternateAckGenerator().generateAcknowledgementWrapup();
         endInterchange();
@@ -294,7 +298,7 @@ public class AnsiReader extends StandardReader {
         process("GS02", groupSender);
         groupReceiver = getTokenizer().nextSimpleValue(false);
         process("GS03", groupReceiver);
-        groupDate = getTokenizer().nextSimpleValue();
+        groupDate = getTokenizer().nextSimpleValue(false);
         getGroupAttributes().addCDATA(getXMLTags().getApplSender(), groupSender);
         getGroupAttributes().addCDATA(getXMLTags().getApplReceiver(), groupReceiver);
         getGroupAttributes().addCDATA(getXMLTags().getDate(), groupDate);
@@ -320,9 +324,9 @@ public class AnsiReader extends StandardReader {
         }
         getGroupAttributes().addCDATA(getXMLTags().getTime(), value);
 
-        setGroupControlNumber(getTokenizer().nextSimpleValue());
+        setGroupControlNumber(getTokenizer().nextSimpleValue(false));
         getGroupAttributes().addCDATA(getXMLTags().getControl(), getGroupControlNumber());
-        getGroupAttributes().addCDATA(getXMLTags().getStandardCode(), getTokenizer().nextSimpleValue());
+        getGroupAttributes().addCDATA(getXMLTags().getStandardCode(), getTokenizer().nextSimpleValue(false));
 
         // Handle the groupVersion at the end of the segment. This is a bit tricky since
         // the groupVersion may be omitted causing us to encounter the end of segment earlier
@@ -368,8 +372,12 @@ public class AnsiReader extends StandardReader {
             }
         }
 
-        checkTransactionCount(docCount, getTokenizer().nextIntValue(), COUNT_GE);
-        checkGroupControlNumber(getGroupControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_GE);
+        checkTransactionCount(docCount, getTokenizer().nextIntValue(true), COUNT_GE);
+        String groupControlNumber = getTokenizer().nextSimpleValue(false, true);
+        if (groupControlNumber == null) {
+            groupControlNumber = "(omitted)";
+        }
+        checkGroupControlNumber(getGroupControlNumber(), groupControlNumber, CONTROL_NUMBER_GE);
         endElement(getXMLTags().getGroupTag());
         getAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
         getAlternateAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
@@ -399,7 +407,7 @@ public class AnsiReader extends StandardReader {
 
         getDocumentAttributes().clear();
         getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(),
-                documentType = getTokenizer().nextSimpleValue());
+                documentType = getTokenizer().nextSimpleValue(false));
 
         logger.info("Parsing {} transaction", documentType);
 
@@ -413,16 +421,26 @@ public class AnsiReader extends StandardReader {
         boolean wrapped = wrapContentHandlerIfNeeded(pluginController);
         if (pluginController.isEnabled())
             getDocumentAttributes().addCDATA(getXMLTags().getName(), pluginController.getDocumentName());
-        getDocumentAttributes().addCDATA(getXMLTags().getControl(), control = getTokenizer().nextSimpleValue());
+        control = getTokenizer().nextSimpleValue(false, true);
+        boolean hitSegmentEnd = false;
+        if (control == null) {
+            // Edge case. The segment terminator immediately followed the ST01 document type element.
+            // That means we've already hit the SEGMENT_END;
+            hitSegmentEnd = true;
+            control = "";
+        }
+        getDocumentAttributes().addCDATA(getXMLTags().getControl(), control);
 
-        Token st03Token = getTokenizer().nextToken();
-        switch (st03Token.getType()) {
-            case SEGMENT_END:
-                break;
-            case SIMPLE:
-                getDocumentAttributes().addCDATA(getXMLTags().getMessageVersion(), st03Token.getValue());
-            default:
-                getTokenizer().skipSegment();
+        if (!hitSegmentEnd) {
+            Token st03Token = getTokenizer().nextToken();
+            switch (st03Token.getType()) {
+                case SEGMENT_END:
+                    break;
+                case SIMPLE:
+                    getDocumentAttributes().addCDATA(getXMLTags().getMessageVersion(), st03Token.getValue());
+                default:
+                    getTokenizer().skipSegment();
+            }
         }
 
         startMessage(getDocumentAttributes());
@@ -450,8 +468,8 @@ public class AnsiReader extends StandardReader {
         for (; toClose > 0; toClose--)
             endElement(getXMLTags().getLoopTag());
 
-        checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_SE);
-        checkTransactionControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_SE);
+        checkSegmentCount(segCount, getTokenizer().nextIntValue(true), COUNT_SE);
+        checkTransactionControlNumber(control, getTokenizer().nextSimpleValue(false, true), CONTROL_NUMBER_SE);
         getAckGenerator().generateTransactionAcknowledgment(documentType, control);
         getAlternateAckGenerator().generateTransactionAcknowledgment(documentType, control);
         endElement(getXMLTags().getDocumentTag());
