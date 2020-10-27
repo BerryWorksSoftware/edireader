@@ -33,6 +33,8 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_END;
+
 public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
@@ -200,7 +202,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      */
     public String nextSimpleValue(boolean required, boolean returnNullAtSegmentEnd) throws SAXException,
             IOException {
-        Token t = nextToken();
+        Token t = (SEGMENT_END == currentToken.getType()) ? currentToken : nextToken();
         switch (t.getType()) {
             case EMPTY:
                 if (required) {
@@ -266,9 +268,19 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      *                                                     if empty
      */
     public int nextIntValue() throws SAXException, IOException {
+        return nextIntValue(false);
+    }
+
+    public int nextIntValue(boolean returnZeroIfEmpty) throws SAXException, IOException {
         int i;
         try {
-            i = Integer.parseInt(nextSimpleValue());
+            String value = nextSimpleValue(false, true);
+            if (value == null) value = "";
+            if (value.trim().length() == 0 && returnZeroIfEmpty) {
+                i = 0;
+            } else {
+                i = Integer.parseInt(value);
+            }
         } catch (NumberFormatException e) {
             EDISyntaxException se = new EDISyntaxException(DIGITS_ONLY, this);
             logger.warn(se.getMessage());
@@ -420,11 +432,15 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      */
     public Token skipSegment() throws SAXException, IOException {
         Token t;
+        if (SEGMENT_END == currentToken.getType()) {
+            // We are already positioned on an END_SEGMENT, so don't advance any further.
+            return currentToken;
+        }
         int i = 0;
         while (true) {
             t = nextToken();
             Token.TokenType tokenType = t.getType();
-            if ((tokenType == Token.TokenType.SEGMENT_END) || (tokenType == Token.TokenType.END_OF_DATA))
+            if ((tokenType == SEGMENT_END) || (tokenType == Token.TokenType.END_OF_DATA))
                 break;
             if (++i > 30) {
                 EDISyntaxException se = new EDISyntaxException("Too many fields in " + t.getSegmentType() + " segment", this);
@@ -653,7 +669,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         state = State.IN_SEGMENT;
                         break;
                     default:
-                        currentToken.setType(Token.TokenType.SEGMENT_END);
+                        currentToken.setType(SEGMENT_END);
                         state = State.EXPECTING_SEGMENT;
                         scanTerminatorSuffix();
                         currentToken.resetSubElementIndex();
