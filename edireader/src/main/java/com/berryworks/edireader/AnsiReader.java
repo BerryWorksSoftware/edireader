@@ -158,19 +158,21 @@ public class AnsiReader extends StandardReader {
             getTokenizer().setRepetitionSeparator(separator);
         }
 
-        String versionId = getFixedLengthISAField(5, false);
+        String versionId = nextField();
+        checkFixedLength("ISA12", versionId, 5);
         getInterchangeAttributes().addCDATA(getXMLTags().getVersion(), versionId);
-        setInterchangeControlNumber(getFixedLengthISAField(9, false));
-        getInterchangeAttributes().addCDATA(getXMLTags().getControl(),
-                getInterchangeControlNumber());
 
+        String controlNumber = nextField();
+        checkFixedLength("ISA13", controlNumber, 9);
+        setInterchangeControlNumber(controlNumber);
+        getInterchangeAttributes().addCDATA(getXMLTags().getControl(), getInterchangeControlNumber());
 
-        // Acknowledgement Request
-        String ackRequest = getTokenizer().nextSimpleValue();
+        String ackRequest = nextField();
+        checkFixedLength("ISA14", ackRequest, 1);
         getInterchangeAttributes().addCDATA(getXMLTags().getAcknowledgementRequest(), ackRequest);
 
-        // Test Indicator
-        String testIndicator = getTokenizer().nextSimpleValue();
+        String testIndicator = nextField();
+        checkFixedLength("ISA15", testIndicator, 1);
         getInterchangeAttributes().addCDATA(getXMLTags().getTestIndicator(), testIndicator);
 
         // Go ahead and parse tokens until the end of the segment is reached
