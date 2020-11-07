@@ -296,11 +296,6 @@ public class AnsiReader extends StandardReader {
         endElement(getXMLTags().getAcknowledgementTag());
     }
 
-    protected String getFixedLengthISAField(int expectedLength)
-            throws IOException, SAXException {
-        return getFixedLengthISAField(expectedLength, true);
-    }
-
     protected String getFixedLengthISAField(int expectedLength, boolean enforce)
             throws SAXException, IOException {
         String field = getTokenizer().nextSimpleValue();

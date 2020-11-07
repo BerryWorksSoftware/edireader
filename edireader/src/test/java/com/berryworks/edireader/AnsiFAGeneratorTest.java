@@ -1,6 +1,8 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.benchmark.EDITestData;
+import com.berryworks.edireader.error.EDISyntaxExceptionHandler;
+import com.berryworks.edireader.error.RecoverableSyntaxException;
 import com.berryworks.edireader.util.BranchingWriter;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,6 +82,7 @@ public class AnsiFAGeneratorTest {
         String ansiInterchange = EDITestData.getAnsiInterchange();
         ansiInterchange = ansiInterchange.replaceAll("58401 {4}", "58401");
         final InputSource inputSource = new InputSource(new StringReader(ansiInterchange));
+        ansiReader.setSyntaxExceptionHandler(syntaxException -> true);
         ansiReader.parse(inputSource);
         assertLikeness(TEST_DATA_997, output.toString());
     }
