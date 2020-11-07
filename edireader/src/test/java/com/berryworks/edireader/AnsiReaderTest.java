@@ -215,14 +215,169 @@ public class AnsiReaderTest {
     }
 
     @Test
-    public void detectsISAFixedLengthError() throws IOException {
+    public void detectsISA01FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("ISA*00*", "ISA*0000*");
         try {
             ansiReader.parse(new InputSource(new StringReader(ediText)));
             fail("ISA fixed length field error not detected");
-        } catch (SAXException e) {
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
             assertEquals(
-                    "Incorrect length of fixed-length ISA field. Expected 2 instead of 4 at segment 1, field 2",
+                    "ISA fixed-length field ISA01 has incorrect length. Expected 2 instead of 4 at segment 1, field 2",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA02FixedLengthError() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("ISA*00*          *", "ISA*00*         *");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA fixed length field error not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
+            assertEquals(
+                    "ISA fixed-length field ISA02 has incorrect length. Expected 10 instead of 9 at segment 1, field 3",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA03FixedLengthError() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("ISA*00*          *00*", "ISA*00*          *000*");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA fixed length field error not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
+            assertEquals(
+                    "ISA fixed-length field ISA03 has incorrect length. Expected 2 instead of 3 at segment 1, field 4",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA04FixedLengthError() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("ISA*00*          *00*          *", "ISA*00*          *00*           *");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA fixed length field error not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
+            assertEquals(
+                    "ISA fixed-length field ISA04 has incorrect length. Expected 10 instead of 11 at segment 1, field 5",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA05FixedLengthError() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("*ZZ*D00111         *", "*ZZ *D00111         *");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA fixed length field error not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
+            assertEquals(
+                    "ISA fixed-length field ISA05 has incorrect length. Expected 2 instead of 3 at segment 1, field 6",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA06FixedLengthError() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("*ZZ*D00111         *", "*ZZ*D00111*");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA fixed length field error not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
+            assertEquals(
+                    "ISA fixed-length field ISA06 has incorrect length. Expected 15 instead of 6 at segment 1, field 7",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA07FixedLengthError() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("*ZZ*0055           *", "*Z*0055           *");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA fixed length field error not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
+            assertEquals(
+                    "ISA fixed-length field ISA07 has incorrect length. Expected 2 instead of 1 at segment 1, field 8",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA08FixedLengthError() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("*ZZ*0055           *", "*ZZ**");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA fixed length field error not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
+            assertEquals(
+                    "ISA fixed-length field ISA08 has incorrect length. Expected 15 instead of 0 at segment 1, field 9",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA09FixedLengthError() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("*030603*", "*20030603*");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA fixed length field error not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
+            assertEquals(
+                    "ISA fixed-length field ISA09 has incorrect length. Expected 6 instead of 8 at segment 1, field 10",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA10FixedLengthError() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("*1337*", "*abc*");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA fixed length field error not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
+            assertEquals(
+                    "ISA fixed-length field ISA10 has incorrect length. Expected 4 instead of 3 at segment 1, field 11",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA11FixedLengthError_StandardsId() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("*U*00401*", "*UU*00401*");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA fixed length field error not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
+            assertEquals(
+                    "ISA fixed-length field ISA11 has incorrect length. Expected 1 instead of 2 at segment 1, field 12",
+                    e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA11FixedLengthError_RepetitionSeparator() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("*U*00401*", "*++*00501*");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA fixed length field error not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertSame(ISAFixedLengthException.class, e.getClass());
+            assertEquals(
+                    "ISA fixed-length field ISA11 has incorrect length. Expected 1 instead of 2 at segment 1, field 12",
                     e.getMessage());
         }
     }
@@ -314,6 +469,12 @@ public class AnsiReaderTest {
 
     @Test
     public void allowsVariableLengthForSomeIsaElements() throws IOException, SAXException {
+        ansiReader.setSyntaxExceptionHandler(new EDISyntaxExceptionHandler() {
+            @Override
+            public boolean process(RecoverableSyntaxException syntaxException) {
+                return true;
+            }
+        });
         ansiReader.parse(new InputSource(new StringReader(EDI_SAMPLE_WITH_TRIMMED_ISA)));
 
         assertEquals(245, ansiReader.getCharCount());

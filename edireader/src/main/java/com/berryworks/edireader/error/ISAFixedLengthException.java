@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2020 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -20,22 +20,10 @@
 
 package com.berryworks.edireader.error;
 
-import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.tokenizer.Tokenizer;
 
-/**
- * An EDISyntaxException from which the parser may be able to recover.
- */
-public abstract class RecoverableSyntaxException extends EDISyntaxException {
-    public RecoverableSyntaxException(String msg, int expected, int actual, Tokenizer tokenizer) {
-        super(msg, expected, actual, tokenizer);
-    }
-
-    public RecoverableSyntaxException(String msg, String expected, String actual, Tokenizer tokenizer) {
-        super(msg, expected, actual, tokenizer);
-    }
-
-    public RecoverableSyntaxException(String msg) {
-        super(msg);
+public class ISAFixedLengthException extends RecoverableSyntaxException {
+    public ISAFixedLengthException(String element, int expected, int actual, Tokenizer tokenizer) {
+        super(String.format("ISA fixed-length field %s has incorrect length", element), expected, actual, tokenizer);
     }
 }

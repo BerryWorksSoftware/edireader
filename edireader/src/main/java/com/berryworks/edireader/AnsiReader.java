@@ -20,7 +20,9 @@
 
 package com.berryworks.edireader;
 
+import com.berryworks.edireader.error.ISAFixedLengthException;
 import com.berryworks.edireader.error.MissingMandatoryElementException;
+import com.berryworks.edireader.error.RecoverableSyntaxException;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import com.berryworks.edireader.util.FixedLength;
@@ -94,29 +96,45 @@ public class AnsiReader extends StandardReader {
         getInterchangeAttributes().clear();
         getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), EDIStandard.ANSI.getDisplayName());
 
-        String authQual = getFixedLengthISAField(2);
-        String authInfo = getFixedLengthISAField(10, false);
-        String securityQual = getFixedLengthISAField(2);
-        String securityInfo = getFixedLengthISAField(10, false);
+        String authQual = nextField();
+        checkFixedLength("ISA01", authQual, 2);
+
+        String authInfo = nextField();
+        checkFixedLength("ISA02", authInfo, 10);
+
+        String securityQual = nextField();
+        checkFixedLength("ISA03", securityQual, 2);
+
+        String securityInfo = nextField();
+        checkFixedLength("ISA04", securityInfo, 10);
 
         getInterchangeAttributes().addCDATA(getXMLTags().getAuthorizationQual(), authQual);
         getInterchangeAttributes().addCDATA(getXMLTags().getAuthorization(), authInfo);
         getInterchangeAttributes().addCDATA(getXMLTags().getSecurityQual(), securityQual);
         getInterchangeAttributes().addCDATA(getXMLTags().getSecurity(), securityInfo);
 
-        String fromQual = getFixedLengthISAField(2);
+        String fromQual = nextField();
+        checkFixedLength("ISA05", fromQual, 2);
         process("ISA05", fromQual);
-        String fromId = getFixedLengthISAField(15, false);
-        process("ISA06", fromId);
-        String toQual = getFixedLengthISAField(2);
-        process("ISA07", toQual);
-        String toId = getFixedLengthISAField(15, false);
-        process("ISA08", fromId);
-        getInterchangeAttributes().addCDATA(
-                getXMLTags().getDate(), getTokenizer().nextSimpleValue());
 
-        // Control time - relax the check for length of exactly 4
-        String controlTime = getTokenizer().nextSimpleValue();
+        String fromId = nextField();
+        checkFixedLength("ISA06", fromId, 15);
+        process("ISA06", fromId);
+
+        String toQual = nextField();
+        checkFixedLength("ISA07", toQual, 2);
+        process("ISA07", toQual);
+
+        String toId = nextField();
+        checkFixedLength("ISA08", toId, 15);
+        process("ISA08", fromId);
+
+        String controlDate = nextField();
+        checkFixedLength("ISA09", controlDate, 6);
+        getInterchangeAttributes().addCDATA(getXMLTags().getDate(), controlDate);
+
+        String controlTime = nextField();
+        checkFixedLength("ISA10", controlTime, 4);
         getInterchangeAttributes().addCDATA(getXMLTags().getTime(), controlTime);
 
         // The standards id, typically "U", through version 4010
@@ -125,7 +143,8 @@ public class AnsiReader extends StandardReader {
         if (separator == -1) {
             // No repetition char is in effect. It is therefore safe to interpret this next
             // element as the standardsId used through version 4010 of ANSI X12.
-            String standardsId = getFixedLengthISAField(1);
+            String standardsId = nextField();
+            checkFixedLength("ISA11", standardsId, 1);
             getInterchangeAttributes().addCDATA(getXMLTags().getStandardsId(), standardsId);
         } else {
             // A repetition char is in effect, presumably previewed from this ISA segment we
@@ -134,13 +153,14 @@ public class AnsiReader extends StandardReader {
             // Temporarily disable the repetition char so that we can parse over this element
             // as normal data.
             getTokenizer().setRepetitionSeparator(-1);
-            getFixedLengthISAField(1);
+            String temp = nextField();
+            checkFixedLength("ISA11", temp, 1);
             getTokenizer().setRepetitionSeparator(separator);
         }
 
-        String versionId = getFixedLengthISAField(5);
+        String versionId = getFixedLengthISAField(5, false);
         getInterchangeAttributes().addCDATA(getXMLTags().getVersion(), versionId);
-        setInterchangeControlNumber(getFixedLengthISAField(9));
+        setInterchangeControlNumber(getFixedLengthISAField(9, false));
         getInterchangeAttributes().addCDATA(getXMLTags().getControl(),
                 getInterchangeControlNumber());
 
@@ -220,7 +240,7 @@ public class AnsiReader extends StandardReader {
         }
 
         checkGroupCount(getGroupCount(), getTokenizer().nextIntValue(true), COUNT_IEA);
-        String ieaControlNumber = getTokenizer().nextSimpleValue(false, true);
+        String ieaControlNumber = nextField();
         if (ieaControlNumber == null) {
             ieaControlNumber = "(omitted)";
         }
@@ -229,6 +249,22 @@ public class AnsiReader extends StandardReader {
         getAlternateAckGenerator().generateAcknowledgementWrapup();
         endInterchange();
         return (getTokenizer().skipSegment());
+    }
+
+    private String nextField() throws SAXException, IOException {
+        return getTokenizer().nextSimpleValue(false, true);
+    }
+
+    private void checkFixedLength(String elementName, String value, int expectedLength) throws EDISyntaxException {
+        if (value == null) {
+            throw new EDISyntaxException(ISA_SEGMENT_HAS_TOO_FEW_FIELDS, getTokenizer());
+        } else if (value.length() != expectedLength) {
+            RecoverableSyntaxException re = new ISAFixedLengthException(elementName, expectedLength, value.length(), getTokenizer());
+            setSyntaxException(re);
+            if (!recover(re)) {
+                throw re;
+            }
+        }
     }
 
     protected void parseTA1(Token token) throws SAXException, IOException {
@@ -247,7 +283,7 @@ public class AnsiReader extends StandardReader {
         String code = getTokenizer().nextSimpleValue();
         attributes.addCDATA(getXMLTags().getAcknowledgementCode(), code);
 
-        String note = getTokenizer().nextSimpleValue(false, true);
+        String note = nextField();
         if (note != null) {
             if (note.length() > 0) {
                 attributes.addCDATA(getXMLTags().getNotCode(), note);
@@ -373,7 +409,7 @@ public class AnsiReader extends StandardReader {
         }
 
         checkTransactionCount(docCount, getTokenizer().nextIntValue(true), COUNT_GE);
-        String groupControlNumber = getTokenizer().nextSimpleValue(false, true);
+        String groupControlNumber = nextField();
         if (groupControlNumber == null) {
             groupControlNumber = "(omitted)";
         }
@@ -421,7 +457,7 @@ public class AnsiReader extends StandardReader {
         boolean wrapped = wrapContentHandlerIfNeeded(pluginController);
         if (pluginController.isEnabled())
             getDocumentAttributes().addCDATA(getXMLTags().getName(), pluginController.getDocumentName());
-        control = getTokenizer().nextSimpleValue(false, true);
+        control = nextField();
         boolean hitSegmentEnd = false;
         if (control == null) {
             // Edge case. The segment terminator immediately followed the ST01 document type element.
@@ -469,7 +505,7 @@ public class AnsiReader extends StandardReader {
             endElement(getXMLTags().getLoopTag());
 
         checkSegmentCount(segCount, getTokenizer().nextIntValue(true), COUNT_SE);
-        checkTransactionControlNumber(control, getTokenizer().nextSimpleValue(false, true), CONTROL_NUMBER_SE);
+        checkTransactionControlNumber(control, nextField(), CONTROL_NUMBER_SE);
         getAckGenerator().generateTransactionAcknowledgment(documentType, control);
         getAlternateAckGenerator().generateTransactionAcknowledgment(documentType, control);
         endElement(getXMLTags().getDocumentTag());
