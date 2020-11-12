@@ -215,6 +215,24 @@ public class AnsiReaderTest {
     }
 
     @Test
+    public void correctsISA01FixedLength() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("ISA*00*", "ISA*0000*");
+        // Tell the parser to keep going after a recoverable error
+        ansiReader.setSyntaxExceptionHandler(syntaxException -> true);
+        // The parsed value should have been trimmer to a length of 2
+        ansiReader.setContentHandler(new MyContentHandler() {
+            @Override
+            public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+                super.startElement(uri, localName, qName, attributes);
+                if ("interchange".equals(localName)) {
+                    assertEquals(2, attributes.getValue("AuthorizationQual").length());
+                }
+            }
+        });
+        ansiReader.parse(new InputSource(new StringReader(ediText)));
+    }
+
+    @Test
     public void detectsISA01FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("ISA*00*", "ISA*0000*");
         try {

@@ -96,45 +96,32 @@ public class AnsiReader extends StandardReader {
         getInterchangeAttributes().clear();
         getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), EDIStandard.ANSI.getDisplayName());
 
-        String authQual = nextField();
-        checkFixedLength("ISA01", authQual, 2);
-
-        String authInfo = nextField();
-        checkFixedLength("ISA02", authInfo, 10);
-
-        String securityQual = nextField();
-        checkFixedLength("ISA03", securityQual, 2);
-
-        String securityInfo = nextField();
-        checkFixedLength("ISA04", securityInfo, 10);
+        String authQual = checkFixedLength("ISA01", nextField(), 2);
+        String authInfo = checkFixedLength("ISA02", nextField(), 10);
+        String securityQual = checkFixedLength("ISA03", nextField(), 2);
+        String securityInfo = checkFixedLength("ISA04", nextField(), 10);
 
         getInterchangeAttributes().addCDATA(getXMLTags().getAuthorizationQual(), authQual);
         getInterchangeAttributes().addCDATA(getXMLTags().getAuthorization(), authInfo);
         getInterchangeAttributes().addCDATA(getXMLTags().getSecurityQual(), securityQual);
         getInterchangeAttributes().addCDATA(getXMLTags().getSecurity(), securityInfo);
 
-        String fromQual = nextField();
-        checkFixedLength("ISA05", fromQual, 2);
+        String fromQual = checkFixedLength("ISA05", nextField(), 2);
         process("ISA05", fromQual);
 
-        String fromId = nextField();
-        checkFixedLength("ISA06", fromId, 15);
+        String fromId = checkFixedLength("ISA06", nextField(), 15);
         process("ISA06", fromId);
 
-        String toQual = nextField();
-        checkFixedLength("ISA07", toQual, 2);
+        String toQual = checkFixedLength("ISA07", nextField(), 2);
         process("ISA07", toQual);
 
-        String toId = nextField();
-        checkFixedLength("ISA08", toId, 15);
+        String toId = checkFixedLength("ISA08", nextField(), 15);
         process("ISA08", fromId);
 
-        String controlDate = nextField();
-        checkFixedLength("ISA09", controlDate, 6);
+        String controlDate = checkFixedLength("ISA09", nextField(), 6);
         getInterchangeAttributes().addCDATA(getXMLTags().getDate(), controlDate);
 
-        String controlTime = nextField();
-        checkFixedLength("ISA10", controlTime, 4);
+        String controlTime = checkFixedLength("ISA10", nextField(), 4);
         getInterchangeAttributes().addCDATA(getXMLTags().getTime(), controlTime);
 
         // The standards id, typically "U", through version 4010
@@ -143,8 +130,7 @@ public class AnsiReader extends StandardReader {
         if (separator == -1) {
             // No repetition char is in effect. It is therefore safe to interpret this next
             // element as the standardsId used through version 4010 of ANSI X12.
-            String standardsId = nextField();
-            checkFixedLength("ISA11", standardsId, 1);
+            String standardsId = checkFixedLength("ISA11", nextField(), 1);
             getInterchangeAttributes().addCDATA(getXMLTags().getStandardsId(), standardsId);
         } else {
             // A repetition char is in effect, presumably previewed from this ISA segment we
@@ -153,26 +139,21 @@ public class AnsiReader extends StandardReader {
             // Temporarily disable the repetition char so that we can parse over this element
             // as normal data.
             getTokenizer().setRepetitionSeparator(-1);
-            String temp = nextField();
-            checkFixedLength("ISA11", temp, 1);
+            checkFixedLength("ISA11", nextField(), 1);
             getTokenizer().setRepetitionSeparator(separator);
         }
 
-        String versionId = nextField();
-        checkFixedLength("ISA12", versionId, 5);
+        String versionId = checkFixedLength("ISA12", nextField(), 5);
         getInterchangeAttributes().addCDATA(getXMLTags().getVersion(), versionId);
 
-        String controlNumber = nextField();
-        checkFixedLength("ISA13", controlNumber, 9);
+        String controlNumber = checkFixedLength("ISA13", nextField(), 9);
         setInterchangeControlNumber(controlNumber);
         getInterchangeAttributes().addCDATA(getXMLTags().getControl(), getInterchangeControlNumber());
 
-        String ackRequest = nextField();
-        checkFixedLength("ISA14", ackRequest, 1);
+        String ackRequest = checkFixedLength("ISA14", nextField(), 1);
         getInterchangeAttributes().addCDATA(getXMLTags().getAcknowledgementRequest(), ackRequest);
 
-        String testIndicator = nextField();
-        checkFixedLength("ISA15", testIndicator, 1);
+        String testIndicator = checkFixedLength("ISA15", nextField(), 1);
         getInterchangeAttributes().addCDATA(getXMLTags().getTestIndicator(), testIndicator);
 
         // Go ahead and parse tokens until the end of the segment is reached
@@ -257,7 +238,16 @@ public class AnsiReader extends StandardReader {
         return getTokenizer().nextSimpleValue(false, true);
     }
 
-    private void checkFixedLength(String elementName, String value, int expectedLength) throws EDISyntaxException {
+    /**
+     * Checks an ISA field value for compliance with the known fixed length.
+     * If the value is of the right length, then this simply returns that value unchanged.
+     * If the value is not the right length, then the method does one of two things;
+     * it either returns the value trimmed or padded at the end to the correct length, or
+     * it throws an ISAFixedLengthException. The decision between the two options is based on
+     * whether there is an EDISyntaxExceptionHandler in place. If not, the exception is throw;
+     * if so, then that handler gets to decide whether or not to throw the exception.
+     */
+    private String checkFixedLength(String elementName, String value, int expectedLength) throws EDISyntaxException {
         if (value == null) {
             throw new EDISyntaxException(ISA_SEGMENT_HAS_TOO_FEW_FIELDS, getTokenizer());
         } else if (value.length() != expectedLength) {
@@ -266,7 +256,9 @@ public class AnsiReader extends StandardReader {
             if (!recover(re)) {
                 throw re;
             }
+            value = FixedLength.valueOf(value, expectedLength);
         }
+        return value;
     }
 
     protected void parseTA1(Token token) throws SAXException, IOException {
@@ -294,22 +286,6 @@ public class AnsiReader extends StandardReader {
         }
         startElement(getXMLTags().getAcknowledgementTag(), attributes);
         endElement(getXMLTags().getAcknowledgementTag());
-    }
-
-    protected String getFixedLengthISAField(int expectedLength, boolean enforce)
-            throws SAXException, IOException {
-        String field = getTokenizer().nextSimpleValue();
-
-        if (field.length() != expectedLength) {
-            if (enforce) {
-                EDISyntaxException se = new EDISyntaxException(ISA_FIELD_WIDTH, expectedLength, field.length(), getTokenizer());
-                logger.warn(se.getMessage());
-                throw se;
-            } else
-                field = FixedLength.valueOf(field, expectedLength);
-        }
-
-        return field;
     }
 
     /**
