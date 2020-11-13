@@ -302,7 +302,7 @@ public class AnsiReader extends StandardReader {
 
         getGroupAttributes().clear();
         getGroupAttributes().addCDATA(getXMLTags().getGroupType(),
-                groupFunctionCode = getTokenizer().nextSimpleValue());
+                groupFunctionCode = getTokenizer().nextSimpleValue(false));
         groupSender = getTokenizer().nextSimpleValue(false);
         process("GS02", groupSender);
         groupReceiver = getTokenizer().nextSimpleValue(false);
