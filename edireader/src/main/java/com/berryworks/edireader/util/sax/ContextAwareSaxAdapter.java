@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2020 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -41,23 +41,25 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
     private EDIAttributes pendingAttributes;
     private String pendingData;
     private final List<String> context = new ArrayList<>();
+    private final boolean isTrimmingEnabled;
+
+    public ContextAwareSaxAdapter() {
+        this(true);
+    }
+
+    public ContextAwareSaxAdapter(boolean isTrimmingEnabled) {
+        this.isTrimmingEnabled = isTrimmingEnabled;
+    }
 
     @Override
     public final void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (pending) {
-            if (pendingData != null) pendingData = pendingData.trim();
-            start(pendingUri, pendingName, pendingData, pendingAttributes);
-            pending = false;
-        }
-
+        applyPending();
         pendingUri = uri;
         pendingName = localName;
         pendingAttributes = new EDIAttributes(attributes);
-        pendingData = null;
         pending = true;
 
         context.add(representationOf(localName, attributes));
-
     }
 
     protected String representationOf(String localName, Attributes attributes) {
@@ -66,12 +68,7 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
 
     @Override
     public final void endElement(String uri, String localName, String qName) throws SAXException {
-        if (pending) {
-            if (pendingData != null) pendingData = pendingData.trim();
-            start(pendingUri, pendingName, pendingData, pendingAttributes);
-            pending = false;
-            pendingData = null;
-        }
+        applyPending();
         end(uri, localName);
 
         if (context.size() > 0) {
@@ -81,6 +78,15 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
                 context.remove(indexOfLast);
             }
         }
+    }
+
+    private void applyPending() throws SAXException {
+        if (pending) {
+            if (pendingData != null && isTrimmingEnabled) pendingData = pendingData.trim();
+            start(pendingUri, pendingName, pendingData, pendingAttributes);
+        }
+        pending = false;
+        pendingData = null;
     }
 
     @Override
