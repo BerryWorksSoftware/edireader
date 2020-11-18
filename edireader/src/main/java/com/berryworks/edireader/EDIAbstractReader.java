@@ -164,6 +164,16 @@ public abstract class EDIAbstractReader implements XMLReader {
      */
     private boolean includeSyntaxCharacters;
 
+    /**
+     * If true, the generated XML will keep EDI elements that contain only spaces as data.
+     * If false, which is the default, any element with only spaces between delimiters is treated as if the delimiters
+     * were adjacent. In other words, "*a*b*  *d*" is normally treated exactly the same as "*a*b**d*" but this default
+     * behaviour may be changed, in which case the series of spaces is treated as a data value for the element.
+     * One reason, perhaps the only reason, you might want to do this is to perform strict validation checking after
+     * parsing.
+     */
+    private boolean keepSpacesOnlyElements;
+
     private SyntaxDescriptor acknowledgmentSyntaxDescriptor;
 
     private TransactionCallback transactionCallback;
@@ -457,6 +467,14 @@ public abstract class EDIAbstractReader implements XMLReader {
 
     public void setIncludeSyntaxCharacters(boolean includeSyntaxCharacters) {
         this.includeSyntaxCharacters = includeSyntaxCharacters;
+    }
+
+    public boolean isKeepSpacesOnlyElements() {
+        return keepSpacesOnlyElements;
+    }
+
+    public void setKeepSpacesOnlyElements(boolean keepSpacesOnlyElements) {
+        this.keepSpacesOnlyElements = keepSpacesOnlyElements;
     }
 
     public boolean isExternalXmlDocumentStart() {

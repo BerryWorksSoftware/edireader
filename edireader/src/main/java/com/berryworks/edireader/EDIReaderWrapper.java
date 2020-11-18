@@ -285,6 +285,16 @@ public class EDIReaderWrapper extends EDIReader {
     }
 
     @Override
+    public boolean isKeepSpacesOnlyElements() {
+        return wrappedEDIReader.isKeepSpacesOnlyElements();
+    }
+
+    @Override
+    public void setKeepSpacesOnlyElements(boolean keepSpacesOnlyElements) {
+        wrappedEDIReader.setKeepSpacesOnlyElements(keepSpacesOnlyElements);
+    }
+
+    @Override
     public void setLocale(Locale locale) throws SAXException {
         wrappedEDIReader.setLocale(locale);
     }

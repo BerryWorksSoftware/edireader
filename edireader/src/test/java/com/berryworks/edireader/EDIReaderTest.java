@@ -9,7 +9,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.StringReader;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class EDIReaderTest {
 
@@ -137,9 +137,61 @@ public class EDIReaderTest {
         assertEquals("", ediReader.getTerminatorSuffix());
     }
 
+    @Test
+    public void spacesOnlyElementsIgnoredByDefault() throws IOException, SAXException {
+        ediReader = new EDIReader();
+        MyContentHandler contentHandler = new MyContentHandler();
+        ediReader.setContentHandler(contentHandler);
+        ediReader.parse(new InputSource(new StringReader("" +
+                "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~\n" +
+                "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~\n" +
+                "ST*204*7629~\n" +
+                "B2*   *XXXX **159771**PP~\n" +
+                "B2A*00*LT~\n" +
+                "SE*4*7629~\n" +
+                "GE*1*7629~\n" +
+                "IEA*1*000007629~\n")));
+        assertEquals(0, contentHandler.numberOfSpacesOnlyElements());
+
+        // Now do it again, explicitly setting the default
+        ediReader = new EDIReader();
+        contentHandler = new MyContentHandler();
+        ediReader.setContentHandler(contentHandler);
+        ediReader.setIncludeSyntaxCharacters(true);
+        ediReader.setKeepSpacesOnlyElements(false);
+        ediReader.parse(new InputSource(new StringReader("" +
+                "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~\n" +
+                "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~\n" +
+                "ST*204*7629~\n" +
+                "B2*   *XXXX **159771**PP~\n" +
+                "B2A*00*LT~\n" +
+                "SE*4*7629~\n" +
+                "GE*1*7629~\n" +
+                "IEA*1*000007629~\n")));
+        assertEquals(0, contentHandler.numberOfSpacesOnlyElements());
+
+        // Now do it again, asking to keep the elements containing only spaces
+        ediReader = new EDIReader();
+        contentHandler = new MyContentHandler();
+        ediReader.setContentHandler(contentHandler);
+        ediReader.setIncludeSyntaxCharacters(true);
+        ediReader.setKeepSpacesOnlyElements(true);
+        ediReader.parse(new InputSource(new StringReader("" +
+                "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~\n" +
+                "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~\n" +
+                "ST*204*7629~\n" +
+                "B2*   *XXXX **159771**PP~\n" +
+                "B2A*00*LT~\n" +
+                "SE*4*7629~\n" +
+                "GE*1*7629~\n" +
+                "IEA*1*000007629~\n")));
+        assertEquals(1, contentHandler.numberOfSpacesOnlyElements());
+    }
+
     private static class MyContentHandler extends EDIReaderSAXAdapter {
         private int segmentCount, elementCount;
         private Attributes interchangeAttributes;
+        private int spacesOnlyElements;
 
         public MyContentHandler() {
             super(new DefaultXMLTags());
@@ -169,6 +221,19 @@ public class EDIReaderTest {
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             super.startElement(uri, localName, qName, attributes);
             elementCount++;
+        }
+
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            super.characters(ch, start, length);
+            String data = new String(ch, start, length);
+            if (data.length() > 0 && data.trim().length() == 0) {
+                spacesOnlyElements += 1;
+            }
+        }
+
+        public int numberOfSpacesOnlyElements() {
+            return spacesOnlyElements;
         }
 
         Attributes getInterchangeAttributes() {

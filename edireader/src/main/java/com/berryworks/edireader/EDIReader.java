@@ -84,6 +84,7 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
                 theReader.setSyntaxExceptionHandler(getSyntaxExceptionHandler());
                 theReader.setNamespaceEnabled(isNamespaceEnabled());
                 theReader.setIncludeSyntaxCharacters(isIncludeSyntaxCharacters());
+                theReader.setKeepSpacesOnlyElements(isKeepSpacesOnlyElements());
             }
             theReader.setXMLTags(xmlTags);
             if (pluginControllerFactory != null) {
