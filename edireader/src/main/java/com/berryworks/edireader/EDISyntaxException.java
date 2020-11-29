@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2020 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -51,15 +51,12 @@ public class EDISyntaxException extends SAXException {
         errorElementNumber = tokenizer.getElementInSegmentCount();
     }
 
-    public EDISyntaxException(String desc, String expected, String actual,
-                              Tokenizer tokenizer) {
-        this(desc + ". Expected " + expected + " instead of " + actual,
-                tokenizer);
+    public EDISyntaxException(String desc, String expected, String actual, Tokenizer tokenizer) {
+        this(desc + ". Expected " + expected + " instead of " + actual, tokenizer);
     }
 
     public EDISyntaxException(String desc, int expected, int actual, Tokenizer tokenizer) {
-        this(desc + ". Expected " + expected + " instead of " + actual,
-                tokenizer);
+        this(desc + ". Expected " + expected + " instead of " + actual, tokenizer);
     }
 
     public EDISyntaxException(String desc, IOException e) {

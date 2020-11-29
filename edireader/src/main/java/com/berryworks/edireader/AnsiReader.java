@@ -20,6 +20,7 @@
 
 package com.berryworks.edireader;
 
+import com.berryworks.edireader.error.ISA16SubElementDelimiterException;
 import com.berryworks.edireader.error.ISAFixedLengthException;
 import com.berryworks.edireader.error.MissingMandatoryElementException;
 import com.berryworks.edireader.error.RecoverableSyntaxException;
@@ -37,6 +38,7 @@ import java.lang.invoke.MethodHandles;
 
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_END;
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_START;
+import static java.lang.Character.*;
 
 /**
  * Reads and parses ANSI X.12 EDI interchanges. This class is not normally
@@ -156,7 +158,19 @@ public class AnsiReader extends StandardReader {
         String testIndicator = checkFixedLength("ISA15", nextField(), 1);
         getInterchangeAttributes().addCDATA(getXMLTags().getTestIndicator(), testIndicator);
 
-        // Go ahead and parse tokens until the end of the segment is reached
+        // We should have already noted ISA16, the sub-element delimiter, when we previewed this interchange.
+        // If one was not established, then report it as a recoverable syntax error.
+        if (getSubDelimiter() == '\000') {
+            RecoverableSyntaxException syntaxException = new ISA16SubElementDelimiterException();
+            if (!recover(syntaxException)) {
+                throw syntaxException;
+            }
+        }
+
+        // At this point, we have parsed all the elements we need from the ISA, but we will keep looking
+        // for more elements before the end of the segment. If we do not find the segment end soon,
+        // then there is a serious issue with the segment terminator. Better to report this now
+        // instead of attempting to parse more segments of this interchange.
         while (getTokenizer().nextToken().getType() != SEGMENT_END)
             if (getTokenizer().getElementInSegmentCount() > 30) {
                 EDISyntaxException se = new EDISyntaxException(TOO_MANY_ISA_FIELDS, getTokenizer());
@@ -590,14 +604,23 @@ public class AnsiReader extends StandardReader {
             logger.warn(ISA_SEGMENT_HAS_TOO_FEW_FIELDS);
             throw new EDISyntaxException(ISA_SEGMENT_HAS_TOO_FEW_FIELDS);
         }
+
+        // Determine the sub-element delimiter
         c = buf[indexOf16thFieldSeparator + 1];
         if (isAcceptable(c))
             setSubDelimiter(c);
+        else {
+            // Continue with it unset, allowing an invalid value to be treated as a recoverable syntax error.
+            logger.warn(INVALID_SUB_ELEMENT_DELIMITER);
+        }
+
+        // Determine the segment terminator
         c = buf[indexOf16thFieldSeparator + 2];
         if (isAcceptable(c))
             setTerminator(c);
         else {
             logger.warn(INVALID_SEGMENT_TERMINATOR);
+            // This is not recoverable.
             throw new EDISyntaxException(INVALID_SEGMENT_TERMINATOR);
         }
         setTerminatorSuffix(findTerminatorSuffix(buf, indexOf16thFieldSeparator + 3, 128));
@@ -640,12 +663,32 @@ public class AnsiReader extends StandardReader {
     }
 
     protected boolean isAcceptable(char c) {
-        return getDelimiter() != c;
+        if (isSpaceChar(c) || isLetter(c) || isDigit(c)) {
+            // It cannot be a letter or digit or space
+            return false;
+        }
+        if (getDelimiter() == c) {
+            // It cannot be the same as the element delimiter
+            return false;
+        }
+        if (getRepetitionSeparator() != '\000' && getRepetitionSeparator() == c) {
+            // It cannot be the same as the repetition separator
+            return false;
+        }
+        if (getSubDelimiter() != '\000' && getSubDelimiter() == c) {
+            // It cannot be the same as the sub-element delimiter
+            return false;
+        }
+        if (getTerminator() != '\000' && getTerminator() == c) {
+            // It cannot be the same as the segment terminator
+            return false;
+        }
+        return true;
     }
 
     protected static String findTerminatorSuffix(char[] buf, int i, int j) {
         StringBuilder result = new StringBuilder();
-        for (int n = i; n < j && !Character.isLetter(buf[n]); n++)
+        for (int n = i; n < j && !isLetter(buf[n]); n++)
             result.append(buf[n]);
         return result.toString();
     }

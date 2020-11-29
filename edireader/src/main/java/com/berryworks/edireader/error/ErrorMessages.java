@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2020 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -29,6 +29,7 @@ public interface ErrorMessages {
     String DIGITS_ONLY = "Element must contain only digits";
     String INVALID_COMPOSITE = "Invalid composite element";
     String INVALID_SEGMENT_TERMINATOR = "Invalid segment terminator";
+    String INVALID_SUB_ELEMENT_DELIMITER = "Invalid ISA16 sub-element delimiter";
     String UNEXPECTED_EOF = "Unexpected end of data";
     String INVALID_BEGINNING_OF_SEGMENT = "Invalid beginning of segment";
     String UNEXPECTED_SEGMENT_IN_CONTEXT = "Unexpected segment type in this context";

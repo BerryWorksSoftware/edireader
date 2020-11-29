@@ -457,6 +457,68 @@ public class AnsiReaderTest {
     }
 
     @Test
+    public void detectsISA16Error_space() throws IOException, SAXException {
+        // A space is not acceptable
+        String ediText = EDI_SAMPLE.replace("*0*T*:^", "*0*T* ^");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA16 (sub-element delimiter) problem not detected");
+        } catch (RecoverableSyntaxException e) {
+            assertEquals("Invalid ISA16 sub-element delimiter", e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA16Error_digit() throws IOException, SAXException {
+        // A space is not acceptable
+        String ediText = EDI_SAMPLE.replace("*0*T*:^", "*0*T*0^");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA16 (sub-element delimiter) problem not detected");
+        } catch (EDISyntaxException e) {
+            assertEquals("Invalid ISA16 sub-element delimiter", e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA16Error_letter() throws IOException, SAXException {
+        // A space is not acceptable
+        String ediText = EDI_SAMPLE.replace("*0*T*:^", "*0*T*A^");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA16 (sub-element delimiter) problem not detected");
+        } catch (EDISyntaxException e) {
+            assertEquals("Invalid ISA16 sub-element delimiter", e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA16Error_empty() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("*0*T*:^", "*0*T^*");
+        // The element delimiter after the T is missing, so the parser cannot reliably detect the segment terminator.
+        // This is not a recoverable error!
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA16 (sub-element delimiter) problem not detected");
+        } catch (EDISyntaxException e) {
+            assertEquals("Invalid segment terminator", e.getMessage());
+        }
+    }
+
+    @Test
+    public void detectsISA16Error_omitted() throws IOException, SAXException {
+        String ediText = EDI_SAMPLE.replace("*0*T*:^", "*0*T^");
+        // The element delimiter after the T is missing, so the parser cannot reliably detect the segment terminator.
+        // This is not a recoverable error!
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediText)));
+            fail("ISA16 (sub-element delimiter) problem not detected");
+        } catch (EDISyntaxException e) {
+            assertEquals("Invalid segment terminator", e.getMessage());
+        }
+    }
+
+    @Test
     public void detectsGSMandatoryFieldError() throws IOException {
         String ediText = EDI_SAMPLE.replace("*1337*1", "**1");
         try {
