@@ -16,13 +16,6 @@
         and custom integrations. This Community Edition serves as the underlying core for the
         EDIReader Premium Edition providing EDIWriter and other added-value modules.
     </description>
-    <url>https://github.com/BerryWorksSoftware/edireader</url>
-
-    <scm>
-        <connection>scm://github.com/BerryWorksSoftware/edireader.git</connection>
-        <developerConnection>scm://github.com/BerryWorksSoftware/edireader.git</developerConnection>
-        <url>git@github.com/BerryWorksSoftware/edireader.git</url>
-    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
