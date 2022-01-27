@@ -1,9 +1,15 @@
 # Release Notes
 
+### 5.6.0 - January 25, 2022
+
+* Feature: An EDI element that contains only spaces is, by default, treated as an omitted element within the segment. 
+Add an option to treat these spaces as data instead. This option is NOT recommended for normal use.
+* Refactor: Revise handling of the fixed length ISA elements, preserving full backward compatibility.
+
 ### 5.5.3 - May 15, 2020
 
 * Feature: In the EDI splitter tool, let the test indicator, "P" or "T", be available as a component when
-naming the split files.
+  naming the split files.
 
 ### 5.5.2 - March 23, 2020
 
