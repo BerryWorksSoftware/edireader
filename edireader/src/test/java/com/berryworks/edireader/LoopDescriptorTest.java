@@ -30,6 +30,22 @@ public class LoopDescriptorTest {
     }
 
     @Test
+    public void canConstructWithMinMax() {
+        loopDescriptor = new LoopDescriptor("LoopName", "FirstSegment", 3, "CurrentLoop", 1, 2);
+        assertEquals("LoopName", loopDescriptor.getName());
+        assertEquals("FirstSegment", loopDescriptor.getFirstSegment());
+        assertEquals(3, loopDescriptor.getNestingLevel());
+        assertEquals(-1, loopDescriptor.getLevelContext());
+        assertEquals("CurrentLoop", loopDescriptor.getLoopContext());
+        assertFalse(loopDescriptor.isAnyContext());
+        assertEquals(1, loopDescriptor.getMinimumOccurrences());
+        assertEquals(2, loopDescriptor.getMaximumOccurrences());
+        assertEquals(
+                "loop LoopName at nesting level 3: encountering segment FirstSegment while currently in loop CurrentLoop",
+                loopDescriptor.toString());
+    }
+
+    @Test
     public void canConstructWithDefaultContext() {
         loopDescriptor = new LoopDescriptor("LoopName", "FirstSegment", 2);
         assertEquals("LoopName", loopDescriptor.getName());

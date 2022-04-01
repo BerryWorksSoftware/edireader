@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2022 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -152,6 +152,8 @@ import static com.berryworks.edireader.util.FixedLength.isPresent;
  */
 public class LoopDescriptor {
 
+    public static final int UNSPECIFIED = -1;
+
     /**
      * Name of the loop entered as the result of applying this descriptor.
      * <p>
@@ -179,6 +181,15 @@ public class LoopDescriptor {
     protected final int nestingLevel;
 
     /**
+     * Specifies a minimum and maximum number of sequential occurrences of the loop.
+     * In the case of a LoopDescriptor used to explicitly specify that a segment does NOT constitute
+     * instance of a new loop but simply continuation of the current loop, the minimum and maximum
+     * can describe the minimum and maximum occurences of that segment.
+     */
+    protected final int minimumOccurrences;
+    protected final int maximumOccurrences;
+
+    /**
      * Context which determines whether or not a particular appearance of a
      * segment type that matches the firstSegment is in fact an instance of this
      * loop.
@@ -196,8 +207,9 @@ public class LoopDescriptor {
     private final Set<String> resultFlags = new TreeSet<>();
     private final Set<String> conditionFlags = new TreeSet<>();
 
+
     /**
-     * Constructor a descriptor for recognizing the beginning of a nested loop.
+     * Construct a descriptor for recognizing the beginning of a nested loop.
      *
      * @param loopName     Name of the loop, suitable for use as an XML attribute value
      * @param firstSegment Segment type that (at least sometimes) indicates entry into
@@ -206,11 +218,29 @@ public class LoopDescriptor {
      * @param currentLoop  Name of a loop; indicates a valid prior state
      */
     public LoopDescriptor(String loopName, String firstSegment, int nestingLevel, String currentLoop) {
+        this(loopName, firstSegment, nestingLevel, currentLoop, UNSPECIFIED, UNSPECIFIED);
+    }
+
+    /**
+     * Construct a descriptor for recognizing the beginning of a nested loop.
+     *
+     * @param loopName     Name of the loop, suitable for use as an XML attribute value
+     * @param firstSegment Segment type that (at least sometimes) indicates entry into
+     *                     this loop.
+     * @param nestingLevel How deeply is this loop nested within other loops.
+     * @param currentLoop  Name of a loop; indicates a valid prior state
+     * @param minimumOccurrences Minimum number of sequential occurrences, or -1 for unspecified
+     * @param maximumOccurrences Maximum number of sequential occurrences, or -1 for unspecified
+     */
+    public LoopDescriptor(String loopName, String firstSegment, int nestingLevel, String currentLoop,
+                          int minimumOccurrences, int maximumOccurrences) {
         this.name = loopName;
         this.firstSegment = firstSegment;
         this.nestingLevel = nestingLevel;
         this.loopContext = currentLoop;
         this.levelContext = -1;
+        this.minimumOccurrences = minimumOccurrences;
+        this.maximumOccurrences = maximumOccurrences;
         lookForFlags();
     }
 
@@ -236,6 +266,7 @@ public class LoopDescriptor {
         this.nestingLevel = nestingLevel;
         this.loopContext = Plugin.ANY_CONTEXT;
         this.levelContext = currentLevel;
+        minimumOccurrences = maximumOccurrences = UNSPECIFIED;
         lookForFlags();
     }
 
@@ -297,6 +328,14 @@ public class LoopDescriptor {
 
     public int getLevelContext() {
         return levelContext;
+    }
+
+    public int getMinimumOccurrences() {
+        return minimumOccurrences;
+    }
+
+    public int getMaximumOccurrences() {
+        return maximumOccurrences;
     }
 
     /**
@@ -365,6 +404,8 @@ public class LoopDescriptor {
                 && getNestingLevel() == sld.getNestingLevel()
                 && getLoopContext().equals(sld.getLoopContext())
                 && getLevelContext() == sld.getLevelContext()
+                && getMinimumOccurrences() == sld.getMinimumOccurrences()
+                && getMaximumOccurrences() == sld.getMaximumOccurrences()
                 && getResultFlags().equals(sld.getResultFlags())
                 && getConditionFlags().equals(sld.getConditionFlags());
     }
