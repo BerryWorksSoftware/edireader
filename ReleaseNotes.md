@@ -1,5 +1,18 @@
 # Release Notes
 
+### 5.6.2 - May 1, 2022
+
+* Fix: Avoid potential for a null pointer exception when using a plugin with condition flags. For a few
+transaction/message types, the same segment type can mark the beginning of two different loop/group types;
+condition flags are used to disambiguate such situations.
+
+### 5.6.1 - April 1, 2022
+
+* Feature: Add min and max occurrence attributes to a LoopDescriptor. Among other things, this allows an easy
+way to treat repeatable and non-repeatable segments in a particular loop context differently. For example,
+when rendering EDI as JSON, you might want to use a JSON key:object pair for a non-repeatable segment, but
+a JSON array for a repeatable segment. 
+
 ### 5.6.0 - January 25, 2022
 
 * Feature: An EDI element that contains only spaces is, by default, treated as an omitted element within the segment. 
