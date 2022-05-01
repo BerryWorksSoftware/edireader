@@ -135,7 +135,7 @@ public abstract class Plugin {
      * that maintains state. For example, a FilteringPlugin might need to make decisions based on what segment types
      * have been seen previously in a given document. In such a case, you may override the init() method in order to
      * reset the state before starting a new document. In developing such a state-bearing plugin, you must carefully
-     * consider thread safety issues for multi-threaded environments. The use of ThreadLocal is recommended in such
+     * consider thread safety issues for multithreaded environments. The use of ThreadLocal is recommended in such
      * cases.
      */
     public void init() {
@@ -198,12 +198,11 @@ public abstract class Plugin {
         for (LoopDescriptor descriptor : descriptorList) {
             boolean candidate = matchesWithoutRegardToFlagConditionals(descriptor, segment, currentLoopStack, currentLevel);
             if (candidate) {
-
-                // Now check to see if has any flag-related conditions.
+                // Now check to see if it has any flag-related conditions.
                 Set<String> conditions = descriptor.getConditionFlags();
                 boolean satisfied = true;
                 for (String condition : conditions) {
-                    if (!resultFlags.contains(condition)) {
+                    if (resultFlags == null || !resultFlags.contains(condition)) {
                         satisfied = false;
                         break;
                     }
@@ -249,11 +248,7 @@ public abstract class Plugin {
                 && currentLoopStack.startsWith(candidateContext)) {
             logger.debug("startsWith satisfied");
             return true;
-        } else if (currentLoopStack.endsWith(candidateContext)) {
-            return true;
-        }
-
-        return false;
+        } else return currentLoopStack.endsWith(candidateContext);
     }
 
     public static int getCount() {
