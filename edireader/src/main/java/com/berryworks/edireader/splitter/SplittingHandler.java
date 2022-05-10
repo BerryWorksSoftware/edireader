@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2022 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -69,6 +69,7 @@ public class SplittingHandler extends DefaultHandler {
     private int segmentCountLimit;
     private AbstractPluginControllerFactory pluginControllerFactory;
     private EdiReaderFilter filter;
+    private SyntaxDescriptor syntaxDescriptor;
 
 
     public SplittingHandler(HandlerFactory handlerFactory) {
@@ -79,6 +80,7 @@ public class SplittingHandler extends DefaultHandler {
         char[] leftOver = null;
         EDIReader parser;
         while ((parser = EDIReaderFactory.createEDIReader(inputSource, leftOver)) != null) {
+            noteSyntaxDetails(parser);
             parser.setContentHandler(this);
             parser.setSyntaxExceptionHandler(new MyErrorHandler());
             if (pluginControllerFactory != null) {
@@ -93,6 +95,18 @@ public class SplittingHandler extends DefaultHandler {
             leftOver = parser.getTokenizer().getBuffered();
         }
         handlerFactory.markEndOfStream();
+    }
+
+    private void noteSyntaxDetails(EDIReader parser) {
+        syntaxDescriptor = new SyntaxDescriptor();
+        syntaxDescriptor.setDelimiter(parser.getDelimiter());
+        syntaxDescriptor.setSubDelimiter(parser.getSubDelimiter());
+        syntaxDescriptor.setTerminator(parser.getTerminator());
+        syntaxDescriptor.setTerminatorSuffix(parser.getTerminatorSuffix());
+        syntaxDescriptor.setRelease(parser.getRelease());
+        syntaxDescriptor.setDecimalMark(parser.getDecimalMark());
+        syntaxDescriptor.setRepetitionSeparator(parser.getRepetitionSeparator());
+        syntaxDescriptor.setSubSubDelimiter(parser.getSubSubDelimiter());
     }
 
     @Override
@@ -275,6 +289,10 @@ public class SplittingHandler extends DefaultHandler {
 
     public HandlerFactory getHandlerFactory() {
         return handlerFactory;
+    }
+
+    public SyntaxDescriptor getSyntaxDescriptor() {
+        return syntaxDescriptor;
     }
 
     private static class MyErrorHandler implements EDISyntaxExceptionHandler {
