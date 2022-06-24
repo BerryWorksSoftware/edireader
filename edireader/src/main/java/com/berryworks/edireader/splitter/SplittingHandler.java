@@ -46,13 +46,14 @@ import static com.berryworks.edireader.util.FixedLength.isPresent;
  * containing only that one document.
  */
 public class SplittingHandler extends DefaultHandler {
-    private final HandlerFactory handlerFactory;
-    private final XMLTags xmlTags = DefaultXMLTags.getInstance();
-    private final String interchangeTagName = xmlTags.getInterchangeTag();
-    private final String senderTagName = xmlTags.getSenderTag();
-    private final String receiverTagName = xmlTags.getReceiverTag();
-    private final String addressTagName = xmlTags.getAddressTag();
+    protected final XMLTags xmlTags = DefaultXMLTags.getInstance();
+    protected final String interchangeTagName = xmlTags.getInterchangeTag();
+    protected final String senderTagName = xmlTags.getSenderTag();
+    protected final String receiverTagName = xmlTags.getReceiverTag();
+    protected final String addressTagName = xmlTags.getAddressTag();
 
+    private final HandlerFactory handlerFactory;
+    private SplittingLevel level;
     private ContentHandler contentHandler;
     private boolean pendingDocumentClose;
     private boolean senderAddress;
@@ -293,6 +294,14 @@ public class SplittingHandler extends DefaultHandler {
 
     public SyntaxDescriptor getSyntaxDescriptor() {
         return syntaxDescriptor;
+    }
+
+    public SplittingLevel getLevel() {
+        return level;
+    }
+
+    public void setLevel(SplittingLevel level) {
+        this.level = level;
     }
 
     private static class MyErrorHandler implements EDISyntaxExceptionHandler {
