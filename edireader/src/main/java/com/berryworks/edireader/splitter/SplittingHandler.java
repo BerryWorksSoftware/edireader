@@ -52,25 +52,25 @@ public class SplittingHandler extends DefaultHandler {
     protected final String receiverTagName = xmlTags.getReceiverTag();
     protected final String addressTagName = xmlTags.getAddressTag();
 
-    private final HandlerFactory handlerFactory;
-    private SplittingLevel level;
-    private ContentHandler contentHandler;
-    private boolean pendingDocumentClose;
-    private boolean senderAddress;
-    private Attributes interchangeAttributes;
-    private Attributes senderAttributes;
-    private Attributes receiverAttributes;
-    private Attributes groupAttributes;
-    private Attributes documentAttributes;
-    private final Attributes emptyAttributes = new AttributesImpl();
-    private int transactionsInInterchangeCount;
-    private int transactionsInGroupCount;
-    private int segmentCount;
-    private int transactionCountLimit;
-    private int segmentCountLimit;
-    private AbstractPluginControllerFactory pluginControllerFactory;
-    private EdiReaderFilter filter;
-    private SyntaxDescriptor syntaxDescriptor;
+    protected final HandlerFactory handlerFactory;
+    protected SplittingLevel level;
+    protected ContentHandler contentHandler;
+    protected boolean pendingDocumentClose;
+    protected boolean senderAddress;
+    protected Attributes interchangeAttributes;
+    protected Attributes senderAttributes;
+    protected Attributes receiverAttributes;
+    protected Attributes groupAttributes;
+    protected Attributes documentAttributes;
+    protected final Attributes emptyAttributes = new AttributesImpl();
+    protected int transactionsInInterchangeCount;
+    protected int transactionsInGroupCount;
+    protected int segmentCount;
+    protected int transactionCountLimit;
+    protected int segmentCountLimit;
+    protected AbstractPluginControllerFactory pluginControllerFactory;
+    protected EdiReaderFilter filter;
+    protected SyntaxDescriptor syntaxDescriptor;
 
 
     public SplittingHandler(HandlerFactory handlerFactory) {
@@ -98,7 +98,7 @@ public class SplittingHandler extends DefaultHandler {
         handlerFactory.markEndOfStream();
     }
 
-    private void noteSyntaxDetails(EDIReader parser) {
+    protected void noteSyntaxDetails(EDIReader parser) {
         syntaxDescriptor = new SyntaxDescriptor();
         syntaxDescriptor.setDelimiter(parser.getDelimiter());
         syntaxDescriptor.setSubDelimiter(parser.getSubDelimiter());
@@ -195,7 +195,7 @@ public class SplittingHandler extends DefaultHandler {
         contentHandler.startElement(uri, localName, qName, attributes);
     }
 
-    private void generateArtificialBoundaryForNewDocument() throws SAXException {
+    protected void generateArtificialBoundaryForNewDocument() throws SAXException {
         pendingDocumentClose = false;
 
         // Close off the current group
@@ -208,7 +208,7 @@ public class SplittingHandler extends DefaultHandler {
         startElement("", groupTagName, groupTagName, groupAttributes);
     }
 
-    private void generateArtificialBoundaryForNewGroup() throws SAXException {
+    protected void generateArtificialBoundaryForNewGroup() throws SAXException {
         pendingDocumentClose = false;
 
         // Close off the current interchange, transaction, root, and XML document
@@ -304,7 +304,7 @@ public class SplittingHandler extends DefaultHandler {
         this.level = level;
     }
 
-    private static class MyErrorHandler implements EDISyntaxExceptionHandler {
+    protected static class MyErrorHandler implements EDISyntaxExceptionHandler {
 
         @Override
         public boolean process(RecoverableSyntaxException syntaxException) {
