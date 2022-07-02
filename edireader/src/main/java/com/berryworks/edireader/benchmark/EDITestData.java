@@ -124,7 +124,11 @@ public class EDITestData implements Runnable {
     }
 
     public static String getEdifactInterchange() {
-        return getEdifactInterchange("DCQCKI", "APR");
+        return getEdifactInterchange(1);
+    }
+
+    public static String getEdifactInterchange(int numberOfMessages) {
+        return getEdifactInterchange(numberOfMessages, "DCQCKI", "APR");
     }
 
     public static String getEdifactInterchange(String type) {
@@ -132,22 +136,33 @@ public class EDITestData implements Runnable {
     }
 
     public static String getEdifactInterchange(String type, String appRef) {
-        return getEdifactInterchange(type, "CONVTST2", appRef);
+        return getEdifactInterchange(1, type, appRef);
+    }
+
+    public static String getEdifactInterchange(int numberOfMessage, String type, String appRef) {
+        return getEdifactInterchange(numberOfMessage, type, "CONVTST2", appRef);
     }
 
     public static String getEdifactInterchange(String type, String recipientRef, String appRef) {
-        return "UNB+IATA:1+REUAIR08DLH:PIMA+REUAGT82AGENT/LHR01:PIMA+941027:1520+841F60UNZ+" +
+        return getEdifactInterchange(1, type, recipientRef, appRef);
+    }
+
+    public static String getEdifactInterchange(int numberOfMessage, String type, String recipientRef, String appRef) {
+        StringBuilder result = new StringBuilder("UNB+IATA:1+REUAIR08DLH:PIMA+REUAGT82AGENT/LHR01:PIMA+941027:1520+841F60UNZ+" +
                 recipientRef + "+" + appRef
-                + "+L+1'"
-                + "UNH+1+" + type + ":90:1:IA+841F60'"
-                + "LOR+SR:GVA'"
-                + "FDQ+DL+573+890701+ATL+MIA++SR+120+8907011300+8907011655+ZRH+ATL'"
-                + "PPD+MEIER+F:Y++BARBARAMRS+MILLER:JOHN'"
-                + "PRD+Y'"
-                + "PSD+N'"
-                + "PBD+2:22'"
-                + "UNT+8+1'"
-                + "UNZ+1+841F60UNZ+1+30077'";
+                + "+L+1'");
+        for (int n = numberOfMessage; n > 0; n--) {
+            result.append("UNH+1+" + type + ":90:1:IA+841F60'"
+                    + "LOR+SR:GVA'"
+                    + "FDQ+DL+573+890701+ATL+MIA++SR+120+8907011300+8907011655+ZRH+ATL'"
+                    + "PPD+MEIER+F:Y++BARBARAMRS+MILLER:JOHN'"
+                    + "PRD+Y'"
+                    + "PSD+N'"
+                    + "PBD+2:22'"
+                    + "UNT+8+1'");
+        }
+        result.append("UNZ+").append(numberOfMessage).append("+841F60UNZ+1+30077'");
+        return result.toString();
     }
 
     @Override
