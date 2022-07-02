@@ -147,21 +147,22 @@ public class EDITestData implements Runnable {
         return getEdifactInterchange(1, type, recipientRef, appRef);
     }
 
-    public static String getEdifactInterchange(int numberOfMessage, String type, String recipientRef, String appRef) {
+    public static String getEdifactInterchange(int numberOfMessages, String type, String recipientRef, String appRef) {
         StringBuilder result = new StringBuilder("UNB+IATA:1+REUAIR08DLH:PIMA+REUAGT82AGENT/LHR01:PIMA+941027:1520+841F60UNZ+" +
                 recipientRef + "+" + appRef
                 + "+L+1'");
-        for (int n = numberOfMessage; n > 0; n--) {
-            result.append("UNH+1+" + type + ":90:1:IA+841F60'"
-                    + "LOR+SR:GVA'"
-                    + "FDQ+DL+573+890701+ATL+MIA++SR+120+8907011300+8907011655+ZRH+ATL'"
-                    + "PPD+MEIER+F:Y++BARBARAMRS+MILLER:JOHN'"
-                    + "PRD+Y'"
-                    + "PSD+N'"
-                    + "PBD+2:22'"
-                    + "UNT+8+1'");
+        for (int n = 1; n <= numberOfMessages; n++) {
+            result.append("UNH+").append(n).append("+").append(type).append(":90:1:IA+841F60'")
+                    .append(""
+                            + "LOR+SR:GVA'"
+                            + "FDQ+DL+573+890701+ATL+MIA++SR+120+8907011300+8907011655+ZRH+ATL'"
+                            + "PPD+MEIER+F:Y++BARBARAMRS+MILLER:JOHN'"
+                            + "PRD+Y'"
+                            + "PSD+N'"
+                            + "PBD+2:22'")
+                    .append("UNT+8+").append(n).append("'");
         }
-        result.append("UNZ+").append(numberOfMessage).append("+841F60UNZ+1+30077'");
+        result.append("UNZ+").append(numberOfMessages).append("+841F60UNZ+1+30077'");
         return result.toString();
     }
 

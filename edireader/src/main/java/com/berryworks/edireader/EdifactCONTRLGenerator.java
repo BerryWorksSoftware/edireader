@@ -34,6 +34,7 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
 
     private final Writer ackStream;
     private char delimiter;
+    private char subDelimiter;
     private String segmentTerminator;
     private String syntaxIdentifier;
     private String versionNumber;
@@ -120,7 +121,7 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
             // generating a CONTRL message for a CONTRL message?
 
             delimiter = standardReader.getDelimiter();
-            char subDelimiter = standardReader.getSubDelimiter();
+            subDelimiter = standardReader.getSubDelimiter();
             char terminator = standardReader.getTerminator();
             String terminatorSuffix = standardReader.getTerminatorSuffix();
             segmentTerminator = terminator + terminatorSuffix;
@@ -183,37 +184,38 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
                     + "7");
             ackStream.write(segmentTerminator);
             segmentCount++;
+        }
 
-            // Generate UCM to acknowledge each message.
-            // 7 means This level acknowledged and all lower levels acknowledged if not explicitly rejected
-            String messageReference, messageType, mvn, release, agency, association;
-            messageReference = attributes.getValue(standardReader.getXMLTags().getControl());
-            if (messageReference != null) {
-                ackStream.write("UCM" + delimiter + messageReference);
-                messageType = attributes.getValue(standardReader.getXMLTags().getDocumentType());
-                if (messageType != null) {
-                    ackStream.write(delimiter + messageType);
-                    mvn = attributes.getValue(standardReader.getXMLTags().getVersion());
-                    if (mvn != null) {
-                        ackStream.write(subDelimiter + mvn);
-                        release = attributes.getValue(standardReader.getXMLTags().getRelease());
-                        if (release != null) {
-                            ackStream.write(subDelimiter + release);
-                            agency = attributes.getValue(standardReader.getXMLTags().getAgency());
-                            if (agency != null) {
-                                ackStream.write(subDelimiter + agency);
-                                association = attributes.getValue(standardReader.getXMLTags().getAssociation());
-                                if (association != null) {
-                                    ackStream.write(subDelimiter + association);
-                                }
+        // Generate UCM to acknowledge this message.
+        // 7 means This level acknowledged and all lower levels acknowledged if not explicitly rejected
+        String messageReference, messageType, mvn, release, agency, association;
+        messageReference = attributes.getValue(standardReader.getXMLTags().getControl());
+        if (messageReference != null) {
+            ackStream.write("UCM" + delimiter + messageReference);
+            messageType = attributes.getValue(standardReader.getXMLTags().getDocumentType());
+            if (messageType != null) {
+                ackStream.write(delimiter + messageType);
+                mvn = attributes.getValue(standardReader.getXMLTags().getVersion());
+                if (mvn != null) {
+                    ackStream.write(subDelimiter + mvn);
+                    release = attributes.getValue(standardReader.getXMLTags().getRelease());
+                    if (release != null) {
+                        ackStream.write(subDelimiter + release);
+                        agency = attributes.getValue(standardReader.getXMLTags().getAgency());
+                        if (agency != null) {
+                            ackStream.write(subDelimiter + agency);
+                            association = attributes.getValue(standardReader.getXMLTags().getAssociation());
+                            if (association != null) {
+                                ackStream.write(subDelimiter + association);
                             }
                         }
                     }
                 }
-                ackStream.write(delimiter + "7" + segmentTerminator);
-                segmentCount++;
             }
+            ackStream.write(delimiter + "7" + segmentTerminator);
+            segmentCount++;
         }
+
     }
 
     @Override
