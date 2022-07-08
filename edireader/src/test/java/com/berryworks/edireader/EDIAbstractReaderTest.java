@@ -105,7 +105,7 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
         assertEquals(0, reader.getSegmentCharCount());
         reader.parse(inputSource);
         assertEquals(EDITestData.getEdifactInterchange().length(), reader.getCharCount());
-        assertEquals(24, reader.getSegmentCharCount());
+        assertEquals(16, reader.getSegmentCharCount());
 
         // Not EDI and not XML
         inputSource = new InputSource(new StringReader("this is not edi"));

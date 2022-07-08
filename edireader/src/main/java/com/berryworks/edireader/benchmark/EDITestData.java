@@ -162,7 +162,7 @@ public class EDITestData implements Runnable {
                             + "PBD+2:22'")
                     .append("UNT+8+").append(n).append("'");
         }
-        result.append("UNZ+").append(numberOfMessages).append("+841F60UNZ+1+30077'");
+        result.append("UNZ+").append(numberOfMessages).append("+841F60UNZ'");
         return result.toString();
     }
 
