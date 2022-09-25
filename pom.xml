@@ -5,22 +5,39 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.berryworks</groupId>
-    <artifactId>EDIReaderCommunityEdition</artifactId>
+    <artifactId>EDIReaderCore</artifactId>
     <version>5.6.4</version>
 
     <packaging>pom</packaging>
-    <name>EDIReader Core, the Community Edition</name>
+    <name>EDIReader Core EDI Parser</name>
     <description>
         EDIReader is a flexible and lightweight EDI parser, written in pure Java with many integration options.
         It has handled millions of transactions in a wide variety of products, services, industries, platforms,
-        and custom integrations. This Community Edition serves as the underlying core for the
-        EDIReader Premium Edition providing EDIWriter and other added-value modules.
+        and custom integrations. This EDI parser serves as the underlying core for the
+        EDIReader Framework providing EDIWriter and other added-value modules.
     </description>
+    <url>https://gitlab.com/canabrook/edireader-core</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License (GPL) version 3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>R. Scott Mayberry</name>
+            <email>scott@canabrook.org</email>
+            <organization>BerryWorks Software</organization>
+            <organizationUrl>http://berryworkssoftware.net</organizationUrl>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
-        <maven.jar.plugin.version>3.2.2</maven.jar.plugin.version>
+        <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
         <slf4j.version>1.7.33</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <jquantify.version>4.1.3</jquantify.version>
@@ -60,6 +77,17 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -75,6 +103,57 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${maven.jar.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.13</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

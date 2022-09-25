@@ -6,7 +6,7 @@
     <artifactId>edireader</artifactId>
     <packaging>jar</packaging>
     <name>EDIReader Core jar</name>
-    <url>http://maven.apache.org</url>
+    <url>https://gitlab.com/canabrook/edireader-core</url>
 
     <parent>
         <groupId>com.berryworks</groupId>
