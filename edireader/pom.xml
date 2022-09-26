@@ -6,6 +6,13 @@
     <artifactId>edireader</artifactId>
     <packaging>jar</packaging>
     <name>EDIReader Core jar</name>
+    <description>
+        EDIReader is a flexible and lightweight EDI parser, written in pure Java with many integration options.
+        It has handled millions of transactions in a wide variety of products, services, industries, platforms,
+        and custom integrations. This EDI parser serves as the underlying core for the
+        EDIReader Framework providing EDIWriter and other added-value modules.
+    </description>
+
     <url>https://gitlab.com/canabrook/edireader-core</url>
 
     <parent>
@@ -14,8 +21,36 @@
         <version>5.6.4</version>
     </parent>
 
+    <licenses>
+        <license>
+            <name>GNU General Public License (GPL) version 3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>R. Scott Mayberry</name>
+            <email>scott@canabrook.org</email>
+            <organization>BerryWorks Software</organization>
+            <organizationUrl>http://berryworkssoftware.net</organizationUrl>
+        </developer>
+    </developers>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -29,6 +64,66 @@
                     </archive>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven.javadoc.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven.gpg.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <keyname>${gpg.keyname}</keyname>
+                            <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus.staging.maven.plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
