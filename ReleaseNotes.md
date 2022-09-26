@@ -1,10 +1,23 @@
 # Release Notes
 
+### 5.6.4 - September 26, 2022
+
+* Feature: Provide a MaskingTool as a utility class allowing two text items
+  to be compared where certain fields (for example, date and time fields) are 
+  disregarded. This is primarily for testing purposes. 
+* Fix: Improve support for CONTRL messages produced as an optional by-product
+  of EDIFACT parsing.
+
+### 5.6.3 - June 24, 2022
+
+* Feature: When splitting, let the syntax details of the original EDI input be easily accessible
+  which may be useful to the system handling the individual transactions.
+
 ### 5.6.2 - May 1, 2022
 
 * Fix: Avoid potential for a null pointer exception when using a plugin with condition flags. For a few
-transaction/message types, the same segment type can mark the beginning of two different loop/group types;
-condition flags are used to disambiguate such situations.
+  transaction/message types, the same segment type can mark the beginning of two different loop/group types;
+  condition flags are used to disambiguate such situations.
 
 ### 5.6.1 - April 1, 2022
 
