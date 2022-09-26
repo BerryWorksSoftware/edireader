@@ -35,7 +35,7 @@ import java.io.OutputStream;
  */
 public class SAXObjectHandler extends DefaultHandler {
 
-    private ObjectOutputStream objectStream;
+    private final ObjectOutputStream objectStream;
     private int sAXEventsWritten;
     private boolean disabled;
 

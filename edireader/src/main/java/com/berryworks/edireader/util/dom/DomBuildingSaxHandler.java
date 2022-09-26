@@ -36,7 +36,7 @@ import static com.berryworks.edireader.util.FixedLength.isPresent;
 
 public class DomBuildingSaxHandler extends ContextAwareSaxAdapter {
 
-    private Document document;
+    private final Document document;
     private Element currentElement;
 
     public DomBuildingSaxHandler() throws ParserConfigurationException {

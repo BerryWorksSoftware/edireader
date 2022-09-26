@@ -38,7 +38,7 @@ public abstract class EncoderBackEnd extends AbstractEncoderDecoder {
     public void consume(byte b) {
         switch (state) {
             case STATE62:
-                emit(base64Alphabet[(int) b]);
+                emit(base64Alphabet[b]);
                 state = STATE24;
                 break;
             case STATE24:
@@ -58,7 +58,7 @@ public abstract class EncoderBackEnd extends AbstractEncoderDecoder {
                 state = STATE66;
                 break;
             case STATE66:
-                emit(base64Alphabet[(int) b]);
+                emit(base64Alphabet[b]);
                 state = STATE62;
                 break;
         }

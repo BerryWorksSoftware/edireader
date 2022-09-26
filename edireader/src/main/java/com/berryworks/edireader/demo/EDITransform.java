@@ -52,9 +52,9 @@ import java.io.*;
  * not specified, System.out is used.
  */
 public class EDITransform {
-    private InputSource inputSource;
+    private final InputSource inputSource;
     private final StreamSource stylesheetSource;
-    private OutputStream generatedOutput;
+    private final OutputStream generatedOutput;
 
     /**
      * Constructor for the EDITransform object

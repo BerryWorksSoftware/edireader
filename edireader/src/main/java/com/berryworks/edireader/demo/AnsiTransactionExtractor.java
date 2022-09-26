@@ -69,7 +69,7 @@ public class AnsiTransactionExtractor {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         } catch (SAXException e) {
-            System.out.println("EDI input not well-formed: " + e.toString());
+            System.out.println("EDI input not well-formed: " + e);
         }
     }
 

@@ -115,7 +115,7 @@ public class ContextAwareSaxAdapterTest {
         assertEquals(data, adapter.getData());
     }
 
-    private class MyContextAwareSaxAdapter extends ContextAwareSaxAdapter {
+    private static class MyContextAwareSaxAdapter extends ContextAwareSaxAdapter {
 
         private StringBuilder data = new StringBuilder();
         private StringBuilder sequence = new StringBuilder();

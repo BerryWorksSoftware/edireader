@@ -91,7 +91,7 @@ public class EDIAck {
             System.err.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
         } catch (SAXException e) {
-            System.err.println("\nEDI input not well-formed:\n" + e.toString());
+            System.err.println("\nEDI input not well-formed:\n" + e);
             throw new RuntimeException(e.getMessage());
         }
     }

@@ -52,7 +52,7 @@ public class Benchmark implements Runnable {
         long totalChars = charCounter.getCumulativeEvents();
         long milliSeconds = charCounter.getAgeMillis();
         long charThroughput = (int) charCounter.getCumulativeFreq();
-        long interchangeThroughput = iterations * 1000 / milliSeconds;
+        long interchangeThroughput = iterations * 1000L / milliSeconds;
         System.out.println("Results");
         System.out.println("  Actual number of characters parsed: "
                 + totalChars);

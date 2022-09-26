@@ -76,7 +76,7 @@ public class EDITokenizer extends AbstractTokenizer {
         result += " segTokenCount=" + segTokenCount;
         result += " segCharCount=" + segCharCount;
         result += " currentToken=" + currentToken;
-        result += " buffer.limit=" + ((Buffer) charBuffer).limit();
+        result += " buffer.limit=" + charBuffer.limit();
         result += " buffer.position=" + charBuffer.position();
         return result;
     }
@@ -203,14 +203,13 @@ public class EDITokenizer extends AbstractTokenizer {
 
         // Move chars from the buffer into the return value
         int j = 1;
-        for (int i = charBuffer.position(); i < ((Buffer) charBuffer).limit() && j < n; i++)
+        for (int i = charBuffer.position(); i < charBuffer.limit() && j < n; i++)
             rval[j++] = charBuffer.get(i);
 
         // If more lookahead chars were requested than were satisfied for any reason,
         // then fill the return value with '?' to the requested length.
-        for (; j < n; ) {
+        while (j < n) {
             rval[j++] = '?';
-//            throw new RuntimeException("problem with lookahead " + n);
         }
 
         return rval;

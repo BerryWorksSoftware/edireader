@@ -34,7 +34,7 @@ import java.util.ListIterator;
 public class XPathElements extends AbstractElementList {
 
     protected final XPath xPath = XPathFactory.newInstance().newXPath();
-    private NodeList nodeList;
+    private final NodeList nodeList;
 
     public XPathElements(Node node, String path) throws XPathExpressionException {
         nodeList = (NodeList) xPath.evaluate(path, node, XPathConstants.NODESET);

@@ -35,7 +35,7 @@ import java.util.Locale;
  */
 public class EDIReaderWrapper extends EDIReader {
 
-    private EDIReader wrappedEDIReader;
+    private final EDIReader wrappedEDIReader;
 
     public EDIReaderWrapper(EDIReader wrappedEdiReader) {
         super();

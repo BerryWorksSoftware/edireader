@@ -58,8 +58,8 @@ import java.nio.charset.StandardCharsets;
  * not specified, System.out is used.
  */
 public class EDIScanner {
-    private InputSource inputSource;
-    private PrintStream scannerOutput;
+    private final InputSource inputSource;
+    private final PrintStream scannerOutput;
     private EDIReader parser;
     private int interchangeCount;
 
