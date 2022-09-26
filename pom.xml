@@ -38,9 +38,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
         <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
-        <slf4j.version>1.7.33</slf4j.version>
+        <slf4j.version>2.0.2</slf4j.version>
         <junit.version>4.13.2</junit.version>
-        <jquantify.version>4.1.3</jquantify.version>
+        <jquantify.version>4.2.0</jquantify.version>
         <xmlunit.version>1.6</xmlunit.version>
     </properties>
 
