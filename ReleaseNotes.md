@@ -1,5 +1,10 @@
 # Release Notes
 
+### 5.6.5 - September 29, 2022
+
+* Fix: Simplify to a single-module Maven project, removing the unnecessary complexity of parent/child modules when
+  there is only one child.
+
 ### 5.6.4 - September 26, 2022
 
 * Feature: Provide a MaskingTool as a utility class allowing two text items
