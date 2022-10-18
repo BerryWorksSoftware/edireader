@@ -15,7 +15,7 @@ then
 fi
 
 cp pom.xml $DEST
-cp -R edireader $DEST
+cp -R src $DEST
 cp -R testresults $DEST
 
 echo "Done"
