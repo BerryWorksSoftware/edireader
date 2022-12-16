@@ -118,7 +118,7 @@ public class AnsiReader extends StandardReader {
         process("ISA07", toQual);
 
         String toId = checkFixedLength("ISA08", nextField(), 15);
-        process("ISA08", fromId);
+        process("ISA08", toId);
 
         String controlDate = checkFixedLength("ISA09", nextField(), 6);
         getInterchangeAttributes().addCDATA(getXMLTags().getDate(), controlDate);
@@ -137,7 +137,7 @@ public class AnsiReader extends StandardReader {
         } else {
             // A repetition char is in effect, presumably previewed from this ISA segment we
             // are now parsing. Therefore, we treat this field in accordance with version 4020
-            // or later where it repetition character instead of a standardsId.
+            // or later where it designates a repetition character instead of a standardsId.
             // Temporarily disable the repetition char so that we can parse over this element
             // as normal data.
             getTokenizer().setRepetitionSeparator(-1);
@@ -189,7 +189,7 @@ public class AnsiReader extends StandardReader {
             getInterchangeAttributes().addCDATA(getXMLTags().getSegmentTerminator(), String.valueOf(getTerminator()));
         }
 
-        // Now make the the callbacks to the ContentHandler
+        // Now make the callbacks to the ContentHandler
         startInterchange(getInterchangeAttributes());
 
         getInterchangeAttributes().clear();
@@ -259,7 +259,7 @@ public class AnsiReader extends StandardReader {
      * it either returns the value trimmed or padded at the end to the correct length, or
      * it throws an ISAFixedLengthException. The decision between the two options is based on
      * whether there is an EDISyntaxExceptionHandler in place. If not, the exception is throw;
-     * if so, then that handler gets to decide whether or not to throw the exception.
+     * if so, then that handler gets to decide whether to throw the exception.
      */
     private String checkFixedLength(String elementName, String value, int expectedLength) throws EDISyntaxException {
         if (value == null) {

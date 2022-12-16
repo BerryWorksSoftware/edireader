@@ -1,5 +1,11 @@
 # Release Notes
 
+### 5.6.6 - December 16, 2022
+
+* Fix: Pass the correct receiver address to the process() method when parsing an X12 envelope. The process() method
+  allows a subclass of AnsiReader to easily grab EDI addresses from the ISA and GS envelope. This feature is not use
+  within the project, so the fixed bug is visible only with a custom AnsiReader subclass.
+
 ### 5.6.5 - September 29, 2022
 
 * Fix: Simplify to a single-module Maven project, removing the unnecessary complexity of parent/child modules when
