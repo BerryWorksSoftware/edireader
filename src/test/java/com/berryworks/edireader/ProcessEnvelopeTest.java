@@ -23,7 +23,10 @@ public class ProcessEnvelopeTest {
                 "SE~2~0001$\n" +
                 "GE~1~000038449$\n" +
                 "IEA~1~000038449$\n")));
-        assertEquals("ISA05=AA,ISA06=BBBB           ,ISA07=CC,ISA08=DDDD           ,GS02=EEEEE,GS03=FFFFF", myAnsiReader.getProcessed());
+        assertEquals("ISA05=AA,ISA06=BBBB           ,ISA07=CC,ISA08=DDDD           ,ISA13=000038449," +
+                        "GS02=EEEEE,GS03=FFFFF,GS06=000038449,GS08=002040CHRY," +
+                        "ST02=0001",
+                myAnsiReader.getProcessed());
     }
 
     private static class MyAnsiReader extends AnsiReader {

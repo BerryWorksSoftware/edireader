@@ -149,6 +149,7 @@ public class AnsiReader extends StandardReader {
         getInterchangeAttributes().addCDATA(getXMLTags().getVersion(), versionId);
 
         String controlNumber = checkFixedLength("ISA13", nextField(), 9);
+        process("ISA13", controlNumber);
         setInterchangeControlNumber(controlNumber);
         getInterchangeAttributes().addCDATA(getXMLTags().getControl(), getInterchangeControlNumber());
 
@@ -347,7 +348,9 @@ public class AnsiReader extends StandardReader {
         }
         getGroupAttributes().addCDATA(getXMLTags().getTime(), value);
 
-        setGroupControlNumber(getTokenizer().nextSimpleValue(false));
+        String groupControlNumber = getTokenizer().nextSimpleValue(false);
+        setGroupControlNumber(groupControlNumber);
+        process("GS06", groupControlNumber);
         getGroupAttributes().addCDATA(getXMLTags().getControl(), getGroupControlNumber());
         getGroupAttributes().addCDATA(getXMLTags().getStandardCode(), getTokenizer().nextSimpleValue(false));
 
@@ -360,6 +363,7 @@ public class AnsiReader extends StandardReader {
         } else {
             groupVersion = t.getValue();
             getGroupAttributes().addCDATA(getXMLTags().getStandardVersion(), groupVersion);
+            process("GS08", groupVersion);
             getTokenizer().skipSegment();
         }
 
@@ -395,12 +399,14 @@ public class AnsiReader extends StandardReader {
             }
         }
 
+        // Check GE trailer segment for this functional group
         checkTransactionCount(docCount, getTokenizer().nextIntValue(true), COUNT_GE);
-        String groupControlNumber = nextField();
+        groupControlNumber = nextField();
         if (groupControlNumber == null) {
             groupControlNumber = "(omitted)";
         }
         checkGroupControlNumber(getGroupControlNumber(), groupControlNumber, CONTROL_NUMBER_GE);
+
         endElement(getXMLTags().getGroupTag());
         getAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
         getAlternateAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
@@ -420,7 +426,7 @@ public class AnsiReader extends StandardReader {
      */
     protected Token parseDocument(Token token) throws SAXException,
             IOException {
-        String control;
+        String controlNumber;
         String documentType;
         Token t;
         int segCount = 2;
@@ -444,15 +450,17 @@ public class AnsiReader extends StandardReader {
         boolean wrapped = wrapContentHandlerIfNeeded(pluginController);
         if (pluginController.isEnabled())
             getDocumentAttributes().addCDATA(getXMLTags().getName(), pluginController.getDocumentName());
-        control = nextField();
+
+        controlNumber = nextField();
         boolean hitSegmentEnd = false;
-        if (control == null) {
+        if (controlNumber == null) {
             // Edge case. The segment terminator immediately followed the ST01 document type element.
             // That means we've already hit the SEGMENT_END;
             hitSegmentEnd = true;
-            control = "";
+            controlNumber = "";
         }
-        getDocumentAttributes().addCDATA(getXMLTags().getControl(), control);
+        getDocumentAttributes().addCDATA(getXMLTags().getControl(), controlNumber);
+        process("ST02", controlNumber);
 
         if (!hitSegmentEnd) {
             Token st03Token = getTokenizer().nextToken();
@@ -492,9 +500,9 @@ public class AnsiReader extends StandardReader {
             endElement(getXMLTags().getLoopTag());
 
         checkSegmentCount(segCount, getTokenizer().nextIntValue(true), COUNT_SE);
-        checkTransactionControlNumber(control, nextField(), CONTROL_NUMBER_SE);
-        getAckGenerator().generateTransactionAcknowledgment(documentType, control);
-        getAlternateAckGenerator().generateTransactionAcknowledgment(documentType, control);
+        checkTransactionControlNumber(controlNumber, nextField(), CONTROL_NUMBER_SE);
+        getAckGenerator().generateTransactionAcknowledgment(documentType, controlNumber);
+        getAlternateAckGenerator().generateTransactionAcknowledgment(documentType, controlNumber);
         endElement(getXMLTags().getDocumentTag());
 
         // Skip over this SE segment
