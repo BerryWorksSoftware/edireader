@@ -4,7 +4,8 @@
 
 * Fix: Pass the correct receiver address to the process() method when parsing an X12 envelope. The process() method
   allows a subclass of AnsiReader to easily grab EDI addresses from the ISA and GS envelope. This feature is not use
-  within the project, so the fixed bug is visible only with a custom AnsiReader subclass.
+  within the project, so the fixed bug is visible only with a custom AnsiReader subclass. With this fix, the prcess()
+  hook is extended to also provide access to ISA, GS, and ST control numbers and the version indicated in the GS.
 
 ### 5.6.5 - September 29, 2022
 
