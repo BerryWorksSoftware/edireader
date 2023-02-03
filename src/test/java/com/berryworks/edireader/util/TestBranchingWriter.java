@@ -52,7 +52,7 @@ public class TestBranchingWriter {
             writer.write("Part1/");
 
             writer.writeTrunk("Part2trunk/");
-//        writer.writeBranch("Part2branch/");
+            writer.writeBranch("Part2branch/");
 
             writer.write("Part3");
         }

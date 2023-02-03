@@ -1,8 +1,10 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.benchmark.EDITestData;
+import com.berryworks.edireader.error.SegmentCountException;
 import com.berryworks.edireader.util.BranchingWriter;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -24,6 +26,15 @@ public class AnsiFAGeneratorTest {
             "AK1~AG~38327$" +
             "AK2~824~000042460$AK5~A$" +
             "AK9~A~1~1~1$SE~6~0001$" +
+            "GE~1~000038449$" +
+            "IEA~1~000038449$";
+    public static final String TEST_DATA_NEGATIVE_997 = "" +
+            "ISA~00~          ~00~          ~ZZ~58401          ~ZZ~04000          ~999999~9999~U~00204~000038449~0~P~<$" +
+            "GS~FA~58401~04000~999999~9999~000038449~X~002040CHRY$" +
+            "ST~997~0001$" +
+            "AK1~AG~38327$" +
+            "AK2~824~000042460$AK5~R$" +
+            "AK9~R~1~1~1$SE~6~0001$" +
             "GE~1~000038449$" +
             "IEA~1~000038449$";
     public static final String TEST_DATA_997_WITH_TA1 = "" +
@@ -60,6 +71,24 @@ public class AnsiFAGeneratorTest {
         ansiReader.setAcknowledgment(ackStream);
         ansiReader.parse(EDITestData.getAnsiInputSource());
         assertLikeness(TEST_DATA_997, output.toString());
+    }
+
+    @Ignore
+    @Test
+    public void canGenerateNegative997() throws IOException, SAXException {
+        ansiReader = new AnsiReader();
+        ansiReader.setContentHandler(new DefaultHandler());
+        ansiReader.setAcknowledgment(ackStream);
+        String ediInput = EDITestData.getAnsiInterchange();
+        ediInput = ediInput.replace("SE~31~", "SE~00~");
+        try {
+            ansiReader.parse(new InputSource(new StringReader(ediInput)));
+        } catch (SegmentCountException e) {
+            assertEquals("Segment count error in SE segment. Expected 31 instead of 0 at segment 33, field 2", e.getMessage());
+        }
+        String actual = output.toString();
+        System.out.println(actual);
+        assertLikeness(TEST_DATA_NEGATIVE_997, actual);
     }
 
     @Test
