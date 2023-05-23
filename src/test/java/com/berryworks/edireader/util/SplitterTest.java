@@ -1,12 +1,10 @@
 /*
- * Copyright 2005-2018 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2023 by BerryWorks Software, LLC. All rights reserved.
  */
 
 package com.berryworks.edireader.util;
 
 import com.berryworks.edireader.DefaultXMLTags;
-import com.berryworks.edireader.EDIReaderFactory;
-import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.benchmark.EDITestData;
 import com.berryworks.edireader.demo.EDISplitter;
 import com.berryworks.edireader.splitter.ClosingDetails;
@@ -21,8 +19,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXSource;
@@ -75,20 +71,11 @@ public class SplitterTest extends VerboseTestCase {
 
         factory.shutdown();
 
-        Document controlDom = generateDOM(EDITestData.getAnsiInputSource());
+        Document controlDom = DocumentUtil.getInstance().buildDocumentFromEdi(EDITestData.getAnsiInputSource());
         String differences = DocumentUtil.compare(controlDom, factory.getDom());
         if (differences !=  null) {
             fail(differences);
         }
-    }
-
-    private Document generateDOM(InputSource inputSource) throws IOException, EDISyntaxException, TransformerException {
-        XMLReader ediReader = EDIReaderFactory.createEDIReader(inputSource);
-        SAXSource source = new SAXSource(ediReader, inputSource);
-        DOMResult domResult = new DOMResult();
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        transformer.transform(source, domResult);
-        return (Document) domResult.getNode();
     }
 
     @Test
@@ -135,7 +122,7 @@ public class SplitterTest extends VerboseTestCase {
 
         factory.shutdown();
 
-        Document controlDom = generateDOM(EDITestData.getAnsiInputSource());
+        Document controlDom = DocumentUtil.getInstance().buildDocumentFromEdi(EDITestData.getAnsiInputSource());
         String differences = DocumentUtil.compare(controlDom, factory.getDom());
         if (differences !=  null) {
             fail(differences);
@@ -184,10 +171,10 @@ public class SplitterTest extends VerboseTestCase {
 
     class MyHandlerFactory implements HandlerFactory {
         private int createCalls;
-        private SAXObjectHandler handler;
-        private InputStream pipedInputStream;
-        private Runnable readerRunnable;
-        private Thread readerThread;
+        private final SAXObjectHandler handler;
+        private final InputStream pipedInputStream;
+        private final Runnable readerRunnable;
+        private final Thread readerThread;
         private int interchangeCount, groupCount, transactionCount;
 
         public MyHandlerFactory() {
@@ -358,9 +345,7 @@ public class SplitterTest extends VerboseTestCase {
         }
     }
 
-
     class MyHandler extends DefaultHandler {
-
         private int documentCount;
         private int elementCount;
         private int attributeCount;
@@ -402,6 +387,5 @@ public class SplitterTest extends VerboseTestCase {
         public int getSAXEventsRead() {
             return sAXEventsRead;
         }
-
     }
 }
