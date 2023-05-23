@@ -21,13 +21,14 @@
 package com.berryworks.edireader.util.base64;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This class establishes a base for common inheritance among the classes
  * that cooperate to provide base 64 encoding and decoding.
  */
 public abstract class AbstractEncoderDecoder {
-    protected static final Charset charset = Charset.forName("8859_1");
+    protected static final Charset charset = StandardCharsets.ISO_8859_1;
 
     static final byte STATE62 = 0;
     static final byte STATE44 = 1;

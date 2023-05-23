@@ -154,9 +154,6 @@ public class EDITokenizer extends AbstractTokenizer {
     public char[] getBuffered() {
         char[] result = new char[0];
 
-//        if (endOfFile)
-//            return result;
-
         if (charBuffer.remaining() == 0 && !unGot) {
             return result;
         }
