@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2023 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -181,6 +181,8 @@ public class DocumentUtil {
      * @return null if there are no significant differences, or a String representation of the differences
      */
     public static String compare(Document documentA, Document documentB) {
+        if (documentA == null) return "First Document is null";
+        if (documentB == null) return "Second Document is null";
         return null;
     }
 
