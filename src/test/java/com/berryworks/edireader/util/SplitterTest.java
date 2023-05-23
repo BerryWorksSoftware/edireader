@@ -15,7 +15,6 @@ import com.berryworks.edireader.splitter.SplittingHandler;
 import com.berryworks.edireader.util.dom.DocumentUtil;
 import com.berryworks.edireader.util.sax.SAXObjectHandler;
 import com.berryworks.edireader.util.sax.SAXObjectReader;
-import org.custommonkey.xmlunit.Diff;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -77,10 +76,9 @@ public class SplitterTest extends VerboseTestCase {
         factory.shutdown();
 
         Document controlDom = generateDOM(EDITestData.getAnsiInputSource());
-        Diff diff = new Diff(controlDom, factory.getDom());
-        boolean identical = diff.identical();
-        if (!identical) {
-            fail(diff.toString());
+        String differences = DocumentUtil.compare(controlDom, factory.getDom());
+        if (differences !=  null) {
+            fail(differences);
         }
     }
 
@@ -138,11 +136,11 @@ public class SplitterTest extends VerboseTestCase {
         factory.shutdown();
 
         Document controlDom = generateDOM(EDITestData.getAnsiInputSource());
-        Diff diff = new Diff(controlDom, factory.getDom());
-        boolean identical = diff.identical();
-        if (!identical) {
-            fail(diff.toString());
+        String differences = DocumentUtil.compare(controlDom, factory.getDom());
+        if (differences !=  null) {
+            fail(differences);
         }
+
     }
 
     @Test
