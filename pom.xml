@@ -53,9 +53,8 @@
         <maven.javadoc.plugin.version>3.4.1</maven.javadoc.plugin.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
-        <slf4j.version>2.0.2</slf4j.version>
+        <slf4j.version>2.0.7</slf4j.version>
         <junit.version>4.13.2</junit.version>
-        <jquantify.version>4.2.0</jquantify.version>
         <xmlunit.version>1.6</xmlunit.version>
         <gpg.keyname>0xC8794862</gpg.keyname>
     </properties>
@@ -79,11 +78,6 @@
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.berryworks</groupId>
-            <artifactId>jquantify</artifactId>
-            <version>${jquantify.version}</version>
         </dependency>
         <dependency>
             <groupId>xmlunit</groupId>
