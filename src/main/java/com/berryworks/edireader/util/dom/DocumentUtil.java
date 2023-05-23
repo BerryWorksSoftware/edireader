@@ -22,10 +22,7 @@ package com.berryworks.edireader.util.dom;
 
 import com.berryworks.edireader.EDIReader;
 import com.berryworks.edireader.plugin.PluginControllerFactoryInterface;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -183,7 +180,62 @@ public class DocumentUtil {
     public static String compare(Document documentA, Document documentB) {
         if (documentA == null) return "First Document is null";
         if (documentB == null) return "Second Document is null";
-        return null;
+        String difference = compareElements(documentA.getDocumentElement(), documentB.getDocumentElement());
+        return difference;
+    }
+
+    public static String compareElements(Element elementA, Element elementB) {
+        StringBuilder sb = new StringBuilder();
+        if (!elementA.getNodeName().equals(elementB.getNodeName())) sb.append("element NodeName mismatch;");
+
+        String textContentA = elementA.getTextContent();
+        String textContentB = elementB.getTextContent();
+        if (textContentA == null) {
+            if (textContentB != null) {
+                sb.append("element value missing from document A;");
+            }
+        } else {
+            if (textContentB == null) {
+                sb.append("element value missing from document B;");
+            } else {
+                if (!textContentA.equals(textContentB)) sb.append("element value mismatch;");
+            }
+        }
+
+        NodeList childNodesB = elementB.getChildNodes();
+        NodeList childNodesA = elementA.getChildNodes();
+        if (childNodesA.getLength() != childNodesB.getLength()) sb.append("number of child nodes mismatch;");
+        for (int i = 0; i < childNodesA.getLength(); i++) {
+            Node childNodeA = childNodesA.item(i);
+            Node childNodeB = childNodesB.item(i);
+
+            short type = childNodeA.getNodeType();
+            if (childNodeA.getNodeType() != childNodeB.getNodeType()) sb.append("child node type mismatch;");
+
+            if (type == Element.ELEMENT_NODE) {
+                String compareElements = compareElements((Element) childNodeA, (Element) childNodeB);
+                if (compareElements != null) {
+                    sb.append(compareElements);
+                }
+            }
+        }
+
+        NamedNodeMap attributesA = elementA.getAttributes();
+        NamedNodeMap attributesB = elementB.getAttributes();
+        if (attributesA.getLength() != attributesB.getLength()) sb.append("number of attributes mismatch;");
+        for (int i = 0; i < attributesA.getLength(); i++) {
+            Attr attrA = (Attr) attributesA.item(i);
+            String name = attrA.getName();
+            String value = attrA.getValue();
+
+            Node attributeNodeB = attributesB.getNamedItem(name);
+            if (attributeNodeB == null) sb.append("missing attribute;");
+            if (!value.equals(attributeNodeB.getNodeValue())) {
+                sb.append("attribute value mismatch;");
+            }
+        }
+
+        return sb.length() == 0 ? null : sb.toString();
     }
 
 }
