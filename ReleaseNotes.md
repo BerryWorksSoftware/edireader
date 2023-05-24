@@ -1,5 +1,12 @@
 # Release Notes
 
+### 5.6.7 - May 24, 2023
+
+* Maintenance: Use latest versions of Maven plugins.
+* Maintenance: Reduce dependencies on third-party libraries (even great ones!)
+whenever possible to simplify build process and minimize footprint.
+With this release, there is no longer a dependence on xmlunit or JQuantify.
+
 ### 5.6.6 - December 16, 2022
 
 * Fix: Pass the correct receiver address to the process() method when parsing an X12 envelope. The process() method
