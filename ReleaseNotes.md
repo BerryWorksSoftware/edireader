@@ -6,6 +6,8 @@
 * Maintenance: Reduce dependencies on third-party libraries (even great ones!)
 whenever possible to simplify build process and minimize footprint.
 With this release, there is no longer a dependence on xmlunit or JQuantify.
+* Feature: Create a compare method in DocumentUtil to compare two
+org.w3c.dom.Document objects.
 
 ### 5.6.6 - December 16, 2022
 
