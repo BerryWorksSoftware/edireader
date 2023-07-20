@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2023 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -30,23 +30,23 @@ import java.util.Map;
  * characters of data.
  * <p>
  * The parsers for ANSI X.12 and UN/EDIFACT are included in the registry be default. The classes
- * that implement these parsers are provided by the core EDIReader framework.
+ * that implement these parsers are provided by the core EDIReader.
  * <p>
- * Parsers for other formats, including HL7, ACH, and NSF, are also listed in the registry.
- * The classes that implement these formats are optional modules not included in the core EDIReader framework.
+ * Parsers for other formats, including HL7 and TRADACOMS, are also listed in the registry.
+ * The classes that implement these formats are optional modules not included in the core EDIReader.
  * If an optional parser module is present in the classpath, the registry is therefore able to
  * select and load the appropriate parser in response to the leading character sequences in the data.
  * <p>
  * It is also possible for a developer to implement a parser for an EDI-like data format and register that
  * parser along with the leading data characters which signal the instance of an interchange of that format.
- * In this way, the EDIReader framework can be extended to parse previously unsupported data formats in the same
+ * In this way, EDIReader can be extended to parse previously unsupported data formats in the same
  * way that it supports X12 and EDIFACT.
  */
 public class ParserRegistry {
+    private static final boolean SELECT_PARSER_BY_CLASSNAME_ENABLED = true;
 
     private static final Map<String, Class> builtinClass = new HashMap<>();
-    private static final Map<String, String>
-            registeredClassNames = new HashMap<>();
+    private static final Map<String, String> registeredClassNames = new HashMap<>();
 
     static {
         new ParserRegistry();
@@ -57,16 +57,8 @@ public class ParserRegistry {
         builtinClass.put("UNA", EdifactReaderWithCONTRL.class);
         builtinClass.put("UNB", EdifactReaderWithCONTRL.class);
         builtinClass.put("UNH", UNHReader.class);
-        registeredClassNames.put("UNH",
-                "com.berryworks.edireader.amadeus.AmadeusReader");
-        registeredClassNames.put("MSH",
-                "com.berryworks.edireader.hl7.HL7Reader");
-        registeredClassNames.put("STX",
-                "com.berryworks.edireader.tradacoms.TradacomsReader");
-        registeredClassNames.put("1",
-                "com.berryworks.edireader.ach.ACHReader");
-        registeredClassNames.put("AA0",
-                "com.berryworks.edireader.nsf.NSFReader");
+        registeredClassNames.put("MSH", "com.berryworks.edireader.hl7.HL7Reader");
+        registeredClassNames.put("STX", "com.berryworks.edireader.tradacoms.TradacomsReader");
     }
 
     /**
@@ -77,6 +69,13 @@ public class ParserRegistry {
      * custom parsers developed by users. Parsers registered via register() are considered first for
      * a match with the incoming data before the built-in parsers are considered, allowing users to
      * provide custom implementations of X12 and EDIFACT parsers if needed.
+     * <p>
+     * However, if SELECT_PARSER_BY_CLASSNAME_ENABLED constant is changed to false, thent loading of
+     * parsers by classname is disabled, leaving only the built-in parsers to handle EDI parsing. This would
+     * prevent any potential for a malicious party to somehow register a dangerous parser by classname and
+     * then submit carefully-crafted "EDI" to cause that parser to gain control. For backward compatibility,
+     * the constant is true unless changed in the source code. If changed to false, the Java compiler will drop
+     * entirely the code blocks where parser classes are loaded by name.
      *
      * @param firstChars of data to be parsed
      * @return subclass of EDIReader that knows how to parse the data, or null if no parser is available
@@ -85,15 +84,17 @@ public class ParserRegistry {
     public static EDIReader get(String firstChars) {
         EDIReader result = null;
         Class parserClass;
+        String parserClassname;
 
-        // See if a suitable registered class name is recognized by these
-        // firstChars
-        String name = (String) getMatch(firstChars, registeredClassNames);
-        if (name != null) {
-            try {
-                parserClass = Class.forName(name);
-                result = (EDIReader) parserClass.newInstance();
-            } catch (Exception ignore) {
+        if (SELECT_PARSER_BY_CLASSNAME_ENABLED) {
+            // See if a suitable registered class name is recognized by these firstChars
+            parserClassname = (String) getMatch(firstChars, registeredClassNames);
+            if (parserClassname != null) {
+                try {
+                    parserClass = Class.forName(parserClassname);
+                    result = (EDIReader) parserClass.newInstance();
+                } catch (Exception ignore) {
+                }
             }
         }
 
@@ -108,14 +109,16 @@ public class ParserRegistry {
             }
         }
 
-        // If still nothing, return the "catch all" parser if there is one
-        if (result == null) {
-            name = registeredClassNames.get("");
-            if (name != null) {
-                try {
-                    parserClass = Class.forName(name);
-                    result = (EDIReader) parserClass.newInstance();
-                } catch (Exception ignore) {
+        if (SELECT_PARSER_BY_CLASSNAME_ENABLED) {
+            // If still nothing, return the "catch all" parser if there is one
+            if (result == null) {
+                parserClassname = registeredClassNames.get("");
+                if (parserClassname != null) {
+                    try {
+                        parserClass = Class.forName(parserClassname);
+                        result = (EDIReader) parserClass.newInstance();
+                    } catch (Exception ignore) {
+                    }
                 }
             }
         }
