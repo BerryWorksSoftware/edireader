@@ -7,7 +7,7 @@ import java.io.StringWriter;
 
 import static org.junit.Assert.assertEquals;
 
-public class xmlFormatterTest {
+public class XmlFormatterTest {
     private final static String EOL = System.getProperty("line.separator");
 
     private XmlFormatter xmlFormatter;
@@ -36,6 +36,20 @@ public class xmlFormatterTest {
     }
 
     @Test
+    public void canFormatWithSlashWithinData() throws IOException {
+        StringWriter writer = new StringWriter();
+        xmlFormatter = new XmlFormatter(writer);
+        xmlFormatter.write("<root><a>A/A</a><b>/B/</b></root>");
+        xmlFormatter.close();
+        assertEquals("" +
+                        "<root>" + EOL +
+                        "    <a>A/A</a>" + EOL +
+                        "    <b>/B/</b>" + EOL +
+                        "</root>",
+                writer.toString());
+    }
+
+    @Test
     public void canFormatNestedElements() throws IOException {
         StringWriter writer = new StringWriter();
         xmlFormatter = new XmlFormatter(writer);
@@ -57,11 +71,21 @@ public class xmlFormatterTest {
     public void canFormatAttributes() throws IOException {
         StringWriter writer = new StringWriter();
         xmlFormatter = new XmlFormatter(writer);
-        xmlFormatter.write("<root><a x=\"X\" y=\"Y\">A</a></root>");
+        xmlFormatter.write("<root>" +
+                "<a x=\"X\" y='Y/Y'>A</a>" +
+                "<a x='X' y=\"Y/Y\">A</a>" +
+                "<a x=\"X\" y=\"Y/Y\">" +
+                "<b z='Z/Z'>B</b>" +
+                "</a>" +
+                "</root>");
         xmlFormatter.close();
         assertEquals("" +
                         "<root>" + EOL +
-                        "    <a x=\"X\" y=\"Y\">A</a>" + EOL +
+                        "    <a x=\"X\" y='Y/Y'>A</a>" + EOL +
+                        "    <a x='X' y=\"Y/Y\">A</a>" + EOL +
+                        "    <a x=\"X\" y=\"Y/Y\">" + EOL +
+                        "        <b z='Z/Z'>B</b>" + EOL +
+                        "    </a>" + EOL +
                         "</root>",
                 writer.toString());
     }

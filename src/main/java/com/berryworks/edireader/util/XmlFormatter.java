@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2023 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -30,6 +30,7 @@ public class XmlFormatter extends FilterWriter {
     private final static String INDENT = "    ";
     private char mostRecentCharOfInterest;
     private String currentIndent = "";
+    private boolean isWithinDoubleQuotes, isWithinSingleQuotes;
 
     private enum State {
         NORMAL_TEXT,
@@ -57,7 +58,27 @@ public class XmlFormatter extends FilterWriter {
 
         switch (state) {
             case NORMAL_TEXT:
-                if (c == '>') {
+                if (isWithinDoubleQuotes) {
+                    out.write(c);
+                    if (c == '"') {
+                        isWithinDoubleQuotes = false;
+                    }
+                    break;
+                } else if (isWithinSingleQuotes) {
+                    out.write(c);
+                    if (c == '\'') {
+                        isWithinSingleQuotes = false;
+                    }
+                    break;
+                } else if (c == '"') {
+                    out.write(c);
+                    isWithinDoubleQuotes = true;
+                    break;
+                } else if (c == '\'') {
+                    out.write(c);
+                    isWithinSingleQuotes = true;
+                    break;
+                } else if (c == '>') {
                     state = State.HOLDING_A_CLOSE;
                     break;
                 } else {
