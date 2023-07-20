@@ -173,8 +173,8 @@ public class DocumentUtil {
      * Compares two Documents with respect to the content and attributes
      * populated via EDIReader.
      *
-     * @param documentA
-     * @param documentB
+     * @param documentA first document for comparison
+     * @param documentB second document, for comparison with the first
      * @return null if there are no significant differences, or a String representation of the differences
      */
     public static String compare(Document documentA, Document documentB) {

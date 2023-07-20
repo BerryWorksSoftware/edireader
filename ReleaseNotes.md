@@ -1,5 +1,13 @@
 # Release Notes
 
+### 5.6.8 - July 18, 2023
+
+* Maintenance: Revise ParserRegistry class in order to eliminate any potential
+for malicious creation of a custom parser class that gets control in response to carefully
+crafted input data.
+* Fix: With the XmlFormatter, format XML correctly when it includes an attribute value that contains a / (slash).
+Such a slash must not be confused with a slash that closes an XML element.
+
 ### 5.6.7 - May 24, 2023
 
 * Maintenance: Use latest versions of Maven plugins.
@@ -15,7 +23,7 @@ org.w3c.dom.Document objects.
 
 * Fix: Pass the correct receiver address to the process() method when parsing an X12 envelope. The process() method
   allows a subclass of AnsiReader to easily grab EDI addresses from the ISA and GS envelope. This feature is not use
-  within the project, so the fixed bug is visible only with a custom AnsiReader subclass. With this fix, the prcess()
+  within the project, so the fixed bug is visible only with a custom AnsiReader subclass. With this fix, the process()
   hook is extended to also provide access to ISA, GS, and ST control numbers and the version indicated in the GS.
 
 ### 5.6.5 - September 29, 2022

@@ -141,6 +141,7 @@ public class SplitterTest extends VerboseTestCase {
 
         String[] args = new String[]{"toSplit.edi", "-o", getTestresultsPath() + "x12/split-0000.xml"};
         EDISplitter.main(args);
+        new File("toSplit.edi").delete();
 
         System.setOut(systemOut);
 
