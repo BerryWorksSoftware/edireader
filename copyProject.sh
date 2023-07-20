@@ -15,6 +15,7 @@ then
 fi
 
 cp pom.xml $DEST
+cp ReleaseNotes.md $DEST
 cp -R src $DEST
 cp -R testresults $DEST
 
