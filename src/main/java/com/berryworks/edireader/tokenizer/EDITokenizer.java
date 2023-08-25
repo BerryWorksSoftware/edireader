@@ -46,7 +46,7 @@ public class EDITokenizer extends AbstractTokenizer {
     public EDITokenizer(Reader source) {
         super(source);
         ((Buffer) charBuffer).flip();
-        logger.debug("Constructed a new EDITokenizer");
+//        logger.debug("Constructed a new EDITokenizer");
     }
 
     public EDITokenizer(Reader source, char[] preRead) {
@@ -116,7 +116,7 @@ public class EDITokenizer extends AbstractTokenizer {
 
         if (endOfFile) {
             cClass = CharacterClass.EOF;
-            logger.debug("end-of-file encountered");
+//            logger.debug("end-of-file encountered");
         } else {
             cChar = charBuffer.get();
             if (cChar == delimiter)
@@ -182,7 +182,7 @@ public class EDITokenizer extends AbstractTokenizer {
      * @throws IOException for problem reading EDI data
      */
     public char[] lookahead(int n) throws IOException {
-        logger.debug("EDITokenizer.lookahead({})", n);
+//        logger.debug("EDITokenizer.lookahead({})", n);
         char[] rval = new char[n];
 
         // The 1st char is grabbed using the tokenizer's built-in
@@ -194,7 +194,7 @@ public class EDITokenizer extends AbstractTokenizer {
 
         // The minus 1 is because we have already filled the first char of the return value, so we only need n-1 more
         if (charBuffer.remaining() < n - 1) {
-            logger.debug("Buffering more data to satisfy lookahead({}})", n);
+//            logger.debug("Buffering more data to satisfy lookahead({}})", n);
             readUntilBufferProvidesAtLeast(n - 1);
         }
 
@@ -216,8 +216,8 @@ public class EDITokenizer extends AbstractTokenizer {
 
         int remaining;
         while ((remaining = charBuffer.remaining()) < needed) {
-            logger.debug("Reading from input stream because at least {} chars are needed and only {} are available",
-                    needed, remaining);
+//            logger.debug("Reading from input stream because at least {} chars are needed and only {} are available",
+//                    needed, remaining);
             charBuffer.compact();
             int n;
             while ((n = inputReader.read(charBuffer)) == 0) {
@@ -225,11 +225,11 @@ public class EDITokenizer extends AbstractTokenizer {
             ((Buffer) charBuffer).flip();
 
             if (n < 0) {
-                logger.debug("Hit end of file on the input stream");
+//                logger.debug("Hit end of file on the input stream");
                 endOfFile = true;
                 break;
             } else {
-                logger.debug("Number of chars read from input stream: {}", n);
+//                logger.debug("Number of chars read from input stream: {}", n);
             }
         }
     }

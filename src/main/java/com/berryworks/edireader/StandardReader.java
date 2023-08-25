@@ -349,7 +349,7 @@ public abstract class StandardReader extends EDIReader {
             // the transition
             int toClose = pluginController.closedCount();
 
-            logger.debug("closing {} loops", toClose);
+//            logger.debug("closing {} loops", toClose);
             for (; toClose > 0; toClose--)
                 endElement(getXMLTags().getLoopTag());
 

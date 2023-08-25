@@ -110,7 +110,7 @@ public abstract class Plugin {
      */
     protected LoopDescriptor[] loops;
 
-    protected boolean debug;
+//    protected boolean debug;
     protected final String documentType;
     protected final String documentName;
     protected PluginPreparation optimizedForm;
@@ -180,7 +180,7 @@ public abstract class Plugin {
      */
     public LoopDescriptor query(String segment, String currentLoopStack, int currentLevel, Set<String> resultFlags) {
         LoopDescriptor result = null;
-        logger.debug("plugin query for segment {}", segment);
+//        logger.debug("plugin query for segment {}", segment);
 
         if (loops == null)
             return null;
@@ -190,10 +190,10 @@ public abstract class Plugin {
 
         List<LoopDescriptor> descriptorList = optimizedForm.getList(segment);
         if (descriptorList == null) {
-            logger.debug("No descriptors found");
+//            logger.debug("No descriptors found");
             return null;
         }
-        logger.debug("Number of descriptors found: {}", descriptorList.size());
+//        logger.debug("Number of descriptors found: {}", descriptorList.size());
 
         for (LoopDescriptor descriptor : descriptorList) {
             boolean candidate = matchesWithoutRegardToFlagConditionals(descriptor, segment, currentLoopStack, currentLevel);
@@ -229,7 +229,7 @@ public abstract class Plugin {
             throw new RuntimeException("Internal error: optimized plugin structure invalid");
         }
         int levelContext = descriptor.getLevelContext();
-        logger.debug("checking level context {}", levelContext);
+//        logger.debug("checking level context {}", levelContext);
         if (levelContext > -1) {
             return levelContext == currentLevel;
         }
@@ -238,15 +238,15 @@ public abstract class Plugin {
 
         if (currentLoopStack == null)
             currentLoopStack = "*";
-        if (debug)
-            logger.debug("checking loop context {} with current loop stack {}", candidateContext, currentLoopStack);
+//        if (debug)
+//            logger.debug("checking loop context {} with current loop stack {}", candidateContext, currentLoopStack);
 
         if (ANY_CONTEXT.equals(candidateContext)) {
             return true;
         } else if (candidateContext.startsWith("/")
                 && candidateContext.length() > 1
                 && currentLoopStack.startsWith(candidateContext)) {
-            logger.debug("startsWith satisfied");
+//            logger.debug("startsWith satisfied");
             return true;
         } else return currentLoopStack.endsWith(candidateContext);
     }

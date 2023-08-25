@@ -1,5 +1,10 @@
 # Release Notes
 
+### 5.6.9 - August 42, 2023
+
+* Maintenance: Reduce debug logging that is no longer needed.
+* Maintenance: Use latest versions of Maven plugins and dependencies.
+
 ### 5.6.8 - July 18, 2023
 
 * Maintenance: Revise ParserRegistry class in order to eliminate any potential

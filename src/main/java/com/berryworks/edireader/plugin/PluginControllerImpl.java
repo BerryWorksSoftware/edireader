@@ -120,9 +120,9 @@ public class PluginControllerImpl extends PluginController {
         if (!enabled)
             return false;
 
-        if (debug)
-            logger.debug("considering segment {} while in loop {} with stack {}",
-                    segmentName, loopDescriptor.getName(), loopStack.toString());
+//        if (debug)
+//            logger.debug("considering segment {} while in loop {} with stack {}",
+//                    segmentName, loopDescriptor.getName(), loopStack.toString());
 
         boolean result = false;
 
@@ -132,8 +132,8 @@ public class PluginControllerImpl extends PluginController {
                 loopDescriptor.getNestingLevel(),
                 resultFlags);
 
-        if (debug)
-            logger.debug("considering segment {} using descriptor {}", segmentName, newDescriptor);
+//        if (debug)
+//            logger.debug("considering segment {} using descriptor {}", segmentName, newDescriptor);
 
         if (!validateDescriptor(newDescriptor, segmentName, tokenizer))
             return false;
@@ -141,15 +141,15 @@ public class PluginControllerImpl extends PluginController {
         // Set flags related to this descriptor.
         Set<String> flags = newDescriptor.getResultFlags();
         for (String flagName : flags) {
-            logger.debug("setting flag {}", flagName);
+//            logger.debug("setting flag {}", flagName);
             resultFlags.add(flagName);
         }
 
         String newLoopName = newDescriptor.getName();
         if (CURRENT.equals(newLoopName) && newDescriptor.getNestingLevel() == loopDescriptor.getNestingLevel()) {
-            logger.debug("resuming current loop without transition");
+//            logger.debug("resuming current loop without transition");
         } else {
-            logger.debug("transitioning to level {}", newDescriptor.getNestingLevel());
+//            logger.debug("transitioning to level {}", newDescriptor.getNestingLevel());
             result = true;
 
             numberOfLoopsClosed = loopDescriptor.getNestingLevel() - newDescriptor.getNestingLevel();
@@ -169,7 +169,7 @@ public class PluginControllerImpl extends PluginController {
                 resumeLoop = false;
             }
 
-            logger.debug("closing {} loops", numberOfLoopsClosed);
+//            logger.debug("closing {} loops", numberOfLoopsClosed);
 
             if ((numberOfLoopsClosed < 0) || (numberOfLoopsClosed > loopDescriptor.getNestingLevel())) {
                 EDISyntaxException se = new EDISyntaxException("Improper sequencing noted with segment " + segmentName, tokenizer);
@@ -180,23 +180,23 @@ public class PluginControllerImpl extends PluginController {
                 for (int i = 0; i < numberOfLoopsClosed; i++) {
                     LoopContext completedLoop = loopStack.pop();
                     validateCompletedLoop(completedLoop);
-                    logger.debug("popped {} off the stack", completedLoop);
+//                    logger.debug("popped {} off the stack", completedLoop);
                 }
             }
             loopDescriptor = newDescriptor;
             if (resumeLoop) {
-                if (debug)
-                    logger.debug("resuming loop at level {} with name {} ",
-                            loopDescriptor.getNestingLevel(), loopDescriptor.getName());
+//                if (debug)
+//                    logger.debug("resuming loop at level {} with name {} ",
+//                            loopDescriptor.getNestingLevel(), loopDescriptor.getName());
                 if (loopDescriptor.getNestingLevel() == 0
                         && loopDescriptor.getName().length() > 1
                         && loopDescriptor.getName().startsWith("/")) {
-                    logger.debug("special legacy case: {}", loopDescriptor);
+//                    logger.debug("special legacy case: {}", loopDescriptor);
                     loopStack.setBottom(new LoopContext(loopDescriptor.getName().substring(1)));
                 }
             } else {
                 loopStack.push(createLoopContext(loopDescriptor.getName(), plugin, loopStack.toString()));
-                logger.debug("pushed {} onto the stack", loopDescriptor.getName());
+//                logger.debug("pushed {} onto the stack", loopDescriptor.getName());
             }
         }
 
