@@ -70,6 +70,21 @@ public class ANSI_834_X_005010 extends CompositeAwarePlugin {
 
         composites.put("QTY-3", "");
         composites.put("REF-4", "");
-
+        composites.put("INS-6", "");
+        composites.put("DMG-5", "");
+        composites.put("PRV-5", "");
+        composites.put("K3-3", "");
+        composites.put("HI-1", "");
+        composites.put("HI-2", "");
+        composites.put("HI-3", "");
+        composites.put("HI-4", "");
+        composites.put("HI-5", "");
+        composites.put("HI-6", "");
+        composites.put("HI-7", "");
+        composites.put("HI-8", "");
+        composites.put("HI-9", "");
+        composites.put("HI-10", "");
+        composites.put("HI-11", "");
+        composites.put("HI-12", "");
     }
 }  
