@@ -123,15 +123,17 @@ public abstract class StandardReader extends EDIReader {
                 attributes.clear();
                 attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
 
-               if (isSpecifiedAsComposite(t)) {
+                if (isSpecifiedAsComposite(t)) {
                     // Special case. What looks like a simple element (for example, INS-6) is really a composite with
                     // only a first sub-element (for example, INS-6-1).
 
                     // Add a Composite=yes attribute before starting the element
-                    attributes.addCDATA(getXMLTags().getCompositeTag(), "yes");
+                    attributes.addCDATA(getXMLTags().getCompositeIndicator(), "yes");
                     startElement(getXMLTags().getElementTag(), attributes);
 
                     // start a sub-element
+                    attributes.clear();
+                    attributes.addCDATA(getXMLTags().getSubElementSequence(), "1");
                     startElement(getXMLTags().getSubElementTag(), attributes);
                     // associate data with that sub-element
                     getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
