@@ -21,6 +21,7 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.error.*;
+import com.berryworks.edireader.plugin.CompositeAwarePlugin;
 import com.berryworks.edireader.plugin.PluginControllerFactory;
 import com.berryworks.edireader.plugin.PluginControllerFactoryInterface;
 import com.berryworks.edireader.tokenizer.Token;
@@ -121,11 +122,32 @@ public abstract class StandardReader extends EDIReader {
                 attributes = getDocumentAttributes();
                 attributes.clear();
                 attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
-                startElement(getXMLTags().getElementTag(), attributes);
-                getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
-                endElement(getXMLTags().getElementTag());
-                if (segmentPluginController != null)
-                    segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
+
+               if (isSpecifiedAsComposite(t)) {
+                    // Special case. What looks like a simple element (for example, INS-6) is really a composite with
+                    // only a first sub-element (for example, INS-6-1).
+
+                    // Add a Composite=yes attribute before starting the element
+                    attributes.addCDATA(getXMLTags().getCompositeTag(), "yes");
+                    startElement(getXMLTags().getElementTag(), attributes);
+
+                    // start a sub-element
+                    startElement(getXMLTags().getSubElementTag(), attributes);
+                    // associate data with that sub-element
+                    getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
+                    // end the sub-element
+                    endElement(getXMLTags().getSubElementTag());
+                    // end the element
+                    endElement(getXMLTags().getElementTag());
+                } else {
+                    // Normal case. A simple non-composite element.
+                    startElement(getXMLTags().getElementTag(), attributes);
+                    getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
+                    endElement(getXMLTags().getElementTag());
+                    if (segmentPluginController != null)
+                        segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
+                }
+
                 break;
 
             case SUB_ELEMENT:
@@ -168,6 +190,18 @@ public abstract class StandardReader extends EDIReader {
                 }
                 break;
         }
+    }
+
+    private boolean isSpecifiedAsComposite(Token t) {
+        boolean isActuallyAComposite = false;
+        if (segmentPluginController != null) {
+            Plugin plugin = segmentPluginController.getPlugin();
+            if (plugin instanceof CompositeAwarePlugin) {
+                CompositeAwarePlugin cap = (CompositeAwarePlugin) plugin;
+                isActuallyAComposite = cap.isComposite(t.getSegmentType(), t.getIndex());
+            }
+        }
+        return isActuallyAComposite;
     }
 
     /**

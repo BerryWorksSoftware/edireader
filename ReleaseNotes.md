@@ -1,7 +1,10 @@
 # Release Notes
 
-### 5.6.9 - August 42, 2023
+### 5.6.9 - August 27, 2023
 
+* Feature: Use the plugin, if available, to recognize a composite element with only its first sub-element,
+which looks identical to a simple element since no sub-element delimiter is visible. In this situation, the parsed
+EDI content reflects a composite element instead of a simple element. 
 * Maintenance: Reduce debug logging that is no longer needed.
 * Maintenance: Use latest versions of Maven plugins and dependencies.
 

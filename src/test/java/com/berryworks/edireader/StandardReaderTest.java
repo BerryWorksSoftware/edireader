@@ -83,7 +83,7 @@ public class StandardReaderTest {
                 "start(element, 001) end(element) " +
                 "start(element, AI) end(element) " +
                 "start(element, A) end(element) " +
-                "start(element, C) end(element) " +
+                "start(element, null) start(subelement, C) end(subelement) end(element) " +
                 "start(element, AC) end(element) " +
                 "start(element, N) end(element) " +
                 "end(segment) " +
