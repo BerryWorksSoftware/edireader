@@ -438,7 +438,7 @@ public class AnsiReader extends StandardReader {
         getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(),
                 documentType = getTokenizer().nextSimpleValue(false));
 
-        logger.info("Parsing {} transaction", documentType);
+        logger.debug("Parsing {} transaction", documentType);
 
         String version = groupVersion;
         if (version.length() > 6) version = version.substring(0, 6);

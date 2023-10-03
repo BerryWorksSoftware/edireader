@@ -380,7 +380,7 @@ public class EdifactReader extends StandardReader {
             String s = v.get(0);
             if (s != null) {
                 messageType = s;
-                logger.info("Parsing {} message", messageType);
+                logger.debug("Parsing {} message", messageType);
                 getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(), messageType);
             }
             if (n > 1) {

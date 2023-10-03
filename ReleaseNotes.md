@@ -1,5 +1,10 @@
 # Release Notes
 
+### 5.6.10 - October 3, 2023
+
+* Maintenance: Change from INFO-level to DEBUG-level
+the logging of every document type as it is parsed.
+
 ### 5.6.9 - August 27, 2023
 
 * Feature: Use the plugin, if available, to recognize a composite element with only its first sub-element,

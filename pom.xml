@@ -6,7 +6,7 @@
 
     <groupId>com.berryworks</groupId>
     <artifactId>edireader</artifactId>
-    <version>5.6.9</version>
+    <version>5.6.10</version>
 
     <packaging>jar</packaging>
     <name>EDIReader Core EDI Parser</name>
