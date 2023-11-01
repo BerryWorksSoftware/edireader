@@ -14,9 +14,9 @@ then
   exit 1
 fi
 
-cp pom.xml $DEST
-cp ReleaseNotes.md $DEST
-cp -R src $DEST
-cp -R testresults $DEST
+rsync pom.xml $DEST
+rsync ReleaseNotes.md $DEST
+rsync -rv --exclude=.DS_Store src $DEST
+rsync -rv --exclude=.DS_Store testresults $DEST
 
 echo "Done"
