@@ -38,6 +38,7 @@ import java.lang.invoke.MethodHandles;
 
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_END;
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_START;
+import static com.berryworks.edireader.util.FixedLength.isPresent;
 import static java.lang.Character.*;
 
 /**
@@ -369,11 +370,12 @@ public class AnsiReader extends StandardReader {
 
         startElement(getXMLTags().getGroupTag(), getGroupAttributes());
 
+        int groupDateLength = versionSpecificGroupDateLength(groupVersion);
         getAckGenerator().generateAcknowledgmentHeader(getFirstSegment(),
-                groupSender, groupReceiver, groupDate.length(), groupVersion,
+                groupSender, groupReceiver, groupDateLength, groupVersion,
                 groupFunctionCode, getGroupControlNumber());
         getAlternateAckGenerator().generateAcknowledgmentHeader(getFirstSegment(),
-                groupSender, groupReceiver, groupDate.length(), groupVersion,
+                groupSender, groupReceiver, groupDateLength, groupVersion,
                 groupFunctionCode, getGroupControlNumber());
 
         label:
@@ -539,6 +541,21 @@ public class AnsiReader extends StandardReader {
             }
             setContentHandler(queuedContentHandler.getWrappedContentHandler());
         }
+    }
+
+    protected int versionSpecificGroupDateLength(String groupVersion) {
+        // The proper length of the GS04 date in an X12 function group varies with the X12 version.
+        // Beginning with 004010, the maximum length is 8; before that it is 6.
+        // We want to generate an acknowledgment of the same version as the type, but with the correct
+        // length of the GS04 date field even if it was wrong in the EDI input.
+        int result = 8;
+        if (isPresent(groupVersion) && groupVersion.length() >= 6) {
+            char c = groupVersion.charAt(2);
+            if (Character.isDigit(c) && c < '4') {
+                result = 6;
+            }
+        }
+        return result;
     }
 
     public static boolean isEnvelopeSegment(String segmentType) {

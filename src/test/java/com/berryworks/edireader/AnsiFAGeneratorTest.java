@@ -28,6 +28,15 @@ public class AnsiFAGeneratorTest {
             "AK9~A~1~1~1$SE~6~0001$" +
             "GE~1~000038449$" +
             "IEA~1~000038449$";
+    public static final String TEST_DATA_997_4010 = "" +
+            "ISA~00~          ~00~          ~ZZ~58401          ~ZZ~04000          ~999999~9999~U~00204~000038449~0~P~<$" +
+            "GS~FA~58401~04000~99999999~9999~000038449~X~004010CHRY$" +
+            "ST~997~0001$" +
+            "AK1~AG~38327$" +
+            "AK2~824~000042460$AK5~A$" +
+            "AK9~A~1~1~1$SE~6~0001$" +
+            "GE~1~000038449$" +
+            "IEA~1~000038449$";
     public static final String TEST_DATA_NEGATIVE_997 = "" +
             "ISA~00~          ~00~          ~ZZ~58401          ~ZZ~04000          ~999999~9999~U~00204~000038449~0~P~<$" +
             "GS~FA~58401~04000~999999~9999~000038449~X~002040CHRY$" +
@@ -71,6 +80,16 @@ public class AnsiFAGeneratorTest {
         ansiReader.setAcknowledgment(ackStream);
         ansiReader.parse(EDITestData.getAnsiInputSource());
         assertLikeness(TEST_DATA_997, output.toString());
+    }
+
+    @Test
+    public void canGenerate997_4010() throws IOException, SAXException {
+        ansiReader = new AnsiReader();
+        ansiReader.setContentHandler(new DefaultHandler());
+        ansiReader.setAcknowledgment(ackStream);
+        String ediData = EDITestData.getAnsiInterchange().replace("002040", "004010");
+        ansiReader.parse(new InputSource(new StringReader(ediData)));
+        assertLikeness(TEST_DATA_997_4010, output.toString());
     }
 
     @Ignore
