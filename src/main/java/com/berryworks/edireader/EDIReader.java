@@ -76,7 +76,7 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
                     logger.debug("EDIReader.parse(InputSource) hit end of input");
                     break;
                 }
-                logger.info("Created an EDIReader of type {}", theReader.getClass().getName());
+                logger.debug("Created an EDIReader of type {}", theReader.getClass().getName());
                 theReader.setExternalXmlDocumentStart(true);
                 theReader.setAcknowledgment(getAckStream());
                 theReader.setAlternateAcknowledgment(getAlternateAckStream());
