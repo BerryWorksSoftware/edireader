@@ -25,16 +25,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.berryworks.edireader.util.EdiVersionUtil.isX12VersionBefore;
+
 public abstract class ReplyGenerator {
     protected StandardReader standardReader;
 
     protected String controlDateAndTimeOverride;
 
-    protected DateFormat yymmdd;
-
-    protected DateFormat yyyymmdd;
-
-    protected DateFormat hhmm;
+    protected DateFormat yymmdd, yyyymmdd, hhmm, hhmmss;
 
     public abstract void generateAcknowledgementWrapup() throws IOException;
 
@@ -65,11 +63,11 @@ public abstract class ReplyGenerator {
         controlDateAndTimeOverride = overrideValue;
     }
 
-    public String controlDateAndTime(int dateLength) {
-        return controlDateAndTime(dateLength, standardReader.getDelimiter());
+    public String controlDateAndTime(String groupVersion) {
+        return controlDateAndTime(groupVersion, standardReader.getDelimiter());
     }
 
-    public String controlDateAndTime(int dateLength, char delimiter) {
+    public String controlDateAndTime(String groupVersion, char delimiter) {
         if (controlDateAndTimeOverride != null)
             return controlDateAndTimeOverride;
 
@@ -80,10 +78,13 @@ public abstract class ReplyGenerator {
             yyyymmdd = new SimpleDateFormat("yyyyMMdd");
         if (hhmm == null)
             hhmm = new SimpleDateFormat("HHmm");
+        if (hhmmss == null)
+            hhmmss = new SimpleDateFormat("HHmmss");
 
         Date now = new Date();
-        DateFormat sixOrEight = (dateLength == 6) ? yymmdd : yyyymmdd;
-        return sixOrEight.format(now) + delimiter + hhmm.format(now);
+        DateFormat dateFormat = (isX12VersionBefore(groupVersion, 4010)) ? yymmdd : yyyymmdd;
+        DateFormat timeFormat = (isX12VersionBefore(groupVersion, 3020)) ? hhmm : hhmmss;
+        return dateFormat.format(now) + delimiter + timeFormat.format(now);
     }
 
 }

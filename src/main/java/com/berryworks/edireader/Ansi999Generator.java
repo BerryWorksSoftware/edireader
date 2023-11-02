@@ -55,8 +55,7 @@ public class Ansi999Generator extends AnsiFAGenerator {
         skipFA = false;
 
         logger.debug("generating FA envelope");
-        generateAcknowledgementPreamble(firstSegment, groupSender,
-                groupReceiver, groupDateLength, groupVersion);
+        generateAcknowledgementPreamble(firstSegment, groupSender, groupReceiver, groupVersion);
 
         // Generate the ST 999
         logger.debug("generating first part of 999");

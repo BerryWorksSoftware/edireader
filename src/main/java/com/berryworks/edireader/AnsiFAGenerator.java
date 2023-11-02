@@ -73,8 +73,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
         skipFA = false;
 
         logger.debug("generating FA envelope");
-        generateAcknowledgementPreamble(firstSegment, groupSender,
-                groupReceiver, groupDateLength, groupVersion);
+        generateAcknowledgementPreamble(firstSegment, groupSender, groupReceiver, groupVersion);
 
         // Generate the ST 997
         logger.debug("generating first part of 997");
@@ -170,7 +169,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
     }
 
     protected void generateAcknowledgementPreamble(String firstSegment,
-                                                   String groupSender, String groupReceiver, int groupDateLength,
+                                                   String groupSender, String groupReceiver,
                                                    String groupVersion) throws IOException {
         if (ackStream == null || preambleGenerated)
             return;
@@ -235,7 +234,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
         // Write the GS segment
         ackStream.write("GS" + delimiter + "FA" + delimiter + groupReceiver
                 + delimiter + groupSender + delimiter
-                + controlDateAndTime(groupDateLength, delimiter) + delimiter
+                + controlDateAndTime(groupVersion, delimiter) + delimiter
                 + thisGroupControlNumber + delimiter + "X" + delimiter
                 + groupVersion);
         ackStream.write(terminatorWithSuffix);
