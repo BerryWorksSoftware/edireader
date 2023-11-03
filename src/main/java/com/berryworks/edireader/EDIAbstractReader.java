@@ -179,6 +179,16 @@ public abstract class EDIAbstractReader implements XMLReader {
     private TransactionCallback transactionCallback;
 
     /**
+     * A convenience method allowing EDI to be parsed from a Reader without needing to
+     * explicitly construct an InputSource.
+     *
+     * @param reader the Reader providing the EDI input
+     */
+    public void parse(Reader reader) throws IOException, SAXException {
+        parse(new InputSource(reader));
+    }
+
+    /**
      * Gets the character marking the boundary between segments
      *
      * @return The terminator value

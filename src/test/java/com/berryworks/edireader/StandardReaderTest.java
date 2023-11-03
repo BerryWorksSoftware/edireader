@@ -5,7 +5,6 @@ import com.berryworks.edireader.tokenizer.Token.TokenType;
 import com.berryworks.edireader.tokenizer.TokenImpl;
 import com.berryworks.edireader.util.sax.ContextAwareSaxAdapter;
 import org.junit.Test;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -56,7 +55,7 @@ public class StandardReaderTest {
         final MyContentHandler handler = new MyContentHandler();
         reader.setContentHandler(handler);
 
-        reader.parse(new InputSource(new StringReader(SMALL_834)));
+        reader.parse(new StringReader(SMALL_834));
         String log = handler.getLog();
         assertEquals("start(ediroot, null) start(interchange, null) " +
                 "start(sender, null) start(address, null) end(address) end(sender) " +
