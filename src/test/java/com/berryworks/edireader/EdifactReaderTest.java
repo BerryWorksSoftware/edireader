@@ -179,7 +179,7 @@ public class EdifactReaderTest {
         edifactReader = new EdifactReader();
         edifactReader.setContentHandler(new DefaultHandler());
         try {
-            edifactReader.parse(new StringReader(ediText));
+            edifactReader.parseEdi(ediText);
             fail("Functional group count error not detected");
         } catch (GroupCountException e) {
             assertEquals("Functional group count error in UNZ segment. Expected 1 instead of 11 at segment 10, field 2", e.getMessage());
@@ -192,7 +192,7 @@ public class EdifactReaderTest {
         edifactReader = new EdifactReader();
         edifactReader.setContentHandler(new DefaultHandler());
         try {
-            edifactReader.parse(new StringReader(ediText));
+            edifactReader.parseEdi(ediText);
             fail("Interchange control number error not detected");
         } catch (InterchangeControlNumberException e) {
             assertEquals(
@@ -207,7 +207,7 @@ public class EdifactReaderTest {
         edifactReader = new EdifactReader();
         edifactReader.setContentHandler(new DefaultHandler());
         try {
-            edifactReader.parse(new StringReader(ediText));
+            edifactReader.parseEdi(ediText);
             fail("Transaction count error not detected");
         } catch (TransactionCountException e) {
             assertEquals("Message count error in UNE segment. Expected 1 instead of 111 at segment 6, field 2", e.getMessage());
@@ -220,7 +220,7 @@ public class EdifactReaderTest {
         edifactReader = new EdifactReader();
         edifactReader.setContentHandler(new DefaultHandler());
         try {
-            edifactReader.parse(new StringReader(ediText));
+            edifactReader.parseEdi(ediText);
             fail("Group control number error not detected");
         } catch (GroupControlNumberException e) {
             assertEquals(
@@ -235,7 +235,7 @@ public class EdifactReaderTest {
         edifactReader = new EdifactReader();
         edifactReader.setContentHandler(new DefaultHandler());
         try {
-            edifactReader.parse(new StringReader(ediText));
+            edifactReader.parseEdi(ediText);
             fail("Segment count error not detected");
         } catch (SegmentCountException e) {
             assertEquals("Segment count error in UNT segment. Expected 8 instead of 88 at segment 9, field 2", e.getMessage());
@@ -248,7 +248,7 @@ public class EdifactReaderTest {
         edifactReader = new EdifactReader();
         edifactReader.setContentHandler(new DefaultHandler());
         try {
-            edifactReader.parse(new StringReader(ediText));
+            edifactReader.parseEdi(ediText);
             fail("Transaction control number error not detected");
         } catch (TransactionControlNumberException e) {
             assertEquals(

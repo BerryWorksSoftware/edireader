@@ -88,7 +88,7 @@ public class AnsiFAGeneratorTest {
         ansiReader.setContentHandler(new DefaultHandler());
         ansiReader.setAcknowledgment(ackStream);
         String ediData = EDITestData.getAnsiInterchange().replace("002040", "004010");
-        ansiReader.parse(new StringReader(ediData));
+        ansiReader.parseEdi(ediData);
         assertLikeness(TEST_DATA_997_4010, output.toString());
     }
 
@@ -101,7 +101,7 @@ public class AnsiFAGeneratorTest {
         String ediInput = EDITestData.getAnsiInterchange();
         ediInput = ediInput.replace("SE~31~", "SE~00~");
         try {
-            ansiReader.parse(new StringReader(ediInput));
+            ansiReader.parseEdi(ediInput);
         } catch (SegmentCountException e) {
             assertEquals("Segment count error in SE segment. Expected 31 instead of 0 at segment 33, field 2", e.getMessage());
         }

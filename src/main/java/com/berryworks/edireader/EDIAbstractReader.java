@@ -189,6 +189,16 @@ public abstract class EDIAbstractReader implements XMLReader {
     }
 
     /**
+     * A convenience method allowing EDI to be parsed from a String without needing to
+     * explicitly construct an InputSource.
+     *
+     * @param edi the EDI String
+     */
+    public void parseEdi(String edi) throws IOException, SAXException {
+        parse(new InputSource(new StringReader(edi)));
+    }
+
+    /**
      * Gets the character marking the boundary between segments
      *
      * @return The terminator value

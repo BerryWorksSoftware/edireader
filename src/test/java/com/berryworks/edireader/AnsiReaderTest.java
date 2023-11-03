@@ -77,7 +77,7 @@ public class AnsiReaderTest {
 
     @Test
     public void canParseSmallSample() throws IOException, SAXException {
-        ansiReader.parse(new StringReader(EDI_SAMPLE));
+        ansiReader.parseEdi(EDI_SAMPLE);
 
         assertEquals(286, ansiReader.getCharCount());
         assertEquals(1, ansiReader.getGroupCount());
@@ -93,7 +93,7 @@ public class AnsiReaderTest {
     public void supportsOptionToObserveSyntaxCharacters() throws IOException, SAXException {
         // Baseline: default behavior, without the option
         assertFalse(ansiReader.isIncludeSyntaxCharacters());
-        ansiReader.parse(new StringReader(EDI_SAMPLE));
+        ansiReader.parseEdi(EDI_SAMPLE);
         assertNull(myContentHandler.getInterchangeAttributes().getValue("SegmentTerminator"));
         assertNull(myContentHandler.getInterchangeAttributes().getValue("ElementDelimiter"));
         assertNull(myContentHandler.getInterchangeAttributes().getValue("SubElementDelimiter"));
@@ -102,7 +102,7 @@ public class AnsiReaderTest {
         // Now with the option enabled, for a version 4010 interchange without a repetition separator
         setUp();
         ansiReader.setIncludeSyntaxCharacters(true);
-        ansiReader.parse(new StringReader(EDI_SAMPLE));
+        ansiReader.parseEdi(EDI_SAMPLE);
         assertEquals("^", myContentHandler.getInterchangeAttributes().getValue("SegmentTerminator"));
         assertEquals("*", myContentHandler.getInterchangeAttributes().getValue("ElementDelimiter"));
         assertEquals(":", myContentHandler.getInterchangeAttributes().getValue("SubElementDelimiter"));
@@ -111,7 +111,7 @@ public class AnsiReaderTest {
         // Again with the option enabled, for a version 5010 interchange with a repetition separator
         setUp();
         ansiReader.setIncludeSyntaxCharacters(true);
-        ansiReader.parse(new StringReader(EDI_SAMPLE_5010));
+        ansiReader.parseEdi(EDI_SAMPLE_5010);
         assertEquals("^", myContentHandler.getInterchangeAttributes().getValue("SegmentTerminator"));
         assertEquals("*", myContentHandler.getInterchangeAttributes().getValue("ElementDelimiter"));
         assertEquals(":", myContentHandler.getInterchangeAttributes().getValue("SubElementDelimiter"));
@@ -120,7 +120,7 @@ public class AnsiReaderTest {
 
     @Test
     public void canParseTA1() throws IOException, SAXException {
-        ansiReader.parse(new StringReader(EDI_TA1_SAMPLE));
+        ansiReader.parseEdi(EDI_TA1_SAMPLE);
 
         assertEquals(303, ansiReader.getCharCount());
         assertEquals(1, ansiReader.getGroupCount());
@@ -134,7 +134,7 @@ public class AnsiReaderTest {
 
     @Test
     public void canParseBIN() throws IOException, SAXException {
-        ansiReader.parse(new StringReader(EDI_BIN_SAMPLE));
+        ansiReader.parseEdi(EDI_BIN_SAMPLE);
 
         assertEquals(291, ansiReader.getCharCount());
         assertEquals(14, myContentHandler.getElementCount());
@@ -145,7 +145,7 @@ public class AnsiReaderTest {
     public void detectsGroupCountError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("IEA*1*", "IEA*44*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("Functional group count error not detected");
         } catch (GroupCountException e) {
             assertEquals("Functional group count error in IEA segment. Expected 1 instead of 44 at segment 8, field 2", e.getMessage());
@@ -156,7 +156,7 @@ public class AnsiReaderTest {
     public void detectsInterchangeControlNumberError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("IEA*1*000000121", "IEA*1*000000921");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("Interchange control number error not detected");
         } catch (InterchangeControlNumberException e) {
             assertEquals(
@@ -169,7 +169,7 @@ public class AnsiReaderTest {
     public void detectsTransactionCountError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("GE*1*", "GE*44*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("Transaction count error not detected");
         } catch (TransactionCountException e) {
             assertEquals("Transaction count error in GE segment. Expected 1 instead of 44 at segment 7, field 2", e.getMessage());
@@ -180,7 +180,7 @@ public class AnsiReaderTest {
     public void detectsGroupControlNumberError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("GE*1*1210001^", "GE*1*9210001^");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("Group control number error not detected");
         } catch (GroupControlNumberException e) {
             assertEquals(
@@ -193,7 +193,7 @@ public class AnsiReaderTest {
     public void detectsSegmentCountError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("SE*4*", "SE*44*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("Segment count error not detected");
         } catch (SegmentCountException e) {
             assertEquals("Segment count error in SE segment. Expected 4 instead of 44 at segment 6, field 2", e.getMessage());
@@ -204,7 +204,7 @@ public class AnsiReaderTest {
     public void detectsTransactionControlNumberError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("SE*4*0000001", "SE*4*1111111");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("Transaction control number error not detected");
         } catch (TransactionControlNumberException e) {
             assertEquals(
@@ -228,14 +228,14 @@ public class AnsiReaderTest {
                 }
             }
         });
-        ansiReader.parse(new StringReader(ediText));
+        ansiReader.parseEdi(ediText);
     }
 
     @Test
     public void detectsISA01FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("ISA*00*", "ISA*0000*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -249,7 +249,7 @@ public class AnsiReaderTest {
     public void detectsISA02FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("ISA*00*          *", "ISA*00*         *");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -263,7 +263,7 @@ public class AnsiReaderTest {
     public void detectsISA03FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("ISA*00*          *00*", "ISA*00*          *000*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -277,7 +277,7 @@ public class AnsiReaderTest {
     public void detectsISA04FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("ISA*00*          *00*          *", "ISA*00*          *00*           *");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -291,7 +291,7 @@ public class AnsiReaderTest {
     public void detectsISA05FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*ZZ*D00111         *", "*ZZ *D00111         *");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -305,7 +305,7 @@ public class AnsiReaderTest {
     public void detectsISA06FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*ZZ*D00111         *", "*ZZ*D00111*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -319,7 +319,7 @@ public class AnsiReaderTest {
     public void detectsISA07FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*ZZ*0055           *", "*Z*0055           *");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -333,7 +333,7 @@ public class AnsiReaderTest {
     public void detectsISA08FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*ZZ*0055           *", "*ZZ**");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -347,7 +347,7 @@ public class AnsiReaderTest {
     public void detectsISA09FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*030603*", "*20030603*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -361,7 +361,7 @@ public class AnsiReaderTest {
     public void detectsISA10FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*1337*", "*abc*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -375,7 +375,7 @@ public class AnsiReaderTest {
     public void detectsISA11FixedLengthError_StandardsId() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*U*00401*", "*UU*00401*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -389,7 +389,7 @@ public class AnsiReaderTest {
     public void detectsISA11FixedLengthError_RepetitionSeparator() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*U*00401*", "*++*00501*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -403,7 +403,7 @@ public class AnsiReaderTest {
     public void detectsISA12FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*U*00401*", "*U*00440011*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -417,7 +417,7 @@ public class AnsiReaderTest {
     public void detectsISA13FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*000000121*", "*121*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -431,7 +431,7 @@ public class AnsiReaderTest {
     public void detectsISA14FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*0*", "*000*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -445,7 +445,7 @@ public class AnsiReaderTest {
     public void detectsISA15FixedLengthError() throws IOException, SAXException {
         String ediText = EDI_SAMPLE.replace("*T*", "**");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA fixed length field error not detected");
         } catch (RecoverableSyntaxException e) {
             assertSame(ISAFixedLengthException.class, e.getClass());
@@ -460,7 +460,7 @@ public class AnsiReaderTest {
         // A space is not acceptable
         String ediText = EDI_SAMPLE.replace("*0*T*:^", "*0*T* ^");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA16 (sub-element delimiter) problem not detected");
         } catch (RecoverableSyntaxException e) {
             assertEquals("Invalid ISA16 sub-element delimiter", e.getMessage());
@@ -472,7 +472,7 @@ public class AnsiReaderTest {
         // A space is not acceptable
         String ediText = EDI_SAMPLE.replace("*0*T*:^", "*0*T*0^");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA16 (sub-element delimiter) problem not detected");
         } catch (EDISyntaxException e) {
             assertEquals("Invalid ISA16 sub-element delimiter", e.getMessage());
@@ -484,7 +484,7 @@ public class AnsiReaderTest {
         // A space is not acceptable
         String ediText = EDI_SAMPLE.replace("*0*T*:^", "*0*T*A^");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA16 (sub-element delimiter) problem not detected");
         } catch (EDISyntaxException e) {
             assertEquals("Invalid ISA16 sub-element delimiter", e.getMessage());
@@ -497,7 +497,7 @@ public class AnsiReaderTest {
         // The element delimiter after the T is missing, so the parser cannot reliably detect the segment terminator.
         // This is not a recoverable error!
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA16 (sub-element delimiter) problem not detected");
         } catch (EDISyntaxException e) {
             assertEquals("Invalid segment terminator", e.getMessage());
@@ -510,7 +510,7 @@ public class AnsiReaderTest {
         // The element delimiter after the T is missing, so the parser cannot reliably detect the segment terminator.
         // This is not a recoverable error!
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("ISA16 (sub-element delimiter) problem not detected");
         } catch (EDISyntaxException e) {
             assertEquals("Invalid segment terminator", e.getMessage());
@@ -521,7 +521,7 @@ public class AnsiReaderTest {
     public void detectsGSMandatoryFieldError() throws IOException {
         String ediText = EDI_SAMPLE.replace("*1337*1", "**1");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("GS mandatory field error not detected");
         } catch (SAXException e) {
             assertEquals(
@@ -534,7 +534,7 @@ public class AnsiReaderTest {
     public void detectsBiNSegmentLengthError() throws IOException {
         String ediText = EDI_BIN_SAMPLE.replace("BIN*10", "BIN*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("BIN length error not detected");
         } catch (SAXException e) {
             assertEquals(
@@ -547,7 +547,7 @@ public class AnsiReaderTest {
     public void detectsBiNSegmentLengthNumericError() throws IOException {
         String ediText = EDI_BIN_SAMPLE.replace("BIN*10", "BIN*xx");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("BIN numeric length error not detected");
         } catch (SAXException e) {
             assertEquals("BIN object length must be numeric instead of xx at segment 5, field 2", e.getMessage());
@@ -558,7 +558,7 @@ public class AnsiReaderTest {
     public void detectsMissingSEError() throws IOException {
         String ediText = EDI_SAMPLE.replace("SE*4*0000001", "SEE*4*0000001");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("Missing SE error not detected");
         } catch (SAXException e) {
             assertEquals("Transaction must be terminated with an SE segment at segment 7, field 1", e.getMessage());
@@ -569,7 +569,7 @@ public class AnsiReaderTest {
     public void detectsMissingGEError() throws IOException {
         String ediText = EDI_SAMPLE.replace("GE*1*1210001", "xGE*1*1210001");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("Missing GE error not detected");
         } catch (SAXException e) {
             assertEquals(
@@ -582,7 +582,7 @@ public class AnsiReaderTest {
     public void detectsInvalidSegmentStartError() throws IOException {
         String ediText = EDI_SAMPLE.replace("GS*HP*", "*HP*");
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("Invalid segment start not detected");
         } catch (SAXException e) {
             assertEquals("Invalid beginning of segment at segment 1", e.getMessage());
@@ -595,7 +595,7 @@ public class AnsiReaderTest {
         String ediText = "ISA*00*          *00*          *ZZ*ENS_EDI        *ZZ*UB920128       *161208*1130*^*00501*014684581*1*P*:\n" +
                 "GS*HP*ENS_EDI*UB920128*20161208*1130*014684581*X*005010X221A1";
         try {
-            ansiReader.parse(new StringReader(ediText));
+            ansiReader.parseEdi(ediText);
             fail("Invalid segment start not detected");
         } catch (SAXException e) {
             assertEquals("Invalid beginning of segment at segment 2", e.getMessage());
@@ -610,7 +610,7 @@ public class AnsiReaderTest {
                 return true;
             }
         });
-        ansiReader.parse(new StringReader(EDI_SAMPLE_WITH_TRIMMED_ISA));
+        ansiReader.parseEdi(EDI_SAMPLE_WITH_TRIMMED_ISA);
 
         assertEquals(245, ansiReader.getCharCount());
         assertEquals(1, ansiReader.getGroupCount());

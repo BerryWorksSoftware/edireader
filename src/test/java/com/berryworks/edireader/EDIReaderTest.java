@@ -6,7 +6,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.io.StringReader;
 
 import static org.junit.Assert.assertEquals;
 
@@ -22,7 +21,7 @@ public class EDIReaderTest {
         ediReader.setIncludeSyntaxCharacters(true);
 
         // X12 version 5010 and later having repetition separator in ISA11
-        ediReader.parse(new StringReader("" +
+        ediReader.parseEdi("" +
                 "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~\n" +
                 "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~\n" +
                 "ST*204*7629~\n" +
@@ -30,7 +29,7 @@ public class EDIReaderTest {
                 "B2A*00*LT~\n" +
                 "SE*4*7629~\n" +
                 "GE*1*7629~\n" +
-                "IEA*1*000007629~\n"));
+                "IEA*1*000007629~\n");
         assertEquals('*', ediReader.getDelimiter());
         assertEquals('>', ediReader.getSubDelimiter());
         assertEquals(':', ediReader.getRepetitionSeparator());
@@ -49,7 +48,7 @@ public class EDIReaderTest {
         ediReader.setContentHandler(new MyContentHandler());
 
         // X12 version 4010 and earlier having standards Id, typically "U", in ISA11
-        ediReader.parse(new StringReader("" +
+        ediReader.parseEdi("" +
                 "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*U*00401*000007629*0*T*>~\r\n" +
                 "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*004010~\r\n" +
                 "ST*204*7629~\r\n" +
@@ -57,7 +56,7 @@ public class EDIReaderTest {
                 "B2A*00*LT~\r\n" +
                 "SE*4*7629~\r\n" +
                 "GE*1*7629~\r\n" +
-                "IEA*1*000007629~\r\n"));
+                "IEA*1*000007629~\r\n");
         assertEquals('*', ediReader.getDelimiter());
         assertEquals('>', ediReader.getSubDelimiter());
         assertEquals(0, ediReader.getRepetitionSeparator());
@@ -71,7 +70,7 @@ public class EDIReaderTest {
         ediReader.setContentHandler(new MyContentHandler());
 
         // EDIFACT without UNA segment
-        ediReader.parse(new StringReader("" +
+        ediReader.parseEdi("" +
                 "UNB+UNOA:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'" +
                 "UNH+00000000000117+INVOIC:D:97B:UN'" +
                 "BGM+380+342459+9'" +
@@ -90,7 +89,7 @@ public class EDIReaderTest {
                 "PRI+INV:20.5'" +
                 "UNT+16+00000000000117'" +
                 "UNZ+1+00000000000778'"
-        ));
+        );
         assertEquals('+', ediReader.getDelimiter());
         assertEquals(':', ediReader.getSubDelimiter());
         assertEquals('.', ediReader.getDecimalMark());
@@ -106,7 +105,7 @@ public class EDIReaderTest {
         ediReader.setContentHandler(new MyContentHandler());
 
         // EDIFACT with UNA segment
-        ediReader.parse(new StringReader("" +
+        ediReader.parseEdi("" +
                 "UNA:*.? '" +
                 "UNB*UNOA:1*005435656:1*006415160CFS:1*000210:1434*00000000000778*rref*aref*p*a*cid*t'" +
                 "UNH*00000000000117*INVOIC:D:97B:UN'" +
@@ -126,7 +125,7 @@ public class EDIReaderTest {
                 "PRI*INV:20.5'" +
                 "UNT*16*00000000000117'" +
                 "UNZ*1*00000000000778'"
-        ));
+        );
         assertEquals('*', ediReader.getDelimiter());
         assertEquals(':', ediReader.getSubDelimiter());
         assertEquals('.', ediReader.getDecimalMark());
@@ -141,7 +140,7 @@ public class EDIReaderTest {
         ediReader = new EDIReader();
         MyContentHandler contentHandler = new MyContentHandler();
         ediReader.setContentHandler(contentHandler);
-        ediReader.parse(new StringReader("" +
+        ediReader.parseEdi("" +
                 "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~\n" +
                 "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~\n" +
                 "ST*204*7629~\n" +
@@ -149,7 +148,7 @@ public class EDIReaderTest {
                 "B2A*00*LT~\n" +
                 "SE*4*7629~\n" +
                 "GE*1*7629~\n" +
-                "IEA*1*000007629~\n"));
+                "IEA*1*000007629~\n");
         assertEquals(0, contentHandler.numberOfSpacesOnlyElements());
 
         // Now do it again, explicitly setting the default
@@ -158,7 +157,7 @@ public class EDIReaderTest {
         ediReader.setContentHandler(contentHandler);
         ediReader.setIncludeSyntaxCharacters(true);
         ediReader.setKeepSpacesOnlyElements(false);
-        ediReader.parse(new StringReader("" +
+        ediReader.parseEdi("" +
                 "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~\n" +
                 "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~\n" +
                 "ST*204*7629~\n" +
@@ -166,7 +165,7 @@ public class EDIReaderTest {
                 "B2A*00*LT~\n" +
                 "SE*4*7629~\n" +
                 "GE*1*7629~\n" +
-                "IEA*1*000007629~\n"));
+                "IEA*1*000007629~\n");
         assertEquals(0, contentHandler.numberOfSpacesOnlyElements());
 
         // Now do it again, asking to keep the elements containing only spaces
@@ -175,7 +174,7 @@ public class EDIReaderTest {
         ediReader.setContentHandler(contentHandler);
         ediReader.setIncludeSyntaxCharacters(true);
         ediReader.setKeepSpacesOnlyElements(true);
-        ediReader.parse(new StringReader("" +
+        ediReader.parseEdi("" +
                 "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~\n" +
                 "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~\n" +
                 "ST*204*7629~\n" +
@@ -183,7 +182,7 @@ public class EDIReaderTest {
                 "B2A*00*LT~\n" +
                 "SE*4*7629~\n" +
                 "GE*1*7629~\n" +
-                "IEA*1*000007629~\n"));
+                "IEA*1*000007629~\n");
         assertEquals(1, contentHandler.numberOfSpacesOnlyElements());
     }
 

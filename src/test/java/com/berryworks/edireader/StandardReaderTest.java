@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.io.StringReader;
 
 import static org.junit.Assert.assertEquals;
 
@@ -55,7 +54,7 @@ public class StandardReaderTest {
         final MyContentHandler handler = new MyContentHandler();
         reader.setContentHandler(handler);
 
-        reader.parse(new StringReader(SMALL_834));
+        reader.parseEdi(SMALL_834);
         String log = handler.getLog();
         assertEquals("start(ediroot, null) start(interchange, null) " +
                 "start(sender, null) start(address, null) end(address) end(sender) " +
