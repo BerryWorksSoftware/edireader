@@ -28,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
+import static com.berryworks.edireader.util.EdiVersionUtil.isX12VersionBefore;
+import static com.berryworks.edireader.util.FixedLength.isPresent;
 import static com.berryworks.edireader.util.FixedLength.valueOf;
 
 /**
@@ -232,14 +234,36 @@ public class AnsiFAGenerator extends ReplyGenerator {
         thisGroupControlNumber = thisInterchangeControlNumber;
 
         // Write the GS segment
-        ackStream.write("GS" + delimiter + "FA" + delimiter + groupReceiver
-                + delimiter + groupSender + delimiter
+        ackStream.write("GS" + delimiter + "FA" + delimiter
+                + (isX12VersionBefore(groupVersion, 3020)
+                ? minMax(groupReceiver, 1, 12)
+                : minMax(groupReceiver, 1, 15))
+                + delimiter
+                + (isX12VersionBefore(groupVersion, 3020)
+                ? minMax(groupSender, 1, 12)
+                : minMax(groupSender, 1, 15))
+                + delimiter
                 + controlDateAndTime(groupVersion, delimiter) + delimiter
-                + thisGroupControlNumber + delimiter + "X" + delimiter
-                + groupVersion);
+                + minMax(thisGroupControlNumber, 1, 9) + delimiter + "X" + delimiter
+                + minMax(groupVersion, 1, 12));
         ackStream.write(terminatorWithSuffix);
 
         preambleGenerated = true;
+    }
+
+    private String minMax(String text, int min, int max) {
+        if (isPresent(text)) {
+            if (text.length() < min) {
+                return valueOf(text, min);
+            } else if (text.length() > max) {
+                return valueOf(text, max);
+            } else {
+                return text;
+            }
+        } else {
+            return valueOf(null, min);
+        }
+
     }
 
     private String[] splitOnDelimiter() {
