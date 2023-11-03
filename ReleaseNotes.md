@@ -2,9 +2,10 @@
 
 ### 5.6.11 - November 2, 2023
 
-* Fix: When providing an X12 acknowledgment as a parsing by-product,
-use the proper length for any GS element with a maximum length that varies with the X12 version. 
-For example, the GS04 date element has maximum length of 8 beginning with 004010 and 6 before.
+* Fix: When producing an X12 acknowledgment as a parsing by-product,
+use a proper length for each GS element, truncating or padding as necessary to comply with min:max rules.
+For some GS elements, the min:max length varies between X12 versions. 
+For example, the GS04 date element has minimum and maximum length of 8 beginning with 004010 and 6 before.
 
 ### 5.6.10 - October 3, 2023
 

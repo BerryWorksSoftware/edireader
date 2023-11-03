@@ -6,6 +6,7 @@ package com.berryworks.edireader.util;
 
 import org.junit.Test;
 
+import static com.berryworks.edireader.util.FixedLength.minMax;
 import static org.junit.Assert.assertEquals;
 
 public class FixedLengthTest {
@@ -15,7 +16,7 @@ public class FixedLengthTest {
         assertEquals("", FixedLength.spaces(0));
         assertEquals(" ", FixedLength.spaces(1));
         assertEquals("     ", FixedLength.spaces(5));
-//        assertEquals("", FixedLength.spaces(-1));
+        assertEquals("", FixedLength.spaces(-1));
     }
 
     @Test(expected = RuntimeException.class)
@@ -28,7 +29,7 @@ public class FixedLengthTest {
         assertEquals("", FixedLength.zeroes(0));
         assertEquals("0", FixedLength.zeroes(1));
         assertEquals("00000", FixedLength.zeroes(5));
-//        assertEquals("", FixedLength.zeroes(-1));
+        assertEquals("", FixedLength.zeroes(-1));
     }
 
     @Test(expected = RuntimeException.class)
@@ -73,6 +74,29 @@ public class FixedLengthTest {
         assertEquals("00  ", FixedLength.leadingZeros("  ", 4));
         assertEquals("0000", FixedLength.leadingZeros("0", 4));
         assertEquals("0 0 ", FixedLength.leadingZeros(" 0 ", 4));
+    }
+
+    @Test
+    public void testMinMax() {
+        // cases where text is unchanged
+        assertEquals("abc", minMax("abc", 1, 3));
+        assertEquals("abc", minMax("abc", 2, 3));
+        assertEquals("abc", minMax("abc", 3, 3));
+        // cases where text is truncated
+        assertEquals("abc", minMax("abcd", 1, 3));
+        // cases where text is padded
+        assertEquals("abc ", minMax("abc", 4, 5));
+        assertEquals("abc  ", minMax("abc", 5, 6));
+        // 0 for either min or max means unconstrained
+        assertEquals("abc", minMax("abcd", 0, 3));
+        assertEquals("abc", minMax("abcd", 0, 3));
+        assertEquals("abcd", minMax("abcd", 2, 0));
+        // edge cases, pathological cases
+        assertEquals(" ", minMax("", 1, 3));
+        assertEquals("  ", minMax("", 2, 3));
+        assertEquals("  ", minMax(null, 2, 3));
+        assertEquals("x", minMax("x", -1, 3));
+        assertEquals("x ", minMax("x", 2, -1));
     }
 }
 

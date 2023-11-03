@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2023 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 import static com.berryworks.edireader.util.EdiVersionUtil.isX12VersionBefore;
-import static com.berryworks.edireader.util.FixedLength.isPresent;
+import static com.berryworks.edireader.util.FixedLength.minMax;
 import static com.berryworks.edireader.util.FixedLength.valueOf;
 
 /**
@@ -243,27 +243,14 @@ public class AnsiFAGenerator extends ReplyGenerator {
                 ? minMax(groupSender, 1, 12)
                 : minMax(groupSender, 1, 15))
                 + delimiter
-                + controlDateAndTime(groupVersion, delimiter) + delimiter
-                + minMax(thisGroupControlNumber, 1, 9) + delimiter + "X" + delimiter
+                + controlDateAndTime(groupVersion, delimiter)
+                + delimiter
+                + minMax(thisGroupControlNumber, 1, 9)
+                + delimiter + "X" + delimiter
                 + minMax(groupVersion, 1, 12));
         ackStream.write(terminatorWithSuffix);
 
         preambleGenerated = true;
-    }
-
-    private String minMax(String text, int min, int max) {
-        if (isPresent(text)) {
-            if (text.length() < min) {
-                return valueOf(text, min);
-            } else if (text.length() > max) {
-                return valueOf(text, max);
-            } else {
-                return text;
-            }
-        } else {
-            return valueOf(null, min);
-        }
-
     }
 
     private String[] splitOnDelimiter() {

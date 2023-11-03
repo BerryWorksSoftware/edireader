@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2023 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -145,4 +145,19 @@ public abstract class FixedLength {
     public static String emptyIfNull(String value) {
         return value == null ? "" : value;
     }
+
+    public static String minMax(String text, int min, int max) {
+        if (isPresent(text)) {
+            if (text.length() < min) {
+                return valueOf(text, min);
+            } else if (max > 0 && text.length() > max) {
+                return valueOf(text, max);
+            } else {
+                return text;
+            }
+        } else {
+            return valueOf(null, min);
+        }
+    }
+
 }
