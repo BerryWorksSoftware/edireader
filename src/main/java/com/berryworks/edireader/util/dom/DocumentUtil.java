@@ -34,6 +34,7 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ import java.util.List;
 /**
  * Provides convenience methods for using the W3C DOM API in an EDI context.
  * <p>
- * These method are written using the EDIReader and DOM APIs and simply encapsulate
+ * These methods are written using the EDIReader and DOM APIs and simply encapsulate
  * functional sequences that may be useful for testing and other purposes.
  */
 public class DocumentUtil {
@@ -69,6 +70,14 @@ public class DocumentUtil {
      */
     public synchronized Document buildDocumentFromEdi(InputSource inputSource) throws Exception {
         return buildDocumentFromEdi(inputSource, null);
+    }
+
+    public synchronized Document buildDocumentFromEdi(Reader inputReader) throws Exception {
+        return buildDocumentFromEdi(new InputSource(inputReader), null);
+    }
+
+    public synchronized Document buildDocumentFromEdi(Reader inputReader, PluginControllerFactoryInterface factory) throws Exception {
+        return buildDocumentFromEdi(new InputSource(inputReader), factory);
     }
 
     public synchronized Document buildDocumentFromEdi(InputSource inputSource, PluginControllerFactoryInterface factory) throws Exception {

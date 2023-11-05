@@ -4,7 +4,6 @@ import com.berryworks.edireader.benchmark.EDITestData;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 import java.io.StringReader;
 
@@ -18,12 +17,12 @@ public class DocumentCompareTest {
     @Before
     public void setUp() throws Exception {
         String ediA = EDITestData.getAnsiInterchange();
-        documentA = getInstance().buildDocumentFromEdi(new InputSource(new StringReader(ediA)));
+        documentA = getInstance().buildDocumentFromEdi(new StringReader(ediA));
         String ediB = ediA
                 .replaceAll("000042460", "000042461")
                 .replace("07141005162", "07141005163");
         assertNotEquals(ediA, ediB);
-        documentB = getInstance().buildDocumentFromEdi(new InputSource(new StringReader(ediB)));
+        documentB = getInstance().buildDocumentFromEdi(new StringReader(ediB));
     }
 
     @Test
