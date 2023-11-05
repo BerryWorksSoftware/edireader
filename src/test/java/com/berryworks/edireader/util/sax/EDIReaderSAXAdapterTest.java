@@ -16,7 +16,7 @@ public class EDIReaderSAXAdapterTest {
     @Test
     public void basics() throws SAXException {
         XMLTags xmlTags = new DefaultXMLTags();
-        adapter = new MyAdapater(xmlTags);
+        adapter = new MyAdapater();
 
         EDIAttributes attributes = new EDIAttributes();
         attributes.addCDATA("A", "a");
@@ -45,10 +45,6 @@ public class EDIReaderSAXAdapterTest {
     static class MyAdapater extends EDIReaderSAXAdapter {
 
         private final StringBuilder builder = new StringBuilder();
-
-        public MyAdapater(XMLTags xmlTags) {
-            super(xmlTags);
-        }
 
         @Override
         protected void beginInterchange(int charCount, int segmentCharCount, Attributes attributes) {

@@ -20,6 +20,7 @@
 
 package com.berryworks.edireader.util.sax;
 
+import com.berryworks.edireader.DefaultXMLTags;
 import com.berryworks.edireader.XMLTags;
 import com.berryworks.edireader.tokenizer.SourcePosition;
 import org.xml.sax.Attributes;
@@ -48,6 +49,9 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
 
     protected String elementString;
 
+    public EDIReaderSAXAdapter() {
+        this(new DefaultXMLTags());
+    }
     public EDIReaderSAXAdapter(XMLTags xmlTags) {
         this.xmlTags = xmlTags;
     }

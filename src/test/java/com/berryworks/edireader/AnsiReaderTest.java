@@ -604,12 +604,7 @@ public class AnsiReaderTest {
 
     @Test
     public void allowsVariableLengthForSomeIsaElements() throws IOException, SAXException {
-        ansiReader.setSyntaxExceptionHandler(new EDISyntaxExceptionHandler() {
-            @Override
-            public boolean process(RecoverableSyntaxException syntaxException) {
-                return true;
-            }
-        });
+        ansiReader.setSyntaxExceptionHandler(syntaxException -> true);
         ansiReader.parseEdi(EDI_SAMPLE_WITH_TRIMMED_ISA);
 
         assertEquals(245, ansiReader.getCharCount());
@@ -661,10 +656,6 @@ public class AnsiReaderTest {
     private static class MyContentHandler extends EDIReaderSAXAdapter {
         private int segmentCount, elementCount;
         private Attributes interchangeAttributes;
-
-        MyContentHandler() {
-            super(new DefaultXMLTags());
-        }
 
         @Override
         protected void beginInterchange(int charCount, int segmentCharCount, Attributes attributes) {

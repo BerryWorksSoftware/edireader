@@ -1,11 +1,16 @@
 package com.berryworks.edireader.plugin;
 
+import com.berryworks.edireader.EDIReader;
 import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.Plugin;
 import com.berryworks.edireader.demo.EDItoXML;
+import com.berryworks.edireader.util.sax.EDIReaderSAXAdapter;
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -219,34 +224,8 @@ public class PluginControllerImplTest {
         assertFalse(controller.transition("AMT"));
     }
 
-    //    @Ignore
     @Test
-    public void canProduceCorrectXmlFor850WithDifficultAMT() {
-        String TINY_850 =
-                "ISA*00*          *00*          *ZZ*04000          *ZZ*58401          *040714*1003*U*00204*000038449*0*P*<$" +
-                        "GS*PO*04000*58401*040714*1003*38327*X*003999$" +
-                        "ST*850*000042460$" +
-                        "BEG*00*RL*SPE1C115D1099*1594*160701****FR*SP$" +
-                        "REF*DS*DOC9$" +
-                        "AMT*KC*121.2$" +
-                        "AT**97 0X0X49305CBX*****S33189**001      2620$" +
-                        "REF*AX*BX$" +
-                        "N1*BY*DLA TROOP SUPPORT*10*SPE1C1$" +
-                        "N2*C AND T SUPPLY CHAIN$" +
-                        "N3*800 SNOWBALL AVENUE$" +
-                        "N4*PHILADELPHIA*PA*191115096*US$" +
-                        "N1*SE*ANOTHER, INC. DBA*33*1CAY9$" +
-                        "N2*ADS$" +
-                        "N3*921 HAVEN HWY STE 100$" +
-                        "N4*VIRGINIA BEACH*VA*234527448*US$" +
-                        "PO1*0001*1*BX*121.20000**FS*8465015151158*UA*718020072050$" +
-                        "PID*F****STRAP, INVOLUNTARY, RESTRAINT$" +
-                        "CTT*1$" +
-                        "AMT*TT*121.2$" +
-                        "SE*19*000042460$" +
-                        "GE*1*38327$" +
-                        "IEA*1*000038449$";
-
+    public void canProduceXmlFor850() {
         EDItoXML ediToXml = new EDItoXML();
         StringWriter writer = new StringWriter();
         StringReader reader = new StringReader(TINY_850);
@@ -292,6 +271,19 @@ public class PluginControllerImplTest {
                 writer.toString());
     }
 
+    @Test
+    public void canHidePlugins() throws IOException, SAXException {
+        EDIReader ediReader = new EDIReader();
+        ediReader.setPluginControllerFactory(new PluginsAreHidden());
+        ediReader.setContentHandler(new EDIReaderSAXAdapter() {
+            @Override
+            protected void beginSegmentGroup(String loopName, Attributes atts) {
+                fail("There should be no loops without a plugin");
+            }
+        });
+        ediReader.parse(new StringReader(TINY_850));
+    }
+
     private void assertTransition(String segment, int nestingLevel, String loopEntered, String loopStack, int closedCount, boolean resumed) throws EDISyntaxException {
         assertTrue(controller.transition(segment));
         assertEquals(loopEntered, controller.getLoopEntered());
@@ -315,4 +307,28 @@ public class PluginControllerImplTest {
         assertFalse(controller.transition("B3"));
         assertFalse(controller.transition("N1"));
     }
+
+    public static final String TINY_850 = "ISA*00*          *00*          *ZZ*04000          *ZZ*58401          *040714*1003*U*00204*000038449*0*P*<$" +
+            "GS*PO*04000*58401*040714*1003*38327*X*003999$" +
+            "ST*850*000042460$" +
+            "BEG*00*RL*SPE1C115D1099*1594*160701****FR*SP$" +
+            "REF*DS*DOC9$" +
+            "AMT*KC*121.2$" +
+            "AT**97 0X0X49305CBX*****S33189**001      2620$" +
+            "REF*AX*BX$" +
+            "N1*BY*DLA TROOP SUPPORT*10*SPE1C1$" +
+            "N2*C AND T SUPPLY CHAIN$" +
+            "N3*800 SNOWBALL AVENUE$" +
+            "N4*PHILADELPHIA*PA*191115096*US$" +
+            "N1*SE*ANOTHER, INC. DBA*33*1CAY9$" +
+            "N2*ADS$" +
+            "N3*921 HAVEN HWY STE 100$" +
+            "N4*VIRGINIA BEACH*VA*234527448*US$" +
+            "PO1*0001*1*BX*121.20000**FS*8465015151158*UA*718020072050$" +
+            "PID*F****STRAP, INVOLUNTARY, RESTRAINT$" +
+            "CTT*1$" +
+            "AMT*TT*121.2$" +
+            "SE*19*000042460$" +
+            "GE*1*38327$" +
+            "IEA*1*000038449$";
 }

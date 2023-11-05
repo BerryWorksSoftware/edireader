@@ -191,10 +191,6 @@ public class EDIReaderTest {
         private Attributes interchangeAttributes;
         private int spacesOnlyElements;
 
-        public MyContentHandler() {
-            super(new DefaultXMLTags());
-        }
-
         @Override
         protected void beginInterchange(int charCount, int segmentCharCount, Attributes attributes) {
             interchangeAttributes = new EDIAttributes(attributes);

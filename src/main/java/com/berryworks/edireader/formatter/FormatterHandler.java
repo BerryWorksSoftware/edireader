@@ -42,7 +42,6 @@ public class FormatterHandler extends EDIReaderSAXAdapter {
     private int charsReadSoFar;
 
     public FormatterHandler(EDIReader reader, Reader input, PrintWriter output) {
-        super(reader.getXMLTags());
         this.ediReader = reader;
         this.input = input;
         this.output = output;
@@ -223,14 +222,6 @@ public class FormatterHandler extends EDIReaderSAXAdapter {
     }
 
     public void end(String uri, String name) {
-    }
-
-    @Override
-    public void preface() {
-    }
-
-    @Override
-    public void addendum() {
     }
 
 }
