@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import static com.berryworks.edireader.util.FixedLength.isPresent;
 
@@ -366,11 +367,29 @@ public abstract class StandardReader extends EDIReader {
     }
 
     public PluginControllerFactoryInterface getPluginControllerFactory() {
-        // Lazy load
+        // Lazy load. One may have been set directly via setPluginControllerFactory().
         if (pluginControllerFactory == null) {
-            pluginControllerFactory = new PluginControllerFactory();
+            // We do not already have one. Try to get one from a Java SPI Service Provider on the classpath.
+            // This is a means for the EDI parser in the core to use plugins of kinds not known to the core project.
+            // For example, the ESD-based plugins used in the EDIReader Framework.
+            pluginControllerFactory = getPluginControllerFactoryViaSPI();
+            if (pluginControllerFactory == null) {
+                // If we still do not have one, use the native "legacy" one provided in this core project which
+                // supports EDIReader plugins via Java classes.
+                pluginControllerFactory = new PluginControllerFactory();
+            }
         }
         return pluginControllerFactory;
+    }
+
+    private PluginControllerFactoryInterface getPluginControllerFactoryViaSPI() {
+        for (PluginControllerFactoryInterface pcf : ServiceLoader.load(PluginControllerFactoryInterface.class)) {
+            if (pcf != null) {
+                // Take the first one we encounter.
+                return pcf;
+            }
+        }
+        return null;
     }
 
     @Override
