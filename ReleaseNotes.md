@@ -1,5 +1,19 @@
 # Release Notes
 
+### 5.8.0 - November ??, 2023
+
+* to be added
+
+### 5.7 - skipped
+
+* Several new features in a new release are used by a new release (5.8.0) of the EDIReader Framework
+built upon this EDIReader core project.
+To a void confusion with 5.8.n releases of the framework depending on 5.7.n releases of the core,
+the new release of the core is also designated 5.8.0.
+There is no intention to have a new release of the core for each release of the framework, or vice-versa,
+so the version numbers are not expected to remain synchronized.
+
+
 ### 5.6.11 - November 2, 2023
 
 * Fix: When producing an X12 acknowledgment as a parsing by-product,
