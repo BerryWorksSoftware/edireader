@@ -51,6 +51,19 @@ public abstract class EDIReaderFactory {
     }
 
     /**
+     * Equivalent to createEDIReader(new InputSource(edi))
+     *
+     * @param edi EDI input
+     * @return EDIReader
+     * @throws IOException        if problem reading EDI input
+     * @throws EDISyntaxException if invalid EDI is detected
+     */
+    public static EDIReader createEDIReader(Reader edi)
+            throws EDISyntaxException, IOException {
+        return createEDIReader(new InputSource(edi), null, false);
+    }
+
+    /**
      * Factory method to create an instance of a subclass of EDIReader based on
      * examination of the first few characters of data.
      *

@@ -2,7 +2,8 @@
 
 ### 5.8.0 - November ??, 2023
 
-* to be added
+* Feature: Add convenience methods to accept Reader instead of InputSource,
+simplifying the Java API, while preserving backward compatibility.
 
 ### 5.7 - skipped
 
