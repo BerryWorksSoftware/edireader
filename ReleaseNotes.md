@@ -2,8 +2,10 @@
 
 ### 5.8.0 - November ??, 2023
 
-* Feature: Add convenience methods to accept Reader instead of InputSource,
+* Convenience: Add methods to accept Reader instead of InputSource,
 simplifying the Java API, while preserving backward compatibility.
+* Convenience: When parse() is called on an EDIReader instance without a configured ContentHandler,
+use a DefaultHandler that does nothing with the parsed EDI content.
 
 ### 5.7 - skipped
 

@@ -4,7 +4,6 @@ import com.berryworks.edireader.benchmark.EDITestData;
 import com.berryworks.edireader.error.*;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
@@ -177,7 +176,6 @@ public class EdifactReaderTest {
     public void detectsGroupCountError() throws IOException, SAXException {
         String ediText = EDITestData.getEdifactInterchange().replace("UNZ+1+", "UNZ+11+");
         edifactReader = new EdifactReader();
-        edifactReader.setContentHandler(new DefaultHandler());
         try {
             edifactReader.parseEdi(ediText);
             fail("Functional group count error not detected");
@@ -190,7 +188,6 @@ public class EdifactReaderTest {
     public void detectsInterchangeControlNumberError() throws IOException, SAXException {
         String ediText = EDITestData.getEdifactInterchange().replace("UNZ+1+841F60UNZ", "UNZ+1+not841F60UNZ");
         edifactReader = new EdifactReader();
-        edifactReader.setContentHandler(new DefaultHandler());
         try {
             edifactReader.parseEdi(ediText);
             fail("Interchange control number error not detected");
@@ -205,7 +202,6 @@ public class EdifactReaderTest {
     public void detectsTransactionCountError() throws IOException, SAXException {
         String ediText = EDIFACT_WITH_GROUP.replace("UNE+1+", "UNE+111+");
         edifactReader = new EdifactReader();
-        edifactReader.setContentHandler(new DefaultHandler());
         try {
             edifactReader.parseEdi(ediText);
             fail("Transaction count error not detected");
@@ -218,7 +214,6 @@ public class EdifactReaderTest {
     public void detectsGroupControlNumberError() throws IOException, SAXException {
         String ediText = EDIFACT_WITH_GROUP.replace("UNE+1+16", "UNE+1+99");
         edifactReader = new EdifactReader();
-        edifactReader.setContentHandler(new DefaultHandler());
         try {
             edifactReader.parseEdi(ediText);
             fail("Group control number error not detected");
@@ -233,7 +228,6 @@ public class EdifactReaderTest {
     public void detectsSegmentCountError() throws IOException, SAXException {
         String ediText = EDITestData.getEdifactInterchange().replace("UNT+8+", "UNT+88+");
         edifactReader = new EdifactReader();
-        edifactReader.setContentHandler(new DefaultHandler());
         try {
             edifactReader.parseEdi(ediText);
             fail("Segment count error not detected");
@@ -246,7 +240,6 @@ public class EdifactReaderTest {
     public void detectsTransactionControlNumberError() throws IOException, SAXException {
         String ediText = EDITestData.getEdifactInterchange().replace("UNT+8+1'", "UNT+8+11'");
         edifactReader = new EdifactReader();
-        edifactReader.setContentHandler(new DefaultHandler());
         try {
             edifactReader.parseEdi(ediText);
             fail("Transaction control number error not detected");

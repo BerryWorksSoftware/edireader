@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -73,7 +74,7 @@ public abstract class StandardReader extends EDIReader {
         if (source == null)
             throw new IOException("parse called with null InputSource");
         if (getContentHandler() == null)
-            throw new IOException("parse called with null ContentHandler");
+            setContentHandler(new DefaultHandler());
 
         if (!isExternalXmlDocumentStart())
             startXMLDocument();

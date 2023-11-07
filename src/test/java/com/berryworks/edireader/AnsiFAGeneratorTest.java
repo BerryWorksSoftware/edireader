@@ -8,7 +8,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -76,7 +75,6 @@ public class AnsiFAGeneratorTest {
     @Test
     public void canGenerate997() throws IOException, SAXException {
         ansiReader = new AnsiReader();
-        ansiReader.setContentHandler(new DefaultHandler());
         ansiReader.setAcknowledgment(ackStream);
         ansiReader.parse(EDITestData.getAnsiInputSource());
         assertLikeness(TEST_DATA_997, output.toString());
@@ -85,7 +83,6 @@ public class AnsiFAGeneratorTest {
     @Test
     public void canGenerate997_4010() throws IOException, SAXException {
         ansiReader = new AnsiReader();
-        ansiReader.setContentHandler(new DefaultHandler());
         ansiReader.setAcknowledgment(ackStream);
         String ediData = EDITestData.getAnsiInterchange().replace("002040", "004010");
         ansiReader.parseEdi(ediData);
@@ -96,7 +93,6 @@ public class AnsiFAGeneratorTest {
     @Test
     public void canGenerateNegative997() throws IOException, SAXException {
         ansiReader = new AnsiReader();
-        ansiReader.setContentHandler(new DefaultHandler());
         ansiReader.setAcknowledgment(ackStream);
         String ediInput = EDITestData.getAnsiInterchange();
         ediInput = ediInput.replace("SE~31~", "SE~00~");
@@ -113,7 +109,6 @@ public class AnsiFAGeneratorTest {
     @Test
     public void canGenerate997WithTA1() throws IOException, SAXException {
         ansiReader = new AnsiReader();
-        ansiReader.setContentHandler(new DefaultHandler());
         ansiReader.setAcknowledgment(ackStream);
         ansiReader.setInterchangeAcknowledgment(true);
         ansiReader.parse(EDITestData.getAnsiInputSource());
@@ -123,7 +118,6 @@ public class AnsiFAGeneratorTest {
     @Test
     public void canGenerate997FromVariableLengthISAInput() throws IOException, SAXException {
         ansiReader = new AnsiReader();
-        ansiReader.setContentHandler(new DefaultHandler());
         ansiReader.setAcknowledgment(ackStream);
         String ansiInterchange = EDITestData.getAnsiInterchange();
         ansiInterchange = ansiInterchange.replaceAll("58401 {4}", "58401");
@@ -136,7 +130,6 @@ public class AnsiFAGeneratorTest {
     @Test
     public void canGenerate997WithDelimiterDifferentThanInput() throws IOException, SAXException {
         ansiReader = new AnsiReader();
-        ansiReader.setContentHandler(new DefaultHandler());
         final SyntaxDescriptor syntaxDescriptor = new SyntaxDescriptor();
         syntaxDescriptor.setDelimiter('-');
         ansiReader.setAcknowledgment(ackStream, syntaxDescriptor);

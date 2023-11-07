@@ -21,7 +21,6 @@
 package com.berryworks.edireader.util.sax;
 
 import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.EOFException;
 import java.io.FileInputStream;
@@ -116,7 +115,6 @@ public class SAXObjectReader implements XMLReader {
 
     public static void main(String[] arg) {
         XMLReader reader = new SAXObjectReader();
-        reader.setContentHandler(new DefaultHandler());
         try {
             reader.parse(new InputSource(new FileInputStream("queue.ser")));
         } catch (Exception e) {

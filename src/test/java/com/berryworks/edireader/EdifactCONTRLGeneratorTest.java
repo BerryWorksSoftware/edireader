@@ -5,7 +5,6 @@ import com.berryworks.edireader.util.BranchingWriter;
 import org.junit.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -24,7 +23,6 @@ public class EdifactCONTRLGeneratorTest {
         String ediText = EDITestData.getEdifactInterchange();
         InputSource source = new InputSource(new StringReader(ediText));
         EDIReader ediReader = EDIReaderFactory.createEDIReader(source);
-        ediReader.setContentHandler(new DefaultHandler());
         StringWriter ackWriter = new StringWriter();
         ediReader.setAckStream(new BranchingWriter(ackWriter));
         ediReader.parse(source);
@@ -45,7 +43,6 @@ public class EdifactCONTRLGeneratorTest {
         String ediText = EDITestData.getEdifactInterchange(2);
         InputSource source = new InputSource(new StringReader(ediText));
         EDIReader ediReader = EDIReaderFactory.createEDIReader(source);
-        ediReader.setContentHandler(new DefaultHandler());
         StringWriter ackWriter = new StringWriter();
         ediReader.setAckStream(new BranchingWriter(ackWriter));
         ediReader.parse(source);

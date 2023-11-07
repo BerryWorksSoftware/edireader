@@ -79,7 +79,6 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
         inputSource = EDITestData.getAnsiInputSource();
         reader = EDIReaderFactory.createEDIReader(inputSource);
         assertNotNull(reader.getTokenizer());
-        reader.setContentHandler(new DefaultHandler());
 
         try {
             reader.parse("");
@@ -138,7 +137,6 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
 
         reader = EDIReaderFactory.createEDIReader(inputSource);
 
-        reader.setContentHandler(new DefaultHandler());
         StringWriter sw = new StringWriter();
         reader.setCopyWriter(sw);
         reader.parse(inputSource);

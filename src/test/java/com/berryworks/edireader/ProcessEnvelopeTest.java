@@ -2,7 +2,6 @@ package com.berryworks.edireader;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 
@@ -13,7 +12,6 @@ public class ProcessEnvelopeTest {
     @Test
     public void canProcessAddressesInX12Envelope() throws IOException, SAXException {
         MyAnsiReader myAnsiReader = new MyAnsiReader();
-        myAnsiReader.setContentHandler(new DefaultHandler());
         myAnsiReader.parseEdi("" +
                 "ISA~00~          ~00~          ~AA~BBBB           ~CC~DDDD           ~220810~0941~U~00204~000038449~0~P~<$\n" +
                 "GS~FA~EEEEE~FFFFF~220810~0941~000038449~X~002040CHRY$\n" +
