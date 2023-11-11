@@ -15,6 +15,8 @@ from Java source code.
 simplifying the Java API, while preserving backward compatibility.
 * Convenience: When parse() is called on an EDIReader instance without a configured ContentHandler,
 use a DefaultHandler that does nothing with the parsed EDI content.
+* Maintenance: Add a static instance of a PluginControllerFactory allowing the most recently created one to be
+accessed as a singleton.
 
 ### 5.7 - skipped
 

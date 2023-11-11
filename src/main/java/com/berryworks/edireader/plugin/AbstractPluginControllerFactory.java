@@ -37,6 +37,7 @@ public abstract class AbstractPluginControllerFactory implements PluginControlle
 
     protected static final Map<String, Plugin> pluginCache = new HashMap<>();
     protected static boolean debug;
+    protected static PluginControllerFactoryInterface instance;
 
     protected String lastPluginLoaded = null;
     protected PluginController lastPluginController;
@@ -46,7 +47,15 @@ public abstract class AbstractPluginControllerFactory implements PluginControlle
     }
 
     /**
-     * Creates a new instance of a PluginController, selecting a plugin based on the standard and type of document.
+     * Construct an instance, and make that instance remain globally available.
+     * Therefore, once a PluginControllerFactory is created, it can be referenced as a singleton.
+     */
+    public AbstractPluginControllerFactory() {
+        instance = this;
+    }
+
+    /**
+     * Create a new instance of a PluginController, selecting a plugin based on the standard and type of document.
      *
      * @param standard  - name of EDI standard (for example: "EDIFACT" or "ANSI")
      * @param docType   - type of document (for example: "837" or "INVOIC")
