@@ -1,7 +1,16 @@
 # Release Notes
 
-### 5.8.0 - November ??, 2023
-
+### 5.8.0 - November 11, 2023
+* Feature: Use Java Service Provider (SPI) to find a PluginControllerFactory
+for managing the dynamic selection of transaction and version specific plugins
+during EDI parsing.
+If one is not available from a Service Provider on the classpath,
+then the legacy behavior applies which loads plugins from Java classes;
+therefore, backward compatibility is preserved.
+This new feature allows the EDIReader Framework
+(a non-open source project built on top of this core project)
+to cleanly and securely provide a PluginControllerFactory that uses its own ESD syntax to externalize plugins
+from Java source code.
 * Convenience: Add methods to accept Reader instead of InputSource,
 simplifying the Java API, while preserving backward compatibility.
 * Convenience: When parse() is called on an EDIReader instance without a configured ContentHandler,
@@ -9,13 +18,8 @@ use a DefaultHandler that does nothing with the parsed EDI content.
 
 ### 5.7 - skipped
 
-* Several new features in a new release are used by a new release (5.8.0) of the EDIReader Framework
-built upon this EDIReader core project.
-To a void confusion with 5.8.n releases of the framework depending on 5.7.n releases of the core,
-the new release of the core is also designated 5.8.0.
-There is no intention to have a new release of the core for each release of the framework, or vice-versa,
-so the version numbers are not expected to remain synchronized.
-
+* In order to synchronize versioning with the separate EDIReader Framework project,
+version 5.7 is skipped.
 
 ### 5.6.11 - November 2, 2023
 
