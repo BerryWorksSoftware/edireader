@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2023 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -108,7 +108,7 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
             }
 
         } else if (localName.startsWith(xmlTags.getLoopTag())) {
-            anotherSEG = true;
+            anotherSEG = false;
             String loopName = "";
             if (atts.getLength() > 0)
                 loopName = atts.getValue(0);

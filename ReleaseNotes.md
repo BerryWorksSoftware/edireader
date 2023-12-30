@@ -1,5 +1,10 @@
 # Release Notes
 
+### 5.8.1 - next release
+* Maintenance. Minor adjustment in an internal class, EDIReaderSAXAdapter,
+to allow its subclasses to respond to the first segment in a loop
+differently than to a subsequent segment in the loop.
+
 ### 5.8.0 - November 11, 2023
 * Feature: Use Java Service Provider (SPI) to find a PluginControllerFactory
 for managing the dynamic selection of transaction and version specific plugins
