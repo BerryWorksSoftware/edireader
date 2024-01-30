@@ -22,6 +22,7 @@ package com.berryworks.edireader.tokenizer;
 
 import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.error.ErrorMessages;
+import com.berryworks.edireader.error.RepeatedSegmentTerminatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -526,7 +527,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
         } while (cClass != CharacterClass.EOF && WHITESPACE.indexOf(cChar) != -1);
         ungetChar();
         if (cClass == CharacterClass.TERMINATOR) {
-            EDISyntaxException se = new EDISyntaxException("Encountered adjacent segment terminators with no intervening segment");
+            EDISyntaxException se = new RepeatedSegmentTerminatorException(this);
             logger.warn(se.getMessage());
             throw se;
         }
