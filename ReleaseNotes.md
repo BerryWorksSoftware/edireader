@@ -1,7 +1,9 @@
 # Release Notes
 
-### 5.8.1 - next release
-* Maintenance. Minor adjustment in an internal class, EDIReaderSAXAdapter,
+### 5.8.1 - January 30, 2024
+* Feature: Detect the appearance of two adjacent segment terminators without an intervening segment,
+and throw a (recoverable) RepeatedSegmentTerminatorException.
+* Maintenance: Minor adjustment in an internal class, EDIReaderSAXAdapter,
 to allow its subclasses to respond to the first segment in a loop
 differently than to a subsequent segment in the loop.
 
