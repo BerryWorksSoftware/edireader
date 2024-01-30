@@ -520,11 +520,16 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      *
      * @throws IOException for problem reading EDI data
      */
-    public void scanTerminatorSuffix() throws IOException {
+    public void scanTerminatorSuffix() throws IOException, EDISyntaxException {
         do {
             getChar();
         } while (cClass != CharacterClass.EOF && WHITESPACE.indexOf(cChar) != -1);
         ungetChar();
+        if (cClass == CharacterClass.TERMINATOR) {
+            EDISyntaxException se = new EDISyntaxException("Encountered adjacent segment terminators with no intervening segment");
+            logger.warn(se.getMessage());
+            throw se;
+        }
     }
 
     public char[] getChars(int n) throws IOException, EDISyntaxException {

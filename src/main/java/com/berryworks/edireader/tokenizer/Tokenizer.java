@@ -106,7 +106,7 @@ public interface Tokenizer extends SourcePosition {
     String nextSimpleValue(boolean required, boolean returnNullAtSegmentEnd) throws SAXException,
             IOException;
 
-    void scanTerminatorSuffix() throws IOException;
+    void scanTerminatorSuffix() throws IOException, EDISyntaxException;
 
     boolean isEndOfData();
 

@@ -603,6 +603,18 @@ public class AnsiReaderTest {
     }
 
     @Test
+    public void detectsRepeatedSegmentTerminators() throws IOException {
+        String ediText = EDI_SAMPLE.replace("12345^", "12345^^");
+        try {
+            ansiReader.parseEdi(ediText);
+            fail("Repeated segment terminator error not detected");
+        } catch (SAXException e) {
+            assertEquals("Encountered adjacent segment terminators with no intervening segment", e.getMessage());
+        }
+    }
+
+
+    @Test
     public void allowsVariableLengthForSomeIsaElements() throws IOException, SAXException {
         ansiReader.setSyntaxExceptionHandler(syntaxException -> true);
         ansiReader.parseEdi(EDI_SAMPLE_WITH_TRIMMED_ISA);
