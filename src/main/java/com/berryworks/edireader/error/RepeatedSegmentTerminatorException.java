@@ -27,6 +27,6 @@ import com.berryworks.edireader.tokenizer.Tokenizer;
  */
 public class RepeatedSegmentTerminatorException extends RecoverableSyntaxException {
     public RepeatedSegmentTerminatorException(Tokenizer tokenizer) {
-        super("Encountered adjacent segment terminators with no intervening segment", 0, 0, tokenizer);
+        super("Encountered adjacent segment terminators with no intervening segment");
     }
 }
