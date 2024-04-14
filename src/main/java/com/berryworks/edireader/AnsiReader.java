@@ -26,7 +26,6 @@ import com.berryworks.edireader.error.MissingMandatoryElementException;
 import com.berryworks.edireader.error.RecoverableSyntaxException;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
-import com.berryworks.edireader.util.EdiVersionUtil;
 import com.berryworks.edireader.util.FixedLength;
 import com.berryworks.edireader.util.sax.QueuedContentHandler;
 import org.slf4j.Logger;
@@ -39,6 +38,7 @@ import java.lang.invoke.MethodHandles;
 
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_END;
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_START;
+import static com.berryworks.edireader.util.EdiVersionUtil.isX12VersionBefore;
 import static java.lang.Character.*;
 
 /**
@@ -363,6 +363,9 @@ public class AnsiReader extends StandardReader {
             groupVersion = "";
         } else {
             groupVersion = t.getValue();
+            if (isX12VersionBefore(groupVersion, 4020)) {
+                getTokenizer().setRepetitionSeparator(-1);
+            }
             getGroupAttributes().addCDATA(getXMLTags().getStandardVersion(), groupVersion);
             process("GS08", groupVersion);
             getTokenizer().skipSegment();
@@ -548,7 +551,7 @@ public class AnsiReader extends StandardReader {
         // Beginning with 004010, the maximum length is 8; before that it is 6.
         // We want to generate an acknowledgment of the same version as the EDI input, but with the correct
         // length of the GS04 date field even if it was wrong in the input.
-        return (EdiVersionUtil.isX12VersionBefore(groupVersion, 4010)) ? 6 : 8;
+        return (isX12VersionBefore(groupVersion, 4010)) ? 6 : 8;
     }
 
     public static boolean isEnvelopeSegment(String segmentType) {

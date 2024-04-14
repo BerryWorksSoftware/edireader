@@ -665,6 +665,30 @@ public class AnsiReaderTest {
         assertFalse(AnsiReader.isEnvelopeSegment("REF"));
     }
 
+    @Test
+    public void noRepeatingElementsBefore004020() throws IOException, SAXException {
+        // baseline - a 5010 transaction with ~ separator
+        ansiReader.parseEdi(EDI_SAMPLE_5010);
+        assertEquals('~', ansiReader.getTokenizer().getRepetitionSeparator());
+        // make it 004020 and same result
+        ansiReader = new AnsiReader();
+        ansiReader.parseEdi(EDI_SAMPLE_5010.replace("005010X091A1", "004020X091A1"));
+        assertEquals('~', ansiReader.getTokenizer().getRepetitionSeparator());
+        // even 00402?
+        ansiReader = new AnsiReader();
+        ansiReader.parseEdi(EDI_SAMPLE_5010.replace("005010X091A1", "00402?X091A1"));
+        assertEquals('~', ansiReader.getTokenizer().getRepetitionSeparator());
+        // but not 004010
+        ansiReader = new AnsiReader();
+        ansiReader.parseEdi(EDI_SAMPLE_5010.replace("005010X091A1", "004010X091A1"));
+        assertEquals(-1, ansiReader.getTokenizer().getRepetitionSeparator());
+        // or 003010
+        ansiReader = new AnsiReader();
+        ansiReader.parseEdi(EDI_SAMPLE_5010.replace("005010X091A1", "003010X091A1"));
+        assertEquals(-1, ansiReader.getTokenizer().getRepetitionSeparator());
+
+    }
+
     private static class MyContentHandler extends EDIReaderSAXAdapter {
         private int segmentCount, elementCount;
         private Attributes interchangeAttributes;

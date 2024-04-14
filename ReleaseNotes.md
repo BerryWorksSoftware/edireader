@@ -1,5 +1,16 @@
 # Release Notes
 
+### 5.8.2 - April 14, 2024
+
+* Maintenance: Adjust handling of an obscure special case involving repetition separator and ISA11.
+  Up through and including X12 version 004010, ISA11 contained a standards id, typically U. Starting with 004020,
+  ISA11 contains a repetition separator to separate values for an element that is repeated.
+  In the situation where an X12 interchange of version 004010 or earlier appears to contain a
+  repetition separator, such as ^, instead of U or other letter, the repetition separator in ISA11 is ignored;
+  if that character appears within a segment, it is treated as a part of the data and not as an indicator of
+  element repetition. Before this change, a character in ISA that appeared to be a valid repetition separator was used
+  as such, regardless of the X12 version. 
+
 ### 5.8.1 - January 30, 2024
 * Feature: Detect the appearance of two adjacent segment terminators without an intervening segment,
 and throw a (recoverable) RepeatedSegmentTerminatorException.
