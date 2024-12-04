@@ -221,7 +221,7 @@ public class EDIReaderTest {
         public void characters(char[] ch, int start, int length) throws SAXException {
             super.characters(ch, start, length);
             String data = new String(ch, start, length);
-            if (data.length() > 0 && data.trim().length() == 0) {
+            if (!data.isEmpty() && data.trim().isEmpty()) {
                 spacesOnlyElements += 1;
             }
         }

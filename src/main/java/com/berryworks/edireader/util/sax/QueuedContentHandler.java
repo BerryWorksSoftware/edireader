@@ -61,7 +61,7 @@ public class QueuedContentHandler extends DefaultHandler {
     }
 
     public void drainQueue() throws SAXException {
-        while (queue.size() > 0) {
+        while (!queue.isEmpty()) {
             queue.removeFirst().process(wrappedHandler);
         }
         if (wrappedHandler instanceof SourcePosition) {
@@ -130,7 +130,7 @@ public class QueuedContentHandler extends DefaultHandler {
     }
 
     EDIAttributes getFirstAttributes() {
-        if (queue.size() == 0)
+        if (queue.isEmpty())
             return null;
 
         return queue.getFirst().getAttributes();

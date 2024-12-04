@@ -108,10 +108,10 @@ public class EdifactReader extends StandardReader {
         compositeList = getTokenizer().nextCompositeElement();
         String syntaxIdentifier = getSubElement(compositeList, 0);
         String syntaxVersionNumber = getSubElement(compositeList, 1);
-        if (syntaxIdentifier.length() > 0) {
+        if (!syntaxIdentifier.isEmpty()) {
             getInterchangeAttributes().addCDATA(getXMLTags().getSyntaxIdentifier(),
                     syntaxIdentifier);
-            if (syntaxVersionNumber.length() > 0) {
+            if (!syntaxVersionNumber.isEmpty()) {
                 getInterchangeAttributes().addCDATA(getXMLTags().getSyntaxVersion(),
                         syntaxVersionNumber);
             }
@@ -412,7 +412,7 @@ public class EdifactReader extends StandardReader {
         }
 
         String accessReference = getTokenizer().nextSimpleValue(false, true);
-        if (emptyIfNull(accessReference).length() > 0) {
+        if (!emptyIfNull(accessReference).isEmpty()) {
             getDocumentAttributes().addCDATA(getXMLTags().getAccessReference(), accessReference);
         }
 

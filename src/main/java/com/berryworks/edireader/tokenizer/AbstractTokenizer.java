@@ -277,7 +277,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
         try {
             String value = nextSimpleValue(false, true);
             if (value == null) value = "";
-            if (value.trim().length() == 0 && returnZeroIfEmpty) {
+            if (value.trim().isEmpty() && returnZeroIfEmpty) {
                 i = 0;
             } else {
                 i = Integer.parseInt(value);

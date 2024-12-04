@@ -122,7 +122,7 @@ public class DocumentUtil {
         Element e = origin;
         for (String p : path) {
             List<Element> children = getChildren(e, p);
-            if (children == null || children.size() < 1)
+            if (children == null || children.isEmpty())
                 throw new RuntimeException("Cannot position to <" + p + ">");
             e = children.get(0);
         }

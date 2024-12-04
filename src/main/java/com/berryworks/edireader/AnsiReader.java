@@ -295,7 +295,7 @@ public class AnsiReader extends StandardReader {
 
         String note = nextField();
         if (note != null) {
-            if (note.length() > 0) {
+            if (!note.isEmpty()) {
                 attributes.addCDATA(getXMLTags().getNotCode(), note);
             }
             getTokenizer().skipSegment();

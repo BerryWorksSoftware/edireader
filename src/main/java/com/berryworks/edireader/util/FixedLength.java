@@ -122,7 +122,7 @@ public abstract class FixedLength {
      * @return false if the argument is null or empty, and true otherwise
      */
     public static boolean isPresent(String value) {
-        return value != null && value.length() > 0;
+        return value != null && !value.isEmpty();
     }
 
     /**
@@ -132,7 +132,7 @@ public abstract class FixedLength {
      * @return false if the argument is null or empty, and true otherwise
      */
     public static boolean isPresent(List<?> list) {
-        return list != null && list.size() > 0;
+        return list != null && !list.isEmpty();
     }
 
     /**

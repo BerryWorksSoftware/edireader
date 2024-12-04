@@ -71,7 +71,7 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
         applyPending();
         end(uri, localName);
 
-        if (context.size() > 0) {
+        if (!context.isEmpty()) {
             final int indexOfLast = context.size() - 1;
             final String lastOne = context.get(indexOfLast);
             if (localName.equals(lastOne)) {
