@@ -21,15 +21,17 @@ public class EDIReaderTest {
         ediReader.setIncludeSyntaxCharacters(true);
 
         // X12 version 5010 and later having repetition separator in ISA11
-        ediReader.parseEdi("" +
-                "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~\n" +
-                "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~\n" +
-                "ST*204*7629~\n" +
-                "B2**XXXX**159771**PP~\n" +
-                "B2A*00*LT~\n" +
-                "SE*4*7629~\n" +
-                "GE*1*7629~\n" +
-                "IEA*1*000007629~\n");
+        ediReader.parseEdi("""
+                \
+                ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~
+                GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~
+                ST*204*7629~
+                B2**XXXX**159771**PP~
+                B2A*00*LT~
+                SE*4*7629~
+                GE*1*7629~
+                IEA*1*000007629~
+                """);
         assertEquals('*', ediReader.getDelimiter());
         assertEquals('>', ediReader.getSubDelimiter());
         assertEquals(':', ediReader.getRepetitionSeparator());
@@ -47,16 +49,18 @@ public class EDIReaderTest {
         ediReader = new EDIReader();
         ediReader.setContentHandler(new MyContentHandler());
 
-        // X12 version 4010 and earlier having standards Id, typically "U", in ISA11
-        ediReader.parseEdi("" +
-                "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*U*00401*000007629*0*T*>~\r\n" +
-                "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*004010~\r\n" +
-                "ST*204*7629~\r\n" +
-                "B2**XXXX**159771**PP~\r\n" +
-                "B2A*00*LT~\r\n" +
-                "SE*4*7629~\r\n" +
-                "GE*1*7629~\r\n" +
-                "IEA*1*000007629~\r\n");
+        // X12 version 4010 and earlier have standardsId, typically "U", in ISA11
+        ediReader.parseEdi("""
+                \
+                ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*U*00401*000007629*0*T*>~\r
+                GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*004010~\r
+                ST*204*7629~\r
+                B2**XXXX**159771**PP~\r
+                B2A*00*LT~\r
+                SE*4*7629~\r
+                GE*1*7629~\r
+                IEA*1*000007629~\r
+                """);
         assertEquals('*', ediReader.getDelimiter());
         assertEquals('>', ediReader.getSubDelimiter());
         assertEquals(0, ediReader.getRepetitionSeparator());
@@ -140,15 +144,17 @@ public class EDIReaderTest {
         ediReader = new EDIReader();
         MyContentHandler contentHandler = new MyContentHandler();
         ediReader.setContentHandler(contentHandler);
-        ediReader.parseEdi("" +
-                "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~\n" +
-                "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~\n" +
-                "ST*204*7629~\n" +
-                "B2*   *XXXX **159771**PP~\n" +
-                "B2A*00*LT~\n" +
-                "SE*4*7629~\n" +
-                "GE*1*7629~\n" +
-                "IEA*1*000007629~\n");
+        ediReader.parseEdi("""
+                \
+                ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~
+                GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~
+                ST*204*7629~
+                B2*   *XXXX **159771**PP~
+                B2A*00*LT~
+                SE*4*7629~
+                GE*1*7629~
+                IEA*1*000007629~
+                """);
         assertEquals(0, contentHandler.numberOfSpacesOnlyElements());
 
         // Now do it again, explicitly setting the default
@@ -157,15 +163,17 @@ public class EDIReaderTest {
         ediReader.setContentHandler(contentHandler);
         ediReader.setIncludeSyntaxCharacters(true);
         ediReader.setKeepSpacesOnlyElements(false);
-        ediReader.parseEdi("" +
-                "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~\n" +
-                "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~\n" +
-                "ST*204*7629~\n" +
-                "B2*   *XXXX **159771**PP~\n" +
-                "B2A*00*LT~\n" +
-                "SE*4*7629~\n" +
-                "GE*1*7629~\n" +
-                "IEA*1*000007629~\n");
+        ediReader.parseEdi("""
+                \
+                ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~
+                GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~
+                ST*204*7629~
+                B2*   *XXXX **159771**PP~
+                B2A*00*LT~
+                SE*4*7629~
+                GE*1*7629~
+                IEA*1*000007629~
+                """);
         assertEquals(0, contentHandler.numberOfSpacesOnlyElements());
 
         // Now do it again, asking to keep the elements containing only spaces
@@ -174,15 +182,17 @@ public class EDIReaderTest {
         ediReader.setContentHandler(contentHandler);
         ediReader.setIncludeSyntaxCharacters(true);
         ediReader.setKeepSpacesOnlyElements(true);
-        ediReader.parseEdi("" +
-                "ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~\n" +
-                "GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~\n" +
-                "ST*204*7629~\n" +
-                "B2*   *XXXX **159771**PP~\n" +
-                "B2A*00*LT~\n" +
-                "SE*4*7629~\n" +
-                "GE*1*7629~\n" +
-                "IEA*1*000007629~\n");
+        ediReader.parseEdi("""
+                \
+                ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~
+                GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~
+                ST*204*7629~
+                B2*   *XXXX **159771**PP~
+                B2A*00*LT~
+                SE*4*7629~
+                GE*1*7629~
+                IEA*1*000007629~
+                """);
         assertEquals(1, contentHandler.numberOfSpacesOnlyElements());
     }
 

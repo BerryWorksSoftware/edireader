@@ -51,7 +51,7 @@ public class ContentHandlerBase64Encoder extends AbstractEncoder {
         // by the Base 64 encoder.
         base64Bytes = ByteBuffer.allocate(100);
 
-        // Use an encoder repeatedly until all of the chars have been encoded as bytes
+        // Use an encoder repeatedly until all the chars have been encoded as bytes
         // and presented as input for base 64 encoding.
         CharsetEncoder encoder = charset.newEncoder();
         while (true) {

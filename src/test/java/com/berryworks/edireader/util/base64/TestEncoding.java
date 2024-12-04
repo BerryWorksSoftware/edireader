@@ -56,10 +56,10 @@ public class TestEncoding {
 
     @Test
     public void testCase1() throws IOException {
-/**
- * Original bytes:        10101010    | 10101010    | 10101010    | 10101010    | 10101010    | 10101010
- * Emitted by front end:  101010 | 10 | 1010 | 1010 | 10 | 101010 | 101010 | 10 | 1010 | 1010 | 10 | 101010
- * assembled by back end: 101010 | 10 1010   | 1010 10   | 101010 | 101010 | 10 1010   | 1010 10   | 101010
+/*
+  Original bytes:        10101010    | 10101010    | 10101010    | 10101010    | 10101010    | 10101010
+  Emitted by front end:  101010 | 10 | 1010 | 1010 | 10 | 101010 | 101010 | 10 | 1010 | 1010 | 10 | 101010
+  assembled by back end: 101010 | 10 1010   | 1010 10   | 101010 | 101010 | 10 1010   | 1010 10   | 101010
  */
         inputBytes = toByteArray(new int[]{170, 170, 170, 170, 170, 170});
         for (byte inputByte : inputBytes) frontEnd.consume(inputByte);
@@ -78,10 +78,10 @@ public class TestEncoding {
 
     @Test
     public void testCase2() throws IOException {
-/**
- * Original bytes:        00000000    | 00000001    | 0000010     | 00000011
- * Emitted by front end:  000000 | 00 | 0000 | 0001 | 00 | 000010 | 000000 | 11
- * assembled by back end: 000000 | 00 0000   | 0001 00   | 000010 | 000000 | 11 0000 | = | =
+/*
+  Original bytes:        00000000    | 00000001    | 0000010     | 00000011
+  Emitted by front end:  000000 | 00 | 0000 | 0001 | 00 | 000010 | 000000 | 11
+  assembled by back end: 000000 | 00 0000   | 0001 00   | 000010 | 000000 | 11 0000 | = | =
  */
         inputBytes = new byte[]{0, 1, 2, 3};
         for (byte inputByte : inputBytes) frontEnd.consume(inputByte);
@@ -101,10 +101,10 @@ public class TestEncoding {
 
     @Test
     public void testCase3() throws IOException {
-/**
- * Original bytes:        11111101    | 11111110    | 11111111    | 11111110    | 11111101
- * Emitted by front end:  111111 | 01 | 1111 | 1110 | 11 | 111111 | 111111 | 10 | 1111 | 1101
- * assembled by back end: 111111 | 01 1111   | 1110 11   | 111111 | 111111 | 10 1111   | 1101 00 | =
+/*
+  Original bytes:        11111101    | 11111110    | 11111111    | 11111110    | 11111101
+  Emitted by front end:  111111 | 01 | 1111 | 1110 | 11 | 111111 | 111111 | 10 | 1111 | 1101
+  assembled by back end: 111111 | 01 1111   | 1110 11   | 111111 | 111111 | 10 1111   | 1101 00 | =
  */
         inputBytes = toByteArray(new int[]{253, 254, 255, 254, 253});
         for (byte inputByte : inputBytes) frontEnd.consume(inputByte);

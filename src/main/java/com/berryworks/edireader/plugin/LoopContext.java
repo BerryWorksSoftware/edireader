@@ -69,7 +69,7 @@ public class LoopContext {
     }
 
     /**
-     * Returns true if and only if all of the mandatory segment requirements have been met.
+     * Returns true if and only if all the mandatory segment requirements have been met.
      *
      * @return boolean true if the requirements are satisfied
      */
@@ -145,7 +145,7 @@ public class LoopContext {
     public String getMandatorySegmentsRemaining() {
         StringBuilder result = new StringBuilder();
         for (Object mandatorySegment : mandatorySegments) {
-            if (result.length() > 0)
+            if (!result.isEmpty())
                 result.append(", ");
             result.append(mandatorySegment);
         }

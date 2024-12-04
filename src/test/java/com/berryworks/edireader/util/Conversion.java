@@ -17,10 +17,11 @@ import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class Conversion {
 
-    private static final Charset charset = Charset.forName("8859_1");
+    private static final Charset charset = StandardCharsets.ISO_8859_1;
 
     public static void ediToxml(Reader ediInput, Writer xmlOutput, EDIReader parser) throws TransformerException {
         InputSource inputSource = new InputSource(ediInput);

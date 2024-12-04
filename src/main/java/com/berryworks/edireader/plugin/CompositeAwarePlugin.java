@@ -22,7 +22,7 @@ public abstract class CompositeAwarePlugin extends Plugin {
     }
 
     /**
-     * Returns the name of a EDI element that provides a common reference value
+     * Returns the name of an EDI element that provides a common reference value
      * for business purposes, based on the specific transaction type.
      * For example, an 850 Purchase Order would likely use "BEG03", the element
      * containing the purchase order number.

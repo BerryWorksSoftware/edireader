@@ -47,51 +47,52 @@ public class EDIReaderSAXAdapterTest {
 
     @Test
     public void detectFirstSegmentInGroup() throws SAXException, IOException {
-        Reader edi = new StringReader("" +
-                "ISA*00*          *00*          *ZZ*0011223456     *ZZ*999999999      *990320*0157*U*00300*000000015*0*P*~$\n" +
-                "GS*PO*0011223456*999999999*950120*0147*5*X*004010$\n" +
-                "ST*850*000000001$\n" +
-                "BEG*00*SA*95018017***950118$\n" +
-                "N1*SE*UNIVERSAL WIDGETS$\n" +
-                "N3*375 PLYMOUTH PARK*SUITE 205$\n" +
-                "N4*IRVING*TX*75061$\n" +
-                "N1*ST*JIT MANUFACTURING$\n" +
-                "N3*BUILDING 3B*2001 ENTERPRISE PARK$\n" +
-                "N4*JUAREZ*CH**MEX$\n" +
-                "N1*AK*JIT MANUFACTURING$\n" +
-                "N3*400 INDUSTRIAL PARKWAY$\n" +
-                "N4*INDUSTRIAL AIRPORT*KS*66030$\n" +
-                "N1*BT*JIT MANUFACTURING$\n" +
-                "N2*ACCOUNTS PAYABLE DEPARTMENT$\n" +
-                "N3*400 INDUSTRIAL PARKWAY$\n" +
-                "N4*INDUSTRIAL AIRPORT*KS*66030$\n" +
-                "PO1*001*4*EA*330*TE*IN*525*VN*X357-W2$\n" +
-                "PID*F****HIGH PERFORMANCE WIDGET$\n" +
-                "SCH*4*EA****002*950322$\n" +
-                "CTT*1*1$\n" +
-                "SE*20*000000001$\n" +
-                "ST*850*000000002$\n" +
-                "BEG*00*SA*95018017***950118$\n" +
-                "N1*SE*UNIVERSAL WIDGETS$\n" +
-                "N3*375 PLYMOUTH PARK*SUITE 205$\n" +
-                "N4*IRVING*TX*75061$\n" +
-                "N1*ST*JIT MANUFACTURING$\n" +
-                "N3*BUILDING 3B*2001 ENTERPRISE PARK$\n" +
-                "N4*JUAREZ*CH**MEX$\n" +
-                "N1*AK*JIT MANUFACTURING$\n" +
-                "N3*400 INDUSTRIAL PARKWAY$\n" +
-                "N4*INDUSTRIAL AIRPORT*KS*66030$\n" +
-                "N1*BT*JIT MANUFACTURING$\n" +
-                "N2*ACCOUNTS PAYABLE DEPARTMENT$\n" +
-                "N3*400 INDUSTRIAL PARKWAY$\n" +
-                "N4*INDUSTRIAL AIRPORT*KS*66030$\n" +
-                "PO1*001*4*EA*330*TE*IN*525*VN*X357-W2$\n" +
-                "PID*F****HIGH PERFORMANCE WIDGET$\n" +
-                "SCH*4*EA****002*950322$\n" +
-                "CTT*1*1$\n" +
-                "SE*20*000000002$\n" +
-                "GE*2*5$\n" +
-                "IEA*1*000000015$\n");
+        Reader edi = new StringReader("""
+                ISA*00*          *00*          *ZZ*0011223456     *ZZ*999999999      *990320*0157*U*00300*000000015*0*P*~$
+                GS*PO*0011223456*999999999*950120*0147*5*X*004010$
+                ST*850*000000001$
+                BEG*00*SA*95018017***950118$
+                N1*SE*UNIVERSAL WIDGETS$
+                N3*375 PLYMOUTH PARK*SUITE 205$
+                N4*IRVING*TX*75061$
+                N1*ST*JIT MANUFACTURING$
+                N3*BUILDING 3B*2001 ENTERPRISE PARK$
+                N4*JUAREZ*CH**MEX$
+                N1*AK*JIT MANUFACTURING$
+                N3*400 INDUSTRIAL PARKWAY$
+                N4*INDUSTRIAL AIRPORT*KS*66030$
+                N1*BT*JIT MANUFACTURING$
+                N2*ACCOUNTS PAYABLE DEPARTMENT$
+                N3*400 INDUSTRIAL PARKWAY$
+                N4*INDUSTRIAL AIRPORT*KS*66030$
+                PO1*001*4*EA*330*TE*IN*525*VN*X357-W2$
+                PID*F****HIGH PERFORMANCE WIDGET$
+                SCH*4*EA****002*950322$
+                CTT*1*1$
+                SE*20*000000001$
+                ST*850*000000002$
+                BEG*00*SA*95018017***950118$
+                N1*SE*UNIVERSAL WIDGETS$
+                N3*375 PLYMOUTH PARK*SUITE 205$
+                N4*IRVING*TX*75061$
+                N1*ST*JIT MANUFACTURING$
+                N3*BUILDING 3B*2001 ENTERPRISE PARK$
+                N4*JUAREZ*CH**MEX$
+                N1*AK*JIT MANUFACTURING$
+                N3*400 INDUSTRIAL PARKWAY$
+                N4*INDUSTRIAL AIRPORT*KS*66030$
+                N1*BT*JIT MANUFACTURING$
+                N2*ACCOUNTS PAYABLE DEPARTMENT$
+                N3*400 INDUSTRIAL PARKWAY$
+                N4*INDUSTRIAL AIRPORT*KS*66030$
+                PO1*001*4*EA*330*TE*IN*525*VN*X357-W2$
+                PID*F****HIGH PERFORMANCE WIDGET$
+                SCH*4*EA****002*950322$
+                CTT*1*1$
+                SE*20*000000002$
+                GE*2*5$
+                IEA*1*000000015$
+                """);
         EDIReader ediReader = EDIReaderFactory.createEDIReader(edi);
         MyAdapater handler = new MyAdapater(false);
         ediReader.setContentHandler(handler);

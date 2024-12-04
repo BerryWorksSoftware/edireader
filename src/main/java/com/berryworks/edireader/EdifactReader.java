@@ -632,7 +632,6 @@ public class EdifactReader extends StandardReader {
             // trace("...appended buf[" + j + "] to suffix");
             terminatorSuffixDetermined = true;
         }
-        //noinspection ManualArrayCopy
         for (int j = 0; j < buf.length - nShift; j++) {
             buf[j] = buf[j + nShift];
         }

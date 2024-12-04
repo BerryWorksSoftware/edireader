@@ -262,83 +262,84 @@ public class StandardReaderTest {
     private class MyPluginController extends PluginController {
     }
 
-    public static final String SMALL_834 = "ISA*00*          *00*          *ZZ*ORDHS          *ZZ*MB888880       *130312*0206*!*00501*000000238*0*P*:~\n" +
-            "GS*BE*ORDHS*MB888880*20130312*020630*146*X*005010X220A1~\n" +
-            "ST*834*146001*005010X220A1~\n" +
-            "BGN*00*0158420020130310001*20130312*0206*PT***2~\n" +
-            "REF*38*500647166 ~\n" +
-            "N1*P5*OR-MMIS*FI*930592162~\n" +
-            "N1*IN**FI*455492679~\n" +
-            "INS*Y*18*001*AI*A*C**AC**N~\n" +
-            "REF*0F*REF OF~\n" +
-            "REF*23*REF 23~\n" +
-            "REF*3H*REF 3H~\n" +
-            "REF*F6*REF F6~\n" +
-            "DTP*356*D8*20120901~\n" +
-            "DTP*357*D8*20130331~\n" +
-            "NM1*74*1*SUBSCRIBER LAST 1*SUBSCRIBER FIRST 1*M***34*544001234~\n" +
-            "PER*IP**TE*5554718931~\n" +
-            "N3*SUBSCRIBER1 ADDRESS 1~\n" +
-            "N4*GRANTS PASS*OR*975260000**CY*033~\n" +
-            "DMG*D8*19830719*F**C:RET:2186-5~\n" +
-            "AMT*P3*82.25~\n" +
-            "LUI*LE*ENG**7~\n" +
-            "LUI*LE*ENG**5~\n" +
-            "NM1*70*1*INCORRECT*FIRST*A***34*001223344~\n" +
-            "DMG*D8*19930620*F~\n" +
-            "NM1*31*1~\n" +
-            "N3*RECIPIENT MAIL ADDRESS LINE 1*RECIPIENT MAIL ADDRESS LINE 2~\n" +
-            "N4*SALEM*OR*97301~\n" +
-            "NM1*QD**1*RESPONSIBLE PARTY*SMITH*JOHN~\n" +
-            "NM1*GD*1*COMPANY NAME 40 CHARACTER OF DATA~\n" +
-            "HD*001**HMO*12345678902012062020130415N*IND~\n" +
-            "DTP*348*D8*20120901~\n" +
-            "REF*17*D4~\n" +
-            "COB*U*D183*5~\n" +
-            "COB*U*J375*5~\n" +
-            "LS*2700~\n" +
-            "LX*1~\n" +
-            "N1*75*NEWBORN INDICATOR~\n" +
-            "REF*ZZ*Y~\n" +
-            "LX*2~\n" +
-            "N1*75*PREVIOUS PMP END DATE~\n" +
-            "DTP*007*D8*20130615~\n" +
-            "LX*3~\n" +
-            "N1*75*ALTERNATE FORMAT~\n" +
-            "REF*ZZ*10~\n" +
-            "LX*4~\n" +
-            "N1*75*DUE DATE~\n" +
-            "DTP*007*D8*20130620~\n" +
-            "LX*5~\n" +
-            "N1*75*BRANCH - WORKER~\n" +
-            "REF*3L*1234567~\n" +
-            "LX*6~\n" +
-            "N1*75*FIPS CODE~\n" +
-            "REF*3L*88~\n" +
-            "LX*7~\n" +
-            "N1*75*NATIVE AMERICAN HERITAGE CODE~\n" +
-            "REF*XX1*Y~\n" +
-            "LX*8~\n" +
-            "N1*75*GROUP CODE~\n" +
-            "REF*XX1*A~\n" +
-            "LX*9~\n" +
-            "N1*75*BENEFIT PLAN~\n" +
-            "REF*PID*BEN~\n" +
-            "LX*10~\n" +
-            "N1*75*PROGRAM ELIGIBILITY CODE~\n" +
-            "REF*17*11~\n" +
-            "LX*11~\n" +
-            "N1*75*SNRG~\n" +
-            "REF*XX1*7~\n" +
-            "LX*12~\n" +
-            "N1*75*TPL CODE~\n" +
-            "REF*9X*99~\n" +
-            "LX*13~\n" +
-            "N1*75*END REASON~\n" +
-            "REF*17*11~\n" +
-            "LE*2700~\n" +
-            "SE*74*146001~\n" +
-            "GE*1*146~\n" +
-            "IEA*1*000000238~";
+    public static final String SMALL_834 = """
+            ISA*00*          *00*          *ZZ*ORDHS          *ZZ*MB888880       *130312*0206*!*00501*000000238*0*P*:~
+            GS*BE*ORDHS*MB888880*20130312*020630*146*X*005010X220A1~
+            ST*834*146001*005010X220A1~
+            BGN*00*0158420020130310001*20130312*0206*PT***2~
+            REF*38*500647166 ~
+            N1*P5*OR-MMIS*FI*930592162~
+            N1*IN**FI*455492679~
+            INS*Y*18*001*AI*A*C**AC**N~
+            REF*0F*REF OF~
+            REF*23*REF 23~
+            REF*3H*REF 3H~
+            REF*F6*REF F6~
+            DTP*356*D8*20120901~
+            DTP*357*D8*20130331~
+            NM1*74*1*SUBSCRIBER LAST 1*SUBSCRIBER FIRST 1*M***34*544001234~
+            PER*IP**TE*5554718931~
+            N3*SUBSCRIBER1 ADDRESS 1~
+            N4*GRANTS PASS*OR*975260000**CY*033~
+            DMG*D8*19830719*F**C:RET:2186-5~
+            AMT*P3*82.25~
+            LUI*LE*ENG**7~
+            LUI*LE*ENG**5~
+            NM1*70*1*INCORRECT*FIRST*A***34*001223344~
+            DMG*D8*19930620*F~
+            NM1*31*1~
+            N3*RECIPIENT MAIL ADDRESS LINE 1*RECIPIENT MAIL ADDRESS LINE 2~
+            N4*SALEM*OR*97301~
+            NM1*QD**1*RESPONSIBLE PARTY*SMITH*JOHN~
+            NM1*GD*1*COMPANY NAME 40 CHARACTER OF DATA~
+            HD*001**HMO*12345678902012062020130415N*IND~
+            DTP*348*D8*20120901~
+            REF*17*D4~
+            COB*U*D183*5~
+            COB*U*J375*5~
+            LS*2700~
+            LX*1~
+            N1*75*NEWBORN INDICATOR~
+            REF*ZZ*Y~
+            LX*2~
+            N1*75*PREVIOUS PMP END DATE~
+            DTP*007*D8*20130615~
+            LX*3~
+            N1*75*ALTERNATE FORMAT~
+            REF*ZZ*10~
+            LX*4~
+            N1*75*DUE DATE~
+            DTP*007*D8*20130620~
+            LX*5~
+            N1*75*BRANCH - WORKER~
+            REF*3L*1234567~
+            LX*6~
+            N1*75*FIPS CODE~
+            REF*3L*88~
+            LX*7~
+            N1*75*NATIVE AMERICAN HERITAGE CODE~
+            REF*XX1*Y~
+            LX*8~
+            N1*75*GROUP CODE~
+            REF*XX1*A~
+            LX*9~
+            N1*75*BENEFIT PLAN~
+            REF*PID*BEN~
+            LX*10~
+            N1*75*PROGRAM ELIGIBILITY CODE~
+            REF*17*11~
+            LX*11~
+            N1*75*SNRG~
+            REF*XX1*7~
+            LX*12~
+            N1*75*TPL CODE~
+            REF*9X*99~
+            LX*13~
+            N1*75*END REASON~
+            REF*17*11~
+            LE*2700~
+            SE*74*146001~
+            GE*1*146~
+            IEA*1*000000238~""";
 
 }

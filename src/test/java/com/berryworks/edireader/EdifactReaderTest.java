@@ -66,33 +66,34 @@ public class EdifactReaderTest {
     public void producesXmlForAnORDRSP_EANCOM_example() throws IOException, SAXException, TransformerException {
         edifactReader = new EdifactReader();
         StringReader reader = new StringReader(
-                "UNB+UNOB:1+SENDER1:16:ZZUK+RECEIVER1:01:ZZUK+071101:1701+131++ORDRSP++1++1'\n" +
-                        "UNH+ME000001+ORDRSP:D:01B:UN:EAN009'\n" +
-                        "BGM+231+ORSP12856+4'\n" +
-                        "DTM+137:20020330:102'\n" +
-                        "RFF+ON:652744'\n" +
-                        "DTM+171:20020325:102'\n" +
-                        "NAD+BY+5412345000013::9'\n" +
-                        "RFF+VA:452282'\n" +
-                        "NAD+SU+4012345500004::9'\n" +
-                        "RFF+VA:87765432'\n" +
-                        "LIN+1+5+3312345501102:SRV'\n" +
-                        "LIN+2+3+3312345501003:SRV'\n" +
-                        "PIA+1+ABC1234:SA'\n" +
-                        "IMD+C++TU::9'\n" +
-                        "QTY+21:48'\n" +
-                        "DTM+2:20020910:102'\n" +
-                        "MOA+203:26400'\n" +
-                        "PRI+AAA:550:CT:AAA'\n" +
-                        "PAC+4+1+CS'\n" +
-                        "TAX+7+VAT+++:::17.5+S'\n" +
-                        "MOA+124:4620'\n" +
-                        "TDT+20++30++31'\n" +
-                        "LIN+3+7+3312345501096:SRV'\n" +
-                        "UNS+S'\n" +
-                        "CNT+2:3'\n" +
-                        "UNT+25+ME000001'\n" +
-                        "UNZ+1+131'");
+                """
+                        UNB+UNOB:1+SENDER1:16:ZZUK+RECEIVER1:01:ZZUK+071101:1701+131++ORDRSP++1++1'
+                        UNH+ME000001+ORDRSP:D:01B:UN:EAN009'
+                        BGM+231+ORSP12856+4'
+                        DTM+137:20020330:102'
+                        RFF+ON:652744'
+                        DTM+171:20020325:102'
+                        NAD+BY+5412345000013::9'
+                        RFF+VA:452282'
+                        NAD+SU+4012345500004::9'
+                        RFF+VA:87765432'
+                        LIN+1+5+3312345501102:SRV'
+                        LIN+2+3+3312345501003:SRV'
+                        PIA+1+ABC1234:SA'
+                        IMD+C++TU::9'
+                        QTY+21:48'
+                        DTM+2:20020910:102'
+                        MOA+203:26400'
+                        PRI+AAA:550:CT:AAA'
+                        PAC+4+1+CS'
+                        TAX+7+VAT+++:::17.5+S'
+                        MOA+124:4620'
+                        TDT+20++30++31'
+                        LIN+3+7+3312345501096:SRV'
+                        UNS+S'
+                        CNT+2:3'
+                        UNT+25+ME000001'
+                        UNZ+1+131'""");
         StringWriter writer = new StringWriter();
         ediToxml(reader, writer, edifactReader);
         assertEquals(
@@ -137,11 +138,12 @@ public class EdifactReaderTest {
     public void acceptsAnyLetterAsSyntaxIdentifierInUNO() throws IOException, SAXException, TransformerException {
         edifactReader = new EdifactReader();
         StringReader reader = new StringReader(
-                "UNB+UNOL:1+SENDER1:16:ZZUK+RECEIVER1:01:ZZUK+071101:1701+131++ORDRSP++1++1'\n" +
-                        "UNH+ME000001+ORDRSP:D:01B:UN:EAN009'\n" +
-                        "BGM+231+ORSP12856+4'\n" +
-                        "UNT+3+ME000001'\n" +
-                        "UNZ+1+131'");
+                """
+                        UNB+UNOL:1+SENDER1:16:ZZUK+RECEIVER1:01:ZZUK+071101:1701+131++ORDRSP++1++1'
+                        UNH+ME000001+ORDRSP:D:01B:UN:EAN009'
+                        BGM+231+ORSP12856+4'
+                        UNT+3+ME000001'
+                        UNZ+1+131'""");
         StringWriter writer = new StringWriter();
         ediToxml(reader, writer, edifactReader);
         assertTrue(writer.toString().startsWith(

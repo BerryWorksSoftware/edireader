@@ -227,7 +227,7 @@ public class SerializableAttributes extends AttributesImpl implements Serializab
         for (int i = 0; i < n; i++) {
             String name = getQName(i);
             String value = getValue(i);
-            if (result.length() > 0) {
+            if (!result.isEmpty()) {
                 result.append(", ");
             }
             result.append(name).append("=").append(value);

@@ -27,7 +27,7 @@ import java.nio.CharBuffer;
 /**
  * Encodes any sequence of 8-bit bytes into a base-64 encoding of those bytes.
  * In the encoded form, each byte contains only 6 bits of data from the
- * original data stream. Therefore there is an 3-to-4 expansion factor in the
+ * original data stream. Therefore, there is an 3-to-4 expansion factor in the
  * expansion process.
  */
 public abstract class AbstractEncoder extends AbstractEncoderDecoder {

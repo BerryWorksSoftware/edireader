@@ -78,14 +78,14 @@ public class TestDecoding {
 
     @Test
     public void testCase2() throws IOException {
-/**
- * Original bytes:        00000000    | 00000001    | 0000010     | 00000011
- * Emitted by front end:  000000 | 00 | 0000 | 0001 | 00 | 000010 | 000000 | 11
- * assembled by back end: 000000 | 00 0000   | 0001 00   | 000010 | 000000 | 11 0000   | = | =
- * encoding:                A    |    A      |    E      |   C    |   A    |    w      | = | =
- * decoding first step:   000000 | 00 0000   | 0001 00   | 000010 | 000000 | 11 0000
- * decoding front end:    000000 | 00 | 0000 | 0001 | 00 | 000010 | 000000 | 11 | 0000
- * Emitted by back end:     00000000  |   00000001  |  0000010    |   00000011
+/*
+  Original bytes:        00000000    | 00000001    | 0000010     | 00000011
+  Emitted by front end:  000000 | 00 | 0000 | 0001 | 00 | 000010 | 000000 | 11
+  assembled by back end: 000000 | 00 0000   | 0001 00   | 000010 | 000000 | 11 0000   | = | =
+  encoding:                A    |    A      |    E      |   C    |   A    |    w      | = | =
+  decoding first step:   000000 | 00 0000   | 0001 00   | 000010 | 000000 | 11 0000
+  decoding front end:    000000 | 00 | 0000 | 0001 | 00 | 000010 | 000000 | 11 | 0000
+  Emitted by back end:     00000000  |   00000001  |  0000010    |   00000011
  */
         bytes = Conversion.toByteArray("AAECAw==".toCharArray());
         for (byte aByte : bytes) frontEnd.consume(aByte);
@@ -107,14 +107,14 @@ public class TestDecoding {
 
     @Test
     public void testCase3() throws IOException {
-/**
- * Original bytes:        11111101    | 11111110    | 11111111    | 11111110    | 11111101
- * Emitted by front end:  111111 | 01 | 1111 | 1110 | 11 | 111111 | 111111 | 10 | 1111 | 1101
- * assembled by back end: 111111 | 01 1111   | 1110 11   | 111111 | 111111 | 10 1111   | 1101 00   | =
- * encoding:                /    |    f      |    7      |   /    |   /    |    v      |   0       | =
- * decoding first step:   111111 | 01 1111   | 1110 11   | 111111 | 111111 | 10 1111   | 1101 00
- * decoding front end:    111111 | 01 | 1111 | 1110 | 11 | 111111 | 111111 | 10 | 1111 | 1101 | 00
- * Emitted by back end:     11111101  |   11111110  |   11111111  |   11111110  |   11111101
+/*
+  Original bytes:        11111101    | 11111110    | 11111111    | 11111110    | 11111101
+  Emitted by front end:  111111 | 01 | 1111 | 1110 | 11 | 111111 | 111111 | 10 | 1111 | 1101
+  assembled by back end: 111111 | 01 1111   | 1110 11   | 111111 | 111111 | 10 1111   | 1101 00   | =
+  encoding:                /    |    f      |    7      |   /    |   /    |    v      |   0       | =
+  decoding first step:   111111 | 01 1111   | 1110 11   | 111111 | 111111 | 10 1111   | 1101 00
+  decoding front end:    111111 | 01 | 1111 | 1110 | 11 | 111111 | 111111 | 10 | 1111 | 1101 | 00
+  Emitted by back end:     11111101  |   11111110  |   11111111  |   11111110  |   11111101
  */
         bytes = Conversion.toByteArray("/f7//v0=".toCharArray());
         for (byte aByte : bytes) frontEnd.consume(aByte);

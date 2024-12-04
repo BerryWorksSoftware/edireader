@@ -21,9 +21,8 @@
 package com.berryworks.edireader.error;
 
 /**
- * An EDISyntaxExceptionHandler defines a callback interface by which
- * a program using EDIReader can control whether or not parsing should
- * continue after a particular EDI syntax issue.
+ * An EDISyntaxExceptionHandler defines a callback interface by which a program using EDIReader can control
+ * whether parsing should continue after a particular EDI syntax issue.
  */
 public interface EDISyntaxExceptionHandler {
     /**

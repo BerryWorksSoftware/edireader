@@ -179,8 +179,7 @@ public class AnsiFAGenerator extends ReplyGenerator {
         referencedISA = firstSegment;
 
         // Note that the initialization of the following items cannot occur
-        // in the constructor because ansiReader may not have all of the
-        // necessary information at that point.
+        // in the constructor because ansiReader may not have the necessary information at that point.
         establishSyntaxCharacters();
 
         // The ISA envelope is basically the same as that of the input

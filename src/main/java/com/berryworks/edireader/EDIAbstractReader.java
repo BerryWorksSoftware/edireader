@@ -105,7 +105,7 @@ public abstract class EDIAbstractReader implements XMLReader {
     private BranchingWriter alternateAckStream;
 
     /**
-     * If acknowledgements are being written, should an interchange acknowledgment be included?
+     * If acknowledgements are being written, should an interchange acknowledgement be included?
      * For ANSI X12, this would be a TA1 segment after the ISA.
      */
     private boolean interchangeAcknowledgment;

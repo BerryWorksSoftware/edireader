@@ -244,7 +244,7 @@ public class DocumentUtil {
             }
         }
 
-        return sb.length() == 0 ? null : sb.toString();
+        return sb.isEmpty() ? null : sb.toString();
     }
 
 }

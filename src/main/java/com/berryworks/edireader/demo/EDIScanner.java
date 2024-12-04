@@ -44,7 +44,7 @@ import java.nio.charset.StandardCharsets;
  * <p>
  * This programs also demonstrates how to parse a single input stream that
  * contains multiple EDI interchanges. Note the interchanges are not required to
- * be all of the same EDI standard; ANSI and EDIFACT interchanges can be freely
+ * be all the same EDI standard; ANSI and EDIFACT interchanges can be freely
  * intermixed.
  * </p>
  * Assuming your CLASSPATH contains EDIReader.jar, you may run this program with

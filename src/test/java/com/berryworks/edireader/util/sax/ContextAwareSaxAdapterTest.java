@@ -36,7 +36,7 @@ public class ContextAwareSaxAdapterTest {
         assertContext(adapter, null,null, "A");
 
         adapter.startElement(null, "B", null, attributes);
-        // The startElement() means that no more data will be arriving for the a element,
+        // The startElement() means that no more data will be arriving for the element,
         // so the pending data is delivered on a call to start() to the ContextAwareSaxAdapter subclass.
         assertContext(adapter, "(A","aaa aaa|", "A", "B");
 
@@ -117,8 +117,8 @@ public class ContextAwareSaxAdapterTest {
 
     private static class MyContextAwareSaxAdapter extends ContextAwareSaxAdapter {
 
-        private StringBuilder data = new StringBuilder();
-        private StringBuilder sequence = new StringBuilder();
+        private final StringBuilder data = new StringBuilder();
+        private final StringBuilder sequence = new StringBuilder();
 
         public MyContextAwareSaxAdapter(boolean isTrimmingEnabled) {
             super(isTrimmingEnabled);

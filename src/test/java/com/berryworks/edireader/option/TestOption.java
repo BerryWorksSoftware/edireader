@@ -13,6 +13,7 @@ public class TestOption {
 
     private Options options;
 
+    @Test
     public void testDefaults() {
         options = new MyOptions();
 

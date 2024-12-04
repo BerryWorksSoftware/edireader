@@ -3,7 +3,7 @@ package com.berryworks.edireader.util;
 /**
  * A device used in testing to help compare an expected result with an actual result, disregarding specific
  * character sequences marked in the mask by a span of 4 or more '?'.
- *
+ * <p>
  * Date/time generated fields are an example of where this comes in handy. This class is placed here so that it can
  * be easily accessed from a number of test environments. Since it is small and stand-alone, it is harmless to include
  * even though not expected to ever be used in a production scenario.

@@ -76,7 +76,7 @@ import static com.berryworks.edireader.util.FixedLength.isPresent;
  * When determining if a particular rule applies, only the firstSegment
  * and loopContext attributes are considered;
  * the other two attributes govern the action take once a rule is selected
- * and have no bearing on the decision of whether or not the rule applies.
+ * and have no bearing on the decision of whether the rule applies.
  * <p>
  * For a rule to apply, the firstSegment attribute must match exactly the
  * segment type of the segment in the document.
@@ -123,7 +123,7 @@ import static com.berryworks.edireader.util.FixedLength.isPresent;
  * in the plugin and accepts the first one that matches, ignoring the rest.
  * Therefore, if there are multiple LoopDescriptors for a given segment type,
  * the relative order in which those LoopDescriptors appear is very important
- * to the semantics of the plugin. Whether all of the LoopDescriptors for a given
+ * to the semantics of the plugin. Whether all the LoopDescriptors for a given
  * segment type are grouped together or scattered throughout the LoopDescriptor array is
  * not important, only the relative order of LoopDescriptors with respect to others
  * for the same segment type. (For readability, it is suggested that you group LoopDescriptors
@@ -190,9 +190,8 @@ public class LoopDescriptor {
     protected final int maximumOccurrences;
 
     /**
-     * Context which determines whether or not a particular appearance of a
-     * segment type that matches the firstSegment is in fact an instance of this
-     * loop.
+     * Context which determines whether a particular appearance of a segment type that matches the firstSegment
+     * is in fact an instance of this loop.
      */
     protected String loopContext;
 

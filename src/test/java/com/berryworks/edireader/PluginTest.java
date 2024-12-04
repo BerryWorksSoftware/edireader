@@ -58,16 +58,17 @@ public class PluginTest {
         assertTrue(plugin.isValidating());
         plugin.loops = LOOP_DESCRIPTORS;
         assertEquals(
-                "Plugin com.berryworks.edireader.PluginTest$1\n" +
-                        "  N (T)\n" +
-                        "loop A at nesting level 1: encountering segment seg1 anytime\n" +
-                        "loop * at nesting level 1: encountering segment N1 while currently in loop N1\n" +
-                        "loop LX at nesting level 1: encountering segment LX anytime\n" +
-                        "loop N1 at nesting level 2: encountering segment N1 while currently in loop LX\n" +
-                        "loop * at nesting level 1: encountering segment P1 anytime\n" +
-                        "loop L5 at nesting level 2: encountering segment L5 anytime\n" +
-                        "loop L1 at nesting level 3: encountering segment L1 anytime\n" +
-                        "loop * at nesting level 0: encountering segment L3 anytime",
+                """
+                        Plugin com.berryworks.edireader.PluginTest$1
+                          N (T)
+                        loop A at nesting level 1: encountering segment seg1 anytime
+                        loop * at nesting level 1: encountering segment N1 while currently in loop N1
+                        loop LX at nesting level 1: encountering segment LX anytime
+                        loop N1 at nesting level 2: encountering segment N1 while currently in loop LX
+                        loop * at nesting level 1: encountering segment P1 anytime
+                        loop L5 at nesting level 2: encountering segment L5 anytime
+                        loop L1 at nesting level 3: encountering segment L1 anytime
+                        loop * at nesting level 0: encountering segment L3 anytime""",
                 plugin.toString());
         assertEquals(countOfPluginsConstructed + 1, Plugin.getCount());
     }

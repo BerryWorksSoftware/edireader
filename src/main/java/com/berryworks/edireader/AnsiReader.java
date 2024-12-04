@@ -305,7 +305,7 @@ public class AnsiReader extends StandardReader {
     }
 
     /**
-     * Parse ANSI Functional Group (GS .. GE)
+     * Parse ANSI Functional Group (GS ... GE)
      *
      * @param token parsed token that caused this method to be called
      * @return token most recently parsed by this method

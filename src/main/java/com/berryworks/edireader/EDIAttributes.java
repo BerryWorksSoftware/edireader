@@ -58,11 +58,11 @@ public class EDIAttributes extends AttributesImpl {
         StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < getLength(); i++) {
-            if (result.length() > 0) result.append(", ");
+            if (!result.isEmpty()) result.append(", ");
             result.append(getLocalName(i)).append(" = ").append(getValue(i));
         }
 
-        if (result.length() == 0)
+        if (result.isEmpty())
             result.append("empty");
         return result.toString();
     }

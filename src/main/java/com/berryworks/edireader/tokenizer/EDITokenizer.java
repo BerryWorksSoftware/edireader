@@ -185,9 +185,8 @@ public class EDITokenizer extends AbstractTokenizer {
 //        logger.debug("EDITokenizer.lookahead({})", n);
         char[] rval = new char[n];
 
-        // The 1st char is grabbed using the tokenizer's built-in
-        // getChar() / ungetChar() mechanism. This allows things to work
-        // properly whether or not the next char has already been gotten.
+        // The 1st char is grabbed using the tokenizer's built-in getChar() / ungetChar() mechanism.
+        // This allows things to work properly whether or not the next char has already been gotten.
         getChar();
         rval[0] = cChar;
         ungetChar();
