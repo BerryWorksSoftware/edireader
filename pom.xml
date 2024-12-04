@@ -6,7 +6,7 @@
 
     <groupId>com.berryworks</groupId>
     <artifactId>edireader</artifactId>
-    <version>5.8.2</version>
+    <version>5.8.3</version>
 
     <packaging>jar</packaging>
     <name>EDIReader Core EDI Parser</name>
@@ -47,14 +47,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
-        <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
-        <maven.source.plugin.version>3.3.0</maven.source.plugin.version>
-        <maven.javadoc.plugin.version>3.5.0</maven.javadoc.plugin.version>
+        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+        <maven.jar.plugin.version>3.4.1</maven.jar.plugin.version>
+        <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
+        <maven.javadoc.plugin.version>3.11.1</maven.javadoc.plugin.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
         <dependency.check.version>8.4.0</dependency.check.version>
-        <slf4j.version>2.0.7</slf4j.version>
+        <slf4j.version>2.0.16</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <gpg.keyname>0xC8794862</gpg.keyname>
     </properties>
