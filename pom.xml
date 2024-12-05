@@ -170,7 +170,7 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>${dependency.check.version}</version>
                 <configuration>
-                    <nvdApiKey>5f166afd-c789-4547-a8ac-100368875dd7</nvdApiKey>
+                    <nvdApiKey>goes here</nvdApiKey>
                 </configuration>
                 <executions>
                     <execution>
