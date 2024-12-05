@@ -1,10 +1,13 @@
 # Release Notes
 
-### 5.8.3 - December 4, 2024
+### 5.8.3 - December 5, 2024
 
 * Maintenance: Use Java 17 as the default.
-If Java 21 is preferred, the <source> and <target> can be adjusted and the project rebuilt without issue.
+If Java 21 is preferred, the `<source>` and `<target>` can be adjusted and the project rebuilt without issue.
 If Java 11 or 14 is needed, a branch can be easily created with the few adjustments need to avoid multi-line strings.
+
+* Maintenance: Update Maven plugin versions. 
+* Maintenance: Various inspection-driven local refactoring cleanup/simplifications. 
 
 ### 5.8.2 - April 14, 2024
 
