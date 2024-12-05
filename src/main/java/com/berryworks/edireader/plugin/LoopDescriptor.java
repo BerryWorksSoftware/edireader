@@ -174,7 +174,7 @@ public class LoopDescriptor {
      * Level of nesting for this loop.
      * <p>
      * Typically, a document will begin with one or more segments that are
-     * considered to be outside of any segment loops. The segments are
+     * considered to be outside any segment loops. The segments are
      * implicitly at nesting level 0. The first level of explicit nesting is
      * level 1, and increases with each new level.
      */

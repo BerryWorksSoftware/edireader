@@ -156,8 +156,8 @@ public class LoopDescriptorTest {
     public void testEquals() {
         loopDescriptor = new LoopDescriptor("name", "firstSegment", 1, ANY_CONTEXT);
         assertEquals(loopDescriptor, loopDescriptor);
-        assertNotEquals(loopDescriptor, "A String");
-        assertNotEquals(loopDescriptor, null);
+        assertNotEquals("A String", loopDescriptor);
+        assertNotEquals(null, loopDescriptor);
 
         LoopDescriptor d2 = new LoopDescriptor("name", "firstSegment", 1, ANY_CONTEXT);
         LoopDescriptor d3 = new LoopDescriptor("namex", "firstSegment", 1, INITIAL_CONTEXT);

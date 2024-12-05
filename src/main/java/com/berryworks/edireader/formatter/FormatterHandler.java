@@ -148,8 +148,8 @@ public class FormatterHandler extends EDIReaderSAXAdapter {
                         Thread.yield();
                     long n = input.skip(toSkip);
                     if (n > 0) {
-                        toSkip -= n;
-                        charsReadSoFar += n;
+                        toSkip -= (int) n;
+                        charsReadSoFar += (int) n;
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(
