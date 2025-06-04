@@ -550,7 +550,7 @@ public abstract class EDIAbstractReader implements XMLReader {
 
     public Object getProperty(String name) throws SAXNotRecognizedException,
             SAXNotSupportedException {
-        throw new SAXNotSupportedException("Not yet implemented");
+        return null;
     }
 
     public EDIAttributes getDocumentAttributes() {

@@ -1,13 +1,19 @@
 # Release Notes
 
+### 5.8.4-SNAPSHOT
+
+* Maintenance: When an EDIReader instance is used as an XMLReader, getProperty(name) returns null
+instead of throwing an exception. This allows use with in some javax.xml.transform.Transformer
+situations that would fail otherwise. 
+
 ### 5.8.3 - December 5, 2024
 
 * Maintenance: Use Java 17 as the default.
-If Java 21 is preferred, the `<source>` and `<target>` can be adjusted and the project rebuilt without issue.
-If Java 11 or 14 is needed, a branch can be easily created with the few adjustments need to avoid multi-line strings.
+  If Java 21 is preferred, the `<source>` and `<target>` can be adjusted and the project rebuilt without issue.
+  If Java 11 or 14 is needed, a branch can be easily created with the few adjustments need to avoid multi-line strings.
 
-* Maintenance: Update Maven plugin versions. 
-* Maintenance: Various inspection-driven local refactoring cleanup/simplifications. 
+* Maintenance: Update Maven plugin versions.
+* Maintenance: Various inspection-driven local refactoring cleanup/simplifications.
 
 ### 5.8.2 - April 14, 2024
 
@@ -18,76 +24,78 @@ If Java 11 or 14 is needed, a branch can be easily created with the few adjustme
   repetition separator, such as ^, instead of U or other letter, the repetition separator in ISA11 is ignored;
   if that character appears within a segment, it is treated as a part of the data and not as an indicator of
   element repetition. Before this change, a character in ISA that appeared to be a valid repetition separator was used
-  as such, regardless of the X12 version. 
+  as such, regardless of the X12 version.
 
 ### 5.8.1 - January 30, 2024
+
 * Feature: Detect the appearance of two adjacent segment terminators without an intervening segment,
-and throw a (recoverable) RepeatedSegmentTerminatorException.
+  and throw a (recoverable) RepeatedSegmentTerminatorException.
 * Maintenance: Minor adjustment in an internal class, EDIReaderSAXAdapter,
-to allow its subclasses to respond to the first segment in a loop
-differently than to a subsequent segment in the loop.
+  to allow its subclasses to respond to the first segment in a loop
+  differently than to a subsequent segment in the loop.
 
 ### 5.8.0 - November 11, 2023
+
 * Feature: Use Java Service Provider (SPI) to find a PluginControllerFactory
-for managing the dynamic selection of transaction and version specific plugins
-during EDI parsing.
-If one is not available from a Service Provider on the classpath,
-then the legacy behavior applies which loads plugins from Java classes;
-therefore, backward compatibility is preserved.
-This new feature allows the EDIReader Framework
-(a non-open source project built on top of this core project)
-to cleanly and securely provide a PluginControllerFactory that uses its own ESD syntax to externalize plugins
-from Java source code.
+  for managing the dynamic selection of transaction and version specific plugins
+  during EDI parsing.
+  If one is not available from a Service Provider on the classpath,
+  then the legacy behavior applies which loads plugins from Java classes;
+  therefore, backward compatibility is preserved.
+  This new feature allows the EDIReader Framework
+  (a non-open source project built on top of this core project)
+  to cleanly and securely provide a PluginControllerFactory that uses its own ESD syntax to externalize plugins
+  from Java source code.
 * Convenience: Add methods to accept Reader instead of InputSource,
-simplifying the Java API, while preserving backward compatibility.
+  simplifying the Java API, while preserving backward compatibility.
 * Convenience: When parse() is called on an EDIReader instance without a configured ContentHandler,
-use a DefaultHandler that does nothing with the parsed EDI content.
+  use a DefaultHandler that does nothing with the parsed EDI content.
 * Maintenance: Add a static instance of a PluginControllerFactory allowing the most recently created one to be
-accessed as a singleton.
+  accessed as a singleton.
 
 ### 5.7 - skipped
 
 * In order to synchronize versioning with the separate EDIReader Framework project,
-version 5.7 is skipped.
+  version 5.7 is skipped.
 
 ### 5.6.11 - November 2, 2023
 
 * Fix: When producing an X12 acknowledgment as a parsing by-product,
-use a proper length for each GS element, truncating or padding as necessary to comply with min:max rules.
-For some GS elements, the min:max length varies between X12 versions. 
-For example, the GS04 date element has minimum and maximum length of 8 beginning with 004010 and 6 before.
+  use a proper length for each GS element, truncating or padding as necessary to comply with min:max rules.
+  For some GS elements, the min:max length varies between X12 versions.
+  For example, the GS04 date element has minimum and maximum length of 8 beginning with 004010 and 6 before.
 
 ### 5.6.10 - October 3, 2023
 
 * Maintenance: Change from INFO-level to DEBUG-level
-the logging of every document type as it is parsed.
+  the logging of every document type as it is parsed.
 
 ### 5.6.9 - August 27, 2023
 
 * Feature: Use the plugin, if available, to recognize a composite element with only its first sub-element,
-which looks identical to a simple element since no sub-element delimiter is visible. In this situation, the parsed
-EDI content reflects a composite element instead of a simple element. 
+  which looks identical to a simple element since no sub-element delimiter is visible. In this situation, the parsed
+  EDI content reflects a composite element instead of a simple element.
 * Maintenance: Reduce debug logging that is no longer needed.
 * Maintenance: Use latest versions of Maven plugins and dependencies.
 
 ### 5.6.8 - July 18, 2023
 
 * Maintenance: Revise ParserRegistry class in order to eliminate any potential
-for malicious creation of a custom parser class that gets control in response to carefully
-crafted input data.
+  for malicious creation of a custom parser class that gets control in response to carefully
+  crafted input data.
 * Fix: With the XmlFormatter, format XML correctly when it includes an attribute value that contains a / (slash).
-Such a slash must not be confused with a slash that closes an XML element.
+  Such a slash must not be confused with a slash that closes an XML element.
 
 ### 5.6.7 - May 24, 2023
 
 * Maintenance: Use latest versions of Maven plugins.
 * Maintenance: Reduce dependencies on third-party libraries (even great ones!)
-whenever possible to simplify build process and minimize footprint.
-With this release, there is no longer a dependence on xmlunit or JQuantify.
+  whenever possible to simplify build process and minimize footprint.
+  With this release, there is no longer a dependence on xmlunit or JQuantify.
 * Maintenance: Remove the internal benchmarking tool, moving it to the EDIReader Framework
-project.
+  project.
 * Feature: Create a compare method in DocumentUtil to compare two
-org.w3c.dom.Document objects.
+  org.w3c.dom.Document objects.
 
 ### 5.6.6 - December 16, 2022
 
@@ -104,8 +112,8 @@ org.w3c.dom.Document objects.
 ### 5.6.4 - September 26, 2022
 
 * Feature: Provide a MaskingTool as a utility class allowing two text items
-  to be compared where certain fields (for example, date and time fields) are 
-  disregarded. This is primarily for testing purposes. 
+  to be compared where certain fields (for example, date and time fields) are
+  disregarded. This is primarily for testing purposes.
 * Fix: Improve support for CONTRL messages produced as an optional by-product
   of EDIFACT parsing.
 
@@ -123,14 +131,14 @@ org.w3c.dom.Document objects.
 ### 5.6.1 - April 1, 2022
 
 * Feature: Add min and max occurrence attributes to a LoopDescriptor. Among other things, this allows an easy
-way to treat repeatable and non-repeatable segments in a particular loop context differently. For example,
-when rendering EDI as JSON, you might want to use a JSON key:object pair for a non-repeatable segment, but
-a JSON array for a repeatable segment. 
+  way to treat repeatable and non-repeatable segments in a particular loop context differently. For example,
+  when rendering EDI as JSON, you might want to use a JSON key:object pair for a non-repeatable segment, but
+  a JSON array for a repeatable segment.
 
 ### 5.6.0 - January 25, 2022
 
-* Feature: An EDI element that contains only spaces is, by default, treated as an omitted element within the segment. 
-Add an option to treat these spaces as data instead. This option is NOT recommended for normal use.
+* Feature: An EDI element that contains only spaces is, by default, treated as an omitted element within the segment.
+  Add an option to treat these spaces as data instead. This option is NOT recommended for normal use.
 * Refactor: Revise handling of the fixed length ISA elements, preserving full backward compatibility.
 
 ### 5.5.3 - May 15, 2020
@@ -141,13 +149,13 @@ Add an option to treat these spaces as data instead. This option is NOT recommen
 ### 5.5.2 - March 23, 2020
 
 * Fix: Use CharBuffer with compatibility for Java 11 a well as previous versions.
-Avoid NoSuchMethodError when using limit() or clear().
+  Avoid NoSuchMethodError when using limit() or clear().
 
 ### 5.5.1 - November 4, 2019
 
 * Feature: Use SLF4J as a thin logging facade or abstraction for various logging frameworks,
-allowing the end user to plug in the desired logging framework at deployment time or to run with no
-logging framework at all.
+  allowing the end user to plug in the desired logging framework at deployment time or to run with no
+  logging framework at all.
 
 ### 5.5.0 - October 31, 2019
 
@@ -156,27 +164,27 @@ logging framework at all.
 ### 5.4.20 - September 30, 2019
 
 * Feature: Support reset() on a PluginController to restore the internal state to its initial condition, allowing
-a controller to be reused for multiple documents of the same type. This is not used with X12 or EDIFACT, but comes
-in handy with TRADACOMS available with the premium edition.
+  a controller to be reused for multiple documents of the same type. This is not used with X12 or EDIFACT, but comes
+  in handy with TRADACOMS available with the premium edition.
 
 ### 5.4.19 - August 8, 2019
 
 * Fix: With this change, the EDIFACT UNB interchange header segment allows the syntax identifier to contain
-any letter after the UNO instead of restricting to A-K. For example, UNB+UNOL:1+... is allowed.
+  any letter after the UNO instead of restricting to A-K. For example, UNB+UNOL:1+... is allowed.
 
 ### 5.4.18 - June 2, 2019
 
-* Fix: A bug that resulted in an incorrect Id attribute on elements within a segment in a particular 
-combination of repeating elements, composite elements, and empty elements. The situation was not observed
-with X12 or EDIFACT documents, but in the HL7 parser available in the premium edition.
+* Fix: A bug that resulted in an incorrect Id attribute on elements within a segment in a particular
+  combination of repeating elements, composite elements, and empty elements. The situation was not observed
+  with X12 or EDIFACT documents, but in the HL7 parser available in the premium edition.
 
 ### 5.4.17 - April 2, 2019
 
 * Feature: Provide a plugin for 837 version 5010 in the Community Edition
-    
+
 ### 5.4.16 - March 15, 2019
 
-* Feature: Allow specific ISA elements to be variable length instead of the X12-specific fixed length. 
+* Feature: Allow specific ISA elements to be variable length instead of the X12-specific fixed length.
     - ISA02 - authorization information
     - ISA04 - security information
     - ISA06 - sender ID
@@ -185,7 +193,7 @@ with X12 or EDIFACT documents, but in the HL7 parser available in the premium ed
 ### 5.4.15 - March 7, 2019
 
 * Feature: Added an option for X12 syntax characters to appear as attributes
-on the \<interchange\>:
+  on the \<interchange\>:
     - ElementDelimiter
     - SubElementDelimiter
     - SegmentTerminator
@@ -194,8 +202,8 @@ on the \<interchange\>:
 ### 5.4.14 - January 27, 2019
 
 * Fix: The automatically-detected syntax characters (terminators, delimiters, separators, ...) were not all
-accessible when parsing via the EDIReader class instead of a standard-specific class directly. This fixes
-that problem.
+  accessible when parsing via the EDIReader class instead of a standard-specific class directly. This fixes
+  that problem.
 
 ### 5.4.12 - December 21, 2017
 
@@ -203,13 +211,13 @@ that problem.
 
 ### 5.4.11 - December 24, 2017
 
-* Feature: When generating a FA/997 as a byproduct of parsing X12 input, avoid hard-coded group control number; 
-use the ISA control number instead.
+* Feature: When generating a FA/997 as a byproduct of parsing X12 input, avoid hard-coded group control number;
+  use the ISA control number instead.
 
 ### 5.4.10 - September 2, 2017
 
 * Feature: In splitting operations where a group-level version is not available,
-use information from the interchange instead.
+  use information from the interchange instead.
 
 ### 5.4.9 - June 16, 2017
 

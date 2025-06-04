@@ -146,12 +146,12 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
 
     }
 
-    @Test(expected = SAXNotSupportedException.class)
+    @Test
     public void testUnsupportedProperty() throws Exception {
 
         reader = EDIReaderFactory.createEDIReader(EDITestData
                 .getAnsiInputSource());
-        reader.getProperty("p");
+        assertNull(reader.getProperty("p"));
     }
 
     @Test(expected = SAXNotSupportedException.class)
