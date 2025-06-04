@@ -1,6 +1,6 @@
 # Release Notes
 
-### 5.8.4-SNAPSHOT
+### 5.8.4 - June 4, 2025
 
 * Maintenance: When an EDIReader instance is used as an XMLReader, getProperty(name) returns null
 instead of throwing an exception. This allows use with in some javax.xml.transform.Transformer
