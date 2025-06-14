@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2025 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -435,6 +435,7 @@ public class AnsiReader extends StandardReader {
         String documentType;
         Token t;
         int segCount = 2;
+        long charCountAtBeginning = getTokenizer().getCharCount() - 3; // "ST*" is included in the charCount.
 
         if (getTransactionCallback() != null)
             getTransactionCallback().startTransaction(token.getValue());
@@ -514,8 +515,11 @@ public class AnsiReader extends StandardReader {
         // return the SEGMENT_END token
         t = getTokenizer().skipSegment();
 
-        if (getTransactionCallback() != null)
+        if (getTransactionCallback() != null) {
             getTransactionCallback().endTransaction();
+            long size = getTokenizer().getCharCount() - charCountAtBeginning;
+            getTransactionCallback().end(getXMLTags().getDocumentTag(), documentType, groupVersion, size);
+        }
 
         return t;
     }
@@ -556,8 +560,8 @@ public class AnsiReader extends StandardReader {
 
     public static boolean isEnvelopeSegment(String segmentType) {
         return "ISA".equals(segmentType) || "GS".equals(segmentType) || "ST".equals(segmentType) ||
-                "SE".equals(segmentType) || "GE".equals(segmentType) || "IEA".equals(segmentType) ||
-                "TA1".equals(segmentType);
+               "SE".equals(segmentType) || "GE".equals(segmentType) || "IEA".equals(segmentType) ||
+               "TA1".equals(segmentType);
     }
 
     protected void parseBINSequence() throws SAXException, IOException {
@@ -651,9 +655,9 @@ public class AnsiReader extends StandardReader {
         int indexOf11thFieldSeparator = indexOf(getDelimiter(), buf, 11);
         char repetitionChar = buf[indexOf11thFieldSeparator + 1];
         if (Character.isLetterOrDigit(repetitionChar) ||
-                repetitionChar == getTerminator() ||
-                repetitionChar == getDelimiter() ||
-                Character.isWhitespace(repetitionChar)) {
+            repetitionChar == getTerminator() ||
+            repetitionChar == getDelimiter() ||
+            Character.isWhitespace(repetitionChar)) {
             // This is not a suitable repetition character.
             // It may be desirable to further check to see if the version number
             // in the next ISA element indicates 4020 or later; if not, then
