@@ -34,7 +34,10 @@ public class TransactionCallbackTest {
         };
         parser.setTransactionCallback(callback);
         parser.parse(inputSource);
-        assertEquals("transaction, 997, 004010, 0001, 38|transaction, 997, 004010ABC, 0002, 49|", callback.getLog());
+        assertEquals("" +
+                     "transaction, 997, 004010, 0001, 38|" +
+                     "transaction, 997, 004010ABC, 0002, 49|" +
+                     "group, FA, 004010, 000038449, 153|", callback.getLog());
     }
 
     private static class MyCallback implements TransactionCallback {

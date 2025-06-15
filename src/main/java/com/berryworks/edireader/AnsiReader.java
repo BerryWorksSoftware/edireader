@@ -317,6 +317,8 @@ public class AnsiReader extends StandardReader {
             IOException {
         int docCount = 0;
 
+        long charCountAtBeginning = getTokenizer().getCharCount() - 3; // "GS*" is included in the charCount.
+
         getGroupAttributes().clear();
         getGroupAttributes().addCDATA(getXMLTags().getGroupType(),
                 groupFunctionCode = getTokenizer().nextSimpleValue(false));
@@ -416,7 +418,13 @@ public class AnsiReader extends StandardReader {
         endElement(getXMLTags().getGroupTag());
         getAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
         getAlternateAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
-        return (getTokenizer().skipSegment());
+
+        Token returnedToken = getTokenizer().skipSegment();
+        if (getTransactionCallback() != null) {
+            long size = getTokenizer().getCharCount() - charCountAtBeginning;
+            getTransactionCallback().end(getXMLTags().getGroupTag(), groupFunctionCode, groupVersion, groupControlNumber, size);
+        }
+        return returnedToken;
     }
 
     protected void process(String ediElement, String value) throws SAXException {
