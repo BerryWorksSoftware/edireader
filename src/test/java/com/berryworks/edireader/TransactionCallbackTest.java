@@ -34,7 +34,7 @@ public class TransactionCallbackTest {
         };
         parser.setTransactionCallback(callback);
         parser.parse(inputSource);
-        assertEquals("transaction, 997, 004010, 38", callback.getLog());
+        assertEquals("transaction, 997, 004010, 0001, 38|transaction, 997, 004010, 0002, 39|", callback.getLog());
     }
 
     private static class MyCallback implements TransactionCallback {
@@ -46,8 +46,8 @@ public class TransactionCallbackTest {
         }
 
         @Override
-        public void end(String ediUnit, String identifier, String version, long size) {
-            sb.append(String.format("%s, %s, %s, %s", ediUnit, identifier, version, size));
+        public void end(String ediUnit, String identifier, String version, String controlNumber, long size) {
+            sb.append(String.format("%s, %s, %s, %s, %s|", ediUnit, identifier, version, controlNumber, size));
         }
 
         public String getLog() {
@@ -61,7 +61,10 @@ public class TransactionCallbackTest {
             ST~997~0001$
             AK1~AG~38327$
             SE~3~0001$
-            GE~1~000038449$
+            ST~997~0002$
+            AK1~AG~383277$
+            SE~3~0002$
+            GE~2~000038449$
             IEA~1~000038449$
             """;
 }

@@ -28,6 +28,6 @@ public interface TransactionCallback {
     default void endTransaction() {
     }
 
-    default void end(String ediUnit, String identifier, String version, long size) {
+    default void end(String ediUnit, String identifier, String version, String controlNumber, long size) {
     }
 }

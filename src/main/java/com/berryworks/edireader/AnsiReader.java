@@ -518,7 +518,7 @@ public class AnsiReader extends StandardReader {
         if (getTransactionCallback() != null) {
             getTransactionCallback().endTransaction();
             long size = getTokenizer().getCharCount() - charCountAtBeginning;
-            getTransactionCallback().end(getXMLTags().getDocumentTag(), documentType, groupVersion, size);
+            getTransactionCallback().end(getXMLTags().getDocumentTag(), documentType, groupVersion, "0000", size);
         }
 
         return t;
