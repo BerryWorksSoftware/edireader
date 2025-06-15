@@ -37,7 +37,8 @@ public class TransactionCallbackTest {
         assertEquals("" +
                      "transaction, 997, 004010, 0001, 38|" +
                      "transaction, 997, 004010ABC, 0002, 49|" +
-                     "group, FA, 004010, 000038449, 153|", callback.getLog());
+                     "group, FA, 004010, 0038449, 149|" +
+                     "interchange, X12, 00204, 000038449, 273|", callback.getLog());
     }
 
     private static class MyCallback implements TransactionCallback {
@@ -60,14 +61,14 @@ public class TransactionCallbackTest {
 
     private final static String X12_SAMPLE = """
             ISA~00~          ~00~          ~ZZ~58401          ~ZZ~04000          ~220810~0941~U~00204~000038449~0~P~<$
-            GS~FA~58401~04000~220810~0941~000038449~X~004010$
+            GS~FA~58401~04000~220810~0941~0038449~X~004010$
             ST~997~0001$
             AK1~AG~38327$
             SE~3~0001$
             ST~997~0002~004010ABC$
             AK1~AG~383277$
             SE~3~0002$
-            GE~2~000038449$
+            GE~2~0038449$
             IEA~1~000038449$
             """;
 }

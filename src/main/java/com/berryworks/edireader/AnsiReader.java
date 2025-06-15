@@ -95,6 +95,7 @@ public class AnsiReader extends StandardReader {
      */
     @Override
     protected Token parseInterchange(Token token) throws SAXException, IOException {
+        int charCountAtBeginning = getTokenizer().getCharCount() - 4; // ISA* is included in the charCount.
         setGroupCount(0);
 
         getInterchangeAttributes().clear();
@@ -248,7 +249,14 @@ public class AnsiReader extends StandardReader {
         getAckGenerator().generateAcknowledgementWrapup();
         getAlternateAckGenerator().generateAcknowledgementWrapup();
         endInterchange();
-        return (getTokenizer().skipSegment());
+
+        Token returnedToken = getTokenizer().skipSegment();
+        if (getTransactionCallback() != null) {
+            long size = getTokenizer().getCharCount() - charCountAtBeginning;
+            getTransactionCallback().end(getXMLTags().getInterchangeTag(), "X12", versionId, controlNumber, size);
+        }
+
+        return returnedToken;
     }
 
     private String nextField() throws SAXException, IOException {
