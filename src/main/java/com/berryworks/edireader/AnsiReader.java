@@ -39,6 +39,7 @@ import java.lang.invoke.MethodHandles;
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_END;
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_START;
 import static com.berryworks.edireader.util.EdiVersionUtil.isX12VersionBefore;
+import static com.berryworks.edireader.util.FixedLength.isPresent;
 import static java.lang.Character.*;
 
 /**
@@ -468,13 +469,15 @@ public class AnsiReader extends StandardReader {
         getDocumentAttributes().addCDATA(getXMLTags().getControl(), controlNumber);
         process("ST02", controlNumber);
 
+        String st03Version = null;
         if (!hitSegmentEnd) {
             Token st03Token = getTokenizer().nextToken();
             switch (st03Token.getType()) {
                 case SEGMENT_END:
                     break;
                 case SIMPLE:
-                    getDocumentAttributes().addCDATA(getXMLTags().getMessageVersion(), st03Token.getValue());
+                    st03Version = st03Token.getValue();
+                    getDocumentAttributes().addCDATA(getXMLTags().getMessageVersion(), st03Version);
                 default:
                     getTokenizer().skipSegment();
             }
@@ -518,7 +521,7 @@ public class AnsiReader extends StandardReader {
         if (getTransactionCallback() != null) {
             getTransactionCallback().endTransaction();
             long size = getTokenizer().getCharCount() - charCountAtBeginning;
-            getTransactionCallback().end(getXMLTags().getDocumentTag(), documentType, groupVersion, "0000", size);
+            getTransactionCallback().end(getXMLTags().getDocumentTag(), documentType, isPresent(st03Version) ? st03Version : groupVersion, controlNumber, size);
         }
 
         return t;
