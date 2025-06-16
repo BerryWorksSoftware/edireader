@@ -1,6 +1,6 @@
 # Release Notes
 
-### 5.8.5 - June ??, 2025
+### 5.8.5 - June 16, 2025
 
 * Feature: Expand the `TransactionCallback` interface to provide a means for the parser to announce the size of each
   transaction, along with the transaction type, control number, and version. It also returns the same information for
@@ -10,7 +10,7 @@
 
 ### 5.8.4 - June 4, 2025
 
-* Maintenance: When an EDIReader instance is used as an XMLReader, getProperty(name) returns null
+* Maintenance: When an EDIReader instance is used as an XMLReader, getProperty(name) now returns null
   instead of throwing an exception. This allows use with in some javax.xml.transform.Transformer
   situations that would fail otherwise.
 
