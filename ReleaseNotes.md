@@ -1,5 +1,10 @@
 # Release Notes
 
+### 5.8.6 - ???
+
+* Feature: When parsing EDiFACT, choose the character set encoding based on the value of UNB02, if present.
+  If UNB02 is absent or does not indicate a known character set, default to UTF-8.
+
 ### 5.8.5 - June 16, 2025
 
 * Feature: Expand the `TransactionCallback` interface to provide a means for the parser to announce the size of each
