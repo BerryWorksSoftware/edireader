@@ -66,13 +66,26 @@ public class EdifactEncodingTest {
 
     @Test
     public void experiment() throws IOException {
-        byte[] bytes = EDIFACT_UNOE.getBytes(ISO_8859_5);
+        // Start with in InputStream of bytes
+        byte[] bytes = EDIFACT_UNOE.getBytes(StandardCharsets.ISO_8859_1);
         InputStream inputStream = new ByteArrayInputStream(bytes);
         System.out.println("available bytes: " + inputStream.available());
-        Reader readerUTF8 = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-        char[] prefix = new char[10];
-        readerUTF8.read(prefix);
-        System.out.println("Prefix read as UTF-8: " + new String(prefix));
+
+        // Read a few bytes directly from the InputStream, and interpret them as ISO-8859-1
+        byte[] prefixBytes = new byte[10];
+        int bytesRead = inputStream.read(prefixBytes);
+        String prefixString = new String(prefixBytes, 0, bytesRead, StandardCharsets.ISO_8859_1);
+        System.out.println("Prefix read as ISO-8859-1: " + prefixString);
+        System.out.println("available bytes: " + inputStream.available());
+
+        // Now read the rest of the InputStream as ISO-8859-5
+        Reader reader_8859_5 = new InputStreamReader(inputStream, ISO_8859_5);
+        char[] cbuf = new char[1000];
+        int n = reader_8859_5.read(cbuf);
+        String remainder = new String(cbuf, 0, n);
+        String suffix = remainder.substring(remainder.length() - 50);
+        System.out.println("Remaining " + remainder.length() + " bytes read as ISO-8859-5 characters: " +
+                           remainder.substring(0, 50) + " ... " + suffix);
         System.out.println("available bytes: " + inputStream.available());
     }
 
