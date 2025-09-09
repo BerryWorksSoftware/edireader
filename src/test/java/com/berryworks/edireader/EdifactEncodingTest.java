@@ -66,8 +66,8 @@ public class EdifactEncodingTest {
 
     @Test
     public void experiment() throws IOException {
-        // Start with in InputStream of bytes
-        byte[] bytes = EDIFACT_UNOE.getBytes(StandardCharsets.ISO_8859_1);
+        // Start with in InputStream of bytes, encoded as ISO-8859-5
+        byte[] bytes = EDIFACT_UNOE.getBytes(ISO_8859_5);
         InputStream inputStream = new ByteArrayInputStream(bytes);
         System.out.println("available bytes: " + inputStream.available());
 
