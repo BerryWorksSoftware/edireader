@@ -627,4 +627,6 @@ public abstract class EDIAbstractReader implements XMLReader {
                 " charCount: " + getCharCount() + lineBreak +
                 " segmentCharCount: " + getSegmentCharCount() + lineBreak;
     }
+
+    public abstract void parse();
 }

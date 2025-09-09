@@ -26,6 +26,7 @@ import com.berryworks.edireader.tokenizer.Tokenizer;
 import org.xml.sax.InputSource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 
 /**
@@ -59,6 +60,11 @@ public abstract class EDIReaderFactory {
      * @throws EDISyntaxException if invalid EDI is detected
      */
     public static EDIReader createEDIReader(Reader edi)
+            throws EDISyntaxException, IOException {
+        return createEDIReader(new InputSource(edi), null, false);
+    }
+
+    public static EDIReader createEDIReader(InputStream edi)
             throws EDISyntaxException, IOException {
         return createEDIReader(new InputSource(edi), null, false);
     }

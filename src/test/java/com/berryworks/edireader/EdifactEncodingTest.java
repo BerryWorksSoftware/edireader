@@ -44,6 +44,16 @@ public class EdifactEncodingTest {
     }
 
     @Test
+    public void baseline_asByteStream() throws IOException, SAXException {
+        InputStream inputStream = new ByteArrayInputStream(EDIFACT_UNOA.getBytes(StandardCharsets.UTF_8));
+        Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        ediReader = EDIReaderFactory.createEDIReader(new InputSource(inputStream));
+        ediReader.setContentHandler(handler);
+        ediReader.parse(reader);
+        assertEquals("GENERAL WIDGET COMPANY", handler.getNad04());
+    }
+
+    @Test
     public void unoE() throws IOException, SAXException {
         StringReader reader = new StringReader(EDIFACT_UNOE);
         ediReader = EDIReaderFactory.createEDIReader(reader);
