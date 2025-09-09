@@ -7,10 +7,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
@@ -36,11 +33,9 @@ public class EdifactEncodingTest {
 
     @Test
     public void baseline_asBytes() throws IOException, SAXException {
-        byte[] bytes = EDIFACT_UNOA.getBytes(StandardCharsets.UTF_8);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-        InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-        InputSource inputSource = new InputSource(reader);
-        ediReader = EDIReaderFactory.createEDIReader(inputSource);
+        InputStream inputStream = new ByteArrayInputStream(EDIFACT_UNOA.getBytes(StandardCharsets.UTF_8));
+        Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        ediReader = EDIReaderFactory.createEDIReader(new InputSource(reader));
         ediReader.setContentHandler(handler);
         ediReader.parse(reader);
         assertEquals("GENERAL WIDGET COMPANY", handler.getNad04());
