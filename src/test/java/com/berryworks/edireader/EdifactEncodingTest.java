@@ -8,12 +8,14 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
 
 public class EdifactEncodingTest {
 
+    public static final Charset ISO_8859_5 = Charset.forName("ISO-8859-5");
     private EDIReader ediReader;
     private MyContentHandler handler;
 
@@ -42,13 +44,26 @@ public class EdifactEncodingTest {
     }
 
     @Test
-    public void test_UNOE() throws IOException, SAXException {
+    public void unoE() throws IOException, SAXException {
         StringReader reader = new StringReader(EDIFACT_UNOE);
         ediReader = EDIReaderFactory.createEDIReader(reader);
         ediReader.setContentHandler(handler);
         ediReader.parse(reader);
         assertEquals("Рыба текст", handler.getNad04());
     }
+
+    @Test
+    public void unoE_asBytes() throws IOException, SAXException {
+        byte[] bytes = EDIFACT_UNOE.getBytes(ISO_8859_5);
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        System.out.println("Input has " + EDIFACT_UNOE.length() + " characters and " + bytes.length + " bytes");
+        Reader reader = new InputStreamReader(inputStream, ISO_8859_5);
+        ediReader = EDIReaderFactory.createEDIReader(new InputSource(reader));
+        ediReader.setContentHandler(handler);
+        ediReader.parse(reader);
+        assertEquals("Рыба текст", handler.getNad04());
+    }
+
 
     private static final String EDIFACT_UNOA = """
             UNB+UNOA:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'
