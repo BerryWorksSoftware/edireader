@@ -64,6 +64,18 @@ public class EdifactEncodingTest {
         assertEquals("Рыба текст", handler.getNad04());
     }
 
+    @Test
+    public void experiment() throws IOException {
+        byte[] bytes = EDIFACT_UNOE.getBytes(ISO_8859_5);
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        System.out.println("available bytes: " + inputStream.available());
+        Reader readerUTF8 = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        char[] prefix = new char[10];
+        readerUTF8.read(prefix);
+        System.out.println("Prefix read as UTF-8: " + new String(prefix));
+        System.out.println("available bytes: " + inputStream.available());
+    }
+
 
     private static final String EDIFACT_UNOA = """
             UNB+UNOA:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'
