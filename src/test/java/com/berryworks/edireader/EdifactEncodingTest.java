@@ -17,11 +17,27 @@ public class EdifactEncodingTest {
         ediReader.parse(reader);
     }
 
+    @Test
+    public void test_UNOE() throws IOException, SAXException {
+        StringReader reader = new StringReader(EDIFACT_UNOE);
+        ediReader = EDIReaderFactory.createEDIReader(reader);
+        ediReader.parse(reader);
+    }
+
     private static final String EDIFACT_UNOA = """
             UNB+UNOA:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'
             UNH+00000000000117+INVOIC:D:97B:UN'
             BGM+380+342459+9'
             NAD+SE+005435656::16++GENERAL WIDGET COMPANY'
+            UNT+4+00000000000117'
+            UNZ+1+00000000000778'
+            """;
+
+    private static final String EDIFACT_UNOE = """
+            UNB+UNOE:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'
+            UNH+00000000000117+INVOIC:D:97B:UN'
+            BGM+380+342459+9'
+            NAD+SE+005435656::16++Рыба текст'
             UNT+4+00000000000117'
             UNZ+1+00000000000778'
             """;
