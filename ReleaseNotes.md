@@ -2,6 +2,10 @@
 
 ### 5.8.6 - ???
 
+* Feature: As an alternative to parse(Reader), provide a parse() that uses a previously selected
+  when the EDIReader instance was created. This can simplify things a bit, but more importantly allows
+  for the possibility of switching character encodings while an EDIReader is being created in response
+  to inspection of the input data.
 * Feature: When parsing EDiFACT, choose the character set encoding based on the value of UNB02, if present.
   If UNB02 is absent or does not indicate a known character set, default to UTF-8.
 
