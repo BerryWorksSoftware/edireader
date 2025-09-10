@@ -130,8 +130,8 @@ public abstract class EDIReaderFactory {
             return null;
 
         // Grab the first few characters
-        char[] buf = tokenizer.lookahead(3);
-        if (buf == null || buf.length < 3)
+        char[] buf = tokenizer.lookahead(PEEK_LENGTH);
+        if (buf == null || buf.length < PEEK_LENGTH)
             throw new RuntimeException("tokenizer.lookahead() returned null");
 
         // Get an appropriate parser, based on the first few characters
@@ -148,4 +148,6 @@ public abstract class EDIReaderFactory {
         parser.setInputReader(inputReader);
         return parser;
     }
+
+    private static final int PEEK_LENGTH = 3;
 }

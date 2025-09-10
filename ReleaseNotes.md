@@ -1,6 +1,6 @@
 # Release Notes
 
-### 5.8.6 - ???
+### 5.9.0 - ???
 
 * Feature: As an alternative to parse(Reader), provide a parse() that uses a previously selected
   when the EDIReader instance was created. This can simplify things a bit, but more importantly allows
