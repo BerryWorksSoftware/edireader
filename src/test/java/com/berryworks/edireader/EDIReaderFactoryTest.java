@@ -23,6 +23,15 @@ public class EDIReaderFactoryTest {
     }
 
     @Test
+    public void x12UsingReaderAssignedDuringCreation() throws SAXException, IOException {
+        StringReader reader = new StringReader(EDI_SAMPLE);
+        EDIReader ediReader = EDIReaderFactory.createEDIReader(reader);
+        ediReader.parse();
+        int charCount = ediReader.getCharCount();
+        assertEquals(286, charCount);
+    }
+
+    @Test
     public void x12UsingInputStream() throws SAXException, IOException {
 //        StringReader reader = new StringReader(EDI_SAMPLE);
         byte[] bytes = EDI_SAMPLE.getBytes(StandardCharsets.ISO_8859_1);

@@ -145,6 +145,7 @@ public abstract class EDIReaderFactory {
         parser.setTokenizer(tokenizer);
         parser.preview();
 
+        parser.setInputReader(inputReader);
         return parser;
     }
 }

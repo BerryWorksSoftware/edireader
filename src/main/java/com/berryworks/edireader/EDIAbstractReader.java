@@ -48,6 +48,11 @@ public abstract class EDIAbstractReader implements XMLReader {
      */
     private Tokenizer tokenizer;
 
+    /**
+     * The Reader providing the EDI input. Typically assigned by createEDIReader in EDIReaderFactory.
+     */
+    private Reader inputReader;
+
     private EDISyntaxExceptionHandler syntaxExceptionHandler;
 
     private ErrorHandler errorHandler;
@@ -177,6 +182,10 @@ public abstract class EDIAbstractReader implements XMLReader {
     private SyntaxDescriptor acknowledgmentSyntaxDescriptor;
 
     private TransactionCallback transactionCallback;
+
+    public void parse() throws IOException, SAXException {
+        parse(inputReader);
+    }
 
     /**
      * A convenience method allowing EDI to be parsed from a Reader without needing to
@@ -333,25 +342,25 @@ public abstract class EDIAbstractReader implements XMLReader {
     }
 
     protected static Reader createReader(InputSource source) throws IOException {
-        Reader inputReader;
+        Reader theReader;
         if (source == null)
             throw new IOException("createReader called with null InputSource");
 
         // first try to establish inputReader from the InputSource's
         // CharacterStream
-        inputReader = source.getCharacterStream();
-        if (inputReader == null) {
+        theReader = source.getCharacterStream();
+        if (theReader == null) {
             InputStream inputStream = source.getByteStream();
             if (inputStream != null)
                 // establish inputReader from a ByteStream
-                inputReader = new InputStreamReader(inputStream);
+                theReader = new InputStreamReader(inputStream);
             else {
                 String systemId = source.getSystemId();
                 if (systemId != null) {
                     // try to establish inputReader using the SystemId
                     if (systemId.startsWith("file:"))
                         // systemId names a file
-                        inputReader = new FileReader(systemId.substring(5));
+                        theReader = new FileReader(systemId.substring(5));
                     else
                         // some kind of URL not yet supported
                         throw new IOException("InputSource using SystemId ("
@@ -364,7 +373,7 @@ public abstract class EDIAbstractReader implements XMLReader {
             }
         }
 
-        return inputReader;
+        return theReader;
     }
 
     /**
@@ -527,6 +536,14 @@ public abstract class EDIAbstractReader implements XMLReader {
         throw new SAXException("parse(systemId) not supported");
     }
 
+    public Reader getInputReader() {
+        return inputReader;
+    }
+
+    public void setInputReader(Reader inputReader) {
+        this.inputReader = inputReader;
+    }
+
     public void setContentHandler(ContentHandler handler) {
         contentHandler = handler;
     }
@@ -627,6 +644,4 @@ public abstract class EDIAbstractReader implements XMLReader {
                 " charCount: " + getCharCount() + lineBreak +
                 " segmentCharCount: " + getSegmentCharCount() + lineBreak;
     }
-
-    public abstract void parse();
 }
