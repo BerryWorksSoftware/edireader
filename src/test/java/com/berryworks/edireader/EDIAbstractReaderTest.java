@@ -111,7 +111,7 @@ public class EDIAbstractReaderTest extends VerboseTestCase {
         try {
             EDIReaderFactory.createEDIReader(inputSource);
         } catch (EDISyntaxException e) {
-            assertEquals("No supported EDI standard interchange begins with thi", e.getMessage());
+            assertEquals("No supported EDI standard interchange begins with this is not edi???????", e.getMessage());
         }
     }
 

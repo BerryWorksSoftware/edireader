@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2025 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -137,7 +137,7 @@ public abstract class EDIReaderFactory {
         // Get an appropriate parser, based on the first few characters
         String asString = new String(buf);
         EDIReader parser = ParserRegistry.get(asString);
-        if (parser == null) throw new EDISyntaxException("<?xml ".startsWith(asString) ?
+        if (parser == null) throw new EDISyntaxException(asString.startsWith("<?xml ") ?
                 ErrorMessages.XML_INSTEAD_OF_EDI :
                 ErrorMessages.NO_STANDARD_BEGINS_WITH + asString);
 
@@ -149,5 +149,5 @@ public abstract class EDIReaderFactory {
         return parser;
     }
 
-    private static final int PEEK_LENGTH = 3;
+    private static final int PEEK_LENGTH = 22;
 }
