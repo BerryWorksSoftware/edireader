@@ -96,7 +96,7 @@ public class EDIReaderSAXAdapterTest {
         EDIReader ediReader = EDIReaderFactory.createEDIReader(edi);
         MyAdapater handler = new MyAdapater(false);
         ediReader.setContentHandler(handler);
-        ediReader.parse(edi);
+        ediReader.parse();
         assertEquals("Interchange.Group.Transaction." +
                         "FirstSegment-BEG." +
                         "Loop.FirstSegment-N1.AnotherSegment-N3.AnotherSegment-N4." +

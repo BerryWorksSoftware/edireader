@@ -29,7 +29,7 @@ public class EdifactEncodingTest {
         StringReader reader = new StringReader(EDIFACT_UNOA);
         ediReader = EDIReaderFactory.createEDIReader(reader);
         ediReader.setContentHandler(handler);
-        ediReader.parse(reader);
+        ediReader.parse();
         assertEquals("GENERAL WIDGET COMPANY", handler.getNad04());
     }
 
@@ -39,7 +39,7 @@ public class EdifactEncodingTest {
         Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         ediReader = EDIReaderFactory.createEDIReader(new InputSource(reader));
         ediReader.setContentHandler(handler);
-        ediReader.parse(reader);
+        ediReader.parse();
         assertEquals("GENERAL WIDGET COMPANY", handler.getNad04());
     }
 
@@ -49,7 +49,7 @@ public class EdifactEncodingTest {
         Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         ediReader = EDIReaderFactory.createEDIReader(new InputSource(inputStream));
         ediReader.setContentHandler(handler);
-        ediReader.parse(reader);
+        ediReader.parse();
         assertEquals("GENERAL WIDGET COMPANY", handler.getNad04());
     }
 
@@ -58,7 +58,7 @@ public class EdifactEncodingTest {
         StringReader reader = new StringReader(EDIFACT_UNOE);
         ediReader = EDIReaderFactory.createEDIReader(reader);
         ediReader.setContentHandler(handler);
-        ediReader.parse(reader);
+        ediReader.parse();
         assertEquals("Рыба текст", handler.getNad04());
     }
 
@@ -70,7 +70,7 @@ public class EdifactEncodingTest {
         Reader reader = new InputStreamReader(inputStream, ISO_8859_5);
         ediReader = EDIReaderFactory.createEDIReader(new InputSource(reader));
         ediReader.setContentHandler(handler);
-        ediReader.parse(reader);
+        ediReader.parse();
         assertEquals("Рыба текст", handler.getNad04());
     }
 
