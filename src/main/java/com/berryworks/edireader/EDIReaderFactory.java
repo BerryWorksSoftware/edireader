@@ -139,7 +139,7 @@ public abstract class EDIReaderFactory {
         EDIReader parser = ParserRegistry.get(asString);
         if (parser == null) throw new EDISyntaxException(asString.startsWith("<?xml ") ?
                 ErrorMessages.XML_INSTEAD_OF_EDI :
-                ErrorMessages.NO_STANDARD_BEGINS_WITH + asString);
+                ErrorMessages.NO_STANDARD_BEGINS_WITH + asString.replaceAll("\\?+$", ""));
 
         source.setCharacterStream(inputReader);
         parser.setTokenizer(tokenizer);

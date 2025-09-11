@@ -139,6 +139,7 @@ public class ParserRegistry {
 
     private static Object getMatch(String firstChars, Map map) {
         Object result = null;
+        if (firstChars.length() > 3) firstChars = firstChars.substring(0, 3);
         for (int n = firstChars.length(); result == null && n > 0; firstChars = firstChars.substring(0, --n)) {
             result = map.get(firstChars);
         }
