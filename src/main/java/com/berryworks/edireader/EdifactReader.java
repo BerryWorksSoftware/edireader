@@ -29,6 +29,7 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import static com.berryworks.edireader.util.FixedLength.emptyIfNull;
@@ -655,6 +656,11 @@ public class EdifactReader extends StandardReader {
 
         char syntaxIdentifier = buf[7];
         switch (syntaxIdentifier) {
+            case 'E':
+                Charset designatedCharset = Charset.forName("ISO-8859-5");
+                System.out.println("selected Charset " + designatedCharset);
+                setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
+                break;
             case 'B':
                 if (!delimiterDetermined && buf[3] == '+') {
                     // Strange data. It seems that there was no UNA to determine the syntax characters, and
@@ -688,33 +694,7 @@ public class EdifactReader extends StandardReader {
                 }
                 // Deliberately fall into the sequence below
             default:
-                if (!Character.isLetter(syntaxIdentifier)) {
-                    EDISyntaxException se = new EDISyntaxException("Unknown Syntax Identifier in UNB segment: " + new String(buf, 4, 4));
-                    logger.warn(se.getMessage());
-                    throw se;
-                }
-
-                if (!delimiterDetermined)
-                    setDelimiter('+');
-
-                if (buf[3] != getDelimiter()) {
-                    EDISyntaxException se = new EDISyntaxException("Expected data element separator after UNB segment tag");
-                    logger.warn(se.getMessage());
-                    throw se;
-                }
-
-                if (!terminatorDetermined)
-                    setTerminator('\'');
-
-                if (!subDelimiterDetermined)
-                    setSubDelimiter(':');
-
-                if (!decimalMarkDetermined)
-                    setDecimalMark('.');
-
-                if (!releaseDetermined)
-                    setRelease('?');
-
+                setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
                 break;
         }
 
@@ -725,6 +705,35 @@ public class EdifactReader extends StandardReader {
             // segment terminator, and then note suffix characters
             // following.
             setTerminatorSuffix(scanForSuffix(buf, 3));
+    }
+
+    private void setSyntaxCharacters(char[] buf, boolean delimiterDetermined, boolean subDelimiterDetermined, boolean decimalMarkDetermined, boolean releaseDetermined, boolean terminatorDetermined, char syntaxIdentifier) throws EDISyntaxException {
+        if (!Character.isLetter(syntaxIdentifier)) {
+            EDISyntaxException se = new EDISyntaxException("Unknown Syntax Identifier in UNB segment: " + new String(buf, 4, 4));
+            logger.warn(se.getMessage());
+            throw se;
+        }
+
+        if (!delimiterDetermined)
+            setDelimiter('+');
+
+        if (buf[3] != getDelimiter()) {
+            EDISyntaxException se = new EDISyntaxException("Expected data element separator after UNB segment tag");
+            logger.warn(se.getMessage());
+            throw se;
+        }
+
+        if (!terminatorDetermined)
+            setTerminator('\'');
+
+        if (!subDelimiterDetermined)
+            setSubDelimiter(':');
+
+        if (!decimalMarkDetermined)
+            setDecimalMark('.');
+
+        if (!releaseDetermined)
+            setRelease('?');
     }
 
     protected String scanForSuffix(char[] buffer, int index) {
