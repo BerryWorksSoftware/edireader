@@ -116,6 +116,8 @@ public interface Tokenizer extends SourcePosition {
 
     Reader getReader();
 
+    void setReader(Reader replacementReader);
+
     void ungetChar();
 
     /**

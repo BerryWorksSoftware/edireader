@@ -142,6 +142,7 @@ public abstract class EDIReaderFactory {
                 ErrorMessages.NO_STANDARD_BEGINS_WITH + asString.replaceAll("\\?+$", ""));
 
         source.setCharacterStream(inputReader);
+        parser.setInputSource(source);
         parser.setTokenizer(tokenizer);
         parser.preview();
 

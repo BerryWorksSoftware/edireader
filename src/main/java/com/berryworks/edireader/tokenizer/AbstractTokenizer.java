@@ -58,7 +58,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
     protected int segTokenCount;
     protected int charCount;
     protected int segCharCount;
-    protected final Reader inputReader;
+    protected Reader inputReader;
 
     protected char delimiter = '+';
     protected char subDelimiter = ':';
@@ -112,6 +112,10 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
 
     public Reader getReader() {
         return inputReader;
+    }
+
+    public void setReader(Reader replacementReader) {
+        inputReader = replacementReader;
     }
 
     public char getSubSubDelimiter() {
@@ -208,7 +212,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             case EMPTY:
                 if (required) {
                     EDISyntaxException se = new EDISyntaxException("Mandatory element missing in "
-                            + t.getSegmentType() + " segment", this);
+                                                                   + t.getSegmentType() + " segment", this);
                     logger.warn(se.getMessage());
                     throw se;
                 }
@@ -216,7 +220,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             case SEGMENT_END:
                 if (required) {
                     EDISyntaxException se = new EDISyntaxException("Mandatory element missing in "
-                            + t.getSegmentType() + " segment", this);
+                                                                   + t.getSegmentType() + " segment", this);
                     logger.warn(se.getMessage());
                     throw se;
                 } else if (returnNullAtSegmentEnd)
@@ -412,8 +416,8 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             }
             if (++i > 30) {
                 EDISyntaxException se = new EDISyntaxException("Too many fields for "
-                        + t.getSegmentType()
-                        + " segment (Segment terminator problem?)", this);
+                                                               + t.getSegmentType()
+                                                               + " segment (Segment terminator problem?)", this);
                 logger.warn(se.getMessage());
                 throw se;
             }
@@ -539,7 +543,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             getChar();
             if (cClass == CharacterClass.EOF) {
                 EDISyntaxException se = new EDISyntaxException("Encountered end of data unexpectedly after reading " +
-                        i + " characters of an expected " + n + " character sequence");
+                                                               i + " characters of an expected " + n + " character sequence");
                 logger.warn(se.getMessage());
                 throw se;
             }

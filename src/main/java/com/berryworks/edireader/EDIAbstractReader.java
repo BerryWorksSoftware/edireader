@@ -52,6 +52,7 @@ public abstract class EDIAbstractReader implements XMLReader {
      * The Reader providing the EDI input. Typically assigned by createEDIReader in EDIReaderFactory.
      */
     private Reader inputReader;
+    private InputSource inputSource;
 
     private EDISyntaxExceptionHandler syntaxExceptionHandler;
 
@@ -346,8 +347,7 @@ public abstract class EDIAbstractReader implements XMLReader {
         if (source == null)
             throw new IOException("createReader called with null InputSource");
 
-        // first try to establish inputReader from the InputSource's
-        // CharacterStream
+        // first try to establish inputReader from the InputSource's CharacterStream
         theReader = source.getCharacterStream();
         if (theReader == null) {
             InputStream inputStream = source.getByteStream();
@@ -542,6 +542,14 @@ public abstract class EDIAbstractReader implements XMLReader {
 
     public void setInputReader(Reader inputReader) {
         this.inputReader = inputReader;
+    }
+
+    public InputSource getInputSource() {
+        return inputSource;
+    }
+
+    public void setInputSource(InputSource inputSource) {
+        this.inputSource = inputSource;
     }
 
     public void setContentHandler(ContentHandler handler) {

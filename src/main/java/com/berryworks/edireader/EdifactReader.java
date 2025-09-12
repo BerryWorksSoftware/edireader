@@ -25,9 +25,13 @@ import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -659,6 +663,23 @@ public class EdifactReader extends StandardReader {
             case 'E':
                 Charset designatedCharset = Charset.forName("ISO-8859-5");
                 System.out.println("selected Charset " + designatedCharset);
+                InputSource inputSource = getInputSource();
+                String msg = "EDIFACT parser with UNB+UNOE must be created with a byte stream InputSource.";
+                if (inputSource == null) {
+                    EDISyntaxException se = new EDISyntaxException(msg);
+                    logger.warn(se.getMessage());
+                    throw se;
+                } else {
+                    InputStream byteStream = inputSource.getByteStream();
+                    if (byteStream == null) {
+                        EDISyntaxException se = new EDISyntaxException(msg);
+                        logger.warn(se.getMessage());
+                        throw se;
+                    }
+                    Reader replacementReader = new InputStreamReader(byteStream, designatedCharset);
+                    setInputReader(replacementReader);
+                    getTokenizer().setReader(replacementReader);
+                }
                 setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
                 break;
             case 'B':
