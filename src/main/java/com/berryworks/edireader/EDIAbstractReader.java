@@ -407,6 +407,7 @@ public abstract class EDIAbstractReader implements XMLReader {
      */
     protected void parseSetup(InputSource source) throws EDISyntaxException,
             IOException {
+        setInputSource(source);
         Reader inputReader = createReader(source);
 
         if (tokenizer == null)
