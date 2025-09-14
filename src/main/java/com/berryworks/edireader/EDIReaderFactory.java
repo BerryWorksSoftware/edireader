@@ -38,6 +38,8 @@ import java.io.Reader;
  */
 public abstract class EDIReaderFactory {
 
+    private static final int PEEK_LENGTH = 3;
+
     /**
      * Equivalent to createEDIReader(source, debugging=false)
      *
@@ -150,5 +152,4 @@ public abstract class EDIReaderFactory {
         return parser;
     }
 
-    private static final int PEEK_LENGTH = 22;
 }

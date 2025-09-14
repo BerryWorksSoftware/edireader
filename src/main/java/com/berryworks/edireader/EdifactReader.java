@@ -21,6 +21,7 @@
 package com.berryworks.edireader;
 
 import com.berryworks.edireader.error.ErrorMessages;
+import com.berryworks.edireader.tokenizer.EDITokenizer;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import org.slf4j.Logger;
@@ -208,18 +209,18 @@ public class EdifactReader extends StandardReader {
     protected void remainderOfUNB() throws IOException, EDISyntaxException {
 
         if (hitEndOfSegment(getXMLTags().getRecipientReference())
-                || hitEndOfSegment(getXMLTags().getApplicationReference())
-                || hitEndOfSegment(getXMLTags().getProcessingPriority())
-                || hitEndOfSegment(getXMLTags().getAcknowledgementRequest())
-                || hitEndOfSegment(getXMLTags().getInterchangeAgreementIdentifier())
-                || hitEndOfSegment(getXMLTags().getTestIndicator()))
+            || hitEndOfSegment(getXMLTags().getApplicationReference())
+            || hitEndOfSegment(getXMLTags().getProcessingPriority())
+            || hitEndOfSegment(getXMLTags().getAcknowledgementRequest())
+            || hitEndOfSegment(getXMLTags().getInterchangeAgreementIdentifier())
+            || hitEndOfSegment(getXMLTags().getTestIndicator()))
             return;
 
         while (getTokenizer().nextToken().getType() != Token.TokenType.SEGMENT_END) {
             if (getTokenizer().getElementInSegmentCount() > ELEMENTS_IN_UNB_MAXIMUM) {
                 EDISyntaxException se = new EDISyntaxException("Too many ("
-                        + getTokenizer().getElementInSegmentCount()
-                        + ") elements for a UNB. Segment terminator problem?",
+                                                               + getTokenizer().getElementInSegmentCount()
+                                                               + ") elements for a UNB. Segment terminator problem?",
                         getTokenizer());
                 logger.warn(se.getMessage());
                 throw se;
@@ -531,7 +532,7 @@ public class EdifactReader extends StandardReader {
      */
     @Override
     public void preview() throws EDISyntaxException, IOException {
-        char[] buf = getTokenizer().lookahead(128);
+        char[] buf = getTokenizer().lookahead(PREVIEW_LENGTH);
 
         if (!(buf[0] == 'U' && buf[1] == 'N')) {
             EDISyntaxException se = new EDISyntaxException("EDIFACT interchange must begin with UN");
@@ -603,7 +604,7 @@ public class EdifactReader extends StandardReader {
         }
 
         if (releaseDetermined && subDelimiterDetermined && delimiterDetermined
-                && terminatorDetermined && terminatorSuffixDetermined) {
+            && terminatorDetermined && terminatorSuffixDetermined) {
             // We have everything we need; don't bother looking at UNB.
         } else {
             previewUNB(buf, delimiterDetermined, subDelimiterDetermined,
@@ -658,28 +659,51 @@ public class EdifactReader extends StandardReader {
             throw se;
         }
 
+        Charset designatedCharset;
+        InputSource inputSource;
+        InputStream byteStream;
+        String msg;
+
+        inputSource = getInputSource();
+        if (inputSource == null) {
+            msg = "EDIFACT parser must have an InputSource.";
+            EDISyntaxException se = new EDISyntaxException(msg);
+            logger.warn(se.getMessage());
+            throw se;
+        }
+
         char syntaxIdentifier = buf[7];
         switch (syntaxIdentifier) {
-            case 'E':
-                Charset designatedCharset = Charset.forName("ISO-8859-5");
-                System.out.println("selected Charset " + designatedCharset);
-                InputSource inputSource = getInputSource();
-                String msg = "EDIFACT parser with UNB+UNOE must be created with a byte stream InputSource.";
-                if (inputSource == null) {
+            case 'A': // UNOA
+                byteStream = inputSource.getByteStream();
+                if (byteStream == null) {
+                    // We already have a character stream and a Reader ready to use.
+                    setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
+                    break;
+                } else {
+                    // We have a byte stream that needs to be decoded as ISO-8859-1.
+                    // The preview was already decoded.
+                    designatedCharset = Charset.forName("ISO-8859-1");
+                    Reader replacementReader = new InputStreamReader(byteStream, designatedCharset);
+                    char[] preRead = getPreviewString().toCharArray();
+                    EDITokenizer newTokenizer = new EDITokenizer(replacementReader, preRead);
+                    setInputReader(replacementReader);
+                    setTokenizer(newTokenizer);
+                }
+            case 'E': // UNOE
+                designatedCharset = Charset.forName("ISO-8859-5");
+                byteStream = inputSource.getByteStream();
+                if (byteStream == null) {
+                    msg = "EDIFACT parser with UNB+UNOE must be created with a byte stream InputSource.";
                     EDISyntaxException se = new EDISyntaxException(msg);
                     logger.warn(se.getMessage());
                     throw se;
-                } else {
-                    InputStream byteStream = inputSource.getByteStream();
-                    if (byteStream == null) {
-                        EDISyntaxException se = new EDISyntaxException(msg);
-                        logger.warn(se.getMessage());
-                        throw se;
-                    }
-                    Reader replacementReader = new InputStreamReader(byteStream, designatedCharset);
-                    setInputReader(replacementReader);
-                    getTokenizer().setReader(replacementReader);
                 }
+                Reader replacementReader = new InputStreamReader(byteStream, designatedCharset);
+                char[] preRead = getPreviewString().toCharArray();
+                EDITokenizer newTokenizer = new EDITokenizer(replacementReader, preRead);
+                setInputReader(replacementReader);
+                setTokenizer(newTokenizer);
                 setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
                 break;
             case 'B':
@@ -776,5 +800,4 @@ public class EdifactReader extends StandardReader {
     public boolean isUNA() {
         return witnessedUNA;
     }
-
 }

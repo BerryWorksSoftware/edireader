@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2025 by BerryWorks Software. All rights reserved.
  */
 package com.berryworks.edireader.tokenizer;
 
@@ -781,7 +781,7 @@ public class EDITokenizerTest {
     /**
      * Test the use of a release character. The term "release character" here
      * refers specifically to a single character that hides nay special meaning
-     * of the character immediately follow. This is the sytle used in EDIFACT.
+     * of the character immediately follow.
      *
      * @throws Exception DOCUMENT ME!
      */
@@ -1770,7 +1770,7 @@ public class EDITokenizerTest {
     }
 
     @Test
-    public void testGetBufferred() throws Exception {
+    public void testGetBuffered() throws Exception {
 
         tokenizer = new EDITokenizer(new StringReader("abcdefghijklmnopqrstuvwxyz"));
 
@@ -1779,16 +1779,17 @@ public class EDITokenizerTest {
         // Nothing has been read, so nothing is buffered
         assertEquals(0, returnValue.length);
 
-        // Look ahead at the next 10 chars
+        // Look ahead at the next 10 chars. A full buffer is read even though we are only going to peek at the first 10.
         char[] lookahead = tokenizer.lookahead(10);
         assertEquals(10, lookahead.length);
         assertEquals('a', lookahead[0]);
         assertEquals('j', lookahead[9]);
 
-        // Now the entire 26 letter sequence has been buffered
+        // The entire 26 letter sequence has been buffered
         returnValue = tokenizer.getBuffered();
         assertEquals(26, returnValue.length);
         assertEquals('a', returnValue[0]);
+        assertEquals('z', returnValue[25]);
 
         // Consume a few chars of the input
         char[] consumed = tokenizer.getChars(5);
@@ -1820,11 +1821,15 @@ public class EDITokenizerTest {
         // We've read all the data, but have not actually hit the eof
         assertFalse(tokenizer.isEndOfData());
 
-        // Unget a char, then get it again
+        // Unget a char, ...
         tokenizer.ungetChar();
         returnValue = tokenizer.getBuffered();
         assertEquals(1, returnValue.length);
         assertEquals('z', returnValue[0]);
+        returnValue = tokenizer.getBuffered();
+        assertEquals(1, returnValue.length);
+        assertFalse(tokenizer.isEndOfData());
+        // ... and then get it again
         char[] chars = tokenizer.getChars(1);
         assertEquals(1, chars.length);
         assertEquals('z', chars[0]);
@@ -1851,9 +1856,7 @@ public class EDITokenizerTest {
             tokenizer.getChars(1);
             fail("");
         } catch (EDISyntaxException ignore) {
-
         }
-
     }
 
     @Test

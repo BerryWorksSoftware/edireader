@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class EdifactEncodingTest {
 
@@ -26,6 +27,8 @@ public class EdifactEncodingTest {
 
     @Test
     public void baseline() throws IOException, SAXException {
+        // This is a traditional UNB+UNOA scenario where the parser is provided a String of characters.
+        // The characters are already decoded.
         StringReader reader = new StringReader(EDIFACT_UNOA);
         ediReader = EDIReaderFactory.createEDIReader(reader);
         ediReader.setContentHandler(handler);
@@ -45,8 +48,8 @@ public class EdifactEncodingTest {
 
     @Test
     public void baseline_asByteStream() throws IOException, SAXException {
+        // We have a traditional UNB+UNOA scenario where the parser is provided a byte stream.
         InputStream inputStream = new ByteArrayInputStream(EDIFACT_UNOA.getBytes(StandardCharsets.UTF_8));
-        Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         ediReader = EDIReaderFactory.createEDIReader(new InputSource(inputStream));
         ediReader.setContentHandler(handler);
         ediReader.parse();
@@ -54,12 +57,13 @@ public class EdifactEncodingTest {
     }
 
     @Test
-    public void unoE() throws IOException, SAXException {
-        StringReader reader = new StringReader(EDIFACT_UNOE);
-        ediReader = EDIReaderFactory.createEDIReader(reader);
-        ediReader.setContentHandler(handler);
-        ediReader.parse();
-        assertEquals("Рыба текст", handler.getNad04());
+    public void requiresByteStream() throws IOException, SAXException {
+        try {
+            EDIReaderFactory.createEDIReader(new StringReader(EDIFACT_UNOE));
+            fail("Expected EDISyntaxException not thrown");
+        } catch (EDISyntaxException e) {
+            assertEquals("EDIFACT parser with UNB+UNOE must be created with a byte stream InputSource.", e.getMessage());
+        }
     }
 
 //    @Ignore
@@ -68,7 +72,6 @@ public class EdifactEncodingTest {
         byte[] bytes = EDIFACT_UNOE.getBytes(ISO_8859_5);
         InputStream inputStream = new ByteArrayInputStream(bytes);
         System.out.println("Input has " + EDIFACT_UNOE.length() + " characters and " + bytes.length + " bytes");
-        Reader reader = new InputStreamReader(inputStream, StandardCharsets.ISO_8859_1);
         InputSource inputSource = new InputSource(inputStream);
         ediReader = EDIReaderFactory.createEDIReader(inputSource);
         ediReader.setContentHandler(handler);
@@ -100,7 +103,6 @@ public class EdifactEncodingTest {
                            remainder.substring(0, 50) + " ... " + suffix);
         System.out.println("available bytes: " + inputStream.available());
     }
-
 
     private static final String EDIFACT_UNOA = """
             UNB+UNOA:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'

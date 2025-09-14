@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2025 by BerryWorks Software. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -20,12 +20,8 @@
 
 package com.berryworks.edireader.tokenizer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.Reader;
-import java.lang.invoke.MethodHandles;
 import java.nio.Buffer;
 import java.nio.CharBuffer;
 
@@ -39,14 +35,12 @@ import java.nio.CharBuffer;
  * This implementation of Tokenizer uses CharBuffer instead of char[].
  */
 public class EDITokenizer extends AbstractTokenizer {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     public static final int BUFFER_SIZE = 1000;
     private final CharBuffer charBuffer = CharBuffer.wrap(new char[BUFFER_SIZE]);
 
     public EDITokenizer(Reader source) {
         super(source);
         ((Buffer) charBuffer).flip();
-//        logger.debug("Constructed a new EDITokenizer");
     }
 
     public EDITokenizer(Reader source, char[] preRead) {
@@ -56,29 +50,10 @@ public class EDITokenizer extends AbstractTokenizer {
 
         if (preRead.length > charBuffer.capacity())
             throw new RuntimeException("Attempt to create EDITokenizer with " + preRead.length +
-                    " pre-read chars, which is greater than the internal buffer size of " + charBuffer.capacity());
+                                       " pre-read chars, which is greater than the internal buffer size of " + charBuffer.capacity());
         ((Buffer) charBuffer).clear();
         charBuffer.put(preRead);
         ((Buffer) charBuffer).flip();
-    }
-
-    /**
-     * Returns a String representation of the current state of the tokenizer
-     * for testing and debugging purposes.
-     *
-     * @return String representation
-     */
-    @Override
-    public String toString() {
-        String result = "tokenizer state:";
-        result += " segmentCount=" + segmentCount;
-        result += " charCount=" + charCount;
-        result += " segTokenCount=" + segTokenCount;
-        result += " segCharCount=" + segCharCount;
-        result += " currentToken=" + currentToken;
-        result += " buffer.limit=" + charBuffer.limit();
-        result += " buffer.position=" + charBuffer.position();
-        return result;
     }
 
     /**
@@ -137,6 +112,25 @@ public class EDITokenizer extends AbstractTokenizer {
     }
 
     /**
+     * Returns a String representation of the current state of the tokenizer
+     * for testing and debugging purposes.
+     *
+     * @return String representation
+     */
+    @Override
+    public String toString() {
+        String result = "tokenizer state:";
+        result += " segmentCount=" + segmentCount;
+        result += " charCount=" + charCount;
+        result += " segTokenCount=" + segTokenCount;
+        result += " segCharCount=" + segCharCount;
+        result += " currentToken=" + currentToken;
+        result += " buffer.limit=" + charBuffer.limit();
+        result += " buffer.position=" + charBuffer.position();
+        return result;
+    }
+
+    /**
      * Gets the remaining chars that have been read into the buffer
      * and not returned by getChars(n) or equivalant. Chars previewed
      * by lookahead(n) are not considered to have been used and therefore
@@ -182,7 +176,9 @@ public class EDITokenizer extends AbstractTokenizer {
      * @throws IOException for problem reading EDI data
      */
     public char[] lookahead(int n) throws IOException {
-//        logger.debug("EDITokenizer.lookahead({})", n);
+        if (n > BUFFER_SIZE) {
+            throw new IllegalArgumentException("Attempt to lookahead(" + n + ") which exceeds the buffer size of " + BUFFER_SIZE);
+        }
         char[] rval = new char[n];
 
         // The 1st char is grabbed using the tokenizer's built-in getChar() / ungetChar() mechanism.
@@ -213,10 +209,8 @@ public class EDITokenizer extends AbstractTokenizer {
 
     private void readUntilBufferProvidesAtLeast(int needed) throws IOException {
 
-        int remaining;
-        while ((remaining = charBuffer.remaining()) < needed) {
-//            logger.debug("Reading from input stream because at least {} chars are needed and only {} are available",
-//                    needed, remaining);
+        while (charBuffer.remaining() < needed) {
+            // Read from input stream because the number chars needed exceeds available,
             charBuffer.compact();
             int n;
             while ((n = inputReader.read(charBuffer)) == 0) {
@@ -224,11 +218,9 @@ public class EDITokenizer extends AbstractTokenizer {
             ((Buffer) charBuffer).flip();
 
             if (n < 0) {
-//                logger.debug("Hit end of file on the input stream");
+                // Hit end of file on the input stream
                 endOfFile = true;
                 break;
-            } else {
-//                logger.debug("Number of chars read from input stream: {}", n);
             }
         }
     }

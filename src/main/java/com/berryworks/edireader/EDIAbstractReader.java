@@ -37,11 +37,17 @@ import java.util.Locale;
 public abstract class EDIAbstractReader implements XMLReader {
 
     protected static final String BERRYWORKS_NAMESPACE = "http://www.berryworkssoftware.com/2008/edireader";
+    public static final int PREVIEW_LENGTH = 128;
 
     /**
      * The ContentHandler for this XMLReader
      */
     private ContentHandler contentHandler;
+
+    /**
+     * The first PREVIEW_LENGTH bytes of the EDI input, read during
+     */
+    private static String previewString;
 
     /**
      * The tokenizer used by this EDIAbstractReader
@@ -347,14 +353,25 @@ public abstract class EDIAbstractReader implements XMLReader {
         if (source == null)
             throw new IOException("createReader called with null InputSource");
 
-        // first try to establish inputReader from the InputSource's CharacterStream
+        // We expect the InputSource to provide either a character stream or a byte stream.
         theReader = source.getCharacterStream();
         if (theReader == null) {
             InputStream inputStream = source.getByteStream();
-            if (inputStream != null)
-                // establish inputReader from a ByteStream
-                theReader = new InputStreamReader(inputStream);
-            else {
+            if (inputStream != null) {
+                // We have a byte stream. Read PREVIEW_LENGTH bytes to String with ISO-8859-1 encoding,
+                // and be prepared to create a Reader using a different character set depending on what we see in the UNB.
+                byte[] previewBytes = new byte[PREVIEW_LENGTH];
+                try {
+                    int read = inputStream.read(previewBytes);
+                    if (read == -1)
+                        throw new IOException("No bytes available from InputSource ByteStream");
+                } catch (IOException e) {
+                    throw new IOException("Problem reading from InputSource ByteStream: " + e.getMessage());
+                }
+                previewString = new String(previewBytes, "ISO-8859-1");
+
+                theReader = new StringReader(previewString);
+            } else {
                 String systemId = source.getSystemId();
                 if (systemId != null) {
                     // try to establish inputReader using the SystemId
@@ -364,13 +381,15 @@ public abstract class EDIAbstractReader implements XMLReader {
                     else
                         // some kind of URL not yet supported
                         throw new IOException("InputSource using SystemId ("
-                                + systemId + ") not yet supported");
+                                              + systemId + ") not yet supported");
                 } else
                     // getCharacterStream(), getByteStream(), and
                     // getSystemId() all return null
                     throw new IOException(
                             "Cannot get ByteStream, CharacterStream, or SystemId from EDI InputSource");
             }
+        } else {
+            // We have a character stream.
         }
 
         return theReader;
@@ -552,6 +571,10 @@ public abstract class EDIAbstractReader implements XMLReader {
         this.inputSource = inputSource;
     }
 
+    public static String getPreviewString() {
+        return previewString;
+    }
+
     public void setContentHandler(ContentHandler handler) {
         contentHandler = handler;
     }
@@ -642,14 +665,14 @@ public abstract class EDIAbstractReader implements XMLReader {
     public String toString() {
         String lineBreak = System.getProperty("line.separator");
         return lineBreak + "EDIReader summary:" + lineBreak +
-                " class: " + getClass().getName() + lineBreak +
-                " delimiter: " + getDelimiter() + lineBreak +
-                " subDelimiter: " + getSubDelimiter() + lineBreak +
-                " subSubDelimiter: " + getSubSubDelimiter() + lineBreak +
-                " repetitionSeparator: " + getRepetitionSeparator() + lineBreak +
-                " terminator: " + getTerminator() + lineBreak +
-                " terminatorSuffix: " + getTerminatorSuffix() + lineBreak +
-                " charCount: " + getCharCount() + lineBreak +
-                " segmentCharCount: " + getSegmentCharCount() + lineBreak;
+               " class: " + getClass().getName() + lineBreak +
+               " delimiter: " + getDelimiter() + lineBreak +
+               " subDelimiter: " + getSubDelimiter() + lineBreak +
+               " subSubDelimiter: " + getSubSubDelimiter() + lineBreak +
+               " repetitionSeparator: " + getRepetitionSeparator() + lineBreak +
+               " terminator: " + getTerminator() + lineBreak +
+               " terminatorSuffix: " + getTerminatorSuffix() + lineBreak +
+               " charCount: " + getCharCount() + lineBreak +
+               " segmentCharCount: " + getSegmentCharCount() + lineBreak;
     }
 }
