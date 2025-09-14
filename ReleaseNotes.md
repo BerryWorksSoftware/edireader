@@ -2,12 +2,11 @@
 
 ### 5.9.0 - ???
 
-* Feature: As an alternative to parse(Reader), provide a parse() that uses a previously selected
-  when the EDIReader instance was created. This can simplify things a bit, but more importantly allows
-  for the possibility of switching character encodings while an EDIReader is being created in response
-  to inspection of the input data.
-* Feature: When parsing EDiFACT, choose the character set encoding based on the value of UNB02, if present.
-  If UNB02 is absent or does not indicate a known character set, default to UTF-8.
+* Feature: When parsing EDIFACT, choose the character set encoding based on the value of UNB-2.
+  For example, UNB+UNOE indicates that ISO-8859-5 (Cyrillic) is to be used.
+* Maintenance: In support of the new feature where the character set may be selected by inspecting
+  an initial portion of the EDI input, refactoring was done in how an EDI stream is previewed.
+  All of the changes are expected to be fully backward compatible.
 
 ### 5.8.5 - June 16, 2025
 
