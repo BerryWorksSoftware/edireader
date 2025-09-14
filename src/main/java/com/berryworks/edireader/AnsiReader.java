@@ -24,6 +24,7 @@ import com.berryworks.edireader.error.ISA16SubElementDelimiterException;
 import com.berryworks.edireader.error.ISAFixedLengthException;
 import com.berryworks.edireader.error.MissingMandatoryElementException;
 import com.berryworks.edireader.error.RecoverableSyntaxException;
+import com.berryworks.edireader.tokenizer.EDITokenizer;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.util.ContentHandlerBase64Encoder;
 import com.berryworks.edireader.util.FixedLength;
@@ -31,10 +32,15 @@ import com.berryworks.edireader.util.sax.QueuedContentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_END;
 import static com.berryworks.edireader.tokenizer.Token.TokenType.SEGMENT_START;
@@ -627,8 +633,8 @@ public class AnsiReader extends StandardReader {
         // No release character is supported for ANSI X.12
         setRelease(-1);
 
-        char[] buf = getTokenizer().lookahead(128);
-        if ((buf == null) || (buf.length < 128)) {
+        char[] buf = getTokenizer().lookahead(PREVIEW_LENGTH);
+        if ((buf == null) || (buf.length < PREVIEW_LENGTH)) {
             logger.warn(INCOMPLETE_X12);
             throw new EDISyntaxException(INCOMPLETE_X12);
         }
@@ -687,6 +693,23 @@ public class AnsiReader extends StandardReader {
         }
 
         setFirstSegment(new String(buf, 0, indexOf16thFieldSeparator + 3));
+
+        InputSource inputSource = getInputSource();
+        if (inputSource == null) {
+            String msg = "X12 parser must have an InputSource.";
+            EDISyntaxException se = new EDISyntaxException(msg);
+            logger.warn(se.getMessage());
+            throw se;
+        }
+        InputStream byteStream = inputSource.getByteStream();
+        if (byteStream != null) {
+            // The parser was created using a byte stream.
+            Reader replacementReader = new InputStreamReader(byteStream, StandardCharsets.UTF_8);
+            char[] preRead = getPreviewString().toCharArray();
+            EDITokenizer newTokenizer = new EDITokenizer(replacementReader, preRead);
+            setInputReader(replacementReader);
+            setTokenizer(newTokenizer);
+        }
 
         setPreviewed(true);
     }
