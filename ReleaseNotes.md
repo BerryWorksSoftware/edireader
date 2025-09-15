@@ -1,7 +1,9 @@
 # Release Notes
 
 ### To DO
-* Handle UNOB, UNOC, etc. in EDIFACT UNB segment.
+* Handle UNOC, UNOD in EDIFACT UNB segment.
+* Handle UNOB. Is the legacy code correct?
+* Consider what, if anything, to do with the <digit> in UNB+UNO<letter>:<digit>
 
 ### 5.9.0 - ???
 

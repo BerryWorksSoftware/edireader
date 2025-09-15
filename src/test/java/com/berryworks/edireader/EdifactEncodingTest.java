@@ -88,6 +88,8 @@ public class EdifactEncodingTest {
         testEdifactFile("tiny-UNOE.edi");
         testEdifactFile("tiny-withUNA-UNOE.edi");
         testEdifactFile("tiny-syntaxVariants-UNOE.edi");
+        testEdifactFile("ORDERS-D01B-UNOC.edi");
+        testEdifactFile("ORDERS-D01B-UNOD.edi");
         testEdifactFile("ORDERS-D01B-UNOE.edi");
     }
 
