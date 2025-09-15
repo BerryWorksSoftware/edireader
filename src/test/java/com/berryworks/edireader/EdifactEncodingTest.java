@@ -83,9 +83,11 @@ public class EdifactEncodingTest {
     @Test
     public void testEdifactFiles() throws URISyntaxException, IOException, SAXException {
         testEdifactFile("tiny-UNOA.edi");
-        testEdifactFile("tiny-UNOE.edi");
         testEdifactFile("tiny-withUNA-UNOA.edi");
+        testEdifactFile("tiny-syntaxVariants-UNOA.edi");
+        testEdifactFile("tiny-UNOE.edi");
         testEdifactFile("tiny-withUNA-UNOE.edi");
+        testEdifactFile("tiny-syntaxVariants-UNOE.edi");
         testEdifactFile("ORDERS-D01B-UNOE.edi");
     }
 

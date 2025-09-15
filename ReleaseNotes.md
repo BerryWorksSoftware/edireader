@@ -1,5 +1,8 @@
 # Release Notes
 
+### To DO
+* Handle UNOB, UNOC, etc. in EDIFACT UNB segment.
+
 ### 5.9.0 - ???
 
 * Feature: When parsing EDIFACT, choose the character set encoding based on the value of UNB-2.
