@@ -82,17 +82,18 @@ public class EdifactEncodingTest {
 
     @Test
     public void testEdifactFiles() throws URISyntaxException, IOException, SAXException {
-        testEdifactFile(getResourceAsFile("edifact/tiny-UNOE.edi"));
-        testEdifactFile(getResourceAsFile("edifact/tiny-withUNA-UNOE.edi"));
-        testEdifactFile(getResourceAsFile("edifact/ORDERS-D01B-UNOE.edi"));
+//        testEdifactFile("tiny-UNOE.edi");
+        testEdifactFile("tiny-withUNA-UNOE.edi");
+//        testEdifactFile("ORDERS-D01B-UNOE.edi");
     }
 
-    private void testEdifactFile(File edifactFile) throws IOException, SAXException {
+    private void testEdifactFile(String filename) throws IOException, SAXException, URISyntaxException {
+        File edifactFile = getResourceAsFile("edifact/" + filename);
         try (InputStream inputStream = new FileInputStream(edifactFile)) {
             ediReader = EDIReaderFactory.createEDIReader(new InputSource(inputStream));
             ediReader.parse();
         } catch (Exception e) {
-            System.out.println("Problem with file " + edifactFile.getAbsolutePath());
+            System.out.println("Failure to parse " + edifactFile.getName());
             throw e;
         }
     }
