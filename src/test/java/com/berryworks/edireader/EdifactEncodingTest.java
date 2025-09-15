@@ -8,9 +8,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import static com.berryworks.edireader.util.ResourceUtil.getResourceAsFile;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -66,7 +68,6 @@ public class EdifactEncodingTest {
         }
     }
 
-//    @Ignore
     @Test
     public void unoE_asBytes() throws IOException, SAXException {
         byte[] bytes = EDIFACT_UNOE.getBytes(ISO_8859_5);
@@ -77,6 +78,23 @@ public class EdifactEncodingTest {
         ediReader.setContentHandler(handler);
         ediReader.parse();
         assertEquals("Рыба текст", handler.getNad04());
+    }
+
+    @Test
+    public void testEdifactFiles() throws URISyntaxException, IOException, SAXException {
+        testEdifactFile(getResourceAsFile("edifact/tiny-UNOE.edi"));
+        testEdifactFile(getResourceAsFile("edifact/tiny-withUNA-UNOE.edi"));
+        testEdifactFile(getResourceAsFile("edifact/ORDERS-D01B-UNOE.edi"));
+    }
+
+    private void testEdifactFile(File edifactFile) throws IOException, SAXException {
+        try (InputStream inputStream = new FileInputStream(edifactFile)) {
+            ediReader = EDIReaderFactory.createEDIReader(new InputSource(inputStream));
+            ediReader.parse();
+        } catch (Exception e) {
+            System.out.println("Problem with file " + edifactFile.getAbsolutePath());
+            throw e;
+        }
     }
 
     @Test
