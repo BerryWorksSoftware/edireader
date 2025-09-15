@@ -597,20 +597,13 @@ public class EdifactReader extends StandardReader {
                 setRepetitionSeparator(buf[7]);
             }
             setTerminator(buf[8]);
-
             terminatorDetermined = true;
-
             terminatorSuffixDetermined = shiftUNBoverUNA(buf);
         }
 
-        if (releaseDetermined && subDelimiterDetermined && delimiterDetermined
-            && terminatorDetermined && terminatorSuffixDetermined) {
-            // We have everything we need; don't bother looking at UNB.
-        } else {
-            previewUNB(buf, delimiterDetermined, subDelimiterDetermined,
-                    decimalMarkDetermined, releaseDetermined,
-                    terminatorDetermined, terminatorSuffixDetermined);
-        }
+        previewUNB(buf, delimiterDetermined, subDelimiterDetermined,
+                decimalMarkDetermined, releaseDetermined,
+                terminatorDetermined, terminatorSuffixDetermined);
         setPreviewed(true);
     }
 
@@ -635,13 +628,11 @@ public class EdifactReader extends StandardReader {
                 break;
             }
             setTerminatorSuffix(getTerminatorSuffix() + buf[j]);
-            // trace("...appended buf[" + j + "] to suffix");
             terminatorSuffixDetermined = true;
         }
         for (int j = 0; j < buf.length - nShift; j++) {
             buf[j] = buf[j + nShift];
         }
-        // trace("Shifted buffer " + nShift + " chars to examine UNB");
         return terminatorSuffixDetermined;
     }
 
