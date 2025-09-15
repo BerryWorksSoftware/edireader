@@ -684,52 +684,16 @@ public class EdifactReader extends StandardReader {
                     setInputReader(replacementReader);
                     setTokenizer(newTokenizer);
                 }
-            case 'C': // UNOC
-                designatedCharset = Charset.forName("ISO-8859-5");
-                byteStream = inputSource.getByteStream();
-                if (byteStream == null) {
-                    msg = "EDIFACT parser with UNB+UNOE must be created with a byte stream InputSource.";
-                    EDISyntaxException se = new EDISyntaxException(msg);
-                    logger.warn(se.getMessage());
-                    throw se;
-                }
-                replacementReader = new InputStreamReader(byteStream, designatedCharset);
-                preRead = getPreviewString().toCharArray();
-                newTokenizer = new EDITokenizer(replacementReader, preRead);
-                setInputReader(replacementReader);
-                setTokenizer(newTokenizer);
+            case 'C':
+                changeCharSet(syntaxIdentifier, "ISO-8859-1", inputSource);
                 setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
                 break;
-            case 'D': // UNOD
-                designatedCharset = Charset.forName("ISO-8859-2");
-                byteStream = inputSource.getByteStream();
-                if (byteStream == null) {
-                    msg = "EDIFACT parser with UNB+UNOD must be created with a byte stream InputSource.";
-                    EDISyntaxException se = new EDISyntaxException(msg);
-                    logger.warn(se.getMessage());
-                    throw se;
-                }
-                replacementReader = new InputStreamReader(byteStream, designatedCharset);
-                preRead = getPreviewString().toCharArray();
-                newTokenizer = new EDITokenizer(replacementReader, preRead);
-                setInputReader(replacementReader);
-                setTokenizer(newTokenizer);
+            case 'D':
+                changeCharSet(syntaxIdentifier, "ISO-8859-2", inputSource);
                 setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
                 break;
-            case 'E': // UNOE
-                designatedCharset = Charset.forName("ISO-8859-5");
-                byteStream = inputSource.getByteStream();
-                if (byteStream == null) {
-                    msg = "EDIFACT parser with UNB+UNOE must be created with a byte stream InputSource.";
-                    EDISyntaxException se = new EDISyntaxException(msg);
-                    logger.warn(se.getMessage());
-                    throw se;
-                }
-                replacementReader = new InputStreamReader(byteStream, designatedCharset);
-                preRead = getPreviewString().toCharArray();
-                newTokenizer = new EDITokenizer(replacementReader, preRead);
-                setInputReader(replacementReader);
-                setTokenizer(newTokenizer);
+            case 'E':
+                changeCharSet(syntaxIdentifier, "ISO-8859-5", inputSource);
                 setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
                 break;
             case 'B':
@@ -776,6 +740,28 @@ public class EdifactReader extends StandardReader {
             // segment terminator, and then note suffix characters
             // following.
             setTerminatorSuffix(scanForSuffix(buf, 3));
+    }
+
+    private void changeCharSet(char letter, String charSetName, InputSource inputSource) throws EDISyntaxException {
+        String msg;
+        char[] preRead;
+        Reader replacementReader;
+        EDITokenizer newTokenizer;
+        Charset designatedCharset;
+        InputStream byteStream;
+        designatedCharset = Charset.forName(charSetName);
+        byteStream = inputSource.getByteStream();
+        if (byteStream == null) {
+            msg = "EDIFACT parser with UNB+UNO" + letter + " must be created with a byte stream InputSource.";
+            EDISyntaxException se = new EDISyntaxException(msg);
+            logger.warn(se.getMessage());
+            throw se;
+        }
+        replacementReader = new InputStreamReader(byteStream, designatedCharset);
+        preRead = getPreviewString().toCharArray();
+        newTokenizer = new EDITokenizer(replacementReader, preRead);
+        setInputReader(replacementReader);
+        setTokenizer(newTokenizer);
     }
 
     private void setSyntaxCharacters(char[] buf, boolean delimiterDetermined, boolean subDelimiterDetermined, boolean decimalMarkDetermined, boolean releaseDetermined, boolean terminatorDetermined, char syntaxIdentifier) throws EDISyntaxException {

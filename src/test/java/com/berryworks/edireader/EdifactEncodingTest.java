@@ -13,11 +13,13 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import static com.berryworks.edireader.util.ResourceUtil.getResourceAsFile;
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class EdifactEncodingTest {
 
+    public static final Charset ISO_8859_2 = Charset.forName("ISO-8859-2");
     public static final Charset ISO_8859_5 = Charset.forName("ISO-8859-5");
     private EDIReader ediReader;
     private MyContentHandler handler;
@@ -69,6 +71,30 @@ public class EdifactEncodingTest {
     }
 
     @Test
+    public void unoC_asBytes() throws IOException, SAXException {
+        byte[] bytes = EDIFACT_UNOC.getBytes(ISO_8859_1);
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        System.out.println("Input has " + EDIFACT_UNOC.length() + " characters and " + bytes.length + " bytes");
+        InputSource inputSource = new InputSource(inputStream);
+        ediReader = EDIReaderFactory.createEDIReader(inputSource);
+        ediReader.setContentHandler(handler);
+        ediReader.parse();
+        assertEquals("Lörém ïpsü", handler.getNad04());
+    }
+
+    @Test
+    public void unoD_asBytes() throws IOException, SAXException {
+        byte[] bytes = EDIFACT_UNOD.getBytes(ISO_8859_2);
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        System.out.println("Input has " + EDIFACT_UNOD.length() + " characters and " + bytes.length + " bytes");
+        InputSource inputSource = new InputSource(inputStream);
+        ediReader = EDIReaderFactory.createEDIReader(inputSource);
+        ediReader.setContentHandler(handler);
+        ediReader.parse();
+        assertEquals("Lořem ípšum dołoř šít ámet", handler.getNad04());
+    }
+
+    @Test
     public void unoE_asBytes() throws IOException, SAXException {
         byte[] bytes = EDIFACT_UNOE.getBytes(ISO_8859_5);
         InputStream inputStream = new ByteArrayInputStream(bytes);
@@ -115,7 +141,7 @@ public class EdifactEncodingTest {
         // Read a few bytes directly from the InputStream, and interpret them as ISO-8859-1
         byte[] prefixBytes = new byte[10];
         int bytesRead = inputStream.read(prefixBytes);
-        String prefixString = new String(prefixBytes, 0, bytesRead, StandardCharsets.ISO_8859_1);
+        String prefixString = new String(prefixBytes, 0, bytesRead, ISO_8859_1);
         System.out.println("Prefix read as ISO-8859-1: " + prefixString);
         System.out.println("available bytes: " + inputStream.available());
 
@@ -135,6 +161,24 @@ public class EdifactEncodingTest {
             UNH+00000000000117+INVOIC:D:97B:UN'
             BGM+380+342459+9'
             NAD+SE+005435656::16++GENERAL WIDGET COMPANY'
+            UNT+4+00000000000117'
+            UNZ+1+00000000000778'
+            """;
+
+    private static final String EDIFACT_UNOC = """
+            UNB+UNOC:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'
+            UNH+00000000000117+INVOIC:D:97B:UN'
+            BGM+380+342459+9'
+            NAD+SE+005435656::16++Lörém ïpsü'
+            UNT+4+00000000000117'
+            UNZ+1+00000000000778'
+            """;
+
+    private static final String EDIFACT_UNOD = """
+            UNB+UNOD:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'
+            UNH+00000000000117+INVOIC:D:97B:UN'
+            BGM+380+342459+9'
+            NAD+SE+005435656::16++Lořem ípšum dołoř šít ámet'
             UNT+4+00000000000117'
             UNZ+1+00000000000778'
             """;
