@@ -3,7 +3,7 @@
 ### To DO
 * Handle UNOC, UNOD in EDIFACT UNB segment.
 * Handle UNOB. Is the legacy code correct?
-* Consider what, if anything, to do with the <digit> in UNB+UNO<letter>:<digit>
+* What about Interchanges? Can it use a byte stream?
 
 ### 5.9.0 - ???
 

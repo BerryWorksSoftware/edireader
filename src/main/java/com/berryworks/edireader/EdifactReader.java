@@ -35,6 +35,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.berryworks.edireader.util.FixedLength.emptyIfNull;
@@ -650,7 +651,6 @@ public class EdifactReader extends StandardReader {
             throw se;
         }
 
-        Charset designatedCharset;
         InputSource inputSource;
         InputStream byteStream;
         String msg;
@@ -668,7 +668,9 @@ public class EdifactReader extends StandardReader {
         char[] preRead;
         char syntaxIdentifier = buf[7];
         switch (syntaxIdentifier) {
-            case 'A': // UNOA
+            case 'A':
+            case 'B':
+            case 'C':
                 byteStream = inputSource.getByteStream();
                 if (byteStream == null) {
                     // We already have a character stream and a Reader ready to use.
@@ -677,61 +679,21 @@ public class EdifactReader extends StandardReader {
                 } else {
                     // We have a byte stream that needs to be decoded as ISO-8859-1.
                     // The preview was already decoded.
-                    designatedCharset = Charset.forName("ISO-8859-1");
-                    replacementReader = new InputStreamReader(byteStream, designatedCharset);
+                    replacementReader = new InputStreamReader(byteStream, StandardCharsets.ISO_8859_1);
                     preRead = getPreviewString().toCharArray();
                     newTokenizer = new EDITokenizer(replacementReader, preRead);
                     setInputReader(replacementReader);
                     setTokenizer(newTokenizer);
                 }
-            case 'C':
-                changeCharSet(syntaxIdentifier, "ISO-8859-1", inputSource);
-                setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
                 break;
             case 'D':
                 changeCharSet(syntaxIdentifier, "ISO-8859-2", inputSource);
-                setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
                 break;
             case 'E':
                 changeCharSet(syntaxIdentifier, "ISO-8859-5", inputSource);
-                setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
-                break;
-            case 'B':
-                if (!delimiterDetermined && buf[3] == '+') {
-                    // Strange data. It seems that there was no UNA to determine the syntax characters, and
-                    // the UNB segment looked like UNB:UNOB+....
-                    // The B in UNOB says that the syntax characters are supposed to be hex !D, 1F, and 1C,
-                    // but actual delimiter appears to be a +. Which one should we believe?
-                    // Let's believe the actual data for the delimiter, and guess that if the delimiter is a +
-                    // then the other two will be the values that traditionally go with a +. We achieve this
-                    // by simply falling through this case.
-                } else {
-
-                    if (!delimiterDetermined) {
-                        setDelimiter('\u001D');
-                        delimiterDetermined = true;
-                    }
-
-                    if (!subDelimiterDetermined) {
-                        setSubDelimiter('\u001F');
-                        subDelimiterDetermined = true;
-                    }
-
-                    if (!terminatorDetermined) {
-                        setTerminator('\u001C');
-                        terminatorDetermined = true;
-                    }
-
-                    setRelease(-1);
-                    releaseDetermined = true;
-
-                    setRepetitionSeparator('\u0019');
-                }
-                // Deliberately fall into the sequence below
-            default:
-                setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
                 break;
         }
+        setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
 
         if (!terminatorSuffixDetermined)
             // We still have not observed a terminator suffix
