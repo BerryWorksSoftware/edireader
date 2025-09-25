@@ -63,11 +63,6 @@ public abstract class DecoderFrontEnd extends AbstractEncoderDecoder {
           depending upon what state we are in.
          */
         switch (state) {
-            default:
-            case STATE62:
-                emit((byte) unsignedInt);
-                state = STATE24;
-                break;
             case STATE24:
                 emit((byte) (unsignedInt >>> 4));
                 emit((byte) (unsignedInt & 15));
@@ -81,6 +76,11 @@ public abstract class DecoderFrontEnd extends AbstractEncoderDecoder {
             case STATE66:
                 emit((byte) unsignedInt);
                 state = STATE62;
+                break;
+            case STATE62:
+            default:
+                emit((byte) unsignedInt);
+                state = STATE24;
                 break;
         }
     }

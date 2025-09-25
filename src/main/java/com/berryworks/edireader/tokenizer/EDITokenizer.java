@@ -140,7 +140,7 @@ public class EDITokenizer extends AbstractTokenizer {
      * For example, if an input stream contains multiple fully independent EDI
      * interchanges -- perhaps from different EDI standards -- it is useful to
      * logically "start from scratch" on each successive interchange, with new
-     * parser, tokenizer, buffer, etc, with any chars remaining in the buffer
+     * parser, tokenizer, buffer, etc., with any chars remaining in the buffer
      * from the previous interchange to be used as new data.
      *
      * @return chars of unprocessed input data

@@ -123,7 +123,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven.javadoc.plugin.version}</version>
                 <configuration>
-                    <source>8</source>
+                    <source>17</source>
                     <doclint>all,-missing</doclint>
                 </configuration>
                 <executions>

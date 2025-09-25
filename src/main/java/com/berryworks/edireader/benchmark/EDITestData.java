@@ -33,22 +33,22 @@ public class EDITestData implements Runnable {
     private static final String GS_FRAGMENT = "GS~AG~04000~58401~040714~1003~38327~X~002040CHRY$";
 
     private static final String A824_FRAGMENT = "ST~824~000042460$"
-            + "BGN~11~07141005162~040714~1003$" + "N1~SU~~92~58401O$"
-            + "N1~SF~~92~58401O$" + "N1~ST~~92~05304$" + "N1~MA~~92~05304$"
-            + "OTI~IA~SI~AC32804~~~~~~~856$" + "REF~BM~AC32804$"
-            + "REF~PK~00032804$" + "REF~PM~52069902AA$"
-            + "DTM~009~040714~1003~ED$";
+                                                + "BGN~11~07141005162~040714~1003$" + "N1~SU~~92~58401O$"
+                                                + "N1~SF~~92~58401O$" + "N1~ST~~92~05304$" + "N1~MA~~92~05304$"
+                                                + "OTI~IA~SI~AC32804~~~~~~~856$" + "REF~BM~AC32804$"
+                                                + "REF~PK~00032804$" + "REF~PM~52069902AA$"
+                                                + "DTM~009~040714~1003~ED$";
 
     private static final String B824_FRAGMENT = "DTM~011~040714$"
-            + "OTI~IA~SI~AC32804~~~~~~~856$" + "REF~BM~AC32804$"
-            + "REF~PK~00032804$" + "REF~PM~0CP00015$"
-            + "DTM~009~040714~1003~ED$" + "DTM~011~040714$"
-            + "OTI~IA~SI~AC32804~~~~~~~856$" + "REF~BM~AC32804$"
-            + "REF~PK~00032804$" + "REF~PM~0CD03536$"
-            + "DTM~009~040714~1003~ED$" + "DTM~011~040714$"
-            + "OTI~IA~SI~AC32804~~~~~~~856$" + "REF~BM~AC32804$"
-            + "REF~PK~00032804$" + "REF~PM~0CP00016$"
-            + "DTM~009~040714~1003~ED$" + "DTM~011~040714$" + "SE~";
+                                                + "OTI~IA~SI~AC32804~~~~~~~856$" + "REF~BM~AC32804$"
+                                                + "REF~PK~00032804$" + "REF~PM~0CP00015$"
+                                                + "DTM~009~040714~1003~ED$" + "DTM~011~040714$"
+                                                + "OTI~IA~SI~AC32804~~~~~~~856$" + "REF~BM~AC32804$"
+                                                + "REF~PK~00032804$" + "REF~PM~0CD03536$"
+                                                + "DTM~009~040714~1003~ED$" + "DTM~011~040714$"
+                                                + "OTI~IA~SI~AC32804~~~~~~~856$" + "REF~BM~AC32804$"
+                                                + "REF~PK~00032804$" + "REF~PM~0CP00016$"
+                                                + "DTM~009~040714~1003~ED$" + "DTM~011~040714$" + "SE~";
 
     private static final String FILLER_FRAGMENT = "DTM~009~040714~1003~ED$";
 
@@ -149,17 +149,18 @@ public class EDITestData implements Runnable {
 
     public static String getEdifactInterchange(int numberOfMessages, String type, String recipientRef, String appRef) {
         StringBuilder result = new StringBuilder("UNB+IATA:1+REUAIR08DLH:PIMA+REUAGT82AGENT/LHR01:PIMA+941027:1520+841F60UNZ+" +
-                recipientRef + "+" + appRef
-                + "+L+1'");
+                                                 recipientRef + "+" + appRef
+                                                 + "+L+1'");
         for (int n = 1; n <= numberOfMessages; n++) {
             result.append("UNH+").append(n).append("+").append(type).append(":90:1:IA+841F60'")
-                    .append(""
-                            + "LOR+SR:GVA'"
-                            + "FDQ+DL+573+890701+ATL+MIA++SR+120+8907011300+8907011655+ZRH+ATL'"
-                            + "PPD+MEIER+F:Y++BARBARAMRS+MILLER:JOHN'"
-                            + "PRD+Y'"
-                            + "PSD+N'"
-                            + "PBD+2:22'")
+                    .append("""
+                            LOR+SR:GVA'
+                            FDQ+DL+573+890701+ATL+MIA++SR+120+8907011300+8907011655+ZRH+ATL'
+                            PPD+MEIER+F:Y++BARBARAMRS+MILLER:JOHN'
+                            PRD+Y'
+                            PSD+N'
+                            PBD+2:22'
+                            """)
                     .append("UNT+8+").append(n).append("'");
         }
         result.append("UNZ+").append(numberOfMessages).append("+841F60UNZ'");
@@ -181,7 +182,7 @@ public class EDITestData implements Runnable {
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException("Unexpected exception generating data: "
-                    + e);
+                                       + e);
         }
     }
 

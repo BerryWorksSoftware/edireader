@@ -139,11 +139,7 @@ public class PluginControllerImpl extends PluginController {
             return false;
 
         // Set flags related to this descriptor.
-        Set<String> flags = newDescriptor.getResultFlags();
-        for (String flagName : flags) {
-//            logger.debug("setting flag {}", flagName);
-            resultFlags.add(flagName);
-        }
+        resultFlags.addAll(newDescriptor.getResultFlags());
 
         String newLoopName = newDescriptor.getName();
         if (CURRENT.equals(newLoopName) && newDescriptor.getNestingLevel() == loopDescriptor.getNestingLevel()) {

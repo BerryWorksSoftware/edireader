@@ -132,7 +132,7 @@ public class PluginController {
     }
 
     /**
-     * Notifies a plugin controller of an EDI element and it value
+     * Notifies a plugin controller of an EDI element and its value
      * so that a subclass of PluginController could make decisions based
      * on this information.
      *

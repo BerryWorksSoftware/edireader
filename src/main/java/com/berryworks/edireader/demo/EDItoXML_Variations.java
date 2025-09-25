@@ -53,7 +53,7 @@ import static com.berryworks.edireader.demo.EDItoXML.establishOutput;
  * java com.berryworks.edireader.demo.EDItoXML [input-file] [-o output-file]
  * </code><br><br>
  * If an input-file is not specified, System.in is used; if an output-file is
- * not specified, System.out is used.
+ * not specified, then System.out is used.
  */
 public class EDItoXML_Variations {
     private final InputSource inputSource;

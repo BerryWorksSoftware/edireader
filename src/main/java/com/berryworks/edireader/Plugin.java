@@ -56,8 +56,7 @@ import java.util.Set;
  * document.
  * <p>
  * For this linkage to work properly, the fully-qualified class name must
- * match. Therefore, your plugin must bear a package name of
- * com.berryworks.edireader.plugin
+ * match. Therefore, your plugin must bear a package name of com.berryworks.edireader.plugin,
  * although it can be compiled separately and does not have to be placed
  * inside any particular jar file.
  * <p>

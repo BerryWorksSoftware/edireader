@@ -61,7 +61,7 @@ public class StringBase64Decoder extends AbstractDecoder {
         // bytes as they are encoded from the String
         ByteBuffer base64ByteBuffer = ByteBuffer.allocate(100);
 
-        // Use the encoder repeatedly until all of the chars have been encoded as bytes
+        // Use the encoder repeatedly until all the chars have been encoded as bytes
         // and presented as input for base 64 encoding.
         CharsetEncoder encoder = charset.newEncoder();
         while (true) {

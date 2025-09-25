@@ -85,7 +85,7 @@ public class AnsiTransactionExtractor {
             stringWriter = new StringWriter();
             /*
               Note that the parser does not start copying content to the
-              copy writer until after the ST token has been noted. Therefore,
+              copywriter until after the ST token has been noted. Therefore,
               if you want "ST" to appear in your captured output, you can
               place it there at this point. The parser provides it as an
               argument for your convenience.

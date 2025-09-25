@@ -30,12 +30,6 @@ public abstract class EncoderFrontEnd extends AbstractEncoderDecoder {
     public void consume(byte b) {
         int partA, partB;
         switch (state) {
-            default:
-            case STATE62:
-                partA = (b & 255) >>> 2;
-                partB = b & 3;
-                state = STATE44;
-                break;
             case STATE44:
                 partA = (b & 255) >>> 4;
                 partB = b & 15;
@@ -45,6 +39,12 @@ public abstract class EncoderFrontEnd extends AbstractEncoderDecoder {
                 partA = (b & 255) >>> 6;
                 partB = b & 63;
                 state = STATE62;
+                break;
+            case STATE62:
+            default:
+                partA = (b & 255) >>> 2;
+                partB = b & 3;
+                state = STATE44;
                 break;
         }
         emit((byte) partA);

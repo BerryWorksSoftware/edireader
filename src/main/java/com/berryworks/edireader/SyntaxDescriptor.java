@@ -27,11 +27,11 @@ package com.berryworks.edireader;
  * characters used in a given EDI interchange.
  * The delimiter is the character that separates two consecutive fields in an EDI segment.
  * The subdelimiter is the character that separates two consecutive subfields.
- * The subSubDelimiter the the character that separates two consecutive sub-subfields.
+ * The subSubDelimiter is the character that separates two consecutive sub-subfields.
  * (ANSI X12 and EDIFACT standards to no use sub-subfields. This is included for other standards
  * such as HL7.)
  * The decimalMark is the character used in numeric EDI data to represent the radix point.
- * The decimal mark is the often the period but can be a comma or other value.
+ * The decimal mark is often the period but can be a comma or other value.
  * The repetitionSeparator is the character used to separate consecutive instances of
  * field that is allowed to repeat.
  * The terminator is the character used to mark the end of a segment.

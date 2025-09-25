@@ -27,6 +27,7 @@ import com.berryworks.edireader.util.BranchingWriter;
 import org.xml.sax.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 
@@ -82,7 +83,7 @@ public abstract class EDIAbstractReader implements XMLReader {
     private char subSubDelimiter;
 
     /**
-     * Character used as a decimal point ("." or ",")
+     * Character used as a decimal point
      */
     private char decimalMark;
 
@@ -124,7 +125,7 @@ public abstract class EDIAbstractReader implements XMLReader {
 
     /**
      * If acknowledgements are being written, should they be group level only?
-     * For ANSI X12, this would mean 997s without AK2/AK5 transaction level detail..
+     * For ANSI X12, this would mean 997s without AK2/AK5 transaction level detail.
      */
     private boolean groupAcknowledgment;
 
@@ -157,7 +158,7 @@ public abstract class EDIAbstractReader implements XMLReader {
     /**
      * XML attributes relating to the document. In ANSI X12 terminology this
      * would be the Transaction Set (ST/SE). In EDIFACT, it would be a Message
-     * (UNH/UNT)..
+     * (UNH/UNT).
      */
     private final EDIAttributes documentAttributes = new EDIAttributes();
 
@@ -307,8 +308,8 @@ public abstract class EDIAbstractReader implements XMLReader {
 
     /**
      * Gets the character used as the decimal point in currency.
-     * This is the period (".") in the USA and many other countries,
-     * but can also be the comma (",").
+     * This is the period in the USA and many other countries,
+     * but can also be the comma.
      *
      * @return mark
      */
@@ -368,7 +369,7 @@ public abstract class EDIAbstractReader implements XMLReader {
                 } catch (IOException e) {
                     throw new IOException("Problem reading from InputSource ByteStream: " + e.getMessage());
                 }
-                previewString = new String(previewBytes, "ISO-8859-1");
+                previewString = new String(previewBytes, StandardCharsets.ISO_8859_1);
 
                 theReader = new StringReader(previewString);
             } else {

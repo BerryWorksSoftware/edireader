@@ -204,7 +204,7 @@ public class SplittingHandler extends DefaultHandler {
 
         generateArtificialBoundaryForNewGroup();
 
-        // Open an new group
+        // Open a new group
         startElement("", groupTagName, groupTagName, groupAttributes);
     }
 
