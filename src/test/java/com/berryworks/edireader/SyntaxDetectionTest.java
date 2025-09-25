@@ -3,9 +3,10 @@ package com.berryworks.edireader;
 import org.junit.Test;
 import org.xml.sax.InputSource;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
 
@@ -14,17 +15,28 @@ public class SyntaxDetectionTest {
     EDIReader ediReader;
 
     @Test
-    public void x12() throws EDISyntaxException, IOException {
-        assertSyntaxDetails(new StringReader(X12_FRAGMENT), '~', '<', (char) 0, ' ', 0, '$', "\n");
+    public void x12_chars() throws EDISyntaxException, IOException {
+        assertSyntaxDetails(X12_FRAGMENT_A, '~', '<', (char) 0, ' ', 0, '$', "\n");
+        assertSyntaxDetails(X12_FRAGMENT_B, '+', '^', (char) 0, ' ', 0, '!', "\n");
+    }
+
+    @Test
+    public void x12_bytes() throws EDISyntaxException, IOException {
+        assertSyntaxDetails(X12_FRAGMENT_A.getBytes(StandardCharsets.ISO_8859_1), '~', '<', (char) 0, ' ', 0, '$', "\n");
+        assertSyntaxDetails(X12_FRAGMENT_B.getBytes(StandardCharsets.ISO_8859_1), '+', '^', (char) 0, ' ', 0, '!', "\n");
     }
 
     @Test
     public void edifact() throws EDISyntaxException, IOException {
-        assertSyntaxDetails(new StringReader(EDIFACT_UNA_FRAGMENT), '+', ':', '.', '?', 0, '\'', "\n");
+        assertSyntaxDetails(EDIFACT_UNA_FRAGMENT, '+', ':', '.', '?', 0, '\'', "\n");
     }
 
-    private void assertSyntaxDetails(Reader reader, char delimiter, char subDelimiter, char decimal, char release, int repetition, char terminator, String terminatorSuffix) throws EDISyntaxException, IOException {
-        assertSyntaxDetails(new InputSource(reader), delimiter, subDelimiter, decimal, release, repetition, terminator, terminatorSuffix);
+    private void assertSyntaxDetails(String edi, char delimiter, char subDelimiter, char decimal, char release, int repetition, char terminator, String terminatorSuffix) throws EDISyntaxException, IOException {
+        assertSyntaxDetails(new InputSource(new StringReader(edi)), delimiter, subDelimiter, decimal, release, repetition, terminator, terminatorSuffix);
+    }
+
+    private void assertSyntaxDetails(byte[] edi, char delimiter, char subDelimiter, char decimal, char release, int repetition, char terminator, String terminatorSuffix) throws EDISyntaxException, IOException {
+        assertSyntaxDetails(new InputSource(new ByteArrayInputStream(edi)), delimiter, subDelimiter, decimal, release, repetition, terminator, terminatorSuffix);
     }
 
     private void assertSyntaxDetails(InputSource inputSource, char delimiter, char subDelimiter, char decimal, char release, int repetition, char terminator, String terminatorSuffix) throws EDISyntaxException, IOException {
@@ -38,10 +50,16 @@ public class SyntaxDetectionTest {
         assertEquals("Terminator suffix issue", terminatorSuffix, ediReader.getTerminatorSuffix());
     }
 
-    static final String X12_FRAGMENT = """
+    static final String X12_FRAGMENT_A = """
             ISA~00~          ~00~          ~ZZ~58401          ~ZZ~04000          ~220810~0941~U~00204~000038449~0~P~<$
             GS~FA~58401~04000~220810~0941~000038449~X~002040CHRY$
             ST~997~0001$
+            """;
+
+    static final String X12_FRAGMENT_B = """
+            ISA+00+          +00+          +ZZ+58401          +ZZ+04000          +220810+0941+U+00204+000038449+0+P+^!
+            GS+FA+58401+04000+220810+0941+000038449+X+002040CHRY!
+            ST+997+0001!
             """;
 
     static final String EDIFACT_UNA_FRAGMENT = """
