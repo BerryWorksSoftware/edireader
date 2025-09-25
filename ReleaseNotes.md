@@ -1,17 +1,12 @@
 # Release Notes
 
-### To DO
-* Handle UNOC, UNOD in EDIFACT UNB segment.
-* Handle UNOB. Is the legacy code correct?
-* What about Interchanges? Can it use a byte stream?
-
-### 5.9.0 - ???
+### 5.9.0 - September 25, 2025
 
 * Feature: When parsing EDIFACT, choose the character set encoding based on the value of UNB-2.
   For example, UNB+UNOE indicates that ISO-8859-5 (Cyrillic) is to be used.
 * Maintenance: In support of the new feature where the character set may be selected by inspecting
   an initial portion of the EDI input, refactoring was done in how an EDI stream is previewed.
-  All of the changes are expected to be fully backward compatible.
+  All the changes are expected to be fully backward compatible.
 
 ### 5.8.5 - June 16, 2025
 
