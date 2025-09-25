@@ -35,7 +35,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.berryworks.edireader.util.FixedLength.emptyIfNull;
@@ -674,16 +673,11 @@ public class EdifactReader extends StandardReader {
                 byteStream = inputSource.getByteStream();
                 if (byteStream == null) {
                     // We already have a character stream and a Reader ready to use.
+                    // Since UNOA/B/C use ISO-8859-1, we will assume that the Reader is suitable.
                     setSyntaxCharacters(buf, delimiterDetermined, subDelimiterDetermined, decimalMarkDetermined, releaseDetermined, terminatorDetermined, syntaxIdentifier);
                     break;
                 } else {
-                    // We have a byte stream that needs to be decoded as ISO-8859-1.
-                    // The preview was already decoded.
-                    replacementReader = new InputStreamReader(byteStream, StandardCharsets.ISO_8859_1);
-                    preRead = getPreviewString().toCharArray();
-                    newTokenizer = new EDITokenizer(replacementReader, preRead);
-                    setInputReader(replacementReader);
-                    setTokenizer(newTokenizer);
+                    changeCharSet(syntaxIdentifier, "ISO-8859-1", inputSource);
                 }
                 break;
             case 'D':
