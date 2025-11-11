@@ -7,6 +7,8 @@
 * Maintenance: In support of the new feature where the character set may be selected by inspecting
   an initial portion of the EDI input, refactoring was done in how an EDI stream is previewed.
   All the changes are expected to be fully backward compatible.
+* Maintenance: Improve the XmlFormatterTest to draw attention to the need for an XmlFormatter to be closed
+  and illustrate how to do that automatically via a try-with-resources statement.
 
 ### 5.8.5 - June 16, 2025
 
