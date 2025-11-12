@@ -45,7 +45,7 @@ import java.util.Map;
 public class ParserRegistry {
     private static final boolean SELECT_PARSER_BY_CLASSNAME_ENABLED = true;
 
-    private static final Map<String, Class> builtinClass = new HashMap<>();
+    private static final Map<String, Class<? extends EDIReader>> builtinClass = new HashMap<>();
     private static final Map<String, String> registeredClassNames = new HashMap<>();
 
     static {
