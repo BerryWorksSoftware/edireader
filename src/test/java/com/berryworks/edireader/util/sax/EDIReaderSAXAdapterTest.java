@@ -46,6 +46,39 @@ public class EDIReaderSAXAdapterTest {
     }
 
     @Test
+    public void handlesNamespaceVariations() throws SAXException {
+        XMLTags xmlTags = new DefaultXMLTags();
+        adapter = new MyAdapater();
+
+        EDIAttributes attributes = new EDIAttributes();
+        attributes.addCDATA("A", "a");
+
+        // In localName, not qName
+        adapter.startElement("", "interchange", "", attributes);
+        assertEquals("Interchange.", adapter.getTrace());
+
+        // In qName, not localName
+        adapter.startElement("", null, "group", attributes);
+        adapter.startElement("", "transaction", "transaction", attributes);
+        assertEquals("Interchange.Group.Transaction.", adapter.getTrace());
+
+        // In both localName and qName
+        adapter.startElement("", "segment", "segment", attributes);
+        adapter.startElement("", "element", "element", attributes);
+        assertEquals("Interchange.Group.Transaction.FirstSegment.Element.", adapter.getTrace());
+
+        adapter.characters("abc".toCharArray(), 0, 3);
+        adapter.endElement("", "element", "element");
+        assertEquals("Interchange.Group.Transaction.FirstSegment.Element.e:abc.", adapter.getTrace());
+
+        // In qName, qualified
+        adapter.startElement("", "", "ns:subelement", attributes);
+        adapter.characters("def".toCharArray(), 0, 3);
+        adapter.endElement("", "subelement", "subelement");
+        assertEquals("Interchange.Group.Transaction.FirstSegment.Element.e:abc.SubElement.s:def.", adapter.getTrace());
+    }
+
+    @Test
     public void detectFirstSegmentInGroup() throws SAXException, IOException {
         Reader edi = new StringReader("""
                 ISA*00*          *00*          *ZZ*0011223456     *ZZ*999999999      *990320*0157*U*00300*000000015*0*P*~$

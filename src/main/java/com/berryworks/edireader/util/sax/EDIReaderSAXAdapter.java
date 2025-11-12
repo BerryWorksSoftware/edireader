@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2023 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2025 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -29,6 +29,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.PrintStream;
 
+import static com.berryworks.edireader.util.FixedLength.isPresent;
+
 /**
  * A SAX ContentHandler with specific knowledge of the XML structures emitted by EDIReader.
  * If adapts the general purpose SAX ContentHandler API to an API that receives calls in terms
@@ -52,15 +54,17 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
     public EDIReaderSAXAdapter() {
         this(new DefaultXMLTags());
     }
+
     public EDIReaderSAXAdapter(XMLTags xmlTags) {
         this.xmlTags = xmlTags;
     }
 
     @Override
-    public void startElement(String namespace, String localName, String qName,
-                             Attributes atts) throws SAXException {
+    public void startElement(String namespace, String localName, String qName, Attributes atts) throws SAXException {
         int charCount = getCharCount();
         int segmentCharCount = getSegmentCharCount();
+
+        localName = chooseBetween(localName, qName);
 
         if (localName.startsWith(xmlTags.getInterchangeTag())) {
             anotherSEG = false;
@@ -127,6 +131,16 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
         }
     }
 
+    private String chooseBetween(String localName, String qName) {
+        if (isPresent(localName)) return localName;
+        if (isPresent(qName)) {
+            int index = qName.indexOf(':');
+            if (index > 0) qName = qName.substring(index + 1);
+            return qName;
+        }
+        return localName;
+    }
+
     @Override
     public void setCharCounts(int charCount, int segmentCharCount) {
         this.charCount = charCount;
@@ -148,6 +162,8 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
             throws SAXException {
         int charCount = getCharCount();
         int segmentCharCount = getSegmentCharCount();
+
+        localName = chooseBetween(localName, qName);
 
         if (localName.startsWith(xmlTags.getInterchangeTag())) {
             anotherSEG = false;

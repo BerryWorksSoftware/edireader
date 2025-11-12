@@ -1,5 +1,12 @@
 # Release Notes
 
+### 5.9.1 - November 12, 2025
+
+* Maintenance: An XMLReader feeding a SAX ContentHandler may pass element names
+  in either or both of the localName and qName arguments to the startElement and endElement methods.
+  The EDIReader class now handles all known patterns.
+  This is particularly relevant with an XMLReader carefully selected to avoid XML namespace security issues.
+
 ### 5.9.0 - September 25, 2025
 
 * Feature: When parsing EDIFACT, choose the character set encoding based on the value of UNB-2.
