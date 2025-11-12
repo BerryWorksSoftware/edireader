@@ -150,10 +150,14 @@ public class EDITestData implements Runnable {
     public static String getEdifactInterchange(int numberOfMessages, String type, String recipientRef, String appRef) {
         StringBuilder result = new StringBuilder("UNB+IATA:1+REUAIR08DLH:PIMA+REUAGT82AGENT/LHR01:PIMA+941027:1520+841F60UNZ+" +
                                                  recipientRef + "+" + appRef
-                                                 + "+L+1'");
+                                                 + """
+                                                         +L+1'
+                                                         """);
+        // We use multi-line String constants here to get consistent newlines after each segment.
         for (int n = 1; n <= numberOfMessages; n++) {
-            result.append("UNH+").append(n).append("+").append(type).append(":90:1:IA+841F60'")
+            result.append("UNH+").append(n).append("+").append(type)
                     .append("""
+                            :90:1:IA+841F60'
                             LOR+SR:GVA'
                             FDQ+DL+573+890701+ATL+MIA++SR+120+8907011300+8907011655+ZRH+ATL'
                             PPD+MEIER+F:Y++BARBARAMRS+MILLER:JOHN'
@@ -161,9 +165,14 @@ public class EDITestData implements Runnable {
                             PSD+N'
                             PBD+2:22'
                             """)
-                    .append("UNT+8+").append(n).append("'");
+                    .append("UNT+8+").append(n).append("""
+                            '
+                            """);
         }
-        result.append("UNZ+").append(numberOfMessages).append("+841F60UNZ'");
+        result.append("UNZ+").append(numberOfMessages)
+                .append("""
+                        +841F60UNZ'
+                        """);
         return result.toString();
     }
 
