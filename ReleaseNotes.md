@@ -6,6 +6,9 @@
   in either or both of the localName and qName arguments to the startElement and endElement methods.
   The EDIReader class now handles all known patterns.
   This is particularly relevant with an XMLReader carefully selected to avoid XML namespace security issues.
+* Fix: When generating an EDIFACT acknowledgment of receipt CONTRL message,
+  use 8 instead of 7 in the UCI to indicate that the message is simply acknowledging receipt
+  and not the result of validation. 
 
 ### 5.9.0 - September 25, 2025
 
