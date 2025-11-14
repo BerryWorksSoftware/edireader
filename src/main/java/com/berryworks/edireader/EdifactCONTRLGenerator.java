@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2025 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -32,6 +32,9 @@ import java.io.Writer;
  */
 public class EdifactCONTRLGenerator extends ReplyGenerator {
 
+    public static final String INDICATION_OF_RECEIPT = "8";
+    public static final String NEGATIVE_ACKNOWLEDGMENT = "4";
+    public static final String POSITIVE_ACKNOWLEDGMENT = "7";
     private final Writer ackStream;
     private char delimiter;
     private char subDelimiter;
@@ -105,8 +108,8 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
                                              String xrecipient, String xrecipientQualifier, String xcontrolNumber) {
     }
 
-    public void generateTransactionAcknowledgment(Attributes attributes)
-            throws IOException {
+    public void generateTransactionAcknowledgment(Attributes attributes) throws IOException {
+        // These values are just defaults that get replaced so that they match the interchange being acknowledged.
         String messageVersionNumber = "D";
         String messageReleaseNumber = "97B";
         String controllingAgency = "UN";
@@ -114,11 +117,12 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
         if (ackStream == null) {
             return;
         }
+        XMLTags xmlTags = standardReader.getXMLTags();
         if (!generated) {
             generated = true;
 
-            // This is where we should check to make sure to avoid
-            // generating a CONTRL message for a CONTRL message?
+            // This is where we could check to make sure to avoid
+            // generating a CONTRL message for a CONTRL message.
 
             delimiter = standardReader.getDelimiter();
             subDelimiter = standardReader.getSubDelimiter();
@@ -141,81 +145,81 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
                     int ri = standardReader.getRelease();
                     char r = ri < 0 ? ' ' : (char) ri;
                     ackStream.write("UNA" + subDelimiter + delimiter
-                            + reader.getDecimalMark() + r + repetitionCharacter + segmentTerminator);
+                                    + reader.getDecimalMark() + r + repetitionCharacter + segmentTerminator);
                 }
             }
 
             generatedInterchangeControlNumber = interchangeControlNumber;
 
             ackStream.write("UNB" + delimiter + syntaxIdentifier + subDelimiter
-                    + versionNumber + delimiter + interchangeRecipient
-                    + subDelimiter + interchangeRecipientQualifier + delimiter
-                    + interchangeSender + subDelimiter
-                    + interchangeSenderQualifier + delimiter + dateAndTime
-                    + delimiter + generatedInterchangeControlNumber);
+                            + versionNumber + delimiter + interchangeRecipient
+                            + subDelimiter + interchangeRecipientQualifier + delimiter
+                            + interchangeSender + subDelimiter
+                            + interchangeSenderQualifier + delimiter + dateAndTime
+                            + delimiter + generatedInterchangeControlNumber);
             ackStream.write(segmentTerminator);
 
             for (int i = 0; i < attributes.getLength(); i++) {
                 String name = attributes.getLocalName(i);
                 String value = attributes.getValue(i);
-                if (standardReader.getXMLTags().getMessageVersion().equals(name))
+                if (xmlTags.getMessageVersion().equals(name))
                     messageVersionNumber = value;
-                else if (standardReader.getXMLTags().getMessageRelease().equals(name))
+                else if (xmlTags.getMessageRelease().equals(name))
                     messageReleaseNumber = value;
-                else if (standardReader.getXMLTags().getAgency().equals(name))
+                else if (xmlTags.getAgency().equals(name))
                     controllingAgency = value;
             }
 
             // Generate the UNH for the CONTRL message
             ackStream.write("UNH" + delimiter + (++generatedMessageNumber)
-                    + delimiter + "CONTRL" + subDelimiter
-                    + messageVersionNumber + subDelimiter
-                    + messageReleaseNumber + subDelimiter + controllingAgency);
+                            + delimiter + "CONTRL" + subDelimiter
+                            + messageVersionNumber + subDelimiter
+                            + messageReleaseNumber + subDelimiter + controllingAgency);
             ackStream.write(segmentTerminator);
             segmentCount++;
 
             // Generate the UCI to acknowledge the interchange.
-            // 7 means This level acknowledged and all lower levels acknowledged if not explicitly rejected
             ackStream.write("UCI" + delimiter + interchangeControlNumber
-                    + delimiter + interchangeSender + subDelimiter
-                    + interchangeSenderQualifier + delimiter
-                    + interchangeRecipient + subDelimiter
-                    + interchangeRecipientQualifier + delimiter
-                    + "7");
+                            + delimiter + interchangeSender + subDelimiter
+                            + interchangeSenderQualifier + delimiter
+                            + interchangeRecipient + subDelimiter
+                            + interchangeRecipientQualifier + delimiter
+                            + INDICATION_OF_RECEIPT);
             ackStream.write(segmentTerminator);
             segmentCount++;
         }
 
-        // Generate UCM to acknowledge this message.
-        // 7 means This level acknowledged and all lower levels acknowledged if not explicitly rejected
-        String messageReference, messageType, mvn, release, agency, association;
-        messageReference = attributes.getValue(standardReader.getXMLTags().getControl());
-        if (messageReference != null) {
-            ackStream.write("UCM" + delimiter + messageReference);
-            messageType = attributes.getValue(standardReader.getXMLTags().getDocumentType());
-            if (messageType != null) {
-                ackStream.write(delimiter + messageType);
-                mvn = attributes.getValue(standardReader.getXMLTags().getVersion());
-                if (mvn != null) {
-                    ackStream.write(subDelimiter + mvn);
-                    release = attributes.getValue(standardReader.getXMLTags().getRelease());
-                    if (release != null) {
-                        ackStream.write(subDelimiter + release);
-                        agency = attributes.getValue(standardReader.getXMLTags().getAgency());
-                        if (agency != null) {
-                            ackStream.write(subDelimiter + agency);
-                            association = attributes.getValue(standardReader.getXMLTags().getAssociation());
-                            if (association != null) {
-                                ackStream.write(subDelimiter + association);
+        // Generate UCM to acknowledge this message (or not)
+        boolean includeUCM = false;
+        if (includeUCM) {
+            String messageReference, messageType, mvn, release, agency, association;
+            messageReference = attributes.getValue(xmlTags.getControl());
+            if (messageReference != null) {
+                ackStream.write("UCM" + delimiter + messageReference);
+                messageType = attributes.getValue(xmlTags.getDocumentType());
+                if (messageType != null) {
+                    ackStream.write(delimiter + messageType);
+                    mvn = attributes.getValue(xmlTags.getVersion());
+                    if (mvn != null) {
+                        ackStream.write(subDelimiter + mvn);
+                        release = attributes.getValue(xmlTags.getRelease());
+                        if (release != null) {
+                            ackStream.write(subDelimiter + release);
+                            agency = attributes.getValue(xmlTags.getAgency());
+                            if (agency != null) {
+                                ackStream.write(subDelimiter + agency);
+                                association = attributes.getValue(xmlTags.getAssociation());
+                                if (association != null) {
+                                    ackStream.write(subDelimiter + association);
+                                }
                             }
                         }
                     }
                 }
+                ackStream.write(delimiter + INDICATION_OF_RECEIPT + segmentTerminator);
+                segmentCount++;
             }
-            ackStream.write(delimiter + "7" + segmentTerminator);
-            segmentCount++;
         }
-
     }
 
     @Override
@@ -241,12 +245,12 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
         // Generate the UNT to match the UNH
         segmentCount++;
         ackStream.write("UNT" + delimiter + segmentCount + delimiter
-                + generatedMessageNumber);
+                        + generatedMessageNumber);
         ackStream.write(segmentTerminator);
 
         // Finish with a UNZ corresponding to the UNB
         ackStream.write("UNZ" + delimiter + "1" + delimiter
-                + generatedInterchangeControlNumber);
+                        + generatedInterchangeControlNumber);
         ackStream.write(segmentTerminator);
         ackStream.close();
     }
