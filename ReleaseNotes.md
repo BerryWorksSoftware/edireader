@@ -1,6 +1,6 @@
 # Release Notes
 
-### 5.9.2 - December 8, 2025
+### 5.9.2 - December 9, 2025
 
 * Fix: When adding an attribute to an XML SAX event via EDIAttributes, avoid adding one with a null or empty value.
   This avoids the potential for a NullPointerException when the SAX is rendered as XML.
