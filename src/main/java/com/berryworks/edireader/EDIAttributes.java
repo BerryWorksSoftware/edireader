@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2025 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -22,6 +22,8 @@ package com.berryworks.edireader;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
+
+import static com.berryworks.edireader.util.FixedLength.isPresent;
 
 /**
  * Provide convenience methods to simplify the construction
@@ -46,7 +48,7 @@ public class EDIAttributes extends AttributesImpl {
     }
 
     public void addCDATA(String name, String value) {
-        addAttribute("", name, name, "CDATA", value);
+        if (isPresent(value)) addAttribute("", name, name, "CDATA", value);
     }
 
     public void addCDATA(String name, int value) {

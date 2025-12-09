@@ -1,5 +1,9 @@
 # Release Notes
 
+### 5.9.2 - December 8, 2025
+
+
+
 ### 5.9.1 - November 12, 2025
 
 * Maintenance: An XMLReader feeding a SAX ContentHandler may pass element names
