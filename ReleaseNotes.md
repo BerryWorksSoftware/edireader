@@ -2,7 +2,10 @@
 
 ### 5.9.2 - December 8, 2025
 
-
+* Fix: When adding an attribute to an XML SAX event via EDIAttributes, avoid adding one with a null or empty value.
+  This avoids the potential for a NullPointerException when the SAX is rendered as XML.
+  An EDI parser would never add an attributes with no value, but another application may use EDIAttributes
+  in a SAX filter; this helps prevent a NullPointerException.
 
 ### 5.9.1 - November 12, 2025
 
