@@ -157,17 +157,17 @@
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>${maven.gpg.plugin.version}</version>
                 <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                        <configuration>
-                            <useAgent>true</useAgent>
-                            <keyname>xxxxxxxx</keyname>
-                        </configuration>
-                    </execution>
+<!--                    <execution>-->
+<!--                        <id>sign-artifacts</id>-->
+<!--                        <phase>verify</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>sign</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <useAgent>true</useAgent>-->
+<!--                            <keyname>xxxxxxxx</keyname>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
                 </executions>
             </plugin>
             <plugin>
