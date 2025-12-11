@@ -57,7 +57,15 @@
         <slf4j.version>2.0.17</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <gpg.keyname>0xC8794862</gpg.keyname>
+        <core.project.url>https://gitlab.com/canabrook/edireader-core</core.project.url>
     </properties>
+
+    <scm>
+        <connection>scm:git:${core.project.url}</connection>
+        <url>${core.project.url}</url>
+        <developerConnection>scm:git:${core.project.url}</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencies>
         <!-- This is the thin logging facade, with no implementation beyond the no-logging default. -->
@@ -149,17 +157,17 @@
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>${maven.gpg.plugin.version}</version>
                 <executions>
-<!--                    <execution>-->
-<!--                        <id>sign-artifacts</id>-->
-<!--                        <phase>verify</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>sign</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <keyname>${gpg.keyname}</keyname>-->
-<!--                            <passphraseServerId>${gpg.keyname}</passphraseServerId>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <useAgent>true</useAgent>
+                            <keyname>xxxxxxxx</keyname>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
