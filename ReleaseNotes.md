@@ -1,5 +1,9 @@
 # Release Notes
 
+### 5.9.3 - December ??, 2025
+
+* Feature: 
+
 ### 5.9.2 - December 9, 2025
 
 * Fix: When adding an attribute to an XML SAX event via EDIAttributes, avoid adding one with a null or empty value.

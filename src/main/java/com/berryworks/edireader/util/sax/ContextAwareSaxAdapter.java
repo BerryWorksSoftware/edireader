@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2020 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2025 by BerryWorks Software, LLC. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -23,7 +23,7 @@ package com.berryworks.edireader.util.sax;
 import com.berryworks.edireader.EDIAttributes;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLFilterImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.List;
  * two new features: the characters of XML data content are made available when an element is
  * started, and the names of all the nested elements are available at any point.
  */
-public abstract class ContextAwareSaxAdapter extends DefaultHandler {
+public abstract class ContextAwareSaxAdapter extends XMLFilterImpl {
 
     private boolean pending = false;
     private String pendingUri;
@@ -53,6 +53,7 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
 
     @Override
     public final void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        super.startElement(uri, localName, qName, attributes);
         applyPending();
         pendingUri = uri;
         pendingName = localName;
@@ -68,6 +69,7 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
 
     @Override
     public final void endElement(String uri, String localName, String qName) throws SAXException {
+        super.endElement(uri, localName, qName);
         applyPending();
         end(uri, localName);
 
@@ -80,17 +82,9 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
         }
     }
 
-    private void applyPending() throws SAXException {
-        if (pending) {
-            if (pendingData != null && isTrimmingEnabled) pendingData = pendingData.trim();
-            start(pendingUri, pendingName, pendingData, pendingAttributes);
-        }
-        pending = false;
-        pendingData = null;
-    }
-
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
+        super.characters(ch, start, length);
         String fragment = new String(ch, start, length);
         if (pendingData == null)
             pendingData = fragment;
@@ -104,5 +98,14 @@ public abstract class ContextAwareSaxAdapter extends DefaultHandler {
 
     public List<String> getContext() {
         return context;
+    }
+
+    private void applyPending() throws SAXException {
+        if (pending) {
+            if (pendingData != null && isTrimmingEnabled) pendingData = pendingData.trim();
+            start(pendingUri, pendingName, pendingData, pendingAttributes);
+        }
+        pending = false;
+        pendingData = null;
     }
 }

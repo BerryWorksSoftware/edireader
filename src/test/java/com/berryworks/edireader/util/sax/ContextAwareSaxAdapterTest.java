@@ -1,13 +1,21 @@
 package com.berryworks.edireader.util.sax;
 
 import com.berryworks.edireader.EDIAttributes;
+import com.berryworks.edireader.EDIReader;
+import com.berryworks.edireader.EDIReaderFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ContextAwareSaxAdapterTest {
 
@@ -28,28 +36,28 @@ public class ContextAwareSaxAdapterTest {
         addCharacters(adapter, "aaa");
         // The ContextAwareSaxAdapter is buffering data, waiting until it can call
         // start() with all the data
-        assertContext(adapter, null,null, "A");
+        assertContext(adapter, null, null, "A");
 
         addCharacters(adapter, " aaa");
         // The ContextAwareSaxAdapter is buffering data, waiting until it can call
         // start() with all the data
-        assertContext(adapter, null,null, "A");
+        assertContext(adapter, null, null, "A");
 
         adapter.startElement(null, "B", null, attributes);
         // The startElement() means that no more data will be arriving for the element,
         // so the pending data is delivered on a call to start() to the ContextAwareSaxAdapter subclass.
-        assertContext(adapter, "(A","aaa aaa|", "A", "B");
+        assertContext(adapter, "(A", "aaa aaa|", "A", "B");
 
         addCharacters(adapter, "bbb");
         // The new data for the b element is buffered
-        assertContext(adapter, "(A","aaa aaa|", "A", "B");
+        assertContext(adapter, "(A", "aaa aaa|", "A", "B");
 
         adapter.endElement(null, "B", null);
         // There will be no more data for the b element.
-        assertContext(adapter, "(A(BB)","aaa aaa|bbb|", "A");
+        assertContext(adapter, "(A(BB)", "aaa aaa|bbb|", "A");
 
         adapter.endElement(null, "A", null);
-        assertContext(adapter, "(A(BB)A)","aaa aaa|bbb|", null);
+        assertContext(adapter, "(A(BB)A)", "aaa aaa|bbb|", null);
     }
 
     @Test
@@ -59,17 +67,17 @@ public class ContextAwareSaxAdapterTest {
 
         addCharacters(adapter, "aaa");
         addCharacters(adapter, " aaa ");
-        assertContext(adapter, null,null, "A");
+        assertContext(adapter, null, null, "A");
 
         adapter.startElement(null, "B", null, attributes);
         addCharacters(adapter, "bbb   ");
-        assertContext(adapter, "(A","aaa aaa|", "A", "B");
+        assertContext(adapter, "(A", "aaa aaa|", "A", "B");
 
         adapter.endElement(null, "B", null);
-        assertContext(adapter, "(A(BB)","aaa aaa|bbb|", "A");
+        assertContext(adapter, "(A(BB)", "aaa aaa|bbb|", "A");
 
         adapter.endElement(null, "A", null);
-        assertContext(adapter, "(A(BB)A)","aaa aaa|bbb|", null);
+        assertContext(adapter, "(A(BB)A)", "aaa aaa|bbb|", null);
     }
 
     @Test
@@ -80,17 +88,50 @@ public class ContextAwareSaxAdapterTest {
 
         addCharacters(adapter, "aaa");
         addCharacters(adapter, " aaa ");
-        assertContext(adapter, null,null, "A");
+        assertContext(adapter, null, null, "A");
 
         adapter.startElement(null, "B", null, attributes);
         addCharacters(adapter, "bbb   ");
-        assertContext(adapter, "(A","aaa aaa |", "A", "B");
+        assertContext(adapter, "(A", "aaa aaa |", "A", "B");
 
         adapter.endElement(null, "B", null);
-        assertContext(adapter, "(A(BB)","aaa aaa |bbb   |", "A");
+        assertContext(adapter, "(A(BB)", "aaa aaa |bbb   |", "A");
 
         adapter.endElement(null, "A", null);
-        assertContext(adapter, "(A(BB)A)","aaa aaa |bbb   |", null);
+        assertContext(adapter, "(A(BB)A)", "aaa aaa |bbb   |", null);
+    }
+
+    @Test
+    public void canHandleEdi() throws SAXException, IOException {
+        EDIReader ediReader;
+
+        // First with only a counting handler
+        ediReader = EDIReaderFactory.createEDIReader(new StringReader(SAMPLE_850));
+        MyCountingHandler countingHandler = new MyCountingHandler();
+        ediReader.setContentHandler(countingHandler);
+        ediReader.parse();
+        assertEquals(1032, countingHandler.getCount());
+
+        // Then with only a ContextAwareSaxAdapter
+        ediReader = EDIReaderFactory.createEDIReader(new StringReader(SAMPLE_850));
+        MyContextAwareSaxAdapter contextAwareAdapter = new MyContextAwareSaxAdapter();
+        ediReader.setContentHandler(contextAwareAdapter);
+        ediReader.parse();
+        assertTrue(contextAwareAdapter
+                .getStartsAndEnds()
+                .startsWith("(ediroot(interchange(sender(addressaddress)sender)(receiver(addressaddress)receiver)(group"));
+
+        // Then with both
+        ediReader = EDIReaderFactory.createEDIReader(new StringReader(SAMPLE_850));
+        contextAwareAdapter = new MyContextAwareSaxAdapter();
+        countingHandler = new MyCountingHandler();
+        contextAwareAdapter.setContentHandler(countingHandler);
+        ediReader.setContentHandler(contextAwareAdapter);
+        ediReader.parse();
+        assertTrue(contextAwareAdapter
+                .getStartsAndEnds()
+                .startsWith("(ediroot(interchange(sender(addressaddress)sender)(receiver(addressaddress)receiver)(group"));
+        assertEquals(1032, countingHandler.getCount());
     }
 
     private void addCharacters(ContextAwareSaxAdapter adapter, String data) throws SAXException {
@@ -145,6 +186,115 @@ public class ContextAwareSaxAdapterTest {
         @Override
         public void end(String uri, String name) throws SAXException {
             this.sequence.append(name).append(')');
+        }
+    }
+
+    static final String SAMPLE_850 = """
+            ISA*00*          *00*          *ZZ*0011223456     *ZZ*999999999      *990320*0157*U*00300*000000015*0*P*~$
+            GS*PO*0011223456*999999999*950120*0147*5*X*004010$
+            ST*850*000000001$
+            BEG*00*SA*95018017***950118$
+            N1*SE*UNIVERSAL WIDGETS$
+            N3*375 PLYMOUTH PARK*SUITE 205$
+            N4*IRVING*TX*75061$
+            N1*ST*JIT MANUFACTURING$
+            N3*BUILDING 3B*2001 ENTERPRISE PARK$
+            N4*JUAREZ*CH**MEX$
+            N1*AK*JIT MANUFACTURING$
+            N3*400 INDUSTRIAL PARKWAY$
+            N4*INDUSTRIAL AIRPORT*KS*66030$
+            N1*BT*JIT MANUFACTURING$
+            N2*ACCOUNTS PAYABLE DEPARTMENT$
+            N3*400 INDUSTRIAL PARKWAY$
+            N4*INDUSTRIAL AIRPORT*KS*66030$
+            PO1*001*4*EA*330*TE*IN*525*VN*X357-W2$
+            PID*F****HIGH PERFORMANCE WIDGET$
+            SCH*4*EA****002*950322$
+            CTT*1*1$
+            SE*20*000000001$
+            ST*850*000000002$
+            BEG*00*SA*95018017***950118$
+            N1*SE*UNIVERSAL WIDGETS$
+            N3*375 PLYMOUTH PARK*SUITE 205$
+            N4*IRVING*TX*75061$
+            N1*ST*JIT MANUFACTURING$
+            N3*BUILDING 3B*2001 ENTERPRISE PARK$
+            N4*JUAREZ*CH**MEX$
+            N1*AK*JIT MANUFACTURING$
+            N3*400 INDUSTRIAL PARKWAY$
+            N4*INDUSTRIAL AIRPORT*KS*66030$
+            N1*BT*JIT MANUFACTURING$
+            N2*ACCOUNTS PAYABLE DEPARTMENT$
+            N3*400 INDUSTRIAL PARKWAY$
+            N4*INDUSTRIAL AIRPORT*KS*66030$
+            PO1*001*4*EA*330*TE*IN*525*VN*X357-W2$
+            PID*F****HIGH PERFORMANCE WIDGET$
+            SCH*4*EA****002*950322$
+            CTT*1*1$
+            SE*20*000000002$
+            GE*2*5$
+            IEA*1*000000015$
+            """;
+
+    private class MyCountingHandler implements ContentHandler {
+        private int total;
+
+        public int getTotal() {
+            return total;
+        }
+
+        @Override
+        public void setDocumentLocator(Locator locator) {
+        }
+
+        @Override
+        public void startDocument() throws SAXException {
+        }
+
+        @Override
+        public void endDocument() throws SAXException {
+        }
+
+        @Override
+        public void startPrefixMapping(String s, String s1) throws SAXException {
+        }
+
+        @Override
+        public void endPrefixMapping(String s) throws SAXException {
+        }
+
+        @Override
+        public void startElement(String s, String s1, String s2, Attributes attributes) throws SAXException {
+            total++;
+        }
+
+        @Override
+        public void endElement(String s, String s1, String s2) throws SAXException {
+            total++;
+        }
+
+        @Override
+        public void characters(char[] chars, int i, int i1) throws SAXException {
+            total += i1;
+        }
+
+        @Override
+        public void ignorableWhitespace(char[] chars, int i, int i1) throws SAXException {
+
+        }
+
+        @Override
+        public void processingInstruction(String s, String s1) throws SAXException {
+
+        }
+
+        @Override
+        public void skippedEntity(String s) throws SAXException {
+
+        }
+
+        public int getCount() {
+            return total;
         }
     }
 }
