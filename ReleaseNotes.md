@@ -1,8 +1,9 @@
 # Release Notes
 
-### 5.9.3 - December ??, 2025
+### 5.9.3 - January 22, 2026
 
-* Feature: 
+* Feature: Modify `ContextAwareSaxAdapter` to inherit from `XMLFilterImpl` to make it 
+  and all subclasses easier to use in a SAX pipeline.
 
 ### 5.9.2 - December 9, 2025
 
