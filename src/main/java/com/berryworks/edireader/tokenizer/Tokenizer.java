@@ -47,6 +47,8 @@ public interface Tokenizer extends SourcePosition {
 
     void setRepetitionSeparator(int e);
 
+    int getRelease();
+
     void setRelease(int e);
 
     boolean hasMoreTokens() throws IOException, EDISyntaxException;

@@ -126,6 +126,10 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
         subSubDelimiter = ssd;
     }
 
+    public int getRelease() {
+        return release;
+    }
+
     /**
      * Sets the release character
      *
