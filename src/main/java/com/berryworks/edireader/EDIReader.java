@@ -77,6 +77,9 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
                     break;
                 }
                 logger.debug("Created an EDIReader of type {}", theReader.getClass().getName());
+                // Grab a reference to the tokenizer associated with the wrapped EDIReader
+                this.setTokenizer( theReader.getTokenizer());
+                // Push properties onto the wrapped EDIReader
                 theReader.setExternalXmlDocumentStart(true);
                 theReader.setAcknowledgment(getAckStream());
                 theReader.setAlternateAcknowledgment(getAlternateAckStream());
