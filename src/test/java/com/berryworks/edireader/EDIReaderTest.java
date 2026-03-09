@@ -22,7 +22,6 @@ public class EDIReaderTest {
 
         // X12 version 5010 and later having repetition separator in ISA11
         ediReader.parseEdi("""
-                \
                 ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~
                 GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~
                 ST*204*7629~
@@ -51,7 +50,6 @@ public class EDIReaderTest {
 
         // X12 version 4010 and earlier have standardsId, typically "U", in ISA11
         ediReader.parseEdi("""
-                \
                 ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*U*00401*000007629*0*T*>~\r
                 GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*004010~\r
                 ST*204*7629~\r
@@ -74,25 +72,26 @@ public class EDIReaderTest {
         ediReader.setContentHandler(new MyContentHandler());
 
         // EDIFACT without UNA segment
-        ediReader.parseEdi("" +
-                "UNB+UNOA:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'" +
-                "UNH+00000000000117+INVOIC:D:97B:UN'" +
-                "BGM+380+342459+9'" +
-                "DTM+3:20000202:102'" +
-                "RFF+ON:608133'" +
-                "NAD+BY+006415160::16++CUMMINS ENGINE'" +
-                "NAD+SE+005435656::16++GENERAL WIDGET COMPANY'" +
-                "CUX+1:USD'" +
-                "LIN+1++157870:IN'" +
-                "IMD+F++:::WIDGET'" +
-                "QTY+47:1020:EA'" +
-                "PRI+INV:1.179'" +
-                "LIN+2++157871:IN'" +
-                "IMD+F++:::DIFFERENT WIDGET'" +
-                "QTY+47:20:BX'" +
-                "PRI+INV:20.5'" +
-                "UNT+16+00000000000117'" +
-                "UNZ+1+00000000000778'"
+        ediReader.parseEdi("""
+                \
+                UNB+UNOA:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'\
+                UNH+00000000000117+INVOIC:D:97B:UN'\
+                BGM+380+342459+9'\
+                DTM+3:20000202:102'\
+                RFF+ON:608133'\
+                NAD+BY+006415160::16++CUMMINS ENGINE'\
+                NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\
+                CUX+1:USD'\
+                LIN+1++157870:IN'\
+                IMD+F++:::WIDGET'\
+                QTY+47:1020:EA'\
+                PRI+INV:1.179'\
+                LIN+2++157871:IN'\
+                IMD+F++:::DIFFERENT WIDGET'\
+                QTY+47:20:BX'\
+                PRI+INV:20.5'\
+                UNT+16+00000000000117'\
+                UNZ+1+00000000000778'"""
         );
         assertEquals('+', ediReader.getDelimiter());
         assertEquals(':', ediReader.getSubDelimiter());
@@ -109,26 +108,26 @@ public class EDIReaderTest {
         ediReader.setContentHandler(new MyContentHandler());
 
         // EDIFACT with UNA segment
-        ediReader.parseEdi("" +
-                "UNA:*.? '" +
-                "UNB*UNOA:1*005435656:1*006415160CFS:1*000210:1434*00000000000778*rref*aref*p*a*cid*t'" +
-                "UNH*00000000000117*INVOIC:D:97B:UN'" +
-                "BGM*380*342459*9'" +
-                "DTM*3:20000202:102'" +
-                "RFF*ON:608133'" +
-                "NAD*BY*006415160::16**CUMMINS ENGINE'" +
-                "NAD*SE*005435656::16**GENERAL WIDGET COMPANY'" +
-                "CUX*1:USD'" +
-                "LIN*1**157870:IN'" +
-                "IMD*F**:::WIDGET'" +
-                "QTY*47:1020:EA'" +
-                "PRI*INV:1.179'" +
-                "LIN*2**157871:IN'" +
-                "IMD*F**:::DIFFERENT WIDGET'" +
-                "QTY*47:20:BX'" +
-                "PRI*INV:20.5'" +
-                "UNT*16*00000000000117'" +
-                "UNZ*1*00000000000778'"
+        ediReader.parseEdi("""
+                UNA:*.? '
+                UNB*UNOA:1*005435656:1*006415160CFS:1*000210:1434*00000000000778*rref*aref*p*a*cid*t'
+                UNH*00000000000117*INVOIC:D:97B:UN'
+                BGM*380*342459*9'
+                DTM*3:20000202:102'
+                RFF*ON:608133'
+                NAD*BY*006415160::16**CUMMINS ENGINE'
+                NAD*SE*005435656::16**GENERAL WIDGET COMPANY'
+                CUX*1:USD'
+                LIN*1**157870:IN'
+                IMD*F**:::WIDGET'
+                QTY*47:1020:EA'
+                PRI*INV:1.179'
+                LIN*2**157871:IN'
+                IMD*F**:::DIFFERENT WIDGET'
+                QTY*47:20:BX'
+                PRI*INV:20.5'
+                UNT*16*00000000000117'
+                UNZ*1*00000000000778'"""
         );
         assertEquals('*', ediReader.getDelimiter());
         assertEquals(':', ediReader.getSubDelimiter());
@@ -136,7 +135,7 @@ public class EDIReaderTest {
         assertEquals('?', ediReader.getReleaseCharacter());
         assertEquals(0, ediReader.getRepetitionSeparator());
         assertEquals('\'', ediReader.getTerminator());
-        assertEquals("", ediReader.getTerminatorSuffix());
+        assertEquals("\n", ediReader.getTerminatorSuffix());
     }
 
     @Test
@@ -145,7 +144,6 @@ public class EDIReaderTest {
         MyContentHandler contentHandler = new MyContentHandler();
         ediReader.setContentHandler(contentHandler);
         ediReader.parseEdi("""
-                \
                 ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~
                 GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~
                 ST*204*7629~
@@ -164,7 +162,6 @@ public class EDIReaderTest {
         ediReader.setIncludeSyntaxCharacters(true);
         ediReader.setKeepSpacesOnlyElements(false);
         ediReader.parseEdi("""
-                \
                 ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~
                 GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~
                 ST*204*7629~
@@ -183,7 +180,6 @@ public class EDIReaderTest {
         ediReader.setIncludeSyntaxCharacters(true);
         ediReader.setKeepSpacesOnlyElements(true);
         ediReader.parseEdi("""
-                \
                 ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~
                 GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~
                 ST*204*7629~

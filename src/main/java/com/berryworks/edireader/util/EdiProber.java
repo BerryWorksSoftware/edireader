@@ -20,9 +20,7 @@ public class EdiProber {
     private String documentType;
     private String version;
     private Tokenizer tokenizer;
-
-    public EdiProber() {
-    }
+    private String terminatorSuffix;
 
     public boolean probe(String edi) {
         return probe(new StringReader(edi));
@@ -48,19 +46,20 @@ public class EdiProber {
             ediReader.parse(reader);
         } catch (RuntimeException e) {
             if (e.getMessage().equals(ProbeHandler.STOP_PARSING)) {
-                // That is the signal that we have gathered all the information needed
+                // That is the signal that we have gathered all the information needed;
                 // so there is no need to keep parsing.
                 version = handler.getVersion();
                 documentType = handler.getDocumentType();
                 standard = handler.getStandard();
                 tokenizer = ediReader.getTokenizer();
+                terminatorSuffix = ediReader.getTerminatorSuffix();
                 return;
             }
             throw e;
         } catch (EDISyntaxException e) {
             String message = e.getMessage();
             if (isPresent(message) && message.startsWith("No supported EDI standard")) {
-                // This means there was no parser available. However, we want to be able to recognized
+                // This means there was no parser available. However, we want to be able to recognize
                 // HL7, TRADACOMS, etc. even if we don't have a parser available.
                 if (message.endsWith("STX")) {
                     standard = TRADACOMS;
@@ -78,24 +77,12 @@ public class EdiProber {
         return standard;
     }
 
-    private void setStandard(EDIStandard standard) {
-        this.standard = standard;
-    }
-
     public String getDocumentType() {
         return documentType;
     }
 
-    private void setDocumentType(String documentType) {
-        this.documentType = documentType;
-    }
-
     public String getVersion() {
         return version;
-    }
-
-    private void setVersion(String version) {
-        this.version = version;
     }
 
     public String getDelimiter() {
@@ -107,13 +94,17 @@ public class EdiProber {
     }
 
     public String getRepetitionDelimiter() {
-        String result = null;
-        if (tokenizer == null) return result;
+        if (tokenizer == null) return null;
         int repetitionSeparator = tokenizer.getRepetitionSeparator();
-        if (repetitionSeparator < 0) return result;
-        Character c = (char) repetitionSeparator;
-        result = String.valueOf(c);
-        return result;
+        if (repetitionSeparator < 0) return null;
+        return String.valueOf((Character) (char) repetitionSeparator);
+    }
+
+    public String getReleaseCharacter() {
+        if (tokenizer == null) return null;
+        int release = tokenizer.getRelease();
+        if (release < 0) return null;
+        return String.valueOf((Character) (char) release);
     }
 
     public String getSegmentTerminator() {
@@ -121,15 +112,8 @@ public class EdiProber {
     }
 
     public String getSegmentTerminatorSuffix() {
-        String result = null;
-        if (tokenizer == null) return result;
-//        tokenizer.
-        return result;
+        return terminatorSuffix;
     }
-
-//    public String getSegmentTerminatorSuffix() {
-//        return tokenizer == null ? null : String.valueOf(tokenizer.getTerminatorSuffix());
-//    }
 
     private static class ProbeHandler extends EDIReaderSAXAdapter {
         public static final String STOP_PARSING = "StopParsing";

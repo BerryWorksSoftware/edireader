@@ -78,7 +78,7 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
                 }
                 logger.debug("Created an EDIReader of type {}", theReader.getClass().getName());
                 // Grab a reference to the tokenizer associated with the wrapped EDIReader
-                this.setTokenizer( theReader.getTokenizer());
+                this.setTokenizer(theReader.getTokenizer());
                 // Push properties onto the wrapped EDIReader
                 theReader.setExternalXmlDocumentStart(true);
                 theReader.setAcknowledgment(getAckStream());
@@ -109,6 +109,20 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
 
         endXMLDocument();
 
+    }
+
+    @Override
+    public String getTerminatorSuffix() {
+        // Special case. The terminator suffix is not handled by the tokenizer like other syntax characters
+        // but is held on the EDIReader itself. If an exception is thrown during parsing, the EDIReader delegate
+        // will know the terminator suffix, but it will not get propagated upward.
+        // The EdiProber deliberately throws an exception to abort parsing after the first document is seen,
+        // so we need this special case to let the prober discover the actual terminator suffix.
+        String result = super.getTerminatorSuffix();
+        if (result == null && theReader != null) {
+            result = theReader.getTerminatorSuffix();
+        }
+        return result;
     }
 
     public void setXMLTags(XMLTags tags) {
