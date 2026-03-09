@@ -181,9 +181,6 @@ public class PluginControllerImpl extends PluginController {
             }
             loopDescriptor = newDescriptor;
             if (resumeLoop) {
-//                if (debug)
-//                    logger.debug("resuming loop at level {} with name {} ",
-//                            loopDescriptor.getNestingLevel(), loopDescriptor.getName());
                 if (loopDescriptor.getNestingLevel() == 0
                         && loopDescriptor.getName().length() > 1
                         && loopDescriptor.getName().startsWith("/")) {

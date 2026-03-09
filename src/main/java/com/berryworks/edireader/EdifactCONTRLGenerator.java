@@ -133,11 +133,9 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
             if (repetitionCharacter == '\000')
                 repetitionCharacter = ' ';
 
-            String dateAndTime;
-            if (controlDateAndTimeOverride == null) {
-                dateAndTime = DateTimeGenerator.generate(subDelimiter);
-            } else
-                dateAndTime = controlDateAndTimeOverride;
+            String dateAndTime = controlDateAndTimeOverride == null ?
+                    DateTimeGenerator.generate(subDelimiter) :
+                    controlDateAndTimeOverride;
 
             if (standardReader instanceof EdifactReaderWithCONTRL) {
                 EdifactReaderWithCONTRL reader = (EdifactReaderWithCONTRL) standardReader;

@@ -33,6 +33,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import static com.berryworks.edireader.util.FixedLength.isPresent;
+import static java.util.Objects.requireNonNullElse;
 
 public class DomBuildingSaxHandler extends ContextAwareSaxAdapter {
 
@@ -53,12 +54,7 @@ public class DomBuildingSaxHandler extends ContextAwareSaxAdapter {
     @Override
     public void start(String uri, String name, String data, EDIAttributes attributes) throws SAXException {
         Element newElement = document.createElement(name);
-
-        if (currentElement == null) {
-            document.appendChild(newElement);
-        } else {
-            currentElement.appendChild(newElement);
-        }
+        requireNonNullElse(currentElement, document).appendChild(newElement);
 
         currentElement = newElement;
         if (isPresent(data)) {

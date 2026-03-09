@@ -189,8 +189,7 @@ public class DocumentUtil {
     public static String compare(Document documentA, Document documentB) {
         if (documentA == null) return "First Document is null";
         if (documentB == null) return "Second Document is null";
-        String difference = compareElements(documentA.getDocumentElement(), documentB.getDocumentElement());
-        return difference;
+        return compareElements(documentA.getDocumentElement(), documentB.getDocumentElement());
     }
 
     public static String compareElements(Element elementA, Element elementB) {

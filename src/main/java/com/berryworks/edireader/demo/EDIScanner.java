@@ -42,7 +42,7 @@ import java.nio.charset.StandardCharsets;
  * than XSLT. In this case, a simple inner class accepts the call-backs from the
  * EDIReader and produces the report.
  * <p>
- * This programs also demonstrates how to parse a single input stream that
+ * This program also demonstrates how to parse a single input stream that
  * contains multiple EDI interchanges. Note the interchanges are not required to
  * be all the same EDI standard; ANSI and EDIFACT interchanges can be freely
  * intermixed.
@@ -54,8 +54,8 @@ import java.nio.charset.StandardCharsets;
  * java com.berryworks.edireader.demo.EDIScanner [input-file] [-o output-file]
  * </code><br>
  * <br>
- * If an input-file is not specified, System.in is used; if an output-file is
- * not specified, then System.out is used.
+ * If an input-file is not specified, `System.in` is used; if an output-file is
+ * not specified, then `System.out` is used.
  */
 public class EDIScanner {
     private final InputSource inputSource;
