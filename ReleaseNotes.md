@@ -1,5 +1,14 @@
 # Release Notes
 
+### 5.9.4 - March 11, 2026
+
+* Feature: Add `EdiProber`, a utility class that can be used to probe an EDI input stream for its syntax details
+  and other metadata including the standard, version, and control numbers.
+  It uses the normal EDI parsers,
+  but deliberately stops after seeing the first document
+  (aka "transaction", "transaction set", "message")
+  making it very efficient even for large inputs.
+
 ### 5.9.3 - January 22, 2026
 
 * Feature: Modify `ContextAwareSaxAdapter` to inherit from `XMLFilterImpl` to make it 

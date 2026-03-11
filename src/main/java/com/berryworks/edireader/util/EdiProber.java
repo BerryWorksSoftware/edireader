@@ -21,6 +21,7 @@ public class EdiProber {
     private String version;
     private Tokenizer tokenizer;
     private String terminatorSuffix;
+    private String interchangeControl, functionalGroupControl, documentControl;
 
     public boolean probe(String edi) {
         return probe(new StringReader(edi));
@@ -48,9 +49,12 @@ public class EdiProber {
             if (e.getMessage().equals(ProbeHandler.STOP_PARSING)) {
                 // That is the signal that we have gathered all the information needed;
                 // so there is no need to keep parsing.
+                standard = handler.getStandard();
                 version = handler.getVersion();
                 documentType = handler.getDocumentType();
-                standard = handler.getStandard();
+                interchangeControl = handler.getInterchangeControl();
+                functionalGroupControl = handler.getFunctionalGroupControl();
+                documentControl = handler.getDocumentControl();
                 tokenizer = ediReader.getTokenizer();
                 terminatorSuffix = ediReader.getTerminatorSuffix();
                 return;
@@ -115,16 +119,30 @@ public class EdiProber {
         return terminatorSuffix;
     }
 
+    public String getInterchangeControl() {
+        return interchangeControl;
+    }
+
+    public String getFunctionalGroupControl() {
+        return functionalGroupControl;
+    }
+
+    public String getDocumentControl() {
+        return documentControl;
+    }
+
     private static class ProbeHandler extends EDIReaderSAXAdapter {
         public static final String STOP_PARSING = "StopParsing";
         private EDIStandard standard;
-        private String version;
-        private String documentType;
+        private String version, documentType;
+        private String interchangeControl, functionalGroupControl, documentControl;
+
 
         @Override
         protected void beginInterchange(int charCount, int segmentCharCount, Attributes attributes) {
             String standardAttribute = attributes.getValue("Standard");
             standard = select(standardAttribute);
+            interchangeControl = attributes.getValue("Control");
             if (standard == HL7) {
                 // In HL7 we get the version and document type from the MSH header
                 version = attributes.getValue("SyntaxVersion");
@@ -138,11 +156,13 @@ public class EdiProber {
         @Override
         protected void beginExplicitGroup(int charCount, int segmentCharCount, Attributes attributes) {
             version = attributes.getValue("StandardVersion");
+            functionalGroupControl = attributes.getValue("Control");
         }
 
         @Override
         protected void beginDocument(int charCount, int segmentCharCount, Attributes attributes) {
             documentType = attributes.getValue("DocType");
+            documentControl = attributes.getValue("Control");
             if (version == null && standard == EDIFACT) {
                 // In EDIFACT, an explicit functional group is optional and typically omitted.
                 // The version comes from the document-level UNT envelope.
@@ -166,6 +186,18 @@ public class EdiProber {
 
         private String getDocumentType() {
             return documentType;
+        }
+
+        public String getInterchangeControl() {
+            return interchangeControl;
+        }
+
+        public String getFunctionalGroupControl() {
+            return functionalGroupControl;
+        }
+
+        public String getDocumentControl() {
+            return documentControl;
         }
     }
 }
