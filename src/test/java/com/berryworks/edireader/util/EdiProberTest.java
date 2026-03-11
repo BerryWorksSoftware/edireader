@@ -16,8 +16,8 @@ public class EdiProberTest {
         assertEquals("<", ediProber.getSubDelimiter());
         assertEquals("$", ediProber.getSegmentTerminator());
         assertEquals("", ediProber.getSegmentTerminatorSuffix());
-        assertEquals(null, ediProber.getRepetitionDelimiter());
-//        assertEquals("?", ediProber.getEscape());
+        assertNull(ediProber.getRepetitionDelimiter());
+        assertNull(ediProber.getReleaseCharacter());
     }
 
     @Test
@@ -32,7 +32,6 @@ public class EdiProberTest {
         assertEquals("\n", ediProber.getSegmentTerminatorSuffix());
         assertNull(ediProber.getRepetitionDelimiter());
         assertNull(ediProber.getReleaseCharacter());
-
     }
 
     @Test
