@@ -11,6 +11,26 @@ import static org.junit.Assert.assertEquals;
 
 public class EDIReaderTest {
 
+    public static final String INVOIC_97B_NO_SUFFIX = """
+            \
+            UNB+UNOA:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'\
+            UNH+00000000000117+INVOIC:D:97B:UN'\
+            BGM+380+342459+9'\
+            DTM+3:20000202:102'\
+            RFF+ON:608133'\
+            NAD+BY+006415160::16++CUMMINS ENGINE'\
+            NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\
+            CUX+1:USD'\
+            LIN+1++157870:IN'\
+            IMD+F++:::WIDGET'\
+            QTY+47:1020:EA'\
+            PRI+INV:1.179'\
+            LIN+2++157871:IN'\
+            IMD+F++:::DIFFERENT WIDGET'\
+            QTY+47:20:BX'\
+            PRI+INV:20.5'\
+            UNT+16+00000000000117'\
+            UNZ+1+00000000000778'""";
     EDIReader ediReader;
 
     @Test
@@ -72,27 +92,7 @@ public class EDIReaderTest {
         ediReader.setContentHandler(new MyContentHandler());
 
         // EDIFACT without UNA segment
-        ediReader.parseEdi("""
-                \
-                UNB+UNOA:1+005435656:1+006415160CFS:1+000210:1434+00000000000778+rref+aref+p+a+cid+t'\
-                UNH+00000000000117+INVOIC:D:97B:UN'\
-                BGM+380+342459+9'\
-                DTM+3:20000202:102'\
-                RFF+ON:608133'\
-                NAD+BY+006415160::16++CUMMINS ENGINE'\
-                NAD+SE+005435656::16++GENERAL WIDGET COMPANY'\
-                CUX+1:USD'\
-                LIN+1++157870:IN'\
-                IMD+F++:::WIDGET'\
-                QTY+47:1020:EA'\
-                PRI+INV:1.179'\
-                LIN+2++157871:IN'\
-                IMD+F++:::DIFFERENT WIDGET'\
-                QTY+47:20:BX'\
-                PRI+INV:20.5'\
-                UNT+16+00000000000117'\
-                UNZ+1+00000000000778'"""
-        );
+        ediReader.parseEdi(INVOIC_97B_NO_SUFFIX);
         assertEquals('+', ediReader.getDelimiter());
         assertEquals(':', ediReader.getSubDelimiter());
         assertEquals('.', ediReader.getDecimalMark());
