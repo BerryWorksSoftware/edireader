@@ -1,5 +1,14 @@
 # Release Notes
 
+### 5.9.5 - March 18, 2026
+
+* Maintenance: When preparing a `Plugin` for use an EDI parser,
+  support segment names that have a descriptive suffix.
+  This is useful in the EDIReader Framework (not open source)
+  where the EDI parser is often given a plugin derived from an EDI model
+  expressed in YAML. In some cases, a segment name in the model may be suffixed with a description.
+  For example, `segment: NM1_ServiceFacilityLocation`
+
 ### 5.9.4 - March 11, 2026
 
 * Feature: Add `EdiProber`, a utility class that can be used to probe an EDI input stream for its syntax details

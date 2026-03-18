@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2015 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2026 by BerryWorks Software. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -46,10 +46,20 @@ public class PluginPreparation {
         if (loops == null)
             return;
         for (LoopDescriptor loop : loops) {
-            String segmentName = loop.getFirstSegment();
-          List<LoopDescriptor> descriptorList = segmentMap.computeIfAbsent(segmentName, k -> new ArrayList<>());
-          descriptorList.add(loop);
+            String segmentName = rawSegmentName(loop.getFirstSegment());
+            segmentMap.computeIfAbsent(segmentName, k -> new ArrayList<>()).add(loop);
         }
+    }
+
+    private String rawSegmentName(String segmentName) {
+        int index = -1;
+        for (int i = 0; i < segmentName.length(); i++) {
+            if (!Character.isLetterOrDigit(segmentName.charAt(i))) {
+                index = i;
+                break;
+            }
+        }
+        return index > 0 ? segmentName.substring(0, index) : segmentName;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 by BerryWorks Software, LLC. All rights reserved.
+ * Copyright 2005-2026 by BerryWorks Software. All rights reserved.
  *
  * This file is part of EDIReader. You may obtain a license for its use directly from
  * BerryWorks Software, and you may also choose to use this software under the terms of the
@@ -129,7 +129,7 @@ public abstract class Plugin {
     /**
      * Perform any initialization needed for the plugin before use with a new document.
      * <p>
-     * The only cases where this is needed is for plugins that have state. Most plugins are stateless and therefore
+     * The only cases where this is needed are for plugins that have state. Most plugins are stateless and therefore
      * an instance of a plugin can be reused for many documents. However, it is possible to develop a subclass of Plugin
      * that maintains state. For example, a FilteringPlugin might need to make decisions based on what segment types
      * have been seen previously in a given document. In such a case, you may override the init() method in order to
@@ -224,7 +224,7 @@ public abstract class Plugin {
 
     private boolean matchesWithoutRegardToFlagConditionals(LoopDescriptor descriptor, String segment, String currentLoopStack, int currentLevel) {
 
-        if (!descriptor.getFirstSegment().equals(segment)) {
+        if (!descriptor.getFirstSegment().startsWith(segment)) {
             throw new RuntimeException("Internal error: optimized plugin structure invalid");
         }
         int levelContext = descriptor.getLevelContext();
