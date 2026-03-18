@@ -3,7 +3,7 @@
 
     <groupId>com.berryworks</groupId>
     <artifactId>edireader</artifactId>
-    <version>5.9.5-SNAPSHOT</version>
+    <version>5.9.5</version>
 
     <packaging>jar</packaging>
     <name>EDIReader Core EDI Parser</name>
@@ -61,7 +61,7 @@
         <connection>scm:git:${core.project.url}</connection>
         <url>${core.project.url}</url>
         <developerConnection>scm:git:${core.project.url}</developerConnection>
-        <tag>HEAD</tag>
+        <tag>edireader-5.9.5</tag>
     </scm>
 
     <dependencies>
