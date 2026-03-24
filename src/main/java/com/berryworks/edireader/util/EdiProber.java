@@ -22,6 +22,7 @@ public class EdiProber {
     private Tokenizer tokenizer;
     private String terminatorSuffix;
     private String interchangeControl, functionalGroupControl, documentControl;
+    private String senderId, senderQualifier, receiverId, receiverQualifier;
 
     public boolean probe(String edi) {
         return probe(new StringReader(edi));
@@ -50,6 +51,10 @@ public class EdiProber {
                 // That is the signal that we have gathered all the information needed;
                 // so there is no need to keep parsing.
                 standard = handler.getStandard();
+                senderId = handler.senderId;
+                senderQualifier = handler.senderQualifier;
+                receiverId = handler.receiverId;
+                receiverQualifier = handler.receiverQualifier;
                 version = handler.getVersion();
                 documentType = handler.getDocumentType();
                 interchangeControl = handler.getInterchangeControl();
@@ -131,11 +136,28 @@ public class EdiProber {
         return documentControl;
     }
 
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public String getSenderQualifier() {
+        return senderQualifier;
+    }
+
+    public String getReceiverId() {
+        return receiverId;
+    }
+
+    public String getReceiverQualifier() {
+        return receiverQualifier;
+    }
+
     private static class ProbeHandler extends EDIReaderSAXAdapter {
         public static final String STOP_PARSING = "StopParsing";
         private EDIStandard standard;
         private String version, documentType;
         private String interchangeControl, functionalGroupControl, documentControl;
+        private String senderId, senderQualifier, receiverId, receiverQualifier;
 
 
         @Override
@@ -151,6 +173,18 @@ public class EdiProber {
             } else if (standard == TRADACOMS) {
                 version = attributes.getValue("SyntaxVersion");
             }
+        }
+
+        @Override
+        protected void senderAddress(String qualifier, String address, String extra) {
+            senderQualifier = qualifier;
+            senderId = address;
+        }
+
+        @Override
+        protected void receiverAddress(String qualifier, String address, String extra) {
+            receiverQualifier = qualifier;
+            receiverId = address;
         }
 
         @Override

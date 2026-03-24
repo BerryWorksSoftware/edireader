@@ -17,6 +17,10 @@ public class EdiProberTest {
 
         assertEquals(EDIStandard.ANSI, ediProber.getStandard());
         assertEquals("000038449", ediProber.getInterchangeControl());
+        assertEquals("ZZ", ediProber.getSenderQualifier());
+        assertEquals("04000          ", ediProber.getSenderId());
+        assertEquals("ZZ", ediProber.getReceiverQualifier());
+        assertEquals("58401          ", ediProber.getReceiverId());
         assertEquals("38327", ediProber.getFunctionalGroupControl());
         assertEquals("000042460", ediProber.getDocumentControl());
         assertEquals("002040CHRY", ediProber.getVersion());
