@@ -8,9 +8,7 @@ import com.berryworks.edireader.util.sax.EDIReaderSAXAdapter;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.*;
 
 import static com.berryworks.edireader.EDIStandard.*;
 import static com.berryworks.edireader.util.FixedLength.isPresent;
@@ -24,20 +22,17 @@ public class EdiProber {
     private String interchangeControl, functionalGroupControl, documentControl;
     private String senderId, senderQualifier, receiverId, receiverQualifier;
 
-    public boolean probe(String edi) {
-        return probe(new StringReader(edi));
+    public void probe(String edi) throws IOException, SAXException {
+        probe(new StringReader(edi));
     }
 
-    public boolean probe(Reader reader) {
-        try {
-            probeContent(reader);
-            return true;
-        } catch (IOException | SAXException e) {
-            return false;
+    public void probe(File ediFile) throws IOException, SAXException {
+        try (Reader reader = new FileReader(ediFile)) {
+            probe(reader);
         }
     }
 
-    private void probeContent(Reader reader) throws IOException, SAXException {
+    public void probe(Reader reader) throws IOException, SAXException {
         EDIReader ediReader = new EDIReader();
         ProbeHandler handler = new ProbeHandler();
         ediReader.setContentHandler(handler);

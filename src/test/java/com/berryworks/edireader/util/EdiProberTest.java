@@ -3,17 +3,22 @@ package com.berryworks.edireader.util;
 import com.berryworks.edireader.EDIStandard;
 import com.berryworks.edireader.benchmark.EDITestData;
 import org.junit.Test;
+import org.xml.sax.SAXException;
+
+import java.io.File;
+import java.io.IOException;
 
 import static com.berryworks.edireader.EDIReaderTest.INVOIC_97B_NO_SUFFIX;
 import static com.berryworks.edireader.EdifactReaderTest.EDIFACT_WITH_GROUP;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class EdiProberTest {
 
     @Test
-    public void canProbeEarlyX12NoSuffix() {
+    public void canProbeEarlyX12NoSuffix() throws IOException, SAXException {
         EdiProber ediProber = new EdiProber();
-        assertTrue(ediProber.probe(EDITestData.getAnsiInterchange()));
+        ediProber.probe(EDITestData.getAnsiInterchange());
 
         assertEquals(EDIStandard.ANSI, ediProber.getStandard());
         assertEquals("000038449", ediProber.getInterchangeControl());
@@ -34,9 +39,9 @@ public class EdiProberTest {
     }
 
     @Test
-    public void canProbeEarlyX12WithSuffix_LF() {
+    public void canProbeEarlyX12WithSuffix_LF() throws IOException, SAXException {
         EdiProber ediProber = new EdiProber();
-        assertTrue(ediProber.probe(EDITestData.getAnsiInterchange().replace("$", "$\n")));
+        ediProber.probe(EDITestData.getAnsiInterchange().replace("$", "$\n"));
 
         assertEquals(EDIStandard.ANSI, ediProber.getStandard());
         assertEquals("000038449", ediProber.getInterchangeControl());
@@ -53,9 +58,9 @@ public class EdiProberTest {
     }
 
     @Test
-    public void canProbeEarlyX12WithSuffix_CRLF() {
+    public void canProbeEarlyX12WithSuffix_CRLF() throws IOException, SAXException {
         EdiProber ediProber = new EdiProber();
-        assertTrue(ediProber.probe(EDITestData.getAnsiInterchange().replace("$", "$\r\n")));
+        ediProber.probe(EDITestData.getAnsiInterchange().replace("$", "$\r\n"));
 
         assertEquals(EDIStandard.ANSI, ediProber.getStandard());
         assertEquals("000038449", ediProber.getInterchangeControl());
@@ -72,9 +77,9 @@ public class EdiProberTest {
     }
 
     @Test
-    public void canProbeEDIFACT() {
+    public void canProbeEDIFACT() throws IOException, SAXException {
         EdiProber ediProber = new EdiProber();
-        assertTrue(ediProber.probe(INVOIC_97B_NO_SUFFIX));
+        ediProber.probe(INVOIC_97B_NO_SUFFIX);
 
         assertEquals(EDIStandard.EDIFACT, ediProber.getStandard());
         assertEquals("00000000000778", ediProber.getInterchangeControl());
@@ -91,16 +96,16 @@ public class EdiProberTest {
     }
 
     @Test
-    public void canProbeEDIFACT_withUNG() {
+    public void canProbeEDIFACT_withUNG() throws IOException, SAXException {
         EdiProber ediProber = new EdiProber();
-        assertTrue(ediProber.probe(EDIFACT_WITH_GROUP));
+        ediProber.probe(EDIFACT_WITH_GROUP);
 
         assertEquals(EDIStandard.EDIFACT, ediProber.getStandard());
         assertEquals("841F60UNZ", ediProber.getInterchangeControl());
         assertEquals("16", ediProber.getFunctionalGroupControl());
         assertEquals("1", ediProber.getDocumentControl());
-//        assertEquals("D98A", ediProber.getVersion());
-//        assertEquals("INVOIC", ediProber.getDocumentType());
+        assertEquals("D98A", ediProber.getVersion());
+        assertEquals("DCQCKI", ediProber.getDocumentType());
         assertEquals("+", ediProber.getDelimiter());
         assertEquals(":", ediProber.getSubDelimiter());
         assertEquals("'", ediProber.getSegmentTerminator());
@@ -109,4 +114,23 @@ public class EdiProberTest {
         assertEquals("?", ediProber.getReleaseCharacter());
     }
 
+    @Test
+    public void probeJunk() throws IOException {
+        EdiProber ediProber = new EdiProber();
+        try {
+            ediProber.probe("non-EDI");
+        } catch (SAXException e) {
+            assertEquals("No supported EDI standard interchange begins with non", e.getMessage());
+        }
+    }
+
+    @Test
+    public void probeFileDoesNotExist() throws IOException, SAXException {
+        EdiProber ediProber = new EdiProber();
+        try {
+            ediProber.probe(new File("non-existent-file.txt"));
+        } catch (IOException e) {
+            assertEquals("non-existent-file.txt (No such file or directory)", e.getMessage());
+        }
+    }
 }
