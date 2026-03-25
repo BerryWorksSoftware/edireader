@@ -1,5 +1,10 @@
 # Release Notes
 
+### 5.9.6 - March 24, 2026
+
+* Maintenance: Extend `EdiProber` to access sender and receiver addresses.
+  Revise `probe()` method for improved usability.
+
 ### 5.9.5 - March 18, 2026
 
 * Maintenance: When preparing a `Plugin` for use an EDI parser,
@@ -20,7 +25,7 @@
 
 ### 5.9.3 - January 22, 2026
 
-* Feature: Modify `ContextAwareSaxAdapter` to inherit from `XMLFilterImpl` to make it 
+* Feature: Modify `ContextAwareSaxAdapter` to inherit from `XMLFilterImpl` to make it
   and all subclasses easier to use in a SAX pipeline.
 
 ### 5.9.2 - December 9, 2025
@@ -38,7 +43,7 @@
   This is particularly relevant with an XMLReader carefully selected to avoid XML namespace security issues.
 * Fix: When generating an EDIFACT acknowledgment of receipt CONTRL message,
   use 8 instead of 7 in the UCI to indicate that the message is simply acknowledging receipt
-  and not the result of validation. 
+  and not the result of validation.
 
 ### 5.9.0 - September 25, 2025
 
@@ -56,7 +61,8 @@
   transaction, along with the transaction type, control number, and version. It also returns the same information for
   each functional group. Setting a TransactionCallback implementation on an EDIReader has been available since the
   earliest versions, but is little used because much richer information is available in other ways. The exact size
-  in characters, however, is something best done with a simple (non-breaking) expansion to the TransactionCallback interface.
+  in characters, however, is something best done with a simple (non-breaking) expansion to the TransactionCallback
+  interface.
 
 ### 5.8.4 - June 4, 2025
 
