@@ -565,8 +565,7 @@ public class AnsiReader extends StandardReader {
 
     private void unwrapContentHandler(PluginController pluginController) {
         ContentHandler contentHandler = getContentHandler();
-        if (contentHandler instanceof QueuedContentHandler) {
-            QueuedContentHandler queuedContentHandler = (QueuedContentHandler) contentHandler;
+        if (contentHandler instanceof QueuedContentHandler queuedContentHandler) {
             try {
                 queuedContentHandler.drainQueue();
             } catch (SAXException ignore) {

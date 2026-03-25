@@ -137,8 +137,7 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
                     DateTimeGenerator.generate(subDelimiter) :
                     controlDateAndTimeOverride;
 
-            if (standardReader instanceof EdifactReaderWithCONTRL) {
-                EdifactReaderWithCONTRL reader = (EdifactReaderWithCONTRL) standardReader;
+            if (standardReader instanceof EdifactReaderWithCONTRL reader) {
                 if (reader.isUNA()) {
                     int ri = standardReader.getRelease();
                     char r = ri < 0 ? ' ' : (char) ri;

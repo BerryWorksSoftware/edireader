@@ -200,8 +200,7 @@ public abstract class StandardReader extends EDIReader {
         boolean isActuallyAComposite = false;
         if (segmentPluginController != null) {
             Plugin plugin = segmentPluginController.getPlugin();
-            if (plugin instanceof CompositeAwarePlugin) {
-                CompositeAwarePlugin cap = (CompositeAwarePlugin) plugin;
+            if (plugin instanceof CompositeAwarePlugin cap) {
                 isActuallyAComposite = cap.isComposite(t.getSegmentType(), t.getIndex());
             }
         }

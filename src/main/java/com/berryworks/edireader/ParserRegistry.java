@@ -83,7 +83,7 @@ public class ParserRegistry {
 
     public static EDIReader get(String firstChars) {
         EDIReader result = null;
-        Class parserClass;
+        Class<?> parserClass;
         String parserClassname;
 
         if (SELECT_PARSER_BY_CLASSNAME_ENABLED) {
@@ -92,7 +92,7 @@ public class ParserRegistry {
             if (parserClassname != null) {
                 try {
                     parserClass = Class.forName(parserClassname);
-                    result = (EDIReader) parserClass.newInstance();
+                    result = (EDIReader) parserClass.getDeclaredConstructor().newInstance();
                 } catch (Exception ignore) {
                 }
             }
@@ -100,10 +100,10 @@ public class ParserRegistry {
 
         // If not, see if there is a builtin class that matches
         if (result == null) {
-            parserClass = (Class) getMatch(firstChars, builtinClass);
+            parserClass = (Class<?>) getMatch(firstChars, builtinClass);
             if (parserClass != null) {
                 try {
-                    result = (EDIReader) parserClass.newInstance();
+                    result = (EDIReader) parserClass.getDeclaredConstructor().newInstance();
                 } catch (Exception ignore) {
                 }
             }
@@ -116,7 +116,7 @@ public class ParserRegistry {
                 if (parserClassname != null) {
                     try {
                         parserClass = Class.forName(parserClassname);
-                        result = (EDIReader) parserClass.newInstance();
+                        result = (EDIReader) parserClass.getDeclaredConstructor().newInstance();
                     } catch (Exception ignore) {
                     }
                 }
@@ -137,7 +137,7 @@ public class ParserRegistry {
         registeredClassNames.put(firstChars, className);
     }
 
-    private static Object getMatch(String firstChars, Map map) {
+    private static Object getMatch(String firstChars, Map<String, ?> map) {
         Object result = null;
         if (firstChars.length() > 3) firstChars = firstChars.substring(0, 3);
         for (int n = firstChars.length(); result == null && n > 0; firstChars = firstChars.substring(0, --n)) {

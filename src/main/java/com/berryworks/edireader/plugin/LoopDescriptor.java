@@ -394,10 +394,9 @@ public class LoopDescriptor {
      * @return true if this object is the same as the obj argument; false otherwise.
      */
     public boolean equals(Object target) {
-        if (!(target instanceof LoopDescriptor))
+        if (!(target instanceof LoopDescriptor sld))
             return false;
 
-        LoopDescriptor sld = (LoopDescriptor) target;
         return equalsOrBothNull(getName(), sld.getName())
                 && equalsOrBothNull(getFirstSegment(), sld.getFirstSegment())
                 && getNestingLevel() == sld.getNestingLevel()

@@ -69,13 +69,10 @@ public class PluginControllerFactory extends AbstractPluginControllerFactory {
      */
     @Override
     protected Plugin getInstance(String standard, String docType) throws Exception {
-        Plugin instance;
         String pluginName = pluginPackage() + "." + standard + "_" + docType;
-        logger.debug("attempting to load a plugin named {}", pluginName);
-        Class<Plugin> pluginClass = (Class<Plugin>) Class.forName(pluginName);
-
-        logger.debug("plugin loaded");
-        instance = pluginClass.newInstance();
+        Class<?> rawClass = Class.forName(pluginName);
+        Class<? extends Plugin> pluginClass = rawClass.asSubclass(Plugin.class);
+        Plugin instance = pluginClass.getDeclaredConstructor().newInstance();
         instance.prepare();
         lastPluginLoaded = pluginName;
         return instance;
