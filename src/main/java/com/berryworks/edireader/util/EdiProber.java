@@ -13,6 +13,22 @@ import java.io.*;
 import static com.berryworks.edireader.EDIStandard.*;
 import static com.berryworks.edireader.util.FixedLength.isPresent;
 
+/**
+ * Utility for probing EDI input to extract high-level metadata without fully parsing the document.
+ * <p>
+ * This class reads only the initial segments of an EDI stream and determines:
+ * <ul>
+ *     <li>EDI standard (X12, EDIFACT, HL7, TRADACOMS, etc.)</li>
+ *     <li>Document type (e.g., 837, 850, ORDERS)</li>
+ *     <li>Version / release</li>
+ *     <li>Sender and receiver identifiers</li>
+ *     <li>Control numbers (interchange, group, document)</li>
+ *     <li>Delimiter characters</li>
+ * </ul>
+ * <p>
+ * Parsing is intentionally terminated early once sufficient information is gathered,
+ * making this suitable for lightweight inspection or routing decisions.
+ */
 public class EdiProber {
     private EDIStandard standard;
     private String documentType;
@@ -22,29 +38,50 @@ public class EdiProber {
     private String interchangeControl, functionalGroupControl, documentControl;
     private String senderId, senderQualifier, receiverId, receiverQualifier;
 
+    /**
+     * Probe an EDI document provided as a String.
+     *
+     * @param edi the EDI content
+     * @throws IOException  if a read error occurs
+     * @throws SAXException if a parsing error occurs
+     */
     public void probe(String edi) throws IOException, SAXException {
         probe(new StringReader(edi));
     }
 
+    /**
+     * Probe an EDI document from a file.
+     *
+     * @param ediFile the file containing EDI data
+     * @throws IOException  if the file cannot be read
+     * @throws SAXException if a parsing error occurs
+     */
     public void probe(File ediFile) throws IOException, SAXException {
         try (Reader reader = new FileReader(ediFile)) {
             probe(reader);
         }
     }
 
+    /**
+     * Probe an EDI document from a Reader.
+     * <p>
+     * This method performs a partial parse and stops early once key metadata is extracted.
+     * After invocation, getter methods can be used to retrieve the discovered values.
+     *
+     * @param reader the source of EDI data
+     * @throws IOException  if a read error occurs
+     * @throws SAXException if a parsing error occurs
+     */
     public void probe(Reader reader) throws IOException, SAXException {
         EDIReader ediReader = new EDIReader();
         ProbeHandler handler = new ProbeHandler();
         ediReader.setContentHandler(handler);
-        ediReader.setSyntaxExceptionHandler(e -> {
-            return true; // Ignore
-        });
+        ediReader.setSyntaxExceptionHandler(e -> true);
+
         try {
             ediReader.parse(reader);
         } catch (RuntimeException e) {
             if (e.getMessage().equals(ProbeHandler.STOP_PARSING)) {
-                // That is the signal that we have gathered all the information needed;
-                // so there is no need to keep parsing.
                 standard = handler.getStandard();
                 senderId = handler.senderId;
                 senderQualifier = handler.senderQualifier;
@@ -63,8 +100,6 @@ public class EdiProber {
         } catch (EDISyntaxException e) {
             String message = e.getMessage();
             if (isPresent(message) && message.startsWith("No supported EDI standard")) {
-                // This means there was no parser available. However, we want to be able to recognize
-                // HL7, TRADACOMS, etc. even if we don't have a parser available.
                 if (message.endsWith("STX")) {
                     standard = TRADACOMS;
                     return;
@@ -77,72 +112,120 @@ public class EdiProber {
         }
     }
 
+    /**
+     * @return the detected EDI standard, or {@code null} if not determined
+     */
     public EDIStandard getStandard() {
         return standard;
     }
 
+    /**
+     * @return the document type (e.g., 837, 850), or {@code null} if not determined
+     */
     public String getDocumentType() {
         return documentType;
     }
 
+    /**
+     * @return the version or release identifier, or {@code null} if not determined
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * @return the element delimiter character as a String, or {@code null} if unavailable
+     */
     public String getDelimiter() {
         return tokenizer == null ? null : String.valueOf(tokenizer.getDelimiter());
     }
 
+    /**
+     * @return the sub-element delimiter character, or {@code null} if unavailable
+     */
     public String getSubDelimiter() {
         return tokenizer == null ? null : String.valueOf(tokenizer.getSubDelimiter());
     }
 
+    /**
+     * @return the repetition separator character, or {@code null} if not defined
+     */
     public String getRepetitionDelimiter() {
         if (tokenizer == null) return null;
         int repetitionSeparator = tokenizer.getRepetitionSeparator();
         if (repetitionSeparator < 0) return null;
-        return String.valueOf((Character) (char) repetitionSeparator);
+        return String.valueOf((char) repetitionSeparator);
     }
 
+    /**
+     * @return the release (escape) character, or {@code null} if not defined
+     */
     public String getReleaseCharacter() {
         if (tokenizer == null) return null;
         int release = tokenizer.getRelease();
         if (release < 0) return null;
-        return String.valueOf((Character) (char) release);
+        return String.valueOf((char) release);
     }
 
+    /**
+     * @return the segment terminator character, or {@code null} if unavailable
+     */
     public String getSegmentTerminator() {
         return tokenizer == null ? null : String.valueOf(tokenizer.getTerminator());
     }
 
+    /**
+     * @return any suffix following the segment terminator (e.g., CR/LF), or {@code null}
+     */
     public String getSegmentTerminatorSuffix() {
         return terminatorSuffix;
     }
 
+    /**
+     * @return the interchange control number, or {@code null} if not available
+     */
     public String getInterchangeControl() {
         return interchangeControl;
     }
 
+    /**
+     * @return the functional group control number, or {@code null} if not available
+     */
     public String getFunctionalGroupControl() {
         return functionalGroupControl;
     }
 
+    /**
+     * @return the document (transaction set/message) control number, or {@code null}
+     */
     public String getDocumentControl() {
         return documentControl;
     }
 
+    /**
+     * @return the sender identifier, or {@code null} if not available
+     */
     public String getSenderId() {
         return senderId;
     }
 
+    /**
+     * @return the sender qualifier, or {@code null} if not available
+     */
     public String getSenderQualifier() {
         return senderQualifier;
     }
 
+    /**
+     * @return the receiver identifier, or {@code null} if not available
+     */
     public String getReceiverId() {
         return receiverId;
     }
 
+    /**
+     * @return the receiver qualifier, or {@code null} if not available
+     */
     public String getReceiverQualifier() {
         return receiverQualifier;
     }
