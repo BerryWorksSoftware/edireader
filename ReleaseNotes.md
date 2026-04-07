@@ -1,5 +1,11 @@
 # Release Notes
 
+### 5.9.7 - April 7, 2026
+
+* Maintenance: Use Java 21.
+* Maintenance: Adjust test cases for compatbility with Windows-style line termination.
+
+
 ### 5.9.6 - March 24, 2026
 
 * Maintenance: Extend `EdiProber` to access sender and receiver addresses.
