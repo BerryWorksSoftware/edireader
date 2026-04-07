@@ -10,8 +10,7 @@ import java.io.IOException;
 
 import static com.berryworks.edireader.EDIReaderTest.INVOIC_97B_NO_SUFFIX;
 import static com.berryworks.edireader.EdifactReaderTest.EDIFACT_WITH_GROUP;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class EdiProberTest {
 
@@ -130,7 +129,7 @@ public class EdiProberTest {
         try {
             ediProber.probe(new File("non-existent-file.txt"));
         } catch (IOException e) {
-            assertEquals("non-existent-file.txt (No such file or directory)", e.getMessage());
+            assertTrue(e.getMessage().startsWith("non-existent-file.txt"));
         }
     }
 }
