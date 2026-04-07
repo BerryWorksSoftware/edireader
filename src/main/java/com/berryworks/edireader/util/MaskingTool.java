@@ -58,4 +58,8 @@ public abstract class MaskingTool {
         return sb.toString();
     }
 
+    public static String normalizeEol(String s) {
+        return s.replace("\r\n", "\n")
+                .replace("\r", "\n");
+    }
 }

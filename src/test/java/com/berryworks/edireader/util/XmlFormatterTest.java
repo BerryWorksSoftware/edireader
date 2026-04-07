@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import static com.berryworks.edireader.util.MaskingTool.normalizeEol;
 import static org.junit.Assert.assertEquals;
 
 public class XmlFormatterTest {
@@ -20,7 +21,7 @@ public class XmlFormatterTest {
         xmlFormatter.close();
         assertEquals("""
                 <root>
-                </root>""", writer.toString());
+                </root>""", normalizeEol(writer.toString()));
     }
 
     @Test
@@ -34,7 +35,7 @@ public class XmlFormatterTest {
                             <a>A</a>
                             <b>B</b>
                         </root>""",
-                writer.toString());
+                normalizeEol(writer.toString()));
     }
 
     @Test
@@ -48,7 +49,7 @@ public class XmlFormatterTest {
                             <a>A/A</a>
                             <b>/B/</b>
                         </root>""",
-                writer.toString());
+                normalizeEol(writer.toString()));
     }
 
     @Test
@@ -67,7 +68,7 @@ public class XmlFormatterTest {
                                 <b>B2</b>
                             </a>
                         </root>""",
-                writer.toString());
+                normalizeEol(writer.toString()));
     }
 
     @Test
@@ -85,7 +86,7 @@ public class XmlFormatterTest {
                                 <b z='Z/Z'>B</b>
                             </a>
                         </root>""",
-                writer.toString());
+                normalizeEol(writer.toString()));
     }
 
     @Test
@@ -225,7 +226,7 @@ public class XmlFormatterTest {
                             </transaction>
                         </group>
                     </interchange>
-                </ediroot>""", writer.toString());
+                </ediroot>""", normalizeEol(writer.toString()));
     }
 
 }
