@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.berryworks</groupId>
     <artifactId>edireader</artifactId>
-    <version>5.9.8-SNAPSHOT</version>
+    <version>5.9.8</version>
 
     <packaging>jar</packaging>
     <name>EDIReader Core EDI Parser</name>
@@ -13,7 +14,7 @@
         and custom integrations. This EDI parser serves as the underlying core for the
         EDIReader Framework providing EDIWriter and other added-value modules.
     </description>
-    <url>https://gitlab.com/canabrook/edireader-core</url>
+    <url>https://github.com/BerryWorksSoftware/edireader</url>
 
     <licenses>
         <license>
@@ -31,17 +32,6 @@
         </developer>
     </developers>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
@@ -49,18 +39,18 @@
         <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
         <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
         <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
-        <nexus.staging.maven.plugin.version>1.7.0</nexus.staging.maven.plugin.version>
         <dependency.check.version>11.1.0</dependency.check.version>
         <slf4j.version>2.0.17</slf4j.version>
         <junit.version>4.13.2</junit.version>
         <gpg.keyname>0xC8794862</gpg.keyname>
-        <core.project.url>https://gitlab.com/canabrook/edireader-core</core.project.url>
+        <core.project.url>https://github.com/BerryWorksSoftware/edireader.git</core.project.url>
+        <core.project.ssh.url>git@github.com:BerryWorksSoftware/edireader.git</core.project.ssh.url>
     </properties>
 
     <scm>
         <connection>scm:git:${core.project.url}</connection>
         <url>${core.project.url}</url>
-        <developerConnection>scm:git:${core.project.url}</developerConnection>
+        <developerConnection>scm:git:${core.project.ssh.url}</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -143,7 +133,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.9.0</version>
+                <version>0.11.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -154,29 +144,18 @@
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>${maven.gpg.plugin.version}</version>
                 <executions>
-<!--                    <execution>-->
-<!--                        <id>sign-artifacts</id>-->
-<!--                        <phase>verify</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>sign</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <useAgent>true</useAgent>-->
-<!--                            <keyname>xxxxxxxx</keyname>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <useAgent>true</useAgent>
+                            <keyname>${gpg.keyname}</keyname>
+                        </configuration>
+                    </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>${nexus.staging.maven.plugin.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
             </plugin>
             <plugin>
                 <!-- "This product uses the NVD API but is not endorsed or certified by the NVD." -->
@@ -189,7 +168,7 @@
                 <executions>
                     <execution>
                         <goals>
-<!--                            <goal>check</goal>-->
+                            <!--                            <goal>check</goal>-->
                         </goals>
                     </execution>
                 </executions>
