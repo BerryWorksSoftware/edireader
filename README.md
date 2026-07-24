@@ -6,7 +6,7 @@ it has handled millions of transactions in a wide variety of products, services,
 and custom integrations.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
-[![Java Version](https://img.shields.io/badge/Java-8%2B-orange.svg)](pom.xml)
+[![Java Version](https://img.shields.io/badge/Java-21%2B-orange.svg)](pom.xml)
 
 [ReleaseNotes.md](ReleaseNotes.md)
 
