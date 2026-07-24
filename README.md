@@ -1,11 +1,44 @@
 ## EDIReader Community Edition
 
-#### Introduction
-
 EDIReader is a flexible and lightweight EDI parser, written in pure Java using the SAX API
 allowing for many integration options. Released as open source (GPL3) in 2004 and enhanced steadily since then,
 it has handled millions of transactions in a wide variety of products, services, industries, platforms,
 and custom integrations.
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![Java Version](https://img.shields.io/badge/Java-8%2B-orange.svg)](pom.xml)
+
+[ReleaseNotes.md](ReleaseNotes.md)
+
+Looking for an on-premise REST API engine built on EDIReader?
+Check out [BerryWave EDI API](https://github.com/RBMayberry/BerryWave-EDI-API) 
+
+### Quick Start
+
+#### Basic Java Usage Example
+
+```java
+import com.berryworks.edireader.EDIReader;
+import com.berryworks.edireader.EDIReaderFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
+import java.io.FileReader;
+
+public class ParseExample {
+    public static void main(String[] args) throws Exception {
+        // Create an EDIReader instance for an input stream
+        InputSource inputSource = new InputSource(new FileReader("sample.edi"));
+        XMLReader ediReader = EDIReaderFactory.createEDIReader(inputSource);
+
+        // Attach a SAX ContentHandler (e.g., custom handler or standard XML transformer)
+        ediReader.setContentHandler(new MySaxHandler());
+        
+        // Parse the EDI stream
+        ediReader.parse(inputSource);
+    }
+}
+```
 
 #### Features Summary
 
@@ -15,7 +48,6 @@ The EDI parser supports:
 * Segment loops:
     - detects segment loops/groups within a transaction/message
     - using EDIReader plugins
-    - reflected in XML as nested <loop> elements
 * Handles multiple:
     - interchanges per input stream
     - functional groups per interchange
@@ -43,34 +75,22 @@ The EDI parser supports:
 
 #### Primary Interfaces
 
-EDIReader may be easily integrated using:
 * Command line interface tools accepting filename arguments
 * Java API for embedding in your own Java system
 
 
 #### Technical Notes
 
-* Pure Java, with no dependence on third-party libraries
-    - except for SLF4J as described below
-    - avoids dependency version issues
-    - avoids licensing issues
-    - compatible with a wide variety of Java platforms, including Android
-* Uses Simple Logging Facade for Java (SLF4J)
-    - an ultra-thin logging API
-    - allows deployment-time binding with log4j, java.util.logging, and other logging frameworks
-* Thread safe, used in multi-threading applications
-* Compatible with Java 8 syntax
-* Runnable with Java 8 and later
+* Pure Java: Zero third-party library dependencies (except SLF4J), avoiding dependency conflicts and licensing baggage. Compatible with standard JVMs and Android.
+* Logging: Uses Simple Logging Facade for Java (SLF4J) for lightweight deployment-time binding (Logback, Log4j2, java.util.logging).
+* Thread-Safe: Designed for concurrent execution in high-throughput enterprise applications.
 
 
 #### License and Ownership
 
-* Intellectual property of BerryWorks Software
-* Published as open source software under the GPL
-* Can be licensed without GPL constraints
-    - along with the EDIReader Framework containing value-added extensions
-    - including support/maintenance agreement
-    - for either End Users or Service Providers
+* Intellectual Property: Copyright BerryWorks Software.
+* Open Source License: Distributed under the GNU General Public License v3.0 (GPLv3).
+* Commercial Licensing: Commercial licenses (without GPL constraints) are available from BerryWorks Software, along with support and maintenance agreements for end-users and service providers.
 
 #### The EDIReader Framework
 
@@ -78,30 +98,21 @@ The EDIReader Framework is a set of Java modules built on top of the Community E
 Unlike the Community Edition, it is not released as open source but may be licensed from BerryWorks Software.
 It adds many additional EDI features such as:
 
-* EDIWriter, producing EDI output from XML of the style produced by EDIReader
-* EDI Annotations, augmenting the XML from EDIReader with
+* EDIWriter, producing EDI output
+* EDI Annotations, augmenting the parsed content from EDIReader with
     - transaction/message descriptions
     - segment descriptions
     - element and sub-element descriptions
     - code value descriptions
-* Enhanced support for HIPAA transactions
-    - 270, 271, 276, 277, 278, 834, 835, 837
-    - Loop qualifiers included in XML (for example: 1000A, 2010AB)
-    - HL hierarchies reflected via nested XML elements
-* Segment loop awareness via an extensive library of version-specific plugins
+* Segment loop awareness
 * Splitting EDI input containing many transactions into many single-transaction EDI output files
-* EDI validation and compliance checking, using XSDs purchased from X12
+* EDI validation and compliance checking
 * Support for additional EDI and EDI-like formats:
     - HL7
     - NCPDP
     - TRADACOMS
 * JSON support
-    - EDI to JSON, analogous to EDI to XML
-    - JSON to EDI, analogous to EDIWriter
-    - see the edi-json project also at GitHub
-* YAML support
-    - EDI to YAML, annotated for human readability
-* Includes EDI samples for many transactions/versions
-* Includes suite of JUnit test cases
-* Available with full Java source code as Maven project
+    - EDI to JSON
+    - JSON to EDI
+
 
