@@ -1,5 +1,16 @@
 # Release Notes
 
+### 5.9.8 - July 21, 2026
+
+* Milestone release
+  * tagged in public projects 
+    * GitHub https://github.com/BerryWorksSoftware/edireader 
+    * GitLab https://gitlab.com/canabrook/edireader-core
+  * published to Maven Central https://central.sonatype.com/artifact/com.berryworks/edireader
+  * used within [BerryWave EDI API](https://github.com/RBMayberry/BerryWave-EDI-API)
+
+
+
 ### 5.9.7 - April 7, 2026
 
 * Maintenance: Use Java 21.
