@@ -20,6 +20,8 @@
 
 package com.berryworks.edireader;
 
+import com.berryworks.edireader.hl7.HL7Reader;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +59,7 @@ public class ParserRegistry {
         builtinClass.put("UNA", EdifactReaderWithCONTRL.class);
         builtinClass.put("UNB", EdifactReaderWithCONTRL.class);
         builtinClass.put("UNH", UNHReader.class);
-        registeredClassNames.put("MSH", HL7Reader.class);
+        builtinClass.put("MSH", HL7Reader.class);
         registeredClassNames.put("STX", "com.berryworks.edireader.tradacoms.TradacomsReader");
     }
 
