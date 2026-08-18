@@ -29,10 +29,10 @@ import java.util.Map;
  * EDI standard is to be used, this parser registry is used to select a parser based on the initial
  * characters of data.
  * <p>
- * The parsers for ANSI X.12 and UN/EDIFACT are included in the registry be default. The classes
+ * The parsers for ANSI X.12, UN/EDIFACT, and HL7 v2 are included in the registry be default. The classes
  * that implement these parsers are provided by the core EDIReader.
  * <p>
- * Parsers for other formats, including HL7 and TRADACOMS, are also listed in the registry.
+ * Parsers for other formats, including TRADACOMS, are also listed in the registry.
  * The classes that implement these formats are optional modules not included in the core EDIReader.
  * If an optional parser module is present in the classpath, the registry is therefore able to
  * select and load the appropriate parser in response to the leading character sequences in the data.
@@ -57,7 +57,7 @@ public class ParserRegistry {
         builtinClass.put("UNA", EdifactReaderWithCONTRL.class);
         builtinClass.put("UNB", EdifactReaderWithCONTRL.class);
         builtinClass.put("UNH", UNHReader.class);
-        registeredClassNames.put("MSH", "com.berryworks.edireader.hl7.HL7Reader");
+        registeredClassNames.put("MSH", HL7Reader.class);
         registeredClassNames.put("STX", "com.berryworks.edireader.tradacoms.TradacomsReader");
     }
 
@@ -65,12 +65,12 @@ public class ParserRegistry {
      * Returns an instance of some EDIReader subclass based on the first
      * several chars of data to be parsed.
      * <p>
-     * Parsers for ANSI X12 and UN/EDIFACT are built-in. Other parsers can be registered, including
+     * Parsers for ANSI X12, UN/EDIFACT, and HL7 are built-in. Other parsers can be registered, including
      * custom parsers developed by users. Parsers registered via register() are considered first for
      * a match with the incoming data before the built-in parsers are considered, allowing users to
-     * provide custom implementations of X12 and EDIFACT parsers if needed.
+     * provide custom implementations of the built-in  parsers if needed.
      * <p>
-     * However, if SELECT_PARSER_BY_CLASSNAME_ENABLED constant is changed to false, thent loading of
+     * However, if SELECT_PARSER_BY_CLASSNAME_ENABLED constant is changed to false, then loading of
      * parsers by classname is disabled, leaving only the built-in parsers to handle EDI parsing. This would
      * prevent any potential for a malicious party to somehow register a dangerous parser by classname and
      * then submit carefully-crafted "EDI" to cause that parser to gain control. For backward compatibility,
@@ -82,6 +82,10 @@ public class ParserRegistry {
      */
 
     public static EDIReader get(String firstChars) {
+        if (firstChars == null || firstChars.isEmpty()) {
+            return null;
+        }
+
         EDIReader result = null;
         Class<?> parserClass;
         String parserClassname;
@@ -138,13 +142,18 @@ public class ParserRegistry {
     }
 
     private static Object getMatch(String firstChars, Map<String, ?> map) {
-        Object result = null;
-        if (firstChars.length() > 3) firstChars = firstChars.substring(0, 3);
-        for (int n = firstChars.length(); result == null && n > 0; firstChars = firstChars.substring(0, --n)) {
-            result = map.get(firstChars);
+        if (firstChars == null || firstChars.isEmpty()) {
+            return null;
         }
 
-        return result;
-    }
+        String candidate = firstChars.length() > 3 ? firstChars.substring(0, 3) : firstChars;
+        for (int n = candidate.length(); n > 0; n--) {
+            Object result = map.get(candidate.substring(0, n));
+            if (result != null) {
+                return result;
+            }
+        }
 
+        return null;
+    }
 }

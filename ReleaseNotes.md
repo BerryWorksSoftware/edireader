@@ -1,5 +1,9 @@
 # Release Notes
 
+### 6.0.0 - August, 2026
+
+* Feature: HL7 parser
+
 ### 5.9.8 - July 21, 2026
 
 * Milestone release
@@ -14,7 +18,7 @@
 ### 5.9.7 - April 7, 2026
 
 * Maintenance: Use Java 21.
-* Maintenance: Adjust test cases for compatbility with Windows-style line termination.
+* Maintenance: Adjust test cases for compatibility with Windows-style line termination.
 
 
 ### 5.9.6 - March 24, 2026
