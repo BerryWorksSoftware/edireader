@@ -34,7 +34,7 @@ public class Conversion {
     }
 
     public static byte[] toByteArray(char[] data, int offset, int length) {
-si        return new String(data, offset, length).getBytes(CHARSET);
+        return new String(data, offset, length).getBytes(CHARSET);
     }
 
     public static char[] toCharArray(byte[] data) {
@@ -43,4 +43,5 @@ si        return new String(data, offset, length).getBytes(CHARSET);
 
     public static char[] toCharArray(byte[] data, int offset, int length) {
         return new String(data, offset, length, CHARSET).toCharArray();
-    }}
+    }
+}
