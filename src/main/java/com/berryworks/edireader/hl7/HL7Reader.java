@@ -13,7 +13,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 import static com.berryworks.edireader.util.FixedLength.isPresent;
@@ -53,7 +52,7 @@ import static com.berryworks.edireader.util.FixedLength.isPresent;
  * </pre>
  */
 public class HL7Reader extends StandardReader {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
+    private static final Logger logger = LoggerFactory.getLogger(HL7Reader.class);
     private String messageType;
     private CompositeAwarePlugin compositeAwarePlugin;
 
@@ -61,7 +60,6 @@ public class HL7Reader extends StandardReader {
     // but the plugin (and potentially an XSD) says it is not a composite according to the HL7 specifications.
     private boolean nonCompositeAccordingToPlugin;
     private final StringBuilder fauxComposite = new StringBuilder();
-    private final String emptyString = "";
 
     @Override
     public void parse(InputSource source) throws SAXException, IOException {
@@ -99,7 +97,6 @@ public class HL7Reader extends StandardReader {
             if (segType.equals("MSH")) {
                 logger.debug("HL7 message starting with MSH segment");
                 t = parseInterchange(t);
-                logger.debug("after parseInterchange() tokenType is " + t.getType());
             } else {
                 throw new EDISyntaxException("Improperly formed MSH segment",
                         getTokenizer());
@@ -150,27 +147,24 @@ public class HL7Reader extends StandardReader {
         List<String> list = getTokenizer().nextCompositeElement();
         String sendingApplication = !list.isEmpty() ? list.get(0) : "";
         getInterchangeAttributes().addCDATA(getXMLTags().getApplSender(), sendingApplication);
+
         list = getTokenizer().nextCompositeElement();
         String sendingFacility = !list.isEmpty() ? list.get(0) : "";
         getInterchangeAttributes().addCDATA("SendingFacility", sendingFacility);
 
         // Receiving application and facility MSH fields 5 and 6
-        // Analogous to sending application and facility above
         list = getTokenizer().nextCompositeElement();
-        String receivingApplication;
-        try {
-            receivingApplication = list.get(0);
-            getInterchangeAttributes().addCDATA(getXMLTags().getApplReceiver(), receivingApplication);
-        } catch (IndexOutOfBoundsException e) {
-            // This field is not required
+        if (!list.isEmpty()) {
+            getInterchangeAttributes().addCDATA(
+                    getXMLTags().getApplReceiver(),
+                    list.get(0));
         }
+
         list = getTokenizer().nextCompositeElement();
-        String receivingFacility;
-        try {
-            receivingFacility = list.get(0);
-            getInterchangeAttributes().addCDATA("ReceivingFacility", receivingFacility);
-        } catch (IndexOutOfBoundsException e) {
-            // This field is not required
+        if (!list.isEmpty()) {
+            getInterchangeAttributes().addCDATA(
+                    "ReceivingFacility",
+                    list.get(0));
         }
 
         // Date/time of message MSH field 7
@@ -184,13 +178,9 @@ public class HL7Reader extends StandardReader {
 
         // Message type MSH field 9
         list = getTokenizer().nextCompositeElement();
-        messageType = null;
-        String eventType = null;
-        try {
-            messageType = list.get(0);
-            eventType = list.get(1);
-        } catch (ArrayIndexOutOfBoundsException ignored) {
-        }
+        messageType = list.isEmpty() ? null : list.get(0);
+        String eventType = list.size() > 1 ? list.get(1) : null;
+
         if ((messageType != null) && (!messageType.isEmpty())) {
             getInterchangeAttributes().addCDATA(getXMLTags().getMessageType(), messageType);
             String text = Table76.getText(messageType);
@@ -216,12 +206,10 @@ public class HL7Reader extends StandardReader {
 
         // Processing ID MSH field 11
         list = getTokenizer().nextCompositeElement();
-        String processingID;
-        try {
-            processingID = list.get(0);
-        } catch (IndexOutOfBoundsException e) {
+        if (list.isEmpty()) {
             throw new EDISyntaxException("Invalid Processing ID", getTokenizer());
         }
+        String processingID = list.get(0);
         if ((processingID != null) && (!processingID.isEmpty())) {
             getInterchangeAttributes().addCDATA(getXMLTags().getProcessingId(), processingID);
         }
@@ -291,7 +279,7 @@ public class HL7Reader extends StandardReader {
 
     private void processDateAndTime() throws SAXException, IOException {
         String dateAndTime = getTokenizer().nextSimpleValue();
-        if (dateAndTime.length() >= 8) {
+        if (dateAndTime != null && dateAndTime.length() >= 8) {
             getInterchangeAttributes().addCDATA(getXMLTags().getDate(), dateAndTime.substring(0, 8));
             if (dateAndTime.length() >= 12) {
                 getInterchangeAttributes().addCDATA(getXMLTags().getTime(), dateAndTime.substring(8));
@@ -346,15 +334,12 @@ public class HL7Reader extends StandardReader {
             if (segmentType.equals("MSH")) {
                 break;
             }
-            logger.debug("parsing HL7 segment " + segmentType);
+            logger.debug("parsing HL7 segment {}", segmentType);
 
             if (pluginController.transition(segmentType)) {
                 // First close off any loops that were closed as the result of
                 // the transition
                 int toClose = pluginController.closedCount();
-
-                logger.debug("closing " + toClose + " loops");
-
                 for (; toClose > 0; toClose--) {
                     // ... </loop>
                     endElement(getXMLTags().getLoopTag());
@@ -398,7 +383,6 @@ public class HL7Reader extends StandardReader {
 
         int toClose = pluginController.getNestingLevel();
 
-        logger.debug("closing all " + toClose + " loops");
         for (; toClose > 0; toClose--) {
             // ... </loop>
             endElement(getXMLTags().getLoopTag());
@@ -407,7 +391,6 @@ public class HL7Reader extends StandardReader {
         getAckGenerator().generateTransactionAcknowledgment(null, null);
         endElement(getXMLTags().getDocumentTag());
 
-        logger.debug("returning from parseDocument with tokenType " + t.getType());
         return (t);
     }
 
@@ -566,7 +549,7 @@ public class HL7Reader extends StandardReader {
      */
     @Override
     public void preview() throws EDISyntaxException, IOException {
-        int lookaheadSize = 240;
+        final int lookaheadSize = 240;
         char[] buf = getTokenizer().lookahead(lookaheadSize);
         if ((buf == null) || (buf.length < 12)) {
             throw new EDISyntaxException(INCOMPLETE_HL7_MESSAGE);
@@ -604,10 +587,10 @@ public class HL7Reader extends StandardReader {
         // within the lookahead buffer, then just go with \r.
         setTerminator('\r');
         setTerminatorSuffix("");
-        for (int i = mshOffset + 10; i < lookaheadSize; i++) {
+        for (int i = mshOffset + 10; i < buf.length; i++) {
             if (buf[i] == '\r') {
                 setTerminator('\r');
-                if (buf[i + 1] == '\n') {
+                if (i + 1 < buf.length && buf[i + 1] == '\n') {
                     setTerminatorSuffix("\n");
                 }
                 break;
@@ -616,7 +599,6 @@ public class HL7Reader extends StandardReader {
                 break;
             }
         }
-
     }
 
     @Override
