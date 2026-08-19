@@ -14,8 +14,6 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -36,8 +34,7 @@ public class Conversion {
     }
 
     public static byte[] toByteArray(char[] data, int offset, int length) {
-        CharBuffer charBuffer = CharBuffer.wrap(data, offset, length);
-        return CHARSET.encode(charBuffer).array();
+si        return new String(data, offset, length).getBytes(CHARSET);
     }
 
     public static char[] toCharArray(byte[] data) {
@@ -45,7 +42,5 @@ public class Conversion {
     }
 
     public static char[] toCharArray(byte[] data, int offset, int length) {
-        ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, length);
-        return CHARSET.decode(byteBuffer).array();
-    }
-}
+        return new String(data, offset, length, CHARSET).toCharArray();
+    }}
