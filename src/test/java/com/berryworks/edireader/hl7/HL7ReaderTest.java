@@ -66,7 +66,7 @@ public class HL7ReaderTest {
     public void canParseHL7() throws EDISyntaxException, IOException, TransformerException {
         StringReader stringReader = new StringReader(HL7_SAMPLE);
         StringWriter xmlOutput = new StringWriter();
-        Conversion.ediToxml(stringReader, xmlOutput, new HL7Reader());
+        Conversion.ediToXml(stringReader, xmlOutput, new HL7Reader());
         String expected = HL7_XML.replace("\n", "");
         String actual = xmlOutput.toString().replace("\n", "");
         Assert.assertEquals(expected, actual);

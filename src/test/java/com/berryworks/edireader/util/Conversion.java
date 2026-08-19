@@ -21,9 +21,9 @@ import java.nio.charset.StandardCharsets;
 
 public class Conversion {
 
-    private static final Charset charset = StandardCharsets.ISO_8859_1;
+    private static final Charset CHARSET = StandardCharsets.ISO_8859_1;
 
-    public static void ediToxml(Reader ediInput, Writer xmlOutput, EDIReader parser) throws TransformerException {
+    public static void ediToXml(Reader ediInput, Writer xmlOutput, EDIReader parser) throws TransformerException {
         InputSource inputSource = new InputSource(ediInput);
         SAXSource source = new SAXSource(parser, inputSource);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -37,7 +37,7 @@ public class Conversion {
 
     public static byte[] toByteArray(char[] data, int offset, int length) {
         CharBuffer charBuffer = CharBuffer.wrap(data, offset, length);
-        return charset.encode(charBuffer).array();
+        return CHARSET.encode(charBuffer).array();
     }
 
     public static char[] toCharArray(byte[] data) {
@@ -46,6 +46,6 @@ public class Conversion {
 
     public static char[] toCharArray(byte[] data, int offset, int length) {
         ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, length);
-        return charset.decode(byteBuffer).array();
+        return CHARSET.decode(byteBuffer).array();
     }
 }

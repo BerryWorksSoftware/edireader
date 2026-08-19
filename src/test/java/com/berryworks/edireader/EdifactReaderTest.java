@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import static com.berryworks.edireader.util.Conversion.ediToxml;
+import static com.berryworks.edireader.util.Conversion.ediToXml;
 import static org.junit.Assert.*;
 
 public class EdifactReaderTest {
@@ -42,7 +42,7 @@ public class EdifactReaderTest {
                         UNT+8+1'\
                         UNZ+1+841F60UNZ+1+30077'""");
         StringWriter writer = new StringWriter();
-        ediToxml(reader, writer, edifactReader);
+        ediToXml(reader, writer, edifactReader);
         assertEquals(
                 """
                         <?xml version="1.0" encoding="UTF-8"?>\
@@ -98,7 +98,7 @@ public class EdifactReaderTest {
                 UNZ+1+131'""";
         StringReader reader = new StringReader(edi);
         StringWriter writer = new StringWriter();
-        ediToxml(reader, writer, edifactReader);
+        ediToXml(reader, writer, edifactReader);
         assertEquals(
                 """
                         <?xml version="1.0" encoding="UTF-8"?>\
@@ -149,7 +149,7 @@ public class EdifactReaderTest {
                         UNT+3+ME000001'
                         UNZ+1+131'""");
         StringWriter writer = new StringWriter();
-        ediToxml(reader, writer, edifactReader);
+        ediToXml(reader, writer, edifactReader);
         assertTrue(writer.toString().startsWith(
                 """
                         <?xml version="1.0" encoding="UTF-8"?>\
@@ -162,7 +162,7 @@ public class EdifactReaderTest {
         edifactReader = new EdifactReader();
         StringReader ediInput = new StringReader(EDIFACT_WITH_GROUP);
         StringWriter writer = new StringWriter();
-        ediToxml(ediInput, writer, edifactReader);
+        ediToXml(ediInput, writer, edifactReader);
         assertEquals(
                 """
                         <?xml version="1.0" encoding="UTF-8"?>\

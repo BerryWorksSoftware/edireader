@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import static com.berryworks.edireader.util.Conversion.ediToxml;
+import static com.berryworks.edireader.util.Conversion.ediToXml;
 import static org.junit.Assert.*;
 
 public class AnsiReaderTest {
@@ -644,7 +644,7 @@ public class AnsiReaderTest {
         ansiReader = new AnsiReader();
         StringReader reader = new StringReader(EDI_SAMPLE);
         StringWriter writer = new StringWriter();
-        ediToxml(reader, writer, ansiReader);
+        ediToXml(reader, writer, ansiReader);
         assertEquals(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                         "<ediroot>" +
