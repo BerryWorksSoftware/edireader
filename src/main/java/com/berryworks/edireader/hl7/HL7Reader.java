@@ -34,22 +34,23 @@ import static com.berryworks.edireader.util.FixedLength.isPresent;
  * as far as possible. A secondary goal is to provide a framework for supporting other EDI-like standard
  * such as HL7 and TRADACOMS. We map HL7 header fields onto the established EDIReader abstractions
  * and augment with HL7-specific as necessary. No information is lost.
- * <p>
- * MSH|^~\&|SendingApp|SendingFacility|ReceivingApp|ReceivingFacility|DateTime|Security|MessageType|ControlID|ProcessingID|Version|
- * <p>
- * SenderApp         -> <group AppSender="..."/>  (used with X12 and/or EDIFACT)
- * SendingFacility   -> <group SendingFacility="..."/>
- * ReceivingApp      -> <group ApplReceiver="..."/> (used with X12 and/or EDIFACT)
- * ReceivingFacility -> <group ReceivingFacility="..."/>
- * DateTime -> <group Date="..." Time="..."/> (used with X12 and/or EDIFACT)
- * Security -> <group Security="..."/>  (used with X12 and/or EDIFACT)
- * MessageType, 1st sub-element -> <group DocType="..."/> (used with X12 and/or EDIFACT)
- * <transaction DocType="..."/> (used with X12 and/or EDIFACT)
- * MessageType, 2nd sub-element -> <group Event="..."/>
- * <transaction Event="..."/>
- * ControlID -> <group Control="..."/>  (used with X12 and/or EDIFACT)
- * ProcessingID -> <group ProcessingID="..."/>
- * Version -> <group SyntaxVersion="..."/>  (used with X12 and/or EDIFACT)
+ * <pre>
+ * MSH|^~\&amp;|SendingApp|SendingFacility|ReceivingApp|ReceivingFacility|DateTime|Security|MessageType|ControlID|ProcessingID|Version|
+ *
+ * SenderApp         -&gt; &lt;group AppSender="..."/&gt;  (used with X12 and/or EDIFACT)
+ * SendingFacility   -&gt; &lt;group SendingFacility="..."/&gt;
+ * ReceivingApp      -&gt; &lt;group ApplReceiver="..."/&gt; (used with X12 and/or EDIFACT)
+ * ReceivingFacility -&gt; &lt;group ReceivingFacility="..."/&gt;
+ * DateTime           -&gt; &lt;group Date="..." Time="..."/&gt; (used with X12 and/or EDIFACT)
+ * Security           -&gt; &lt;group Security="..."/&gt; (used with X12 and/or EDIFACT)
+ * MessageType, 1st sub-element -&gt; &lt;group DocType="..."/&gt;
+ *                                  &lt;transaction DocType="..."/&gt;
+ * MessageType, 2nd sub-element -&gt; &lt;group Event="..."/&gt;
+ *                                  &lt;transaction Event="..."/&gt;
+ * ControlID          -&gt; &lt;group Control="..."/&gt;
+ * ProcessingID       -&gt; &lt;group ProcessingID="..."/&gt;
+ * Version            -&gt; &lt;group SyntaxVersion="..."/&gt;
+ * </pre>
  */
 public class HL7Reader extends StandardReader {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
@@ -236,7 +237,7 @@ public class HL7Reader extends StandardReader {
         while (true) {
             token = getTokenizer().nextToken();
             if ((token.getType() == Token.TokenType.SEGMENT_END)
-                || (token.getType() == Token.TokenType.END_OF_DATA)) {
+                    || (token.getType() == Token.TokenType.END_OF_DATA)) {
                 break;
             }
             if (getTokenizer().getElementInSegmentCount() > 30) {
@@ -338,7 +339,7 @@ public class HL7Reader extends StandardReader {
             if (tokenType != Token.TokenType.SEGMENT_START) {
                 throw new EDISyntaxException(
                         "Expected the start of a segment or the end of data ("
-                        + tokenType + ")", getTokenizer());
+                                + tokenType + ")", getTokenizer());
             }
 
             String segmentType = t.getSegmentType();
