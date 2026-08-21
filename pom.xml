@@ -163,15 +163,9 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>${dependency.check.version}</version>
                 <configuration>
-                    <nvdApiKey>goes here</nvdApiKey>
+                    <nvdApiKey>${nvdApiKey}</nvdApiKey>
+                    <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <!--                            <goal>check</goal>-->
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
