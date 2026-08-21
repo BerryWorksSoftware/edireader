@@ -2,7 +2,9 @@
 
 ### 6.0.0 - August, 2026
 
-* Feature: HL7 parser
+* Feature: HL7 parser was added to this open source Community Edition.
+  It was previously available in the EDIReader Framework, the proprietary layer of EDI services layered above
+  the EDIReader core.
 
 ### 5.9.8 - July 21, 2026
 
