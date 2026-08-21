@@ -5,6 +5,10 @@ allowing for many integration options. Released as open source (GPL3) in 2004 an
 it has handled millions of transactions in a wide variety of products, services, industries, platforms,
 and custom integrations.
 
+**HL7 support is now included in the EDIReader Community Edition.**  
+Beginning with version 6.0.0, HL7 parsing is available directly in the open-source
+EDIReader Core rather than requiring the EDIReader Framework.
+
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Java Version](https://img.shields.io/badge/Java-21%2B-orange.svg)](pom.xml)
 
@@ -44,7 +48,7 @@ public class ParseExample {
 
 The EDI parser supports:
 * Automatic detection of EDI standard and syntax characters (terminators, delimiters, separators)
-* X12 and EDIFACT
+* X12, EDIFACT, and HL7
 * Segment loops:
     - detects segment loops/groups within a transaction/message
     - using EDIReader plugins
@@ -108,7 +112,6 @@ It adds many additional EDI features such as:
 * Splitting EDI input containing many transactions into many single-transaction EDI output files
 * EDI validation and compliance checking
 * Support for additional EDI and EDI-like formats:
-    - HL7
     - NCPDP
     - TRADACOMS
 * JSON support
