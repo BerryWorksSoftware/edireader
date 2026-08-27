@@ -100,6 +100,8 @@ public class EDITokenizer extends AbstractTokenizer {
                 cClass = CharacterClass.TERMINATOR;
             else if (cChar == subDelimiter)
                 cClass = CharacterClass.SUB_DELIMITER;
+            else if (cChar == subSubDelimiter)
+                cClass = CharacterClass.SUB_SUB_DELIMITER;
             else if (cChar == release)
                 cClass = CharacterClass.RELEASE;
             else if (cChar == repetitionSeparator)

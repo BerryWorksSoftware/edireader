@@ -509,11 +509,40 @@ public class EDITokenizerTest {
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals(1, token.getSubIndex());
-        assertEquals("ghij", token.getValue());
+//        assertEquals(0, token.getSubSubIndex());
+        assertEquals("g", token.getValue());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(13, tokenizer.getCharCount());
-        assertEquals(13, tokenizer.getSegmentCharCount());
+        assertEquals(10, tokenizer.getCharCount());
+        assertEquals(10, tokenizer.getSegmentCharCount());
+
+        // abc-def.g:hi:j..k-l.m! ...
+        //           ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_SUB_ELEMENT, token.getType());
+        assertEquals("abc01", token.getElementId());
+        assertEquals(1, token.getIndex());
+        assertEquals(1, token.getSubIndex());
+//        assertEquals(1, token.getSubSubIndex());
+        assertEquals("hi", token.getValue());
+        assertFalse(token.isFirst());
+        assertFalse(token.isLast());
+        assertEquals(10, tokenizer.getCharCount());
+        assertEquals(10, tokenizer.getSegmentCharCount());
+
+        // abc-def.g:hi:j..k-l.m! ...
+        //              ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_SUB_ELEMENT, token.getType());
+        assertEquals("abc01", token.getElementId());
+        assertEquals(1, token.getIndex());
+        assertEquals(1, token.getSubIndex());
+//        assertEquals(1, token.getSubSubIndex());
+        assertEquals("j", token.getValue());
+        assertFalse(token.isFirst());
+        assertFalse(token.isLast());
+        assertEquals(10, tokenizer.getCharCount());
+        assertEquals(10, tokenizer.getSegmentCharCount());
 
         // abc-def.g:hi:j..k-l.m! ...
         //                ^

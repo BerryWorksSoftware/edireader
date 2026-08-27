@@ -40,11 +40,11 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
     protected enum State {
-        EXPECTING_SEGMENT, IN_SEGMENT, IN_COMPOSITE
+        EXPECTING_SEGMENT, IN_SEGMENT, IN_COMPOSITE, IN_COMPOSITE_LEVEL_2
     }
 
     protected enum CharacterClass {
-        DATA, DELIMITER, SUB_DELIMITER, RELEASE, TERMINATOR, REPEAT_DELIMITER, EOF
+        DATA, DELIMITER, SUB_DELIMITER, SUB_SUB_DELIMITER, RELEASE, TERMINATOR, REPEAT_DELIMITER, EOF
     }
 
     protected CharacterClass cClass;
@@ -216,7 +216,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             case EMPTY:
                 if (required) {
                     EDISyntaxException se = new EDISyntaxException("Mandatory element missing in "
-                                                                   + t.getSegmentType() + " segment", this);
+                            + t.getSegmentType() + " segment", this);
                     logger.warn(se.getMessage());
                     throw se;
                 }
@@ -224,7 +224,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             case SEGMENT_END:
                 if (required) {
                     EDISyntaxException se = new EDISyntaxException("Mandatory element missing in "
-                                                                   + t.getSegmentType() + " segment", this);
+                            + t.getSegmentType() + " segment", this);
                     logger.warn(se.getMessage());
                     throw se;
                 } else if (returnNullAtSegmentEnd)
@@ -420,8 +420,8 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             }
             if (++i > 30) {
                 EDISyntaxException se = new EDISyntaxException("Too many fields for "
-                                                               + t.getSegmentType()
-                                                               + " segment (Segment terminator problem?)", this);
+                        + t.getSegmentType()
+                        + " segment (Segment terminator problem?)", this);
                 logger.warn(se.getMessage());
                 throw se;
             }
@@ -547,7 +547,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             getChar();
             if (cClass == CharacterClass.EOF) {
                 EDISyntaxException se = new EDISyntaxException("Encountered end of data unexpectedly after reading " +
-                                                               i + " characters of an expected " + n + " character sequence");
+                        i + " characters of an expected " + n + " character sequence");
                 logger.warn(se.getMessage());
                 throw se;
             }
@@ -648,11 +648,29 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         currentToken.setType(Token.TokenType.SUB_ELEMENT);
                         currentToken.incrementSubElementIndex();
                         currentToken.setValue(cChar);
-                        if (scanData() != CharacterClass.SUB_DELIMITER) {
+                        CharacterClass characterClass = scanData();
+                        if (characterClass == CharacterClass.SUB_DELIMITER) {
+                            // We hit a sub-element delimiter while within a composite.
+                            // That is the typical case: the marker between two sub-elements.
+                        } else if (characterClass == CharacterClass.SUB_SUB_DELIMITER) {
+                            // We hit the sub-sub-element delimiter, a rather rare situation that can appear in HL7
+                            // but not in X12 or EDIFACT. It means that this sub-element of a composite is not a simple
+                            // value but a sub-element that is actually a series of sub-sub-elements. In other words,
+                            // the same composite with sub-elements concept, but pushed down another level.
+                            System.out.println("... we hit a sub-sub-delimier, probably in HL7!");
+                            currentToken.setType(Token.TokenType.SUB_SUB_ELEMENT);
+                            state = State.IN_COMPOSITE_LEVEL_2;
+
+//                            throw new RuntimeException("we hit a sub-sub-delimier!");
+                        } else {
                             // We hit something that marks the end of a series of sub-elements
                             state = State.IN_SEGMENT;
                             currentToken.setLast(true);
                         }
+                        break;
+                    case IN_COMPOSITE_LEVEL_2:
+                        System.out.println("... we are in a level-2 composite");
+                        currentToken.setValue(cChar);
                         break;
                     default:
                         // We are at the beginning of a segment
