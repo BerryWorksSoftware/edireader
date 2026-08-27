@@ -17,8 +17,7 @@ public class TokenImpl implements Token {
 
     private CharBuffer valueBuffer = CharBuffer.wrap(new char[10]);
     private TokenType type = TokenType.UNKNOWN;
-    private int index;
-    private int subElementIndex;
+    private int index, subElementIndex, subSubElementIndex;
     private boolean lastSubElement;
     private boolean containsNonSpace;
     private String segmentType = "";
@@ -148,7 +147,7 @@ public class TokenImpl implements Token {
 
     @Override
     public void resetIndexes() {
-        index = subElementIndex = 0;
+        index = subElementIndex = subSubElementIndex = 0;
     }
 
     @Override
