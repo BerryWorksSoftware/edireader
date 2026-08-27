@@ -1,5 +1,9 @@
 # Release Notes
 
+### 6.0.1 - August ??, 2026
+
+* Maintenance: When parsing HL7, ignore empty elements by default. 
+
 ### 6.0.0 - August, 2026
 
 * Feature: HL7 parser was added to this open source Community Edition.

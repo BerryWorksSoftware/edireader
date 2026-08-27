@@ -160,7 +160,7 @@ public class EDIReaderTest {
         contentHandler = new MyContentHandler();
         ediReader.setContentHandler(contentHandler);
         ediReader.setIncludeSyntaxCharacters(true);
-        ediReader.setKeepSpacesOnlyElements(false);
+        ediReader.setKeepEmptyElements(false);
         ediReader.parseEdi("""
                 ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~
                 GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~
@@ -178,7 +178,7 @@ public class EDIReaderTest {
         contentHandler = new MyContentHandler();
         ediReader.setContentHandler(contentHandler);
         ediReader.setIncludeSyntaxCharacters(true);
-        ediReader.setKeepSpacesOnlyElements(true);
+        ediReader.setKeepEmptyElements(true);
         ediReader.parseEdi("""
                 ISA*00*          *00*          *ZZ*AAAA           *01*BBBB           *090825*0903*:*00501*000007629*0*T*>~
                 GS*SM*XXXXXXXXX*XXXX*20090825*0903*7629*X*005010~

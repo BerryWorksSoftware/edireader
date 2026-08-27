@@ -425,13 +425,15 @@ public class HL7Reader extends StandardReader {
                 break;
 
             case EMPTY:
-                attributes = getDocumentAttributes();
-                attributes.clear();
-                attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
-                startElement(getXMLTags().getElementTag(), attributes);
-                endElement(getXMLTags().getElementTag());
-                if (segmentPluginController != null)
-                    segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
+                if (isKeepEmptyElements()) {
+                    attributes = getDocumentAttributes();
+                    attributes.clear();
+                    attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
+                    startElement(getXMLTags().getElementTag(), attributes);
+                    endElement(getXMLTags().getElementTag());
+                    if (segmentPluginController != null)
+                        segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
+                }
                 break;
 
             case SUB_ELEMENT:

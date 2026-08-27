@@ -34,15 +34,10 @@ public class HL7_ParsingTest {
                 """));
         reader.parse(source);
         assertEquals("""
-                        ediroot ()interchange (Standard=HL7)group (ApplSender=MEDITECH,Date=20190501,Time=1242,Type=ADT,TypeDesc=ADT message,Event=A08,EventDesc=Update patient information,Control=54920716,ProcessingId=P,SyntaxVersion=2.4,AckRequest=AL)transaction (Type=ADT,Event=A08,Control=54920716)segment (Id=EVN)element (Id=EVN01)
-                        element (Id=EVN02): 201905011242
-                        element (Id=EVN03)
-                        element (Id=EVN04)
-                        element (Id=EVN05)
+                        ediroot ()interchange (Standard=HL7)group (ApplSender=MEDITECH,Date=20190501,Time=1242,Type=ADT,TypeDesc=ADT message,Event=A08,EventDesc=Update patient information,Control=54920716,ProcessingId=P,SyntaxVersion=2.4,AckRequest=AL)transaction (Type=ADT,Event=A08,Control=54920716)segment (Id=EVN)element (Id=EVN02): 201905011242
                         element (Id=EVN06): 201905091242
                         
                         segment (Id=PID)element (Id=PID01): 1
-                        element (Id=PID02)
                         element (Id=PID03,Composite=yes)subelement (Sequence=1): MN00708088
                         subelement (Sequence=5): MR
                         subelement (Sequence=6): JHC
@@ -51,27 +46,22 @@ public class HL7_ParsingTest {
                         subelement (Sequence=5): PI
                         subelement (Sequence=6): JHC
                         
-                        element (Id=PID04)
                         element (Id=PID05,Composite=yes)subelement (Sequence=1): HOWL
                         subelement (Sequence=2): JOE
                         subelement (Sequence=7): L
                         
                         element (Id=PID05,Composite=yes)
-                        element (Id=PID06)
                         element (Id=PID07): 19860522
                         element (Id=PID08): F
-                        element (Id=PID09)
                         element (Id=PID10): RUSF
                         element (Id=PID11,Composite=yes)subelement (Sequence=1): 68 CHOOKS LINE
                         subelement (Sequence=3): BLOOMSBURY
                         subelement (Sequence=4): QLD
                         subelement (Sequence=5): 4799
                         
-                        element (Id=PID12)
                         element (Id=PID13,Composite=yes)subelement (Sequence=1): 07 0134 5366
                         subelement (Sequence=4): JOE.HOWL@anonemail.com
                         
-                        element (Id=PID14)
                         element (Id=PID15): RUS
                         element (Id=PID16): MAR
                         element (Id=PID17): ORT
@@ -84,21 +74,16 @@ public class HL7_ParsingTest {
         reader.setContentHandler(handler);
 //        reader.setPluginControllerFactory(new PluginControllerFactory_ClasspathESD());
         source = new InputSource(new StringReader("" +
-                                                  "MSH|^~\\&|MEDITECH^WA||||201905011242||AXX^A08|54920716|P|2.4|||AL|NE|\n" +
-                                                  "EVN||201905011242||||201905091242|\n" +
-                                                  // Via the plugin, we will indicate that PID03 is NOT a composite, even though it looks like one.
-                                                  "PID|1||MN00708088^^^^MR^JHC~MN597007^^^^PI^JHC||HOWL^JOE^^^^^L~^^^^^^||19860522|F||RUSF|68 CHOOKS LINE^^BLOOMSBURY^QLD^4799||07 0134 5366^^^JOE.HOWL@anonemail.com^^||RUS|MAR|ORT|AN16311706|\n"));
+                "MSH|^~\\&|MEDITECH^WA||||201905011242||AXX^A08|54920716|P|2.4|||AL|NE|\n" +
+                "EVN||201905011242||||201905091242|\n" +
+                // Via the plugin, we will indicate that PID03 is NOT a composite, even though it looks like one.
+                "PID|1||MN00708088^^^^MR^JHC~MN597007^^^^PI^JHC||HOWL^JOE^^^^^L~^^^^^^||19860522|F||RUSF|68 CHOOKS LINE^^BLOOMSBURY^QLD^4799||07 0134 5366^^^JOE.HOWL@anonemail.com^^||RUS|MAR|ORT|AN16311706|\n"));
         reader.parse(source);
         assertEquals("""
-                        ediroot ()interchange (Standard=HL7)group (ApplSender=MEDITECH,Date=20190501,Time=1242,Type=AXX,Event=A08,EventDesc=Update patient information,Control=54920716,ProcessingId=P,SyntaxVersion=2.4,AckRequest=AL)transaction (Type=AXX,Event=A08,Control=54920716)segment (Id=EVN)element (Id=EVN01)
-                        element (Id=EVN02): 201905011242
-                        element (Id=EVN03)
-                        element (Id=EVN04)
-                        element (Id=EVN05)
+                        ediroot ()interchange (Standard=HL7)group (ApplSender=MEDITECH,Date=20190501,Time=1242,Type=AXX,Event=A08,EventDesc=Update patient information,Control=54920716,ProcessingId=P,SyntaxVersion=2.4,AckRequest=AL)transaction (Type=AXX,Event=A08,Control=54920716)segment (Id=EVN)element (Id=EVN02): 201905011242
                         element (Id=EVN06): 201905091242
                         
                         segment (Id=PID)element (Id=PID01): 1
-                        element (Id=PID02)
                         element (Id=PID03,Composite=yes)subelement (Sequence=1): MN00708088
                         subelement (Sequence=5): MR
                         subelement (Sequence=6): JHC
@@ -107,27 +92,22 @@ public class HL7_ParsingTest {
                         subelement (Sequence=5): PI
                         subelement (Sequence=6): JHC
                         
-                        element (Id=PID04)
                         element (Id=PID05,Composite=yes)subelement (Sequence=1): HOWL
                         subelement (Sequence=2): JOE
                         subelement (Sequence=7): L
                         
                         element (Id=PID05,Composite=yes)
-                        element (Id=PID06)
                         element (Id=PID07): 19860522
                         element (Id=PID08): F
-                        element (Id=PID09)
                         element (Id=PID10): RUSF
                         element (Id=PID11,Composite=yes)subelement (Sequence=1): 68 CHOOKS LINE
                         subelement (Sequence=3): BLOOMSBURY
                         subelement (Sequence=4): QLD
                         subelement (Sequence=5): 4799
                         
-                        element (Id=PID12)
                         element (Id=PID13,Composite=yes)subelement (Sequence=1): 07 0134 5366
                         subelement (Sequence=4): JOE.HOWL@anonemail.com
                         
-                        element (Id=PID14)
                         element (Id=PID15): RUS
                         element (Id=PID16): MAR
                         element (Id=PID17): ORT

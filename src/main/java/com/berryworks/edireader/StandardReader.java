@@ -118,7 +118,7 @@ public abstract class StandardReader extends EDIReader {
             case SIMPLE:
 
                 // Take a quick exit for empty fields, a very common case
-                if (t.getValueLength() == 0 || (!t.containsNonSpace() && !isKeepSpacesOnlyElements()))
+                if (t.getValueLength() == 0 || (!t.containsNonSpace() && !isKeepEmptyElements()))
                     return;
 
                 attributes = getDocumentAttributes();

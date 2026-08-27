@@ -285,13 +285,13 @@ public class EDIReaderWrapper extends EDIReader {
     }
 
     @Override
-    public boolean isKeepSpacesOnlyElements() {
-        return wrappedEDIReader.isKeepSpacesOnlyElements();
+    public boolean isKeepEmptyElements() {
+        return wrappedEDIReader.isKeepEmptyElements();
     }
 
     @Override
-    public void setKeepSpacesOnlyElements(boolean keepSpacesOnlyElements) {
-        wrappedEDIReader.setKeepSpacesOnlyElements(keepSpacesOnlyElements);
+    public void setKeepEmptyElements(boolean keepSpacesOnlyElements) {
+        wrappedEDIReader.setKeepEmptyElements(keepSpacesOnlyElements);
     }
 
     @Override
