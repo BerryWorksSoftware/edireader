@@ -53,6 +53,7 @@ public class EDITokenizer extends AbstractTokenizer {
                                        " pre-read chars, which is greater than the internal buffer size of " + charBuffer.capacity());
         ((Buffer) charBuffer).clear();
         charBuffer.put(preRead);
+        // Make the newly added characters immediately available to get().
         ((Buffer) charBuffer).flip();
     }
 
@@ -215,6 +216,7 @@ public class EDITokenizer extends AbstractTokenizer {
             int n;
             while ((n = inputReader.read(charBuffer)) == 0) {
             }
+            // The newly read characters are now in the buffer, and flip() makes them available to get().
             ((Buffer) charBuffer).flip();
 
             if (n < 0) {
