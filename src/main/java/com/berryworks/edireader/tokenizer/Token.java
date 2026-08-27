@@ -28,7 +28,7 @@ import com.berryworks.edireader.EDISyntaxException;
 public interface Token {
 
     enum TokenType {
-        UNKNOWN, SEGMENT_START, SIMPLE, EMPTY, SUB_ELEMENT, SUB_EMPTY, SEGMENT_END, END_OF_DATA
+        UNKNOWN, SEGMENT_START, SIMPLE, EMPTY, SUB_ELEMENT, SUB_SUB_ELEMENT, SUB_EMPTY, SUB_SUB_EMPTY, SEGMENT_END, END_OF_DATA
     }
 
     int getValueLength();
