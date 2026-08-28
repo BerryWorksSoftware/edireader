@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2025 by BerryWorks Software. All rights reserved.
+ * Copyright 2005-2026 by BerryWorks Software. All rights reserved.
  */
 package com.berryworks.edireader.tokenizer;
 
@@ -792,7 +792,7 @@ public class EDITokenizerTest {
         assertNotNull(token = tokenizer.nextToken());
         assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
-        assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("abc", token.getValue());
         assertEquals(4, tokenizer.getCharCount());
         assertEquals(4, tokenizer.getSegmentCharCount());
@@ -808,7 +808,6 @@ public class EDITokenizerTest {
         assertEquals("abc", token.getSegmentType());
         assertTrue(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(0, token.getSubIndex());
         assertEquals(7, tokenizer.getCharCount());
         assertEquals(7, tokenizer.getSegmentCharCount());
 
@@ -853,6 +852,7 @@ public class EDITokenizerTest {
         assertNotNull(token = tokenizer.nextToken());
         assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("SEG", token.getValue());
 
         // SEG|S1||S2||S2a||S3a^S3b|S4$
@@ -940,12 +940,12 @@ public class EDITokenizerTest {
         Token token;
         List<String> composite;
 
-        // UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER
-        // ID:ZZ+970101:1050+00000000000916++ORDERS'
+        // UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER ID:ZZ+970101:1050+00000000000916++ORDERS'
         // ^
         assertNotNull(token = tokenizer.nextToken());
         assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("UNB", token.getValue());
 
         // UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER
@@ -1030,6 +1030,7 @@ public class EDITokenizerTest {
         assertNotNull(token = tokenizer.nextToken());
         assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("SEG", token.getValue());
         assertEquals("SEG00", token.getElementId());
         assertEquals("SEG", token.getSegmentType());

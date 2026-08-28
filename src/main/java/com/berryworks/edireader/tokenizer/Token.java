@@ -64,7 +64,7 @@ public interface Token {
 
 
     /**
-     * Is true for the first subelement in a series of subelements.
+     * Is true for the first sub-element in a series of sub-elements.
      *
      * @return boolean
      */
@@ -72,7 +72,7 @@ public interface Token {
 
 
     /**
-     * Is true for the last subelement in a series of subelements.
+     * Is true for the last sub-element in a series of sub-elements.
      *
      * @return boolean
      */
@@ -80,28 +80,29 @@ public interface Token {
 
 
     /**
-     * Gets the ordinal position of the token in the segment, origin 0.
+     * Gets the index of an element in its segment, origin 0.
+     * The segment type is at index 0, and therefore the first element within the segment has index 1.
      *
-     * @return The index value
+     * @return int index
      */
     int getIndex();
 
 
     /**
-     * Gets the ordinal position of a subelement within a series of subelements token in the segment.
+     * Gets the index, origin 0, of a sub-element within a series of sub-elements within a composite element.
      *
-     * @return int position origin 0
+     * @return int index
      */
     int getSubIndex();
 
 
     /**
-     * Gets the value of a SIMPLE token.
+     * Gets the value of a token.
      * <p>
-     * If this token is of type SEGMENT_START, the value of getSegmentType()
-     * is returned.
+     * If this token is of type SEGMENT_START, the value of getSegmentType() is returned.
+     * For an ELEMENT, SUB_ELEMENT, or SUB_SUB_ELEMENT, the value is the actual EDI value.
      *
-     * @return The value value
+     * @return The value
      */
     String getValue();
 
