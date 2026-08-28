@@ -214,15 +214,14 @@ public class EdifactReaderTest {
                                         <segment Id="NAD">
                                             <element Id="NAD01">CZ</element>
                                             <element Id="NAD02">19339000</element>
-                                            <element Id="NAD04">DSG-CANUSA GMBH</element>
-                                            <element Id="NAD05">CO. KG</element>
-                                            <element Id="NAD06" Composite="yes">
+                                            <element Id="NAD04">DSG-CANUSA GMBH &amp; CO. KG</element>
+                                            <element Id="NAD05" Composite="yes">
                                                 <subelement Sequence="1">BUSCHSTRASE</subelement>
                                                 <subelement Sequence="2">7</subelement>
                                             </element>
-                                            <element Id="NAD07">MECKENHEIM</element>
-                                            <element Id="NAD09">53340</element>
-                                            <element Id="NAD10">DE</element>
+                                            <element Id="NAD06">MECKENHEIM</element>
+                                            <element Id="NAD08">53340</element>
+                                            <element Id="NAD09">DE</element>
                                         </segment>
                                         <segment Id="CTA">
                                             <element Id="CTA01">AC</element>
