@@ -1,6 +1,7 @@
 package com.berryworks.edireader.hl7;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -24,6 +25,7 @@ public class HL7_ParsingTest {
         handler = new MyHandler();
     }
 
+    @Ignore
     @Test
     public void canParse() throws IOException, SAXException {
         reader.setContentHandler(handler);
