@@ -39,6 +39,8 @@ public interface Token {
 
     void incrementSubElementIndex();
 
+    void incrementSubSubElementIndex();
+
     void setType(TokenType tokenType);
 
     void setLast(boolean value);
@@ -94,6 +96,13 @@ public interface Token {
      * @return int index
      */
     int getSubIndex();
+
+    /**
+     * Gets the index, origin 0, of a sub-sub-element within a series within a sub-element.
+     *
+     * @return int index
+     */
+    int getSubSubIndex();
 
 
     /**

@@ -483,6 +483,8 @@ public class EDITokenizerTest {
         assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
         assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals(0, token.getSubSubIndex());
         assertEquals("abc", token.getValue());
         assertEquals(4, tokenizer.getCharCount());
         assertEquals(4, tokenizer.getSegmentCharCount());
@@ -494,6 +496,7 @@ public class EDITokenizerTest {
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals(0, token.getSubIndex());
+        assertEquals(0, token.getSubSubIndex());
         assertEquals("def", token.getValue());
         assertEquals("abc", token.getSegmentType());
         assertTrue(token.isFirst());
@@ -508,8 +511,8 @@ public class EDITokenizerTest {
         assertEquals(SUB_SUB_ELEMENT, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
-//        assertEquals(1, token.getSubIndex());
-//        assertEquals(0, token.getSubSubIndex());
+        assertEquals(1, token.getSubIndex());
+        assertEquals(0, token.getSubSubIndex());
         assertEquals("g", token.getValue());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
@@ -522,8 +525,8 @@ public class EDITokenizerTest {
         assertEquals(SUB_SUB_ELEMENT, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
-//        assertEquals(1, token.getSubIndex());
-//        assertEquals(1, token.getSubSubIndex());
+        assertEquals(1, token.getSubIndex());
+        assertEquals(1, token.getSubSubIndex());
         assertEquals("hi", token.getValue());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
@@ -536,8 +539,8 @@ public class EDITokenizerTest {
         assertEquals(SUB_SUB_ELEMENT, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
-        assertEquals(2, token.getSubIndex());
-//        assertEquals(1, token.getSubSubIndex());
+        assertEquals(1, token.getSubIndex());
+        assertEquals(2, token.getSubSubIndex());
         assertEquals("j", token.getValue());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
@@ -549,7 +552,8 @@ public class EDITokenizerTest {
         token = tokenizer.nextToken();
         assertEquals(SUB_EMPTY, token.getType());
         assertEquals(1, token.getIndex());
-        assertEquals(3, token.getSubIndex());
+        assertEquals(2, token.getSubIndex());
+        assertEquals(2, token.getSubSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
         assertEquals(16, tokenizer.getCharCount());
@@ -560,11 +564,10 @@ public class EDITokenizerTest {
         token = tokenizer.nextToken();
         assertEquals(SUB_ELEMENT, token.getType());
         assertEquals(1, token.getIndex());
-        assertEquals(4, token.getSubIndex());
+        assertEquals(3, token.getSubIndex());
         assertEquals("k", token.getValue());
         assertFalse(token.isFirst());
         assertTrue(token.isLast());
-        assertEquals(4, token.getSubIndex());
         assertEquals(18, tokenizer.getCharCount());
         assertEquals(18, tokenizer.getSegmentCharCount());
 

@@ -69,6 +69,13 @@ public class TokenImpl implements Token {
         return subElementIndex;
     }
 
+    /**
+     * Gets the index, origin 0, of a sub-sub-element within a series within a sub-element.
+     */
+    public int getSubSubIndex() {
+        return subSubElementIndex;
+    }
+
     @Override
     public void setValue(char c) {
         resetValue();
@@ -163,6 +170,11 @@ public class TokenImpl implements Token {
     @Override
     public void incrementSubElementIndex() {
         subElementIndex++;
+    }
+
+    @Override
+    public void incrementSubSubElementIndex() {
+        subSubElementIndex++;
     }
 
     @Override

@@ -658,9 +658,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                             // but not in X12 or EDIFACT. It means that this sub-element of a composite is not a simple
                             // value but a sub-element that is actually a series of sub-sub-elements. In other words,
                             // the same composite with sub-elements concept, but pushed down another level.
-                            System.out.println("... we hit a sub-sub-delimier, probably in HL7!");
                             currentToken.setType(Token.TokenType.SUB_SUB_ELEMENT);
-                            currentToken.incrementSubElementIndex();
                             state = State.IN_COMPOSITE_LEVEL_2;
                         } else {
                             // We hit something that marks the end of a series of sub-elements
@@ -669,8 +667,8 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         }
                         break;
                     case IN_COMPOSITE_LEVEL_2:
-                        System.out.println("... we are in a level-2 composite");
                         currentToken.setValue(cChar);
+                        currentToken.incrementSubSubElementIndex();
                         characterClass = scanData();
                         break;
                     default:
@@ -690,7 +688,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             case TERMINATOR:
                 switch (state) {
                     case IN_COMPOSITE:
-                        // return an empty subelement token, marked as last,
+                        // return an empty sub-element token, marked as last,
                         // before returning the segment terminator token.
                         currentToken.incrementSubElementIndex();
                         currentToken.setLast(true);
@@ -712,7 +710,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             case DELIMITER:
                 switch (state) {
                     case IN_COMPOSITE:
-                        // return an empty subelement token, marked as last,
+                        // return an empty sub-element token, marked as last,
                         // before returning the delimiter token.
                         currentToken.incrementSubElementIndex();
                         currentToken.setType(Token.TokenType.SUB_EMPTY);
@@ -753,7 +751,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             case REPEAT_DELIMITER:
                 switch (state) {
                     case IN_COMPOSITE:
-                        // return an empty subelement token, marked as last
+                        // return an empty sub-element token, marked as last
                         currentToken.incrementSubElementIndex();
                         currentToken.setLast(true);
                         currentToken.setType(Token.TokenType.SUB_EMPTY);
