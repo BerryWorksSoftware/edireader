@@ -121,12 +121,12 @@ public class EDIReaderWrapper extends EDIReader {
     }
 
     @Override
-    public int getRelease() {
+    public char getRelease() {
         return wrappedEDIReader.getRelease();
     }
 
     @Override
-    public void setRelease(int release) {
+    public void setRelease(char release) {
         wrappedEDIReader.setRelease(release);
     }
 

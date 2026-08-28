@@ -584,7 +584,7 @@ public class EdifactReader extends StandardReader {
 
             if (buf[6] == ' ') {
                 // no release processing
-                setRelease(-1);
+                setRelease('\0');
             } else {
                 setRelease(buf[6]);
             }

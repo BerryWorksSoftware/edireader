@@ -246,13 +246,13 @@ public class EDIReaderWrapperTest {
         }
 
         @Override
-        public int getRelease() {
+        public char getRelease() {
             called("getRelease");
             return ' ';
         }
 
         @Override
-        public void setRelease(int n) {
+        public void setRelease(char c) {
             called("setRelease");
         }
 

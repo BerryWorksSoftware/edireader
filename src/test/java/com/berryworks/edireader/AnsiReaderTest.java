@@ -691,11 +691,11 @@ public class AnsiReaderTest {
         // but not 004010
         ansiReader = new AnsiReader();
         ansiReader.parseEdi(EDI_SAMPLE_5010.replace("005010X091A1", "004010X091A1"));
-        assertEquals(-1, ansiReader.getTokenizer().getRepetitionSeparator());
+        assertEquals('\0', ansiReader.getTokenizer().getRepetitionSeparator());
         // or 003010
         ansiReader = new AnsiReader();
         ansiReader.parseEdi(EDI_SAMPLE_5010.replace("005010X091A1", "003010X091A1"));
-        assertEquals(-1, ansiReader.getTokenizer().getRepetitionSeparator());
+        assertEquals('\0', ansiReader.getTokenizer().getRepetitionSeparator());
 
     }
 

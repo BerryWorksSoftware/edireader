@@ -62,17 +62,9 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
 
     protected char delimiter = '+';
     protected char subDelimiter = ':';
-    protected char subSubDelimiter = '&';
-
-    // release is an int instead of a char so that it can hold
-    // a char value (as a positive int) or an indicator of
-    // "no release char" (an int value of -1).
-    protected int release = -1;
-
-    // repetitionSeparator is an int instead of a char so that it can hold
-    // a char value (as a positive int) or an indicator of
-    // "no repeating fields" (an int value of -1)
-    protected int repetitionSeparator = -1;
+    protected char subSubDelimiter;
+    protected char release;
+    protected char repetitionSeparator;
 
     protected char terminator = '.';
     protected boolean tokenReady;
@@ -126,39 +118,35 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
         subSubDelimiter = ssd;
     }
 
-    public int getRelease() {
+    public char getRelease() {
         return release;
     }
 
     /**
      * Sets the release character
      *
-     * @param e The new release value
+     * @param c The new release char
      */
-    public void setRelease(int e) {
-        release = e;
+    public void setRelease(char c) {
+        release = c;
     }
 
     /**
      * Gets the character used to delimit repeating fields.
      *
-     * @return The repetition char, or -1 if no repetition char is in effect
+     * @return The repetition char, or '\0' if no repetition char is in effect
      */
-    public int getRepetitionSeparator() {
+    public char getRepetitionSeparator() {
         return repetitionSeparator;
     }
 
     /**
      * Sets the character used to delimit repeating fields.
      *
-     * @param e The new value
+     * @param c The new value
      */
-    public void setRepetitionSeparator(int e) {
-        // In EDITokenizer, -1 for a repetition char means that none is in effect.
-        // An attempt to set it to zero is interpreted as an alternate way to indicate
-        // that no repetition char is in effect, so we set the value to -1 for that
-        // case as well.
-        repetitionSeparator = e > 0 ? e : -1;
+    public void setRepetitionSeparator(char c) {
+        repetitionSeparator = c;
     }
 
     public void setTerminator(char d) {

@@ -137,8 +137,8 @@ public class AnsiReader extends StandardReader {
 
         // The standards id, typically "U", through version 4010
         // The repetition character, version 4020 and later
-        int separator = getTokenizer().getRepetitionSeparator();
-        if (separator == -1) {
+        char separator = getTokenizer().getRepetitionSeparator();
+        if (separator == '\0') {
             // No repetition char is in effect. It is therefore safe to interpret this next
             // element as the standardsId used through version 4010 of ANSI X12.
             String standardsId = checkFixedLength("ISA11", nextField(), 1);
@@ -149,7 +149,7 @@ public class AnsiReader extends StandardReader {
             // or later where it designates a repetition character instead of a standardsId.
             // Temporarily disable the repetition char so that we can parse over this element
             // as normal data.
-            getTokenizer().setRepetitionSeparator(-1);
+            getTokenizer().setRepetitionSeparator('\0');
             checkFixedLength("ISA11", nextField(), 1);
             getTokenizer().setRepetitionSeparator(separator);
         }
@@ -381,7 +381,7 @@ public class AnsiReader extends StandardReader {
         } else {
             groupVersion = t.getValue();
             if (isX12VersionBefore(groupVersion, 4020)) {
-                getTokenizer().setRepetitionSeparator(-1);
+                getTokenizer().setRepetitionSeparator('\0');
             }
             getGroupAttributes().addCDATA(getXMLTags().getStandardVersion(), groupVersion);
             process("GS08", groupVersion);
@@ -629,8 +629,9 @@ public class AnsiReader extends StandardReader {
             logger.warn(INTERNAL_ERROR_MULTIPLE_EOFS);
             throw new EDISyntaxException(INTERNAL_ERROR_MULTIPLE_EOFS);
         }
-        // No release character is supported for ANSI X.12
-        setRelease(-1);
+        // No release character or sub-sub-delimiter is supported for ANSI X.12
+        setRelease('\0');
+        setSubSubDelimiter('\0');
 
         char[] buf = getTokenizer().lookahead(PREVIEW_LENGTH);
         if ((buf == null) || (buf.length < PREVIEW_LENGTH)) {

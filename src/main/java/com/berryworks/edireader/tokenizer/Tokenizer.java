@@ -43,13 +43,17 @@ public interface Tokenizer extends SourcePosition {
 
     void setSubDelimiter(char sd);
 
-    int getRepetitionSeparator();
+    char getSubSubDelimiter();
 
-    void setRepetitionSeparator(int e);
+    void setSubSubDelimiter(char sd);
 
-    int getRelease();
+    char getRepetitionSeparator();
 
-    void setRelease(int e);
+    void setRepetitionSeparator(char c);
+
+    char getRelease();
+
+    void setRelease(char c);
 
     boolean hasMoreTokens() throws IOException, EDISyntaxException;
 
@@ -111,10 +115,6 @@ public interface Tokenizer extends SourcePosition {
     void scanTerminatorSuffix() throws IOException, EDISyntaxException;
 
     boolean isEndOfData();
-
-    char getSubSubDelimiter();
-
-    void setSubSubDelimiter(char ssd);
 
     Reader getReader();
 
