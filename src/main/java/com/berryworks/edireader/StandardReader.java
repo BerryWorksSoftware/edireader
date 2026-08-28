@@ -81,8 +81,10 @@ public abstract class StandardReader extends EDIReader {
 
         parseSetup(source);
 
+        // Make sure the parser and the tokenizer agree on the syntax characters
         getTokenizer().setDelimiter(getDelimiter());
         getTokenizer().setSubDelimiter(getSubDelimiter());
+        getTokenizer().setSubSubDelimiter(getSubSubDelimiter());
         getTokenizer().setRelease(getRelease());
         getTokenizer().setRepetitionSeparator(getRepetitionSeparator());
         getTokenizer().setTerminator(getTerminator());
