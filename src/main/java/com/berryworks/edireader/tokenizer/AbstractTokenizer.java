@@ -495,6 +495,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                     currentToken.append(cChar);
                     break;
                 case SUB_DELIMITER:
+                case SUB_SUB_DELIMITER:
                     break loop;
                 case REPEAT_DELIMITER:
                     repetition = true;
@@ -659,9 +660,8 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                             // the same composite with sub-elements concept, but pushed down another level.
                             System.out.println("... we hit a sub-sub-delimier, probably in HL7!");
                             currentToken.setType(Token.TokenType.SUB_SUB_ELEMENT);
+                            currentToken.incrementSubElementIndex();
                             state = State.IN_COMPOSITE_LEVEL_2;
-
-//                            throw new RuntimeException("we hit a sub-sub-delimier!");
                         } else {
                             // We hit something that marks the end of a series of sub-elements
                             state = State.IN_SEGMENT;
@@ -671,6 +671,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                     case IN_COMPOSITE_LEVEL_2:
                         System.out.println("... we are in a level-2 composite");
                         currentToken.setValue(cChar);
+                        characterClass = scanData();
                         break;
                     default:
                         // We are at the beginning of a segment

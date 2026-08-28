@@ -36,10 +36,11 @@ import java.nio.CharBuffer;
  */
 public class EDITokenizer extends AbstractTokenizer {
     public static final int BUFFER_SIZE = 1000;
-    private final CharBuffer charBuffer = CharBuffer.wrap(new char[BUFFER_SIZE]);
+    private final CharBuffer charBuffer;
 
     public EDITokenizer(Reader source) {
         super(source);
+        charBuffer = CharBuffer.wrap(new char[BUFFER_SIZE]);
         ((Buffer) charBuffer).flip();
     }
 
