@@ -92,10 +92,13 @@ public class EDITokenizer extends AbstractTokenizer {
 
         if (endOfFile) {
             cClass = CharacterClass.EOF;
-//            logger.debug("end-of-file encountered");
         } else {
             cChar = charBuffer.get();
-            if (cChar == delimiter)
+            if (Character.isLetterOrDigit(cChar))
+                // Most common case: ordinary data.
+                // Note that the syntax characters are not allowed to be a letter or digit.
+                cClass = CharacterClass.DATA;
+            else if (cChar == delimiter)
                 cClass = CharacterClass.DELIMITER;
             else if (cChar == terminator)
                 cClass = CharacterClass.TERMINATOR;

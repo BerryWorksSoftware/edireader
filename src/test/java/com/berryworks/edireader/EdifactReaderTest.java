@@ -11,6 +11,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import static com.berryworks.edireader.util.Conversion.ediToXml;
+import static com.berryworks.edireader.util.TestUtil.assertEqualsDisregardingSpacesAndLineSeparators;
 import static org.junit.Assert.*;
 
 public class EdifactReaderTest {
@@ -63,6 +64,258 @@ public class EdifactReaderTest {
                         </interchange>\
                         </ediroot>""",
                 writer.toString());
+    }
+
+
+    @Test
+    public void testIFTMIN() throws TransformerException {
+        edifactReader = new EdifactReader();
+        String edi = """
+                UNA:+.? '
+                UNB+UNOC:3+19339000+DPAG-EDICC+20060119:1629+074'
+                UNH+14227+IFTMIN:D:01B:UN+DHL2.0/ASSIST4'
+                BGM+787+DSG+9'
+                DTM+9:200601191628:203'
+                DTM+11:200601191628:203'
+                TSR+++200:57:87'
+                MOA+43:500:EUR'
+                FTX+AAA++20+SCHRUMPFSCHLAUCHE'
+                FTX+AAH+++SCHRUMPFSCHLAUCHE'
+                CNT+7:381.000:KGM'
+                CNT+11:1'
+                CNT+15:1:MTQ'
+                TOD+6++CPT'
+                LOC+1+KOBLENZ'
+                RFF+CU'
+                RFF+VAN:14227'
+                GOR++5'
+                LOC+27+DE'
+                NAD+CZ+19339000++DSG-CANUSA GMBH & CO. KG+BUSCHSTRASE:7+MECKENHEIM++53340+DE'
+                CTA+AC+:N.A.'
+                COM+02225/8892-401:TE'
+                NAD+CN+++DECKERT MASCHINENBAU GMBH+THEODOR MARWIT STR.:7+LUNEBURG++21337+DE'
+                LOC+8+200::87'
+                CTA+AC+:N.A.'
+                COM+N.A.:TE'
+                DOC+821+817294'
+                GID+1+1:FPN'
+                MEA+WT+AAE+KGM:381.000'
+                DIM+2+CMT:120.000:80.000:163.000'
+                RFF+CU:000001'
+                PCI+18'
+                GIN+AW+00:840365013855006611'
+                UNT+32+14227'
+                UNZ+1+074'
+                """;
+        StringReader reader = new StringReader(edi);
+        StringWriter writer = new StringWriter();
+        ediToXml(reader, writer, edifactReader);
+        assertEqualsDisregardingSpacesAndLineSeparators(
+                """
+                        <?xml version="1.0" encoding="UTF-8"?>
+                        <ediroot>
+                            <interchange Standard="EDIFACT" SyntaxId="UNOC" SyntaxVersion="3" Date="20060119" Time="1629" Control="074"
+                                         Decimal=".">
+                                <sender>
+                                    <address Id="19339000"/>
+                                </sender>
+                                <receiver>
+                                    <address Id="DPAG-EDICC"/>
+                                </receiver>
+                                <group>
+                                    <transaction Control="14227" DocType="IFTMIN" Version="D" Release="01B" Agency="UN"
+                                                 AccessReference="DHL2.0/ASSIST4">
+                                        <segment Id="BGM">
+                                            <element Id="BGM01">787</element>
+                                            <element Id="BGM02">DSG</element>
+                                            <element Id="BGM03">9</element>
+                                        </segment>
+                                        <segment Id="DTM">
+                                            <element Id="DTM01" Composite="yes">
+                                                <subelement Sequence="1">9</subelement>
+                                                <subelement Sequence="2">200601191628</subelement>
+                                                <subelement Sequence="3">203</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="DTM">
+                                            <element Id="DTM01" Composite="yes">
+                                                <subelement Sequence="1">11</subelement>
+                                                <subelement Sequence="2">200601191628</subelement>
+                                                <subelement Sequence="3">203</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="TSR">
+                                            <element Id="TSR03" Composite="yes">
+                                                <subelement Sequence="1">200</subelement>
+                                                <subelement Sequence="2">57</subelement>
+                                                <subelement Sequence="3">87</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="MOA">
+                                            <element Id="MOA01" Composite="yes">
+                                                <subelement Sequence="1">43</subelement>
+                                                <subelement Sequence="2">500</subelement>
+                                                <subelement Sequence="3">EUR</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="FTX">
+                                            <element Id="FTX01">AAA</element>
+                                            <element Id="FTX03">20</element>
+                                            <element Id="FTX04">SCHRUMPFSCHLAUCHE</element>
+                                        </segment>
+                                        <segment Id="FTX">
+                                            <element Id="FTX01">AAH</element>
+                                            <element Id="FTX04">SCHRUMPFSCHLAUCHE</element>
+                                        </segment>
+                                        <segment Id="CNT">
+                                            <element Id="CNT01" Composite="yes">
+                                                <subelement Sequence="1">7</subelement>
+                                                <subelement Sequence="2">381.000</subelement>
+                                                <subelement Sequence="3">KGM</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="CNT">
+                                            <element Id="CNT01" Composite="yes">
+                                                <subelement Sequence="1">11</subelement>
+                                                <subelement Sequence="2">1</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="CNT">
+                                            <element Id="CNT01" Composite="yes">
+                                                <subelement Sequence="1">15</subelement>
+                                                <subelement Sequence="2">1</subelement>
+                                                <subelement Sequence="3">MTQ</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="TOD">
+                                            <element Id="TOD01">6</element>
+                                            <element Id="TOD03">CPT</element>
+                                        </segment>
+                                        <segment Id="LOC">
+                                            <element Id="LOC01">1</element>
+                                            <element Id="LOC02">KOBLENZ</element>
+                                        </segment>
+                                        <segment Id="RFF">
+                                            <element Id="RFF01">CU</element>
+                                        </segment>
+                                        <segment Id="RFF">
+                                            <element Id="RFF01" Composite="yes">
+                                                <subelement Sequence="1">VAN</subelement>
+                                                <subelement Sequence="2">14227</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="GOR">
+                                            <element Id="GOR02">5</element>
+                                        </segment>
+                                        <segment Id="LOC">
+                                            <element Id="LOC01">27</element>
+                                            <element Id="LOC02">DE</element>
+                                        </segment>
+                                        <segment Id="NAD">
+                                            <element Id="NAD01">CZ</element>
+                                            <element Id="NAD02">19339000</element>
+                                            <element Id="NAD04">DSG-CANUSA GMBH</element>
+                                            <element Id="NAD05">CO. KG</element>
+                                            <element Id="NAD06" Composite="yes">
+                                                <subelement Sequence="1">BUSCHSTRASE</subelement>
+                                                <subelement Sequence="2">7</subelement>
+                                            </element>
+                                            <element Id="NAD07">MECKENHEIM</element>
+                                            <element Id="NAD09">53340</element>
+                                            <element Id="NAD10">DE</element>
+                                        </segment>
+                                        <segment Id="CTA">
+                                            <element Id="CTA01">AC</element>
+                                            <element Id="CTA02" Composite="yes">
+                                                <subelement Sequence="2">N.A.</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="COM">
+                                            <element Id="COM01" Composite="yes">
+                                                <subelement Sequence="1">02225/8892-401</subelement>
+                                                <subelement Sequence="2">TE</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="NAD">
+                                            <element Id="NAD01">CN</element>
+                                            <element Id="NAD04">DECKERT MASCHINENBAU GMBH</element>
+                                            <element Id="NAD05" Composite="yes">
+                                                <subelement Sequence="1">THEODOR MARWIT STR.</subelement>
+                                                <subelement Sequence="2">7</subelement>
+                                            </element>
+                                            <element Id="NAD06">LUNEBURG</element>
+                                            <element Id="NAD08">21337</element>
+                                            <element Id="NAD09">DE</element>
+                                        </segment>
+                                        <segment Id="LOC">
+                                            <element Id="LOC01">8</element>
+                                            <element Id="LOC02" Composite="yes">
+                                                <subelement Sequence="1">200</subelement>
+                                                <subelement Sequence="3">87</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="CTA">
+                                            <element Id="CTA01">AC</element>
+                                            <element Id="CTA02" Composite="yes">
+                                                <subelement Sequence="2">N.A.</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="COM">
+                                            <element Id="COM01" Composite="yes">
+                                                <subelement Sequence="1">N.A.</subelement>
+                                                <subelement Sequence="2">TE</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="DOC">
+                                            <element Id="DOC01">821</element>
+                                            <element Id="DOC02">817294</element>
+                                        </segment>
+                                        <segment Id="GID">
+                                            <element Id="GID01">1</element>
+                                            <element Id="GID02" Composite="yes">
+                                                <subelement Sequence="1">1</subelement>
+                                                <subelement Sequence="2">FPN</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="MEA">
+                                            <element Id="MEA01">WT</element>
+                                            <element Id="MEA02">AAE</element>
+                                            <element Id="MEA03" Composite="yes">
+                                                <subelement Sequence="1">KGM</subelement>
+                                                <subelement Sequence="2">381.000</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="DIM">
+                                            <element Id="DIM01">2</element>
+                                            <element Id="DIM02" Composite="yes">
+                                                <subelement Sequence="1">CMT</subelement>
+                                                <subelement Sequence="2">120.000</subelement>
+                                                <subelement Sequence="3">80.000</subelement>
+                                                <subelement Sequence="4">163.000</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="RFF">
+                                            <element Id="RFF01" Composite="yes">
+                                                <subelement Sequence="1">CU</subelement>
+                                                <subelement Sequence="2">000001</subelement>
+                                            </element>
+                                        </segment>
+                                        <segment Id="PCI">
+                                            <element Id="PCI01">18</element>
+                                        </segment>
+                                        <segment Id="GIN">
+                                            <element Id="GIN01">AW</element>
+                                            <element Id="GIN02" Composite="yes">
+                                                <subelement Sequence="1">00</subelement>
+                                                <subelement Sequence="2">840365013855006611</subelement>
+                                            </element>
+                                        </segment>
+                                    </transaction>
+                                </group>
+                            </interchange>
+                        </ediroot>""",
+                writer.toString());
+
     }
 
     @Test
