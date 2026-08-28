@@ -549,7 +549,7 @@ public class EDITokenizerTest {
         token = tokenizer.nextToken();
         assertEquals(SUB_EMPTY, token.getType());
         assertEquals(1, token.getIndex());
-        assertEquals(2, token.getSubIndex());
+        assertEquals(3, token.getSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
         assertEquals(16, tokenizer.getCharCount());
@@ -560,13 +560,13 @@ public class EDITokenizerTest {
         token = tokenizer.nextToken();
         assertEquals(SUB_ELEMENT, token.getType());
         assertEquals(1, token.getIndex());
-        assertEquals(3, token.getSubIndex());
+        assertEquals(4, token.getSubIndex());
         assertEquals("k", token.getValue());
         assertFalse(token.isFirst());
         assertTrue(token.isLast());
-        assertEquals(3, token.getSubIndex());
-        assertEquals(16, tokenizer.getCharCount());
-        assertEquals(16, tokenizer.getSegmentCharCount());
+        assertEquals(4, token.getSubIndex());
+        assertEquals(18, tokenizer.getCharCount());
+        assertEquals(18, tokenizer.getSegmentCharCount());
 
         // abc-def.g:hi:j..k-l.m! ...
         //                   ^
@@ -578,8 +578,8 @@ public class EDITokenizerTest {
         assertTrue(token.isFirst());
         assertFalse(token.isLast());
         assertEquals(0, token.getSubIndex());
-        assertEquals(18, tokenizer.getCharCount());
-        assertEquals(18, tokenizer.getSegmentCharCount());
+        assertEquals(20, tokenizer.getCharCount());
+        assertEquals(20, tokenizer.getSegmentCharCount());
 
         // ... -l.m!abc-..n.o-p-q...-r...!
         //        ^
@@ -591,16 +591,16 @@ public class EDITokenizerTest {
         assertFalse(token.isFirst());
         assertTrue(token.isLast());
         assertEquals(1, token.getSubIndex());
-        assertEquals(19, tokenizer.getCharCount());
-        assertEquals(19, tokenizer.getSegmentCharCount());
+        assertEquals(21, tokenizer.getCharCount());
+        assertEquals(21, tokenizer.getSegmentCharCount());
 
         // ... -l.m!abc-..n.o-p-q...-r...!
         //         ^
         token = tokenizer.nextToken();
         assertEquals(SEGMENT_END, token.getType());
         assertEquals(2, token.getIndex());
-        assertEquals(20, tokenizer.getCharCount());
-        assertEquals(20, tokenizer.getSegmentCharCount());
+        assertEquals(22, tokenizer.getCharCount());
+        assertEquals(22, tokenizer.getSegmentCharCount());
 
         // ... -l.m!abc-..n.o-p-q...-r...!
         //          ^
@@ -609,7 +609,7 @@ public class EDITokenizerTest {
         assertEquals(0, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc", token.getValue());
-        assertEquals(24, tokenizer.getCharCount());
+        assertEquals(26, tokenizer.getCharCount());
         assertEquals(4, tokenizer.getSegmentCharCount());
 
         // ... -l.m!abc-..n.o-p-q...-r...!
@@ -620,7 +620,7 @@ public class EDITokenizerTest {
         assertEquals(0, token.getSubIndex());
         assertTrue(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(25, tokenizer.getCharCount());
+        assertEquals(27, tokenizer.getCharCount());
         assertEquals(5, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -631,7 +631,7 @@ public class EDITokenizerTest {
         assertEquals(1, token.getSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(26, tokenizer.getCharCount());
+        assertEquals(28, tokenizer.getCharCount());
         assertEquals(6, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -644,7 +644,7 @@ public class EDITokenizerTest {
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
         assertEquals(2, token.getSubIndex());
-        assertEquals(28, tokenizer.getCharCount());
+        assertEquals(30, tokenizer.getCharCount());
         assertEquals(8, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -657,7 +657,7 @@ public class EDITokenizerTest {
         assertFalse(token.isFirst());
         assertTrue(token.isLast());
         assertEquals(3, token.getSubIndex());
-        assertEquals(30, tokenizer.getCharCount());
+        assertEquals(32, tokenizer.getCharCount());
         assertEquals(10, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -667,7 +667,7 @@ public class EDITokenizerTest {
         assertEquals(2, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("p", token.getValue());
-        assertEquals(32, tokenizer.getCharCount());
+        assertEquals(34, tokenizer.getCharCount());
         assertEquals(12, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -680,7 +680,7 @@ public class EDITokenizerTest {
         assertTrue(token.isFirst());
         assertFalse(token.isLast());
         assertEquals(0, token.getSubIndex());
-        assertEquals(34, tokenizer.getCharCount());
+        assertEquals(36, tokenizer.getCharCount());
         assertEquals(14, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -691,7 +691,7 @@ public class EDITokenizerTest {
         assertEquals(1, token.getSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(35, tokenizer.getCharCount());
+        assertEquals(37, tokenizer.getCharCount());
         assertEquals(15, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -702,7 +702,7 @@ public class EDITokenizerTest {
         assertEquals(2, token.getSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(36, tokenizer.getCharCount());
+        assertEquals(38, tokenizer.getCharCount());
         assertEquals(16, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -713,7 +713,7 @@ public class EDITokenizerTest {
         assertEquals(3, token.getSubIndex());
         assertFalse(token.isFirst());
         assertTrue(token.isLast());
-        assertEquals(37, tokenizer.getCharCount());
+        assertEquals(39, tokenizer.getCharCount());
         assertEquals(17, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -726,7 +726,7 @@ public class EDITokenizerTest {
         assertTrue(token.isFirst());
         assertFalse(token.isLast());
         assertEquals(0, token.getSubIndex());
-        assertEquals(39, tokenizer.getCharCount());
+        assertEquals(41, tokenizer.getCharCount());
         assertEquals(19, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -737,7 +737,7 @@ public class EDITokenizerTest {
         assertEquals(1, token.getSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(40, tokenizer.getCharCount());
+        assertEquals(42, tokenizer.getCharCount());
         assertEquals(20, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -748,7 +748,7 @@ public class EDITokenizerTest {
         assertEquals(2, token.getSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(41, tokenizer.getCharCount());
+        assertEquals(43, tokenizer.getCharCount());
         assertEquals(21, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -759,21 +759,21 @@ public class EDITokenizerTest {
         assertEquals(3, token.getSubIndex());
         assertFalse(token.isFirst());
         assertTrue(token.isLast());
-        assertEquals(41, tokenizer.getCharCount());
+        assertEquals(43, tokenizer.getCharCount());
         assertEquals(21, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
         //                          ^
         token = tokenizer.nextToken();
         assertEquals(SEGMENT_END, token.getType());
-        assertEquals(42, tokenizer.getCharCount());
+        assertEquals(44, tokenizer.getCharCount());
         assertEquals(22, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
         //                           ^
         token = tokenizer.nextToken();
         assertEquals(END_OF_DATA, token.getType());
-        assertEquals(43, tokenizer.getCharCount());
+        assertEquals(45, tokenizer.getCharCount());
     }
 
     @Test

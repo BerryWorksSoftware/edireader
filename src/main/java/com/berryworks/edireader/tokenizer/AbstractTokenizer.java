@@ -739,6 +739,11 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         break;
                     case IN_COMPOSITE:
                         currentToken.incrementSubElementIndex();
+                        break;
+                    case IN_COMPOSITE_LEVEL_2:
+                        state = State.IN_COMPOSITE;
+                        currentToken.incrementSubElementIndex();
+                        break;
                 }
                 currentToken.setLast(false);
                 currentToken.setType(Token.TokenType.SUB_EMPTY);
