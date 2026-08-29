@@ -269,13 +269,19 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
     protected void beginSegmentElement(Attributes atts) {
     }
 
-    protected void endSegmentElement(String elementString) {
+    protected void endSegmentElement(String value) {
     }
 
     protected void beginSegmentSubElement(Attributes atts) {
     }
 
-    protected void endSegmentSubElement(String subElementString) {
+    protected void endSegmentSubElement(String value) {
+    }
+
+    protected void beginSegmentSubSubElement(Attributes atts) {
+    }
+
+    protected void endSegmentSubSubElement(String value) {
     }
 
     protected void recover(Exception e) {

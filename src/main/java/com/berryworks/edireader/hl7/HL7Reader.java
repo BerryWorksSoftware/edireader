@@ -528,6 +528,9 @@ public class HL7Reader extends StandardReader {
                     }
                 }
                 break;
+            case SUB_SUB_ELEMENT:
+                System.out.println("... sub-sub-element");
+                break;
         }
     }
 
