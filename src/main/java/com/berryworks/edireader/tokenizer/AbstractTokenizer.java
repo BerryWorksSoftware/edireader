@@ -80,18 +80,22 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      *
      * @return The segmentCount value
      */
+    @Override
     public int getSegmentCount() {
         return segmentCount;
     }
 
+    @Override
     public int getElementInSegmentCount() {
         return segTokenCount;
     }
 
+    @Override
     public int getCharCount() {
         return charCount;
     }
 
+    @Override
     public int getSegmentCharCount() {
         return segCharCount;
     }
@@ -102,22 +106,28 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
         this.segCharCount = segmentCharCount;
     }
 
+    @Override
     public Reader getReader() {
         return inputReader;
     }
 
+    @Override
     public void setReader(Reader replacementReader) {
         inputReader = replacementReader;
     }
 
+    @Override
     public char getSubSubDelimiter() {
         return subSubDelimiter;
     }
 
-    public void setSubSubDelimiter(char ssd) {
+    @Override
+    public Tokenizer setSubSubDelimiter(char ssd) {
         subSubDelimiter = ssd;
+        return this;
     }
 
+    @Override
     public char getRelease() {
         return release;
     }
@@ -127,8 +137,10 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      *
      * @param c The new release char
      */
-    public void setRelease(char c) {
+    @Override
+    public Tokenizer setRelease(char c) {
         release = c;
+        return this;
     }
 
     /**
@@ -136,6 +148,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      *
      * @return The repetition char, or '\0' if no repetition char is in effect
      */
+    @Override
     public char getRepetitionSeparator() {
         return repetitionSeparator;
     }
@@ -145,32 +158,43 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      *
      * @param c The new value
      */
-    public void setRepetitionSeparator(char c) {
+    @Override
+    public Tokenizer setRepetitionSeparator(char c) {
         repetitionSeparator = c;
+        return this;
     }
 
-    public void setTerminator(char d) {
+    @Override
+    public Tokenizer setTerminator(char d) {
         terminator = d;
+        return this;
     }
 
+    @Override
     public char getTerminator() {
         return terminator;
     }
 
+    @Override
     public char getDelimiter() {
         return delimiter;
     }
 
-    public void setDelimiter(char d) {
+    @Override
+    public Tokenizer setDelimiter(char d) {
         delimiter = d;
+        return this;
     }
 
+    @Override
     public char getSubDelimiter() {
         return subDelimiter;
     }
 
-    public void setSubDelimiter(char sd) {
+    @Override
+    public Tokenizer setSubDelimiter(char sd) {
         subDelimiter = sd;
+        return this;
     }
 
     public void copy(char c) {
@@ -585,9 +609,11 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      *
      * @param b The new recorder value
      */
-    public void setRecorder(boolean b) {
+    @Override
+    public Tokenizer setRecorder(boolean b) {
         recorderOn = b;
         logger.debug("recorder turned {}", (b ? "on" : "off"));
+        return this;
     }
 
     public AbstractTokenizer(Reader source) {

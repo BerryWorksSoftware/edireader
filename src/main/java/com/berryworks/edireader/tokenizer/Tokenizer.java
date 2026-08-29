@@ -33,27 +33,27 @@ public interface Tokenizer extends SourcePosition {
 
     char getTerminator();
 
-    void setTerminator(char d);
+    Tokenizer setTerminator(char d);
 
     char getDelimiter();
 
-    void setDelimiter(char d);
+    Tokenizer setDelimiter(char d);
 
     char getSubDelimiter();
 
-    void setSubDelimiter(char sd);
+    Tokenizer setSubDelimiter(char sd);
 
     char getSubSubDelimiter();
 
-    void setSubSubDelimiter(char sd);
+    Tokenizer setSubSubDelimiter(char sd);
 
     char getRepetitionSeparator();
 
-    void setRepetitionSeparator(char c);
+    Tokenizer setRepetitionSeparator(char c);
 
     char getRelease();
 
-    void setRelease(char c);
+    Tokenizer setRelease(char c);
 
     boolean hasMoreTokens() throws IOException, EDISyntaxException;
 
@@ -76,7 +76,7 @@ public interface Tokenizer extends SourcePosition {
 
     String getRecording();
 
-    void setRecorder(boolean b);
+    Tokenizer setRecorder(boolean b);
 
     /**
      * Look ahead into the source of input chars and return the next n chars to
