@@ -651,6 +651,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         if (!repetition)
                             currentToken.incrementIndex();
                         currentToken.resetSubElementIndex();
+                        currentToken.resetSubSubElementIndex();
                         if (scanData() == CharacterClass.SUB_DELIMITER) {
                             // We have a composite token instead of a simple one
                             currentToken.setType(Token.TokenType.SUB_ELEMENT);

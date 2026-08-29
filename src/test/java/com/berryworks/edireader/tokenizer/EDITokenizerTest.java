@@ -2059,7 +2059,7 @@ public class EDITokenizerTest {
                 "abc"));
 
         tokenizer.nextToken();
-        assertEquals("tokenizer state: segmentCount=1 charCount=4 segTokenCount=1 segCharCount=4 currentToken=Token type=SEGMENT_START value=abc index=0 segment=abc buffer.limit=0 buffer.position=0",
+        assertEquals("tokenizer state: segmentCount=1 charCount=4 segTokenCount=1 segCharCount=4 currentToken=Token type=SEGMENT_START 0.0.0 value=abc segment=abc buffer.limit=0 buffer.position=0",
                 tokenizer.toString());
     }
 
@@ -2210,7 +2210,7 @@ public class EDITokenizerTest {
     @Test
     public void testSegmentWith3Levels_A() throws EDISyntaxException, IOException {
         tokenizer = new EDITokenizer(new StringReader("""
-                AIP|||MICHAEL^Bennett^Michael T.^^a&b&c|D|
+                AIP|A||MICHAEL^Bennett^Michael T.^^a&b&c|D|
                 """)).setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
 
         String report = "";
@@ -2220,7 +2220,7 @@ public class EDITokenizerTest {
         }
         assertEquals("""
                 Token type=SEGMENT_START 0.0.0 value=AIP segment=AIP
-                Token type=EMPTY 1.0.0 value= segment=AIP
+                Token type=SIMPLE 1.0.0 value=A segment=AIP
                 Token type=EMPTY 2.0.0 value= segment=AIP
                 Token type=SUB_ELEMENT 3.0.0 value=MICHAEL segment=AIP
                 Token type=SUB_ELEMENT 3.1.0 value=Bennett segment=AIP
@@ -2229,9 +2229,8 @@ public class EDITokenizerTest {
                 Token type=SUB_SUB_ELEMENT 3.4.0 value=a segment=AIP
                 Token type=SUB_SUB_ELEMENT 3.4.1 value=b segment=AIP
                 Token type=SUB_SUB_ELEMENT 3.4.2 value=c segment=AIP
-                Token type=SUB_SUB_ELEMENT 4.0.0 value=D segment=AIP
+                Token type=SIMPLE 4.0.0 value=D segment=AIP
                 Token type=SEGMENT_END 4.0.0 value=D segment=AIP
-                Token type=END_OF_DATA 4.0.0 value=D segment=AIP
                 """, report);
     }
 

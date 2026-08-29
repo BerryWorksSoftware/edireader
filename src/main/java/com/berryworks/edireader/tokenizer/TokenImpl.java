@@ -165,6 +165,11 @@ public class TokenImpl implements Token {
     }
 
     @Override
+    public void resetSubSubElementIndex() {
+        subSubElementIndex = 0;
+    }
+
+    @Override
     public void incrementIndex() {
         index++;
     }

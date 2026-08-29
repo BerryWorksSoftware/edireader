@@ -50,6 +50,7 @@ public interface Token {
     void incrementIndex();
 
     void resetSubElementIndex();
+    void resetSubSubElementIndex();
 
     void resetIndexes();
 
