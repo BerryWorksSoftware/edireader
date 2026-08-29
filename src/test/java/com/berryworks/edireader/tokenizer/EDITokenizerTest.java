@@ -2239,18 +2239,12 @@ public class EDITokenizerTest {
     public void testSegmentWith3Levels() throws EDISyntaxException, IOException {
         tokenizer = new EDITokenizer(new StringReader("""
                 AIP|||MICHAEL^Bennett^Michael T.^^^^^^&&NPI|
-                """));
-        tokenizer.setDelimiter('|');
-        tokenizer.setSubDelimiter('^');
-        tokenizer.setSubSubDelimiter('&');
-        tokenizer.setTerminator('\n');
+                """)).setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
 
-        Token token;
         String report = "";
-        while (true) {
-            token = tokenizer.nextToken();
-            report += token.toString() + System.lineSeparator();
-            if (token.getType() == END_OF_DATA) break;
+        Token token;
+        while ((token = tokenizer.nextToken()).getType() != END_OF_DATA) {
+            report += token + System.lineSeparator();
         }
         assertEquals("""
                 Token type=SEGMENT_START 0.0.0 value=AIP segment=AIP
@@ -2268,7 +2262,6 @@ public class EDITokenizerTest {
                 Token type=SUB_SUB_EMPTY 3.8.1 value= segment=AIP
                 Token type=SUB_SUB_ELEMENT 3.8.2 value=NPI segment=AIP
                 Token type=SEGMENT_END 3.0.0 value=NPI segment=AIP
-                Token type=END_OF_DATA 3.0.0 value=NPI segment=AIP
                 """, report);
     }
 

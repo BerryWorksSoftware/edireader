@@ -768,6 +768,18 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                 currentToken.resetValue();
                 break;
 
+            case SUB_SUB_DELIMITER:
+                switch (state) {
+                    case IN_SEGMENT:
+                        currentToken.incrementIndex();
+                        break;
+                    case IN_COMPOSITE:
+                        currentToken.incrementSubElementIndex();
+                        currentToken.setType(Token.TokenType.SUB_SUB_EMPTY);
+                        break;
+                }
+                break;
+
             case REPEAT_DELIMITER:
                 switch (state) {
                     case IN_COMPOSITE:
