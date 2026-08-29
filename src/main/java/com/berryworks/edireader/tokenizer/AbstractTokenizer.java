@@ -682,6 +682,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         }
                         break;
                     case IN_COMPOSITE_LEVEL_2:
+                        currentToken.setType(Token.TokenType.SUB_SUB_ELEMENT);
                         currentToken.setValue(cChar);
                         currentToken.incrementSubSubElementIndex();
                         characterClass = scanData();
@@ -724,6 +725,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         state = State.EXPECTING_SEGMENT;
                         scanTerminatorSuffix();
                         currentToken.resetSubElementIndex();
+                        currentToken.resetSubSubElementIndex();
                 }
                 break;
 
