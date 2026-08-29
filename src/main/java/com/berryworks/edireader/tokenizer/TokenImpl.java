@@ -134,8 +134,10 @@ public class TokenImpl implements Token {
 
     @Override
     public String toString() {
-        return "Token type=" + getType() + " value=" + getValue() +
-                " index=" + getIndex() + " segment=" + getSegmentType();
+        return "Token type=" + getType() + " " +
+                getIndex() + '.' + getSubIndex() + '.' + getSubSubIndex() +
+                " value=" + getValue() +
+                " segment=" + getSegmentType();
     }
 
     /**
