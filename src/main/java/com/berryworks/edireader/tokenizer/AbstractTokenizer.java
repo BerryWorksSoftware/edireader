@@ -684,6 +684,11 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         currentToken.setValue(cChar);
                         currentToken.incrementSubSubElementIndex();
                         characterClass = scanData();
+                        if (characterClass == CharacterClass.DELIMITER) {
+                            state = State.IN_SEGMENT;
+                        } else if (characterClass == CharacterClass.SUB_DELIMITER) {
+                            state = State.IN_COMPOSITE;
+                        }
                         break;
                     default:
                         // We are at the beginning of a segment
