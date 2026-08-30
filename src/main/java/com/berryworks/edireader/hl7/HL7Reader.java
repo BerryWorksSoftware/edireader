@@ -528,8 +528,20 @@ public class HL7Reader extends StandardReader {
                     }
                 }
                 break;
+            case SUB_SUB_EMPTY:
+                System.out.println("... sub-sub-empty");
+                break;
             case SUB_SUB_ELEMENT:
                 System.out.println("... sub-sub-element");
+                attributes = getDocumentAttributes();
+                attributes.clear();
+                String sequence = String.valueOf(9);
+                attributes.addCDATA("Sequence", sequence);
+                String tag = "subsubelement";
+                startElement(tag, attributes);
+                String data = "(data)";
+                getContentHandler().characters(data.toCharArray(), 0, data.length());
+                endElement(tag);
                 break;
         }
     }
