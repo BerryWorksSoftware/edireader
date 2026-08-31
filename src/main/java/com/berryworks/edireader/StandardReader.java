@@ -125,31 +125,31 @@ public abstract class StandardReader extends EDIReader {
 
                 attributes = getDocumentAttributes();
                 attributes.clear();
-                attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
+                attributes.addCDATA(XMLTags.ID, elementId);
 
                 if (isSpecifiedAsComposite(t)) {
                     // Special case. What looks like a simple element (for example, INS-6) is really a composite with
                     // only a first sub-element (for example, INS-6-1).
 
                     // Add a Composite=yes attribute before starting the element
-                    attributes.addCDATA(getXMLTags().getCompositeIndicator(), "yes");
-                    startElement(getXMLTags().getElementTag(), attributes);
+                    attributes.addCDATA(XMLTags.COMPOSITE, "yes");
+                    startElement(XMLTags.ELEMENT, attributes);
 
                     // start a sub-element
                     attributes.clear();
-                    attributes.addCDATA(getXMLTags().getSubElementSequence(), "1");
-                    startElement(getXMLTags().getSubElementTag(), attributes);
+                    attributes.addCDATA(XMLTags.SUB_ELEMENT_SEQUENCE, "1");
+                    startElement(XMLTags.SUB_ELEMENT, attributes);
                     // associate data with that sub-element
                     getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
                     // end the sub-element
-                    endElement(getXMLTags().getSubElementTag());
+                    endElement(XMLTags.SUB_ELEMENT);
                     // end the element
-                    endElement(getXMLTags().getElementTag());
+                    endElement(XMLTags.ELEMENT);
                 } else {
                     // Normal case. A simple non-composite element.
-                    startElement(getXMLTags().getElementTag(), attributes);
+                    startElement(XMLTags.ELEMENT, attributes);
                     getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
-                    endElement(getXMLTags().getElementTag());
+                    endElement(XMLTags.ELEMENT);
                     if (segmentPluginController != null)
                         segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
                 }
@@ -162,23 +162,23 @@ public abstract class StandardReader extends EDIReader {
 
                 if (t.isFirst()) {
                     attributes.clear();
-                    attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
-                    attributes.addCDATA(getXMLTags().getCompositeIndicator(), "yes");
-                    startElement(getXMLTags().getElementTag(), attributes);
+                    attributes.addCDATA(XMLTags.ID, elementId);
+                    attributes.addCDATA(XMLTags.COMPOSITE, "yes");
+                    startElement(XMLTags.ELEMENT, attributes);
                 }
 
                 attributes.clear();
                 attributes.addAttribute(
                         "",
-                        getXMLTags().getSubElementSequence(),
-                        getXMLTags().getSubElementSequence(),
+                        XMLTags.SUB_ELEMENT_SEQUENCE,
+                        XMLTags.SUB_ELEMENT_SEQUENCE,
                         "CDATA", String.valueOf(1 + t.getSubIndex()));
-                startElement(getXMLTags().getSubElementTag(), attributes);
+                startElement(XMLTags.SUB_ELEMENT, attributes);
                 getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
-                endElement(getXMLTags().getSubElementTag());
+                endElement(XMLTags.SUB_ELEMENT);
 
                 if (t.isLast()) {
-                    endElement(getXMLTags().getElementTag());
+                    endElement(XMLTags.ELEMENT);
                 }
                 break;
 
@@ -187,12 +187,12 @@ public abstract class StandardReader extends EDIReader {
                 if (t.isFirst()) {
                     attributes = getDocumentAttributes();
                     attributes.clear();
-                    attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
-                    attributes.addCDATA(getXMLTags().getCompositeIndicator(), "yes");
-                    startElement(getXMLTags().getElementTag(), attributes);
+                    attributes.addCDATA(XMLTags.ID, elementId);
+                    attributes.addCDATA(XMLTags.COMPOSITE, "yes");
+                    startElement(XMLTags.ELEMENT, attributes);
                 }
                 if (t.isLast()) {
-                    endElement(getXMLTags().getElementTag());
+                    endElement(XMLTags.ELEMENT);
                 }
                 break;
         }
@@ -408,7 +408,7 @@ public abstract class StandardReader extends EDIReader {
 
 //            logger.debug("closing {} loops", toClose);
             for (; toClose > 0; toClose--)
-                endElement(getXMLTags().getLoopTag());
+                endElement(XMLTags.LOOP);
 
             String s = pluginController.getLoopEntered();
             if (pluginController.isResumed()) {
@@ -416,14 +416,14 @@ public abstract class StandardReader extends EDIReader {
                 // start a new instance of the loop.
             } else {
                 getDocumentAttributes().clear();
-                getDocumentAttributes().addCDATA(getXMLTags().getIdAttribute(), s);
-                startElement(getXMLTags().getLoopTag(), getDocumentAttributes());
+                getDocumentAttributes().addCDATA(XMLTags.ID, s);
+                startElement(XMLTags.LOOP, getDocumentAttributes());
             }
         }
 
         getDocumentAttributes().clear();
-        getDocumentAttributes().addCDATA(getXMLTags().getIdAttribute(), segmentType);
-        startElement(getXMLTags().getSegTag(), getDocumentAttributes());
+        getDocumentAttributes().addCDATA(XMLTags.ID, segmentType);
+        startElement(XMLTags.SEGMENT, getDocumentAttributes());
         if (segmentPluginController != null)
             segmentPluginController.noteBeginningOfSegment(getContentHandler(), segmentType);
 
@@ -453,20 +453,20 @@ public abstract class StandardReader extends EDIReader {
         }
         if (segmentPluginController != null)
             segmentPluginController.noteEndOfSegment(getContentHandler(), segmentType);
-        endElement(getXMLTags().getSegTag());
+        endElement(XMLTags.SEGMENT);
     }
 
     protected void startInterchange(EDIAttributes attributes)
             throws SAXException {
-        startElement(getXMLTags().getInterchangeTag(), attributes);
+        startElement(XMLTags.INTERCHANGE, attributes);
     }
 
     protected void endInterchange() throws SAXException {
-        endElement(getXMLTags().getInterchangeTag());
+        endElement(XMLTags.INTERCHANGE);
     }
 
     protected void startMessage(EDIAttributes attributes) throws SAXException {
-        startElement(getXMLTags().getDocumentTag(), attributes);
+        startElement(XMLTags.DOCUMENT, attributes);
     }
 
     protected String getSubElement(List<String> compositeList, int i) {
@@ -481,38 +481,37 @@ public abstract class StandardReader extends EDIReader {
 
     protected void generatedSenderAndReceiver(String fromId, String fromQual, String fromExtra, String toId, String toQual, String toExtra) throws SAXException {
         getInterchangeAttributes().clear();
-        startElement(getXMLTags().getSenderTag(), getInterchangeAttributes());
-        getInterchangeAttributes().addCDATA(getXMLTags().getIdAttribute(), fromId);
-        getInterchangeAttributes().addCDATA(getXMLTags().getQualifierAttribute(),
+        startElement(XMLTags.SENDER, getInterchangeAttributes());
+        getInterchangeAttributes().addCDATA(XMLTags.ID, fromId);
+        getInterchangeAttributes().addCDATA(XMLTags.QUALIFIER,
                 fromQual);
         if (isPresent(fromExtra)) {
             getInterchangeAttributes().addCDATA("Extra", fromExtra);
         }
         startSenderAddress(getInterchangeAttributes());
-        endElement(getXMLTags().getAddressTag());
-        endElement(getXMLTags().getSenderTag());
+        endElement(XMLTags.ADDRESS);
+        endElement(XMLTags.SENDER);
 
         getInterchangeAttributes().clear();
-        startElement(getXMLTags().getReceiverTag(), getInterchangeAttributes());
-        getInterchangeAttributes().addCDATA(getXMLTags().getIdAttribute(), toId);
-        getInterchangeAttributes().addCDATA(getXMLTags().getQualifierAttribute(),
+        startElement(XMLTags.RECEIVER, getInterchangeAttributes());
+        getInterchangeAttributes().addCDATA(XMLTags.ID, toId);
+        getInterchangeAttributes().addCDATA(XMLTags.QUALIFIER,
                 toQual);
         if (isPresent(toExtra)) {
-            getInterchangeAttributes().addCDATA(getXMLTags()
-                    .getAddressExtraAttribute(), toExtra);
+            getInterchangeAttributes().addCDATA(XMLTags.ADDRESS_EXTRA, toExtra);
         }
         startReceiverAddress(getInterchangeAttributes());
-        endElement(getXMLTags().getAddressTag());
-        endElement(getXMLTags().getReceiverTag());
+        endElement(XMLTags.ADDRESS);
+        endElement(XMLTags.RECEIVER);
     }
 
     protected void startSenderAddress(EDIAttributes attributes)
             throws SAXException {
-        startElement(getXMLTags().getAddressTag(), attributes);
+        startElement(XMLTags.ADDRESS, attributes);
     }
 
     protected void startReceiverAddress(EDIAttributes attributes)
             throws SAXException {
-        startElement(getXMLTags().getAddressTag(), attributes);
+        startElement(XMLTags.ADDRESS, attributes);
     }
 }

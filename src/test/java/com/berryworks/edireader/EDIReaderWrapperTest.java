@@ -28,13 +28,6 @@ public class EDIReaderWrapperTest {
         wrapper.parse((InputSource) null);
         assertTrue(ediReader.isCalled("parse"));
 
-        assertFalse(ediReader.isCalled("getXMLTags"));
-        wrapper.getXMLTags();
-        assertTrue(ediReader.isCalled("getXMLTags"));
-        assertFalse(ediReader.isCalled("setXMLTags"));
-        wrapper.setXMLTags(null);
-        assertTrue(ediReader.isCalled("setXMLTags"));
-
         assertFalse(ediReader.isCalled("getTerminator"));
         wrapper.getTerminator();
         assertTrue(ediReader.isCalled("getTerminator"));
@@ -177,17 +170,6 @@ public class EDIReaderWrapperTest {
         @Override
         public void parse(InputSource source) throws SAXException, IOException {
             called("parse");
-        }
-
-        @Override
-        public XMLTags getXMLTags() {
-            called("getXMLTags");
-            return null;
-        }
-
-        @Override
-        public void setXMLTags(XMLTags tags) {
-            called("setXMLTags");
         }
 
         @Override

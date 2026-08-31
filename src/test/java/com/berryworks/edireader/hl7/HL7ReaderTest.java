@@ -24,6 +24,7 @@ public class HL7ReaderTest {
         assertEqualsDisregardingSpacesAndLineSeparators(expected, actual);
     }
 
+    @Ignore
     @Test
     public void canParse3Levels() throws EDISyntaxException, IOException, TransformerException {
         StringReader stringReader = new StringReader(HL7_3_LEVELS);

@@ -4,7 +4,7 @@
 
 package com.berryworks.edireader.util;
 
-import com.berryworks.edireader.DefaultXMLTags;
+import com.berryworks.edireader.XMLTags;
 import com.berryworks.edireader.benchmark.EDITestData;
 import com.berryworks.edireader.demo.EDISplitter;
 import com.berryworks.edireader.splitter.ClosingDetails;
@@ -73,7 +73,7 @@ public class SplitterTest extends VerboseTestCase {
 
         Document controlDom = DocumentUtil.getInstance().buildDocumentFromEdi(EDITestData.getAnsiInputSource());
         String differences = DocumentUtil.compare(controlDom, factory.getDom());
-        if (differences !=  null) {
+        if (differences != null) {
             fail(differences);
         }
     }
@@ -124,7 +124,7 @@ public class SplitterTest extends VerboseTestCase {
 
         Document controlDom = DocumentUtil.getInstance().buildDocumentFromEdi(EDITestData.getAnsiInputSource());
         String differences = DocumentUtil.compare(controlDom, factory.getDom());
-        if (differences !=  null) {
+        if (differences != null) {
             fail(differences);
         }
 
@@ -367,11 +367,11 @@ public class SplitterTest extends VerboseTestCase {
             elementCount++;
             attributeCount += attributes.getLength();
             sAXEventsRead++;
-            if (DefaultXMLTags.getInstance().getInterchangeTag().equals(qName)) {
+            if (XMLTags.INTERCHANGE.equals(qName)) {
                 handlerFactory.incrementInterchangeCount();
-            } else if (DefaultXMLTags.getInstance().getGroupTag().equals(qName)) {
+            } else if (XMLTags.GROUP.equals(qName)) {
                 handlerFactory.incrementGroupCount();
-            } else if (DefaultXMLTags.getInstance().getDocumentTag().equals(qName)) {
+            } else if (XMLTags.DOCUMENT.equals(qName)) {
                 handlerFactory.incrementTransactionCount();
             }
         }

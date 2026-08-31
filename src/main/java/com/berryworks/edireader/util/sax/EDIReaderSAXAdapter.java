@@ -20,7 +20,6 @@
 
 package com.berryworks.edireader.util.sax;
 
-import com.berryworks.edireader.DefaultXMLTags;
 import com.berryworks.edireader.XMLTags;
 import com.berryworks.edireader.tokenizer.SourcePosition;
 import org.xml.sax.Attributes;
@@ -41,7 +40,6 @@ import static com.berryworks.edireader.util.FixedLength.isPresent;
  * of detecting EDI structures in the SAX interface.
  */
 public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePosition {
-    protected final XMLTags xmlTags;
 
     protected boolean anotherSEG, implicitGroup, implicitDocument;
     private int charCount = -1;
@@ -52,11 +50,6 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
     protected String elementString;
 
     public EDIReaderSAXAdapter() {
-        this(new DefaultXMLTags());
-    }
-
-    public EDIReaderSAXAdapter(XMLTags xmlTags) {
-        this.xmlTags = xmlTags;
     }
 
     @Override
@@ -66,27 +59,27 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
 
         localName = chooseBetween(localName, qName);
 
-        if (localName.startsWith(xmlTags.getInterchangeTag())) {
+        if (localName.startsWith(XMLTags.INTERCHANGE)) {
             anotherSEG = false;
             beginInterchange(charCount, segmentCharCount, atts);
 
-        } else if (localName.startsWith(xmlTags.getSenderTag())) {
+        } else if (localName.startsWith(XMLTags.SENDER)) {
             senderAddress = true;
 
-        } else if (localName.startsWith(xmlTags.getReceiverTag())) {
+        } else if (localName.startsWith(XMLTags.RECEIVER)) {
             senderAddress = false;
 
-        } else if (localName.startsWith(xmlTags.getAddressTag())) {
-            final String qualifier = atts.getValue(xmlTags.getQualifierAttribute());
-            final String address = atts.getValue(xmlTags.getIdAttribute());
-            final String extra = atts.getValue(xmlTags.getAddressExtraAttribute());
+        } else if (localName.startsWith(XMLTags.ADDRESS)) {
+            final String qualifier = atts.getValue(XMLTags.QUALIFIER);
+            final String address = atts.getValue(XMLTags.ID);
+            final String extra = atts.getValue(XMLTags.ADDRESS_EXTRA);
             if (senderAddress) {
                 senderAddress(qualifier, address, extra);
             } else {
                 receiverAddress(qualifier, address, extra);
             }
 
-        } else if (localName.startsWith(xmlTags.getGroupTag())) {
+        } else if (localName.startsWith(XMLTags.GROUP)) {
             anotherSEG = false;
             if (atts.getLength() == 0) {
                 implicitGroup = true;
@@ -94,7 +87,7 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
             } else
                 beginExplicitGroup(charCount, segmentCharCount, atts);
 
-        } else if (localName.startsWith(xmlTags.getDocumentTag())) {
+        } else if (localName.startsWith(XMLTags.DOCUMENT)) {
             anotherSEG = false;
             if (atts.getLength() == 0) {
                 implicitDocument = true;
@@ -103,7 +96,7 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
                 beginDocument(charCount, segmentCharCount, atts);
             }
 
-        } else if (localName.startsWith(xmlTags.getSegTag())) {
+        } else if (localName.startsWith(XMLTags.SEGMENT)) {
             if (anotherSEG)
                 beginAnotherSegment(atts);
             else {
@@ -111,21 +104,21 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
                 anotherSEG = true;
             }
 
-        } else if (localName.startsWith(xmlTags.getLoopTag())) {
+        } else if (localName.startsWith(XMLTags.LOOP)) {
             anotherSEG = false;
             String loopName = "";
             if (atts.getLength() > 0)
                 loopName = atts.getValue(0);
             beginSegmentGroup(loopName, atts);
 
-        } else if (localName.startsWith(xmlTags.getPackageTag())) {
+        } else if (localName.startsWith(XMLTags.PACKAGE)) {
             beginBinaryPackage(atts);
 
-        } else if (localName.startsWith(xmlTags.getElementTag())) {
+        } else if (localName.startsWith(XMLTags.ELEMENT)) {
             elementString = "";
             beginSegmentElement(atts);
 
-        } else if (localName.startsWith(xmlTags.getSubElementTag())) {
+        } else if (localName.startsWith(XMLTags.SUB_ELEMENT)) {
             elementString = "";
             beginSegmentSubElement(atts);
         }
@@ -165,31 +158,31 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
 
         localName = chooseBetween(localName, qName);
 
-        if (localName.startsWith(xmlTags.getInterchangeTag())) {
+        if (localName.startsWith(XMLTags.INTERCHANGE)) {
             anotherSEG = false;
             endInterchange(charCount, segmentCharCount);
             implicitInterchangeTermination = false;
-        } else if (localName.startsWith(xmlTags.getGroupTag())) {
+        } else if (localName.startsWith(XMLTags.GROUP)) {
             anotherSEG = false;
             if (implicitGroup)
                 endImplicitGroup();
             else
                 endExplicitGroup(charCount, segmentCharCount);
-        } else if (localName.startsWith(xmlTags.getDocumentTag())) {
+        } else if (localName.startsWith(XMLTags.DOCUMENT)) {
             anotherSEG = false;
             if (!implicitDocument)
                 endDocument(charCount, segmentCharCount);
-        } else if (localName.startsWith(xmlTags.getSegTag())) {
+        } else if (localName.startsWith(XMLTags.SEGMENT)) {
             endSegment(charCount, segmentCharCount);
-        } else if (localName.startsWith(xmlTags.getPackageTag())) {
+        } else if (localName.startsWith(XMLTags.PACKAGE)) {
             endBinaryPackage(charCount, segmentCharCount);
-        } else if (localName.startsWith(xmlTags.getElementTag())) {
+        } else if (localName.startsWith(XMLTags.ELEMENT)) {
             endSegmentElement(elementString);
             elementString = null;
-        } else if (localName.startsWith(xmlTags.getSubElementTag())) {
+        } else if (localName.startsWith(XMLTags.SUB_ELEMENT)) {
             endSegmentSubElement(elementString);
             elementString = null;
-        } else if (localName.startsWith(xmlTags.getLoopTag())) {
+        } else if (localName.startsWith(XMLTags.LOOP)) {
             endSegmentGroup();
         }
     }

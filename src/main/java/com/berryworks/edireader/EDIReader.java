@@ -33,6 +33,8 @@ import org.xml.sax.helpers.AttributesImpl;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
+import static com.berryworks.edireader.XMLTags.ROOT;
+
 /**
  * Reads and parses an EDI interchange in any of the supported EDI standards.
  * Once a specific EDI standard is identified, EDIReader delegates the actual
@@ -46,7 +48,6 @@ import java.lang.invoke.MethodHandles;
 public class EDIReader extends EDIAbstractReader implements ErrorMessages {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
     private EDIReader theReader;
-    private XMLTags xmlTags;
     private PluginControllerFactoryInterface pluginControllerFactory;
 
     /**
@@ -89,7 +90,6 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
                 theReader.setIncludeSyntaxCharacters(isIncludeSyntaxCharacters());
                 theReader.setKeepEmptyElements(isKeepEmptyElements());
             }
-            theReader.setXMLTags(xmlTags);
             if (pluginControllerFactory != null) {
                 theReader.setPluginControllerFactory(pluginControllerFactory);
             }
@@ -125,17 +125,6 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
         return result;
     }
 
-    public void setXMLTags(XMLTags tags) {
-        xmlTags = tags;
-    }
-
-    public XMLTags getXMLTags() {
-        if (xmlTags == null)
-            xmlTags = DefaultXMLTags.getInstance();
-
-        return xmlTags;
-    }
-
     public void setPluginControllerFactory(PluginControllerFactoryInterface pluginControllerFactory) {
         this.pluginControllerFactory = pluginControllerFactory;
     }
@@ -148,7 +137,7 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
             throw new SAXException("No ContentHandler configured for EDIReader");
         }
         contentHandler.startDocument();
-        String rootTag = getXMLTags().getRootTag();
+        String rootTag = ROOT;
         if (isNamespaceEnabled()) {
             contentHandler.startElement(BERRYWORKS_NAMESPACE, rootTag, rootTag, attrList);
         } else {
@@ -157,7 +146,7 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
     }
 
     protected void endXMLDocument() throws SAXException {
-        endElement(getXMLTags().getRootTag());
+        endElement(ROOT);
         getContentHandler().endDocument();
     }
 

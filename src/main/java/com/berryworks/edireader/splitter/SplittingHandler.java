@@ -46,11 +46,10 @@ import static com.berryworks.edireader.util.FixedLength.isPresent;
  * containing only that one document.
  */
 public class SplittingHandler extends DefaultHandler {
-    protected final XMLTags xmlTags = DefaultXMLTags.getInstance();
-    protected final String interchangeTagName = xmlTags.getInterchangeTag();
-    protected final String senderTagName = xmlTags.getSenderTag();
-    protected final String receiverTagName = xmlTags.getReceiverTag();
-    protected final String addressTagName = xmlTags.getAddressTag();
+    protected final String interchangeTagName = XMLTags.INTERCHANGE;
+    protected final String senderTagName = XMLTags.SENDER;
+    protected final String receiverTagName = XMLTags.RECEIVER;
+    protected final String addressTagName = XMLTags.ADDRESS;
 
     protected final HandlerFactory handlerFactory;
     protected SplittingLevel level;
@@ -124,23 +123,23 @@ public class SplittingHandler extends DefaultHandler {
     public void endDocument() throws SAXException {
         contentHandler.endDocument();
         ClosingDetails closingDetails = new ClosingDetails();
-        closingDetails.setSenderQualifier(senderAttributes.getValue(xmlTags.getQualifierAttribute()));
-        closingDetails.setSenderId(senderAttributes.getValue(xmlTags.getIdAttribute()));
-        closingDetails.setReceiverQualifier(receiverAttributes.getValue(xmlTags.getQualifierAttribute()));
-        closingDetails.setReceiverId(receiverAttributes.getValue(xmlTags.getIdAttribute()));
-        closingDetails.setInterchangeControlNumber(interchangeAttributes.getValue(xmlTags.getControl()));
-        closingDetails.setTestIndicator(interchangeAttributes.getValue(xmlTags.getTestIndicator()));
-        closingDetails.setGroupSender(groupAttributes.getValue(xmlTags.getApplSender()));
-        closingDetails.setGroupReceiver(groupAttributes.getValue(xmlTags.getApplReceiver()));
-        closingDetails.setGroupControlNumber(groupAttributes.getValue(xmlTags.getControl()));
-        closingDetails.setDocumentControlNumber(documentAttributes.getValue(xmlTags.getControl()));
-        closingDetails.setDocumentType(documentAttributes.getValue(xmlTags.getDocumentType()));
-        String version = groupAttributes.getValue(xmlTags.getStandardVersion());
+        closingDetails.setSenderQualifier(senderAttributes.getValue(XMLTags.QUALIFIER));
+        closingDetails.setSenderId(senderAttributes.getValue(XMLTags.ID));
+        closingDetails.setReceiverQualifier(receiverAttributes.getValue(XMLTags.QUALIFIER));
+        closingDetails.setReceiverId(receiverAttributes.getValue(XMLTags.ID));
+        closingDetails.setInterchangeControlNumber(interchangeAttributes.getValue(XMLTags.CONTROL));
+        closingDetails.setTestIndicator(interchangeAttributes.getValue(XMLTags.TEST_INDICATOR));
+        closingDetails.setGroupSender(groupAttributes.getValue(XMLTags.APPL_SENDER));
+        closingDetails.setGroupReceiver(groupAttributes.getValue(XMLTags.APPL_RECEIVER));
+        closingDetails.setGroupControlNumber(groupAttributes.getValue(XMLTags.CONTROL));
+        closingDetails.setDocumentControlNumber(documentAttributes.getValue(XMLTags.CONTROL));
+        closingDetails.setDocumentType(documentAttributes.getValue(XMLTags.DOCUMENT_TYPE));
+        String version = groupAttributes.getValue(XMLTags.STANDARD_VERSION);
         if (!isPresent(version)) {
             // If there was no version available from the group, such as 005010 from the GS,
             // then this may be an EDIFACT scenario and the most interesting version is from
             // the UNH, such as 97A.
-            version = documentAttributes.getValue(xmlTags.getRelease());
+            version = documentAttributes.getValue(XMLTags.RELEASE);
         }
         closingDetails.setVersion(version);
         try {
@@ -153,25 +152,25 @@ public class SplittingHandler extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-        if (xmlTags.getInterchangeTag().equals(localName)) {
+        if (XMLTags.INTERCHANGE.equals(localName)) {
             transactionsInInterchangeCount = 0;
             segmentCount = 0;
             interchangeAttributes = new EDIAttributes(attributes);
 
-        } else if (xmlTags.getSenderTag().equals(localName)) {
+        } else if (XMLTags.SENDER.equals(localName)) {
             senderAddress = true;
 
-        } else if (xmlTags.getReceiverTag().equals(localName)) {
+        } else if (XMLTags.RECEIVER.equals(localName)) {
             senderAddress = false;
 
-        } else if (xmlTags.getAddressTag().equals(localName)) {
+        } else if (XMLTags.ADDRESS.equals(localName)) {
             if (senderAddress) {
                 senderAttributes = new EDIAttributes(attributes);
             } else {
                 receiverAttributes = new EDIAttributes(attributes);
             }
 
-        } else if (xmlTags.getGroupTag().equals(localName)) {
+        } else if (XMLTags.GROUP.equals(localName)) {
             transactionsInGroupCount = 0;
 
             if (pendingDocumentClose) {
@@ -181,14 +180,14 @@ public class SplittingHandler extends DefaultHandler {
             groupAttributes = new EDIAttributes(attributes);
             documentAttributes = null;
 
-        } else if (xmlTags.getDocumentTag().equals(localName)) {
+        } else if (XMLTags.DOCUMENT.equals(localName)) {
             if (pendingDocumentClose) {
                 generateArtificialBoundaryForNewDocument();
                 pendingDocumentClose = false;
             }
             documentAttributes = new EDIAttributes(attributes);
 
-        } else if (xmlTags.getSegTag().equals(localName)) {
+        } else if (XMLTags.SEGMENT.equals(localName)) {
             segmentCount++;
         }
 
@@ -199,7 +198,7 @@ public class SplittingHandler extends DefaultHandler {
         pendingDocumentClose = false;
 
         // Close off the current group
-        String groupTagName = xmlTags.getGroupTag();
+        String groupTagName = XMLTags.GROUP;
         endElement("", groupTagName, groupTagName);
 
         generateArtificialBoundaryForNewGroup();
@@ -213,7 +212,7 @@ public class SplittingHandler extends DefaultHandler {
 
         // Close off the current interchange, transaction, root, and XML document
         endElement("", interchangeTagName, interchangeTagName);
-        String rootTagName = xmlTags.getRootTag();
+        String rootTagName = XMLTags.ROOT;
         endElement("", rootTagName, rootTagName);
         endDocument();
 
@@ -237,7 +236,7 @@ public class SplittingHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         contentHandler.endElement(uri, localName, qName);
 
-        if (xmlTags.getDocumentTag().equals(localName)) {
+        if (XMLTags.DOCUMENT.equals(localName)) {
             transactionsInInterchangeCount++;
             transactionsInGroupCount++;
 
@@ -249,7 +248,7 @@ public class SplittingHandler extends DefaultHandler {
                 pendingDocumentClose = true;
             }
 
-        } else if (xmlTags.getInterchangeTag().equals(localName)) {
+        } else if (XMLTags.INTERCHANGE.equals(localName)) {
             pendingDocumentClose = false;
         }
     }

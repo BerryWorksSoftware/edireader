@@ -22,6 +22,7 @@ package com.berryworks.edireader.demo;
 
 import com.berryworks.edireader.EDIReader;
 import com.berryworks.edireader.EDIReaderFactory;
+import com.berryworks.edireader.XMLTags;
 import com.berryworks.edireader.error.EDISyntaxExceptionHandler;
 import com.berryworks.edireader.error.RecoverableSyntaxException;
 import com.berryworks.edireader.tokenizer.Tokenizer;
@@ -167,23 +168,22 @@ public class EDIScanner {
         public void startElement(String namespace, String localName,
                                  String qName, Attributes atts) throws SAXException {
             String indent;
-            if (localName.startsWith(parser.getXMLTags().getInterchangeTag())) {
+            if (localName.startsWith(XMLTags.INTERCHANGE)) {
                 scannerOutput.println("+Interchange  (" + ++interchangeCount + ")");
                 indent = "   ";
-            } else if (localName.startsWith(parser.getXMLTags().getSenderTag())) {
+            } else if (localName.startsWith(XMLTags.SENDER)) {
                 scannerOutput.println("  +Sender");
                 indent = "     ";
-            } else if (localName.startsWith(parser.getXMLTags().getReceiverTag())) {
+            } else if (localName.startsWith(XMLTags.RECEIVER)) {
                 scannerOutput.println("  +Recipient");
                 indent = "     ";
-            } else if (localName.startsWith(parser.getXMLTags().getAddressTag())) {
+            } else if (localName.startsWith(XMLTags.ADDRESS)) {
                 scannerOutput.println("    +Address");
                 indent = "       ";
-            } else if (localName.startsWith(parser.getXMLTags().getGroupTag())) {
+            } else if (localName.startsWith(XMLTags.GROUP)) {
                 scannerOutput.println("  +Group");
                 indent = "     ";
-            } else if (localName.startsWith(parser.getXMLTags()
-                    .getDocumentTag())) {
+            } else if (localName.startsWith(XMLTags.DOCUMENT)) {
                 scannerOutput.println("    +Document");
                 indent = "       ";
 
