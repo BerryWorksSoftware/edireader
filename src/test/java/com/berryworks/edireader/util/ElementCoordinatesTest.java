@@ -130,8 +130,86 @@ public class ElementCoordinatesTest {
         } catch (Exception e) {
             assertEquals("Sub-element not started", e.getMessage());
         }
+
+        // empty element
+        token = tokenizer.nextToken();
+        assertEquals("", token.getValue());
+        coordinates.focus(token);
+        try {
+            coordinates.endElement();
+            fail();
+        } catch (Exception e) {
+            assertEquals("Element not started", e.getMessage());
+        }
         coordinates.startElement();
         coordinates.endElement();
 
+        // fourB (with no fourA)
+        token = tokenizer.nextToken();
+        coordinates.focus(token);
+        assertEquals(Token.TokenType.SUB_EMPTY, token.getType());
+        assertEquals("", token.getValue());
+        coordinates.focus(token);
+        try {
+            coordinates.endSubElement();
+            fail();
+        } catch (Exception e) {
+            assertEquals("Sub-element not started", e.getMessage());
+        }
+        coordinates.startElement();
+        coordinates.endElement();
+
+        token = tokenizer.nextToken();
+        coordinates.focus(token);
+        assertEquals(Token.TokenType.SUB_ELEMENT, token.getType());
+        assertEquals("fourB", token.getValue());
+        coordinates.focus(token);
+        try {
+            coordinates.endSubElement();
+            fail();
+        } catch (Exception e) {
+            assertEquals("Sub-element not started", e.getMessage());
+        }
+
     }
+
+    @Test
+    public void cannotStartTwice() throws EDISyntaxException, IOException {
+        Tokenizer tokenizer = new EDITokenizer(new StringReader("SEG|one|twoA^twoB||^fourB|five"))
+                .setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
+
+        Token token = tokenizer.nextToken();
+        ElementCoordinates coordinates = new ElementCoordinates(token);
+        assertEquals("SEG", token.getValue());
+
+        // one
+        token = tokenizer.nextToken();
+        assertEquals("one", token.getValue());
+        coordinates.focus(token);
+        coordinates.startElement();
+        try {
+            coordinates.startElement();
+            fail();
+        } catch (Exception e) {
+            assertEquals("Element started twice", e.getMessage());
+        }
+        coordinates.endElement();
+
+        // twoA
+        token = tokenizer.nextToken();
+        assertEquals("twoA", token.getValue());
+        coordinates.focus(token);
+        coordinates.startElement();
+        coordinates.startSubElement();
+        try {
+            coordinates.startSubElement();
+            fail();
+        } catch (Exception e) {
+            assertEquals("Sub-element started twice", e.getMessage());
+        }
+        coordinates.endSubElement();
+        coordinates.endElement();
+
+    }
+
 }

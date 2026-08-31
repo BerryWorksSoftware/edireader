@@ -54,6 +54,7 @@ public class ElementCoordinates {
     }
 
     public void startElement() {
+        if (elementStarted) throw new IllegalStateException("Element started twice");
         elementStarted = true;
     }
 
@@ -66,7 +67,7 @@ public class ElementCoordinates {
     }
 
     public void startSubElement() {
-        if (!elementStarted) throw new IllegalStateException("Element not started");
+        if (subElementStarted) throw new IllegalStateException("Sub-element started twice");
         subElementStarted = true;
     }
 
