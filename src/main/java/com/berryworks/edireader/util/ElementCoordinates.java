@@ -1,0 +1,93 @@
+package com.berryworks.edireader.util;
+
+import com.berryworks.edireader.tokenizer.Token;
+
+public class ElementCoordinates {
+    private int index, subIndex, subSubIndex;
+    private boolean elementStarted, elementEnded;
+    private boolean subElementStarted, subElementEnded;
+    private boolean subSubElementStarted, subSubElementEnded;
+
+    public ElementCoordinates(Token token) {
+        focus(token);
+    }
+
+    public void focus(Token token) {
+        if (token == null) throw new IllegalArgumentException("token is null");
+
+        if (token.getIndex() != index) {
+            // Focussing on a new element
+            index = token.getIndex();
+            elementStarted = elementEnded = false;
+
+            subIndex = token.getSubIndex();
+            subElementStarted = subElementEnded = false;
+
+            subSubIndex = token.getSubSubIndex();
+            subSubElementStarted = subSubElementEnded = false;
+
+        } else if (token.getSubIndex() != subIndex) {
+            // Same element, but a different sub-element
+            subIndex = token.getSubIndex();
+            subElementStarted = subElementEnded = false;
+
+            subSubIndex = token.getSubSubIndex();
+            subSubElementStarted = subSubElementEnded = false;
+
+        } else if (token.getSubSubIndex() != subSubIndex) {
+            // Same element and sub-element, but a different sub-sub-element
+            subSubIndex = token.getSubSubIndex();
+            subSubElementStarted = subSubElementEnded = false;
+        }
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public int getSubIndex() {
+        return subIndex;
+    }
+
+    public int getSubSubIndex() {
+        return subSubIndex;
+    }
+
+    public void startElement() {
+        elementStarted = true;
+    }
+
+    public void endElement() {
+        if (!elementStarted) throw new IllegalStateException("Element not started");
+        if (subElementStarted && !subElementEnded) throw new IllegalStateException("Sub-element started but not ended");
+        elementEnded = true;
+        subElementStarted = subElementEnded = false;
+        subSubElementStarted = subSubElementEnded = false;
+    }
+
+    public void startSubElement() {
+        if (!elementStarted) throw new IllegalStateException("Element not started");
+        subElementStarted = true;
+    }
+
+    public void endSubElement() {
+        if (!subElementStarted) throw new IllegalStateException("Sub-element not started");
+        subElementEnded = true;
+    }
+
+    public boolean isElementStarted() {
+        return elementStarted;
+    }
+
+    public boolean isElementEnded() {
+        return elementEnded;
+    }
+
+    public boolean isSubElementStarted() {
+        return subElementStarted;
+    }
+
+    public boolean isSubElementEnded() {
+        return subElementEnded;
+    }
+}
