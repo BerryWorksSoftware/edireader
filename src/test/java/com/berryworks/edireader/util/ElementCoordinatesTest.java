@@ -17,20 +17,22 @@ public class ElementCoordinatesTest {
             AIP||B|MICHAEL^Bennett^Michael T.^^^^^^&&NPI|
             """;
 
+    private ElementCoordinates coordinates = new ElementCoordinates();
+
     @Test
     public void basics() throws EDISyntaxException, IOException {
         Tokenizer tokenizer = new EDITokenizer(new StringReader(SEGMENT))
                 .setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
 
         Token token = tokenizer.nextToken();
-        ElementCoordinates coordinates = new ElementCoordinates(token);
+        coordinates.focus(token);
         assertEquals(Token.TokenType.SEGMENT_START, token.getType());
         assertEquals(0, coordinates.getIndex());
         assertEquals(0, coordinates.getSubIndex());
         assertEquals(0, coordinates.getSubSubIndex());
 
         // Element 1
-        coordinates = new ElementCoordinates(tokenizer.nextToken());
+        coordinates.focus(tokenizer.nextToken());
         assertEquals(Token.TokenType.EMPTY, token.getType());
         assertEquals(1, coordinates.getIndex());
         assertEquals(0, coordinates.getSubIndex());
@@ -91,7 +93,7 @@ public class ElementCoordinatesTest {
                 .setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
 
         Token token = tokenizer.nextToken();
-        ElementCoordinates coordinates = new ElementCoordinates(token);
+        coordinates.focus(token);
         assertEquals("SEG", token.getValue());
 
         // one
@@ -179,7 +181,7 @@ public class ElementCoordinatesTest {
                 .setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
 
         Token token = tokenizer.nextToken();
-        ElementCoordinates coordinates = new ElementCoordinates(token);
+        coordinates.focus(token);
         assertEquals("SEG", token.getValue());
 
         // one

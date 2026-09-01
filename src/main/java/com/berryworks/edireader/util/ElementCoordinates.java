@@ -8,12 +8,9 @@ public class ElementCoordinates {
     private boolean subElementStarted, subElementEnded;
     private boolean subSubElementStarted, subSubElementEnded;
 
-    public ElementCoordinates(Token token) {
-        focus(token);
-    }
-
     public void focus(Token token) {
         if (token == null) throw new IllegalArgumentException("token is null");
+        System.out.println("... focus on " + token);
 
         if (token.getIndex() != index) {
             // Focussing on a new element

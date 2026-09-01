@@ -6,6 +6,7 @@ package com.berryworks.edireader.hl7;
 import com.berryworks.edireader.*;
 import com.berryworks.edireader.plugin.CompositeAwarePlugin;
 import com.berryworks.edireader.tokenizer.Token;
+import com.berryworks.edireader.util.ElementCoordinates;
 import com.berryworks.edireader.util.NameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,7 @@ public class HL7Reader extends StandardReader {
     private static final Logger logger = LoggerFactory.getLogger(HL7Reader.class);
     private String messageType;
     private CompositeAwarePlugin compositeAwarePlugin;
+    private ElementCoordinates coordinates = new ElementCoordinates();
 
     // These next two items deal with the special case where the HL7 data has the form of a composite
     // but the plugin (and potentially an XSD) says it is not a composite according to the HL7 specifications.
@@ -406,6 +408,7 @@ public class HL7Reader extends StandardReader {
         EDIAttributes attributes;
 
         String elementId = t.getElementId();
+        coordinates.focus(t);
         switch (t.getType()) {
 
             case SIMPLE:
@@ -417,9 +420,15 @@ public class HL7Reader extends StandardReader {
                 attributes = getDocumentAttributes();
                 attributes.clear();
                 attributes.addCDATA(XMLTags.ID, elementId);
+
+                coordinates.startElement();
                 startElement(XMLTags.ELEMENT, attributes);
+
                 getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
+
                 endElement(XMLTags.ELEMENT);
+                coordinates.endElement();
+
                 if (segmentPluginController != null)
                     segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
                 break;
@@ -429,8 +438,13 @@ public class HL7Reader extends StandardReader {
                     attributes = getDocumentAttributes();
                     attributes.clear();
                     attributes.addCDATA(XMLTags.ID, elementId);
+
+                    coordinates.startElement();
                     startElement(XMLTags.ELEMENT, attributes);
+
                     endElement(XMLTags.ELEMENT);
+                    coordinates.endElement();
+
                     if (segmentPluginController != null)
                         segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
                 }
@@ -445,6 +459,8 @@ public class HL7Reader extends StandardReader {
                         // Normal case
                         attributes.addCDATA(XMLTags.ID, elementId);
                         attributes.addCDATA(XMLTags.COMPOSITE, "yes");
+
+                        coordinates.startElement();
                         startElement(XMLTags.ELEMENT, attributes);
                     }
                 }
@@ -469,14 +485,22 @@ public class HL7Reader extends StandardReader {
                         // Mimic what we do for a normal simple element
                         attributes.clear();
                         attributes.addCDATA(XMLTags.ID, elementId);
+
+                        coordinates.startElement();
                         startElement(XMLTags.ELEMENT, attributes);
+
                         getContentHandler().characters(data.toCharArray(), 0, data.length());
+
                         endElement(XMLTags.ELEMENT);
+                        coordinates.endElement();
+
                         if (segmentPluginController != null)
                             segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
                         fauxComposite.setLength(0);
                     } else {
                         endElement(XMLTags.ELEMENT);
+                        coordinates.endElement();
+
                         nonCompositeAccordingToPlugin = false;
                     }
                 }
@@ -491,6 +515,8 @@ public class HL7Reader extends StandardReader {
                         attributes.clear();
                         attributes.addCDATA(XMLTags.ID, elementId);
                         attributes.addCDATA(XMLTags.COMPOSITE, "yes");
+
+                        coordinates.startElement();
                         startElement(XMLTags.ELEMENT, attributes);
                     }
                 }
@@ -503,7 +529,10 @@ public class HL7Reader extends StandardReader {
                         // Mimic what we do for a normal simple element
                         attributes.clear();
                         attributes.addCDATA(XMLTags.ID, elementId);
+
+                        coordinates.startElement();
                         startElement(XMLTags.ELEMENT, attributes);
+
                         // Remove trailing ^s
                         while (true) {
                             if (fauxComposite.isEmpty()) break;
@@ -516,7 +545,10 @@ public class HL7Reader extends StandardReader {
                         }
                         String data = fauxComposite.toString();
                         getContentHandler().characters(data.toCharArray(), 0, data.length());
+
                         endElement(XMLTags.ELEMENT);
+                        coordinates.endElement();
+
                         if (segmentPluginController != null)
                             segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
                         fauxComposite.setLength(0);
@@ -524,6 +556,8 @@ public class HL7Reader extends StandardReader {
                     } else {
                         // Normal case
                         endElement(XMLTags.ELEMENT);
+                        coordinates.endElement();
+
                         nonCompositeAccordingToPlugin = false;
                     }
                 }
