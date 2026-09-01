@@ -592,15 +592,16 @@ public class HL7Reader extends StandardReader {
                     // If we see sub-sub-elements without having started a sub-element, do it now.
                     // But we need to be careful about exactly when this sub-element gets ended!
                     coordinates.startSubElement();
-                    int subIndex = coordinates.getSubIndex();
-                    attributes.addCDATA(SUB_ELEMENT_SEQUENCE, String.valueOf(subIndex));
+                    // The sequence is origin 1, while the index is origin 0
+                    int sequence = coordinates.getSubIndex() + 1;
+                    attributes.addCDATA(SUB_ELEMENT_SEQUENCE, String.valueOf(sequence));
                     attributes.addCDATA(XMLTags.COMPOSITE, "yes");
                     startElement(XMLTags.SUB_ELEMENT, attributes);
                     attributes.clear();
                 }
 
-                int subSubIndex = coordinates.getSubSubIndex();
-                attributes.addCDATA(SUB_ELEMENT_SEQUENCE, String.valueOf(subSubIndex));
+                int sequence = coordinates.getSubSubIndex() + 1;
+                attributes.addCDATA(SUB_ELEMENT_SEQUENCE, String.valueOf(sequence));
 
                 coordinates.startSubSubElement();
                 startElement(SUB_SUB_ELEMENT, attributes);
