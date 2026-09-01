@@ -470,9 +470,12 @@ public class HL7Reader extends StandardReader {
                     attributes.clear();
                     attributes.addAttribute("", XMLTags.SUB_ELEMENT_SEQUENCE,
                             XMLTags.SUB_ELEMENT_SEQUENCE, "CDATA", String.valueOf(1 + t.getSubIndex()));
+
+                    coordinates.startSubElement();
                     startElement(XMLTags.SUB_ELEMENT, attributes);
                     getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
                     endElement(XMLTags.SUB_ELEMENT);
+                    coordinates.endSubElement();
                 }
 
                 if (t.isLast()) {
