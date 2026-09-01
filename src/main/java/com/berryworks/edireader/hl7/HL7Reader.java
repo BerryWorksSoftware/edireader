@@ -528,7 +528,7 @@ public class HL7Reader extends StandardReader {
                         attributes.clear();
                         attributes.addCDATA(XMLTags.ID, elementId);
 
-                        // coordinates.startElement();
+                        coordinates.startElement();
                         startElement(XMLTags.ELEMENT, attributes);
 
                         // Remove trailing ^s
@@ -545,7 +545,7 @@ public class HL7Reader extends StandardReader {
                         getContentHandler().characters(data.toCharArray(), 0, data.length());
 
                         endElement(XMLTags.ELEMENT);
-                        // coordinates.endElement();
+                        coordinates.endElement();
 
                         if (segmentPluginController != null)
                             segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
