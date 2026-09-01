@@ -423,9 +423,7 @@ public class HL7Reader extends StandardReader {
 
                 coordinates.startElement();
                 startElement(XMLTags.ELEMENT, attributes);
-
                 getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
-
                 endElement(XMLTags.ELEMENT);
                 coordinates.endElement();
 
@@ -441,7 +439,6 @@ public class HL7Reader extends StandardReader {
 
                     coordinates.startElement();
                     startElement(XMLTags.ELEMENT, attributes);
-
                     endElement(XMLTags.ELEMENT);
                     coordinates.endElement();
 
@@ -460,7 +457,7 @@ public class HL7Reader extends StandardReader {
                         attributes.addCDATA(XMLTags.ID, elementId);
                         attributes.addCDATA(XMLTags.COMPOSITE, "yes");
 
-                        coordinates.startElement();
+                        // coordinates.startElement();
                         startElement(XMLTags.ELEMENT, attributes);
                     }
                 }
@@ -488,9 +485,7 @@ public class HL7Reader extends StandardReader {
 
                         coordinates.startElement();
                         startElement(XMLTags.ELEMENT, attributes);
-
                         getContentHandler().characters(data.toCharArray(), 0, data.length());
-
                         endElement(XMLTags.ELEMENT);
                         coordinates.endElement();
 
@@ -499,7 +494,7 @@ public class HL7Reader extends StandardReader {
                         fauxComposite.setLength(0);
                     } else {
                         endElement(XMLTags.ELEMENT);
-                        coordinates.endElement();
+                        // coordinates.endElement();
 
                         nonCompositeAccordingToPlugin = false;
                     }
@@ -516,7 +511,7 @@ public class HL7Reader extends StandardReader {
                         attributes.addCDATA(XMLTags.ID, elementId);
                         attributes.addCDATA(XMLTags.COMPOSITE, "yes");
 
-                        coordinates.startElement();
+                        // coordinates.startElement();
                         startElement(XMLTags.ELEMENT, attributes);
                     }
                 }
@@ -530,7 +525,7 @@ public class HL7Reader extends StandardReader {
                         attributes.clear();
                         attributes.addCDATA(XMLTags.ID, elementId);
 
-                        coordinates.startElement();
+                        // coordinates.startElement();
                         startElement(XMLTags.ELEMENT, attributes);
 
                         // Remove trailing ^s
@@ -547,7 +542,7 @@ public class HL7Reader extends StandardReader {
                         getContentHandler().characters(data.toCharArray(), 0, data.length());
 
                         endElement(XMLTags.ELEMENT);
-                        coordinates.endElement();
+                        // coordinates.endElement();
 
                         if (segmentPluginController != null)
                             segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
@@ -556,7 +551,7 @@ public class HL7Reader extends StandardReader {
                     } else {
                         // Normal case
                         endElement(XMLTags.ELEMENT);
-                        coordinates.endElement();
+                        // coordinates.endElement();
 
                         nonCompositeAccordingToPlugin = false;
                     }
