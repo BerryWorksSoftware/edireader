@@ -16,6 +16,8 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.util.List;
 
+import static com.berryworks.edireader.XMLTags.SUB_ELEMENT_SEQUENCE;
+import static com.berryworks.edireader.XMLTags.SUB_SUB_ELEMENT;
 import static com.berryworks.edireader.util.FixedLength.isPresent;
 
 /**
@@ -469,8 +471,8 @@ public class HL7Reader extends StandardReader {
                 } else {
                     // Normal case
                     attributes.clear();
-                    attributes.addAttribute("", XMLTags.SUB_ELEMENT_SEQUENCE,
-                            XMLTags.SUB_ELEMENT_SEQUENCE, "CDATA", String.valueOf(1 + t.getSubIndex()));
+                    attributes.addAttribute("", SUB_ELEMENT_SEQUENCE,
+                            SUB_ELEMENT_SEQUENCE, "CDATA", String.valueOf(1 + t.getSubIndex()));
 
                     coordinates.startSubElement();
                     startElement(XMLTags.SUB_ELEMENT, attributes);
@@ -567,16 +569,27 @@ public class HL7Reader extends StandardReader {
             case SUB_SUB_ELEMENT:
                 attributes = getDocumentAttributes();
                 attributes.clear();
-                String sequence = String.valueOf(9);
-                attributes.addCDATA("Sequence", sequence);
-                String tag = "subsubelement";
-                startElement(tag, attributes);
 
-//                String data = "(data)";
-//                getContentHandler().characters(data.toCharArray(), 0, data.length());
+                if (!coordinates.isSubElementStarted()) {
+                    // If we see sub-sub-elements without having started a sub-element, do it now.
+                    // But we need to be careful about exactly when this sub-element gets ended!
+                    coordinates.startSubElement();
+                    int subIndex = coordinates.getSubIndex();
+                    attributes.addCDATA(SUB_ELEMENT_SEQUENCE, String.valueOf(subIndex));
+                    attributes.addCDATA(XMLTags.COMPOSITE, "yes");
+                    startElement(XMLTags.SUB_ELEMENT, attributes);
+                    attributes.clear();
+                }
+
+                int subSubIndex = coordinates.getSubSubIndex();
+                attributes.addCDATA(SUB_ELEMENT_SEQUENCE, String.valueOf(subSubIndex));
+
+                coordinates.startSubSubElement();
+                startElement(SUB_SUB_ELEMENT, attributes);
                 getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
+                endElement(SUB_SUB_ELEMENT);
+                coordinates.endSubSubElement();
 
-                endElement(tag);
                 break;
         }
     }

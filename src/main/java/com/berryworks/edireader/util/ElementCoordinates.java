@@ -74,6 +74,16 @@ public class ElementCoordinates {
         subElementEnded = true;
     }
 
+    public void startSubSubElement() {
+        if (subSubElementStarted) throw new IllegalStateException("Sub-sub-element started twice");
+        subSubElementStarted = true;
+    }
+
+    public void endSubSubElement() {
+        if (!subSubElementStarted) throw new IllegalStateException("Sub-sub-element not started");
+        subSubElementEnded = true;
+    }
+
     public boolean isElementStarted() {
         return elementStarted;
     }
