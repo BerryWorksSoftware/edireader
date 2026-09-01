@@ -125,6 +125,110 @@ public class HL7ReaderTest {
                                     <subelement Sequence="1">20084571</subelement>
                                     <subelement Sequence="5">PT</subelement>
                                 </element>
+                                <element Id="PID04">76432</element>
+                                <element Id="PID05" Composite="yes">
+                                    <subelement Sequence="1">Martinez</subelement>
+                                    <subelement Sequence="2">Robert</subelement>
+                                    <subelement Sequence="5">Mr.</subelement>
+                                </element>
+                                <element Id="PID07">19620417</element>
+                                <element Id="PID08">M</element>
+                                <element Id="PID10">White</element>
+                                <element Id="PID11" Composite="yes">
+                                    <subelement Sequence="1">4217 N Maplewood</subelement>
+                                    <subelement Sequence="3">Chicago</subelement>
+                                    <subelement Sequence="4">IL</subelement>
+                                    <subelement Sequence="5">60618</subelement>
+                                </element>
+                                <element Id="PID13" Composite="yes">
+                                    <subelement Sequence="1">(773) 555-0147</subelement>
+                                    <subelement Sequence="2">PRN</subelement>
+                                    <subelement Sequence="3">PH</subelement>
+                                </element>
+                                <element Id="PID14" Composite="yes">
+                                    <subelement Sequence="2">WPN</subelement>
+                                    <subelement Sequence="3">PH</subelement>
+                                </element>
+                                <element Id="PID15">English</element>
+                                <element Id="PID16">U</element>
+                                <element Id="PID18">20084571</element>
+                                <element Id="PID22">Not Hispanic or Latino</element>
+                                <element Id="PID30">N</element>
+                                <element Id="PID40">Home</element>
+                            </segment>
+                            <segment Id="PV1">
+                                <element Id="PV103">O</element>
+                                <element Id="PV107" Composite="yes">
+                                    <subelement Sequence="1">PRRS</subelement>
+                                    <subelement Sequence="2">Bennett</subelement>
+                                    <subelement Sequence="3">Michael</subelement>
+                                </element>
+                                <element Id="PV108" Composite="yes">
+                                    <subelement Sequence="1">DEC</subelement>
+                                    <subelement Sequence="2">Carter</subelement>
+                                    <subelement Sequence="3">Laura</subelement>
+                                </element>
+                                <element Id="PV118">9</element>
+                                <element Id="PV141">A</element>
+                            </segment>
+                            <segment Id="AIL">
+                                <element Id="AIL03" Composite="yes">
+                                    <subelement Sequence="1">O</subelement>
+                                    <subelement Sequence="2">ResurrectionOffice Retina Services Ill</subelement>
+                                    <subelement Sequence="9">O</subelement>
+                                </element>
+                            </segment>
+                            <segment Id="AIP">
+                                <element Id="AIP03" Composite="yes">
+                                    <subelement Sequence="1">MICHAEL</subelement>
+                                    <subelement Sequence="2">Bennett</subelement>
+                                    <subelement Sequence="3">Michael T.</subelement>
+                                    <subelement Sequence="9" Composite="yes">
+                                        <subsubelement Sequence="3">NPI</subsubelement>
+                                    </subelement>
+                                </element>
+                            </segment>
+                        </transaction>
+                    </group>
+                </interchange>
+            </ediroot>""";
+
+    public static final String HL7_XML_3_LEVELS_WITH_REPETITION = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <ediroot>
+                <interchange Standard="HL7">
+                    <group ApplSender="KeyMed" SendingFacility="Retina Services of Illinois LLC" ApplReceiver="Travercent"
+                           ReceivingFacility="Retina Services of Illinois LLC" Date="20161207" Time="082851" Type="SIU"
+                           TypeDesc="Schedule information unsolicited" Event="S12"
+                           EventDesc="Notification of new appointment booking" Control="5000683794" ProcessingId="P"
+                           SyntaxVersion="2.3.1" sequenceNumber="1">
+                        <transaction Type="SIU" Event="S12" Control="5000683794">
+                            <segment Id="SCH">
+                                <element Id="SCH01">463733</element>
+                                <element Id="SCH07" Composite="yes">
+                                    <subelement Sequence="2">C - CONSULT</subelement>
+                                </element>
+                                <element Id="SCH08" Composite="yes">
+                                    <subelement Sequence="2">Consult</subelement>
+                                </element>
+                                <element Id="SCH09">10</element>
+                                <element Id="SCH10" Composite="yes">
+                                    <subelement Sequence="1">min</subelement>
+                                    <subelement Sequence="2">Minutes</subelement>
+                                </element>
+                                <element Id="SCH11" Composite="yes">
+                                    <subelement Sequence="4">20161207093000</subelement>
+                                    <subelement Sequence="5">20161207094000</subelement>
+                                </element>
+                                <element Id="SCH25" Composite="yes">
+                                    <subelement Sequence="2">Pending</subelement>
+                                </element>
+                            </segment>
+                            <segment Id="PID">
+                                <element Id="PID03" Composite="yes">
+                                    <subelement Sequence="1">20084571</subelement>
+                                    <subelement Sequence="5">PT</subelement>
+                                </element>
                                 <element Id="PID03" Composite="yes">
                                     <subelement Sequence="1">76432</subelement>
                                     <subelement Sequence="5">PI</subelement>
@@ -204,6 +308,7 @@ public class HL7ReaderTest {
                     </group>
                 </interchange>
             </ediroot>""";
+
     public static final String HL7_XML = """
             <?xml version="1.0" encoding="UTF-8"?><ediroot>
             <interchange Standard="HL7">
