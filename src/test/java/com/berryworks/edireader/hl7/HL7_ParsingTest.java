@@ -74,7 +74,6 @@ public class HL7_ParsingTest {
     @Test
     public void handlesCompositeConflict() throws IOException, SAXException {
         reader.setContentHandler(handler);
-//        reader.setPluginControllerFactory(new PluginControllerFactory_ClasspathESD());
         source = new InputSource(new StringReader("" +
                 "MSH|^~\\&|MEDITECH^WA||||201905011242||AXX^A08|54920716|P|2.4|||AL|NE|\n" +
                 "EVN||201905011242||||201905091242|\n" +

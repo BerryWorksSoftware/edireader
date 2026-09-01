@@ -52,7 +52,14 @@ public class ElementCoordinates {
     }
 
     public void startElement() {
-        if (elementStarted) throw new IllegalStateException("Element started twice");
+        if (elementStarted) {
+            if (elementEnded) {
+                // If the element is both started and ended, we will consider this to be a repetition of the element.
+                elementEnded = false;
+            } else {
+                throw new IllegalStateException("Element started twice");
+            }
+        }
         elementStarted = true;
     }
 
