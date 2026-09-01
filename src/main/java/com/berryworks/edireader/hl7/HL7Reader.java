@@ -409,6 +409,7 @@ public class HL7Reader extends StandardReader {
 
         String elementId = t.getElementId();
         coordinates.focus(t);
+        System.out.println(coordinates);
         switch (t.getType()) {
 
             case SIMPLE:

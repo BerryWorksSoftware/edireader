@@ -13,15 +13,13 @@ import static org.junit.Assert.*;
 
 public class ElementCoordinatesTest {
 
-    public static final String SEGMENT = """
-            AIP||B|MICHAEL^Bennett^Michael T.^^^^^^&&NPI|
-            """;
-
     private ElementCoordinates coordinates = new ElementCoordinates();
 
     @Test
     public void basics() throws EDISyntaxException, IOException {
-        Tokenizer tokenizer = new EDITokenizer(new StringReader(SEGMENT))
+        Tokenizer tokenizer = new EDITokenizer(new StringReader("""
+                AIP||B|MICHAEL^Bennett^Michael T.^^^^^^&&NPI|
+                """))
                 .setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
 
         Token token = tokenizer.nextToken();
@@ -86,6 +84,24 @@ public class ElementCoordinatesTest {
         assertTrue(coordinates.isElementStarted());
         assertTrue(coordinates.isElementEnded());
     }
+
+    @Test
+    public void pidSegment() throws EDISyntaxException, IOException {
+        Tokenizer tokenizer = new EDITokenizer(new StringReader("""
+                PID|||20084571^^^^PT~76432^^^^PI~20084571^^^^MR~20084571^^^^AN|76432|Martinez^Robert^^^Mr.||19620417|M||White|4217 N Maplewood^^Chicago^IL^60618||(773) 555-0147^PRN^PH|^WPN^PH|English|U||20084571||||Not Hispanic or Latino||||||||N||||||||||Home|
+                """))
+                .setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
+
+        Token token;
+        ElementCoordinates coordinates = new ElementCoordinates();
+
+        while ((token = tokenizer.nextToken()).getType() != Token.TokenType.END_OF_DATA) {
+            coordinates.focus(token);
+            System.out.println(coordinates);
+        }
+
+    }
+
 
     @Test
     public void cannotEndWithoutStart() throws EDISyntaxException, IOException {

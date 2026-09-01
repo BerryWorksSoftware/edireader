@@ -7,11 +7,12 @@ public class ElementCoordinates {
     private boolean elementStarted, elementEnded;
     private boolean subElementStarted, subElementEnded;
     private boolean subSubElementStarted, subSubElementEnded;
+    private String segmentType;
 
     public void focus(Token token) {
         if (token == null) throw new IllegalArgumentException("token is null");
-        System.out.println("... focus on " + token);
 
+        segmentType = token.getSegmentType();
         if (token.getIndex() != index) {
             // Focussing on a new element
             index = token.getIndex();
@@ -87,5 +88,13 @@ public class ElementCoordinates {
 
     public boolean isSubElementEnded() {
         return subElementEnded;
+    }
+
+    @Override
+    public String toString() {
+        return segmentType + " " + index + "." + subIndex + "." + subSubIndex +
+                ", " + elementStarted + "," + elementEnded +
+                ", " + subElementStarted + "," + subElementEnded +
+                ", " + subSubElementStarted +   "," + subSubElementEnded;
     }
 }
