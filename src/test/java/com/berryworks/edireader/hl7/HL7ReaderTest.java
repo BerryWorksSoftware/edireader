@@ -48,6 +48,15 @@ public class HL7ReaderTest {
     public static final String HL7_3_LEVELS = """
             MSH|^~\\&|KeyMed|Retina Services of Illinois LLC|Travercent|Retina Services of Illinois LLC|20161207082851||SIU^S12|5000683794|P|2.3.1|1|
             SCH|463733||||||^C - CONSULT|^Consult|10|min^Minutes|^^^20161207093000^20161207094000||||||||||||||^Pending|
+            PID|||20084571^^^^PT|76432|Martinez^Robert^^^Mr.||19620417|M||White|4217 N Maplewood^^Chicago^IL^60618||(773) 555-0147^PRN^PH|^WPN^PH|English|U||20084571||||Not Hispanic or Latino||||||||N||||||||||Home|
+            PV1|||O||||PRRS^Bennett^Michael|DEC^Carter^Laura||||||||||9|||||||||||||||||||||||A|
+            AIL|||O^ ResurrectionOffice Retina Services Ill^^^^^^^O|
+            AIP|||MICHAEL^Bennett^Michael T.^^^^^^&&NPI|
+            """;
+
+    public static final String HL7_3_LEVELS_WITH_REPETITION = """
+            MSH|^~\\&|KeyMed|Retina Services of Illinois LLC|Travercent|Retina Services of Illinois LLC|20161207082851||SIU^S12|5000683794|P|2.3.1|1|
+            SCH|463733||||||^C - CONSULT|^Consult|10|min^Minutes|^^^20161207093000^20161207094000||||||||||||||^Pending|
             PID|||20084571^^^^PT~76432^^^^PI~20084571^^^^MR~20084571^^^^AN|76432|Martinez^Robert^^^Mr.||19620417|M||White|4217 N Maplewood^^Chicago^IL^60618||(773) 555-0147^PRN^PH|^WPN^PH|English|U||20084571||||Not Hispanic or Latino||||||||N||||||||||Home|
             PV1|||O||||PRRS^Bennett^Michael|DEC^Carter^Laura||||||||||9|||||||||||||||||||||||A|
             AIL|||O^ ResurrectionOffice Retina Services Ill^^^^^^^O|
