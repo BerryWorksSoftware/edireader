@@ -100,6 +100,14 @@ public class ElementCoordinates {
         return subElementEnded;
     }
 
+    public boolean isSubSubElementStarted() {
+        return subSubElementStarted;
+    }
+
+    public boolean isSubSubElementEnded() {
+        return subSubElementEnded;
+    }
+
     @Override
     public String toString() {
         return segmentType + " " + index + "." + subIndex + "." + subSubIndex +

@@ -372,8 +372,10 @@ public class HL7Reader extends StandardReader {
                 t = getTokenizer().nextToken();
                 switch (t.getType()) {
                     case END_OF_DATA:
+                        endSubElementIfNeeded();
                         // break outerLoop;
                     case SEGMENT_END:
+                        endSubElementIfNeeded();
                         break innerLoop;
                     default:
                         parseSegmentElement(t);
@@ -396,6 +398,22 @@ public class HL7Reader extends StandardReader {
         endElement(XMLTags.DOCUMENT);
 
         return (t);
+    }
+
+    private void endSubElementIfNeeded() throws SAXException {
+        if (coordinates.isSubElementStarted()) {
+            if (!coordinates.isSubElementEnded()) {
+                endElement(XMLTags.SUB_ELEMENT);
+                coordinates.endSubElement();
+            }
+        }
+        if (coordinates.isElementStarted()) {
+            if (!coordinates.isElementEnded()) {
+                endElement(XMLTags.ELEMENT);
+                coordinates.endElement();
+            }
+        }
+
     }
 
     /**
