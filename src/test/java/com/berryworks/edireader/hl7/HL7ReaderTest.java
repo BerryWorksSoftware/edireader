@@ -2,7 +2,6 @@ package com.berryworks.edireader.hl7;
 
 import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.util.Conversion;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.xml.transform.TransformerException;
@@ -33,7 +32,6 @@ public class HL7ReaderTest {
         assertEqualsDisregardingSpacesAndLineSeparators(HL7_XML_3_LEVELS, actual);
     }
 
-    @Ignore
     @Test
     public void tinySample() throws TransformerException {
         StringWriter xmlOutput = new StringWriter();

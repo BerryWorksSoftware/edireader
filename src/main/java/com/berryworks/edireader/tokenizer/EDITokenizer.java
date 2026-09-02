@@ -90,7 +90,7 @@ public class EDITokenizer extends AbstractTokenizer {
             readUntilBufferProvidesAtLeast(1);
         }
 
-        if (endOfFile) {
+        if (endOfFile && charBuffer.remaining() == 0) {
             cClass = CharacterClass.EOF;
         } else {
             cChar = charBuffer.get();
