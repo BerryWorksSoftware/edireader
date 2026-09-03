@@ -17,8 +17,7 @@ public class TokenImpl implements Token {
 
     private CharBuffer valueBuffer = CharBuffer.wrap(new char[10]);
     private TokenType type = TokenType.UNKNOWN;
-    private int index;
-    private int subElementIndex;
+    private int index, subElementIndex, subSubElementIndex;
     private boolean lastSubElement;
     private boolean containsNonSpace;
     private String segmentType = "";
@@ -68,6 +67,13 @@ public class TokenImpl implements Token {
      */
     public int getSubIndex() {
         return subElementIndex;
+    }
+
+    /**
+     * Gets the index, origin 0, of a sub-sub-element within a series within a sub-element.
+     */
+    public int getSubSubIndex() {
+        return subSubElementIndex;
     }
 
     @Override
@@ -128,8 +134,10 @@ public class TokenImpl implements Token {
 
     @Override
     public String toString() {
-        return "Token type=" + getType() + " value=" + getValue() +
-                " index=" + getIndex() + " segment=" + getSegmentType();
+        return "Token type=" + getType() + " " +
+                getIndex() + '.' + getSubIndex() + '.' + getSubSubIndex() +
+                " value=" + getValue() +
+                " segment=" + getSegmentType();
     }
 
     /**
@@ -148,12 +156,17 @@ public class TokenImpl implements Token {
 
     @Override
     public void resetIndexes() {
-        index = subElementIndex = 0;
+        index = subElementIndex = subSubElementIndex = 0;
     }
 
     @Override
     public void resetSubElementIndex() {
         subElementIndex = 0;
+    }
+
+    @Override
+    public void resetSubSubElementIndex() {
+        subSubElementIndex = 0;
     }
 
     @Override
@@ -164,6 +177,11 @@ public class TokenImpl implements Token {
     @Override
     public void incrementSubElementIndex() {
         subElementIndex++;
+    }
+
+    @Override
+    public void incrementSubSubElementIndex() {
+        subSubElementIndex++;
     }
 
     @Override

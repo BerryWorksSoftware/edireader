@@ -28,13 +28,6 @@ public class EDIReaderWrapperTest {
         wrapper.parse((InputSource) null);
         assertTrue(ediReader.isCalled("parse"));
 
-        assertFalse(ediReader.isCalled("getXMLTags"));
-        wrapper.getXMLTags();
-        assertTrue(ediReader.isCalled("getXMLTags"));
-        assertFalse(ediReader.isCalled("setXMLTags"));
-        wrapper.setXMLTags(null);
-        assertTrue(ediReader.isCalled("setXMLTags"));
-
         assertFalse(ediReader.isCalled("getTerminator"));
         wrapper.getTerminator();
         assertTrue(ediReader.isCalled("getTerminator"));
@@ -180,17 +173,6 @@ public class EDIReaderWrapperTest {
         }
 
         @Override
-        public XMLTags getXMLTags() {
-            called("getXMLTags");
-            return null;
-        }
-
-        @Override
-        public void setXMLTags(XMLTags tags) {
-            called("setXMLTags");
-        }
-
-        @Override
         public char getTerminator() {
             called("getTerminator");
             return ' ';
@@ -246,13 +228,13 @@ public class EDIReaderWrapperTest {
         }
 
         @Override
-        public int getRelease() {
+        public char getRelease() {
             called("getRelease");
             return ' ';
         }
 
         @Override
-        public void setRelease(int n) {
+        public void setRelease(char c) {
             called("setRelease");
         }
 

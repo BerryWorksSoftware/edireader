@@ -40,11 +40,11 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
     protected enum State {
-        EXPECTING_SEGMENT, IN_SEGMENT, IN_COMPOSITE
+        EXPECTING_SEGMENT, IN_SEGMENT, IN_COMPOSITE, IN_COMPOSITE_LEVEL_2
     }
 
     protected enum CharacterClass {
-        DATA, DELIMITER, SUB_DELIMITER, RELEASE, TERMINATOR, REPEAT_DELIMITER, EOF
+        DATA, DELIMITER, SUB_DELIMITER, SUB_SUB_DELIMITER, RELEASE, TERMINATOR, REPEAT_DELIMITER, EOF
     }
 
     protected CharacterClass cClass;
@@ -62,17 +62,9 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
 
     protected char delimiter = '+';
     protected char subDelimiter = ':';
-    protected char subSubDelimiter = '&';
-
-    // release is an int instead of a char so that it can hold
-    // a char value (as a positive int) or an indicator of
-    // "no release char" (an int value of -1).
-    protected int release = -1;
-
-    // repetitionSeparator is an int instead of a char so that it can hold
-    // a char value (as a positive int) or an indicator of
-    // "no repeating fields" (an int value of -1)
-    protected int repetitionSeparator = -1;
+    protected char subSubDelimiter;
+    protected char release;
+    protected char repetitionSeparator;
 
     protected char terminator = '.';
     protected boolean tokenReady;
@@ -88,18 +80,22 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      *
      * @return The segmentCount value
      */
+    @Override
     public int getSegmentCount() {
         return segmentCount;
     }
 
+    @Override
     public int getElementInSegmentCount() {
         return segTokenCount;
     }
 
+    @Override
     public int getCharCount() {
         return charCount;
     }
 
+    @Override
     public int getSegmentCharCount() {
         return segCharCount;
     }
@@ -110,79 +106,95 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
         this.segCharCount = segmentCharCount;
     }
 
+    @Override
     public Reader getReader() {
         return inputReader;
     }
 
+    @Override
     public void setReader(Reader replacementReader) {
         inputReader = replacementReader;
     }
 
+    @Override
     public char getSubSubDelimiter() {
         return subSubDelimiter;
     }
 
-    public void setSubSubDelimiter(char ssd) {
+    @Override
+    public Tokenizer setSubSubDelimiter(char ssd) {
         subSubDelimiter = ssd;
+        return this;
     }
 
-    public int getRelease() {
+    @Override
+    public char getRelease() {
         return release;
     }
 
     /**
      * Sets the release character
      *
-     * @param e The new release value
+     * @param c The new release char
      */
-    public void setRelease(int e) {
-        release = e;
+    @Override
+    public Tokenizer setRelease(char c) {
+        release = c;
+        return this;
     }
 
     /**
      * Gets the character used to delimit repeating fields.
      *
-     * @return The repetition char, or -1 if no repetition char is in effect
+     * @return The repetition char, or '\0' if no repetition char is in effect
      */
-    public int getRepetitionSeparator() {
+    @Override
+    public char getRepetitionSeparator() {
         return repetitionSeparator;
     }
 
     /**
      * Sets the character used to delimit repeating fields.
      *
-     * @param e The new value
+     * @param c The new value
      */
-    public void setRepetitionSeparator(int e) {
-        // In EDITokenizer, -1 for a repetition char means that none is in effect.
-        // An attempt to set it to zero is interpreted as an alternate way to indicate
-        // that no repetition char is in effect, so we set the value to -1 for that
-        // case as well.
-        repetitionSeparator = e > 0 ? e : -1;
+    @Override
+    public Tokenizer setRepetitionSeparator(char c) {
+        repetitionSeparator = c;
+        return this;
     }
 
-    public void setTerminator(char d) {
+    @Override
+    public Tokenizer setTerminator(char d) {
         terminator = d;
+        return this;
     }
 
+    @Override
     public char getTerminator() {
         return terminator;
     }
 
+    @Override
     public char getDelimiter() {
         return delimiter;
     }
 
-    public void setDelimiter(char d) {
+    @Override
+    public Tokenizer setDelimiter(char d) {
         delimiter = d;
+        return this;
     }
 
+    @Override
     public char getSubDelimiter() {
         return subDelimiter;
     }
 
-    public void setSubDelimiter(char sd) {
+    @Override
+    public Tokenizer setSubDelimiter(char sd) {
         subDelimiter = sd;
+        return this;
     }
 
     public void copy(char c) {
@@ -216,7 +228,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             case EMPTY:
                 if (required) {
                     EDISyntaxException se = new EDISyntaxException("Mandatory element missing in "
-                                                                   + t.getSegmentType() + " segment", this);
+                            + t.getSegmentType() + " segment", this);
                     logger.warn(se.getMessage());
                     throw se;
                 }
@@ -224,7 +236,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             case SEGMENT_END:
                 if (required) {
                     EDISyntaxException se = new EDISyntaxException("Mandatory element missing in "
-                                                                   + t.getSegmentType() + " segment", this);
+                            + t.getSegmentType() + " segment", this);
                     logger.warn(se.getMessage());
                     throw se;
                 } else if (returnNullAtSegmentEnd)
@@ -420,8 +432,8 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             }
             if (++i > 30) {
                 EDISyntaxException se = new EDISyntaxException("Too many fields for "
-                                                               + t.getSegmentType()
-                                                               + " segment (Segment terminator problem?)", this);
+                        + t.getSegmentType()
+                        + " segment (Segment terminator problem?)", this);
                 logger.warn(se.getMessage());
                 throw se;
             }
@@ -495,6 +507,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                     currentToken.append(cChar);
                     break;
                 case SUB_DELIMITER:
+                case SUB_SUB_DELIMITER:
                     break loop;
                 case REPEAT_DELIMITER:
                     repetition = true;
@@ -547,7 +560,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             getChar();
             if (cClass == CharacterClass.EOF) {
                 EDISyntaxException se = new EDISyntaxException("Encountered end of data unexpectedly after reading " +
-                                                               i + " characters of an expected " + n + " character sequence");
+                        i + " characters of an expected " + n + " character sequence");
                 logger.warn(se.getMessage());
                 throw se;
             }
@@ -596,9 +609,11 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
      *
      * @param b The new recorder value
      */
-    public void setRecorder(boolean b) {
+    @Override
+    public Tokenizer setRecorder(boolean b) {
         recorderOn = b;
         logger.debug("recorder turned {}", (b ? "on" : "off"));
+        return this;
     }
 
     public AbstractTokenizer(Reader source) {
@@ -636,6 +651,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         if (!repetition)
                             currentToken.incrementIndex();
                         currentToken.resetSubElementIndex();
+                        currentToken.resetSubSubElementIndex();
                         if (scanData() == CharacterClass.SUB_DELIMITER) {
                             // We have a composite token instead of a simple one
                             currentToken.setType(Token.TokenType.SUB_ELEMENT);
@@ -648,10 +664,32 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         currentToken.setType(Token.TokenType.SUB_ELEMENT);
                         currentToken.incrementSubElementIndex();
                         currentToken.setValue(cChar);
-                        if (scanData() != CharacterClass.SUB_DELIMITER) {
+                        CharacterClass characterClass = scanData();
+                        if (characterClass == CharacterClass.SUB_DELIMITER) {
+                            // We hit a sub-element delimiter while within a composite.
+                            // That is the typical case: the marker between two sub-elements.
+                        } else if (characterClass == CharacterClass.SUB_SUB_DELIMITER) {
+                            // We hit the sub-sub-element delimiter, a rather rare situation that can appear in HL7
+                            // but not in X12 or EDIFACT. It means that this sub-element of a composite is not a simple
+                            // value but a sub-element that is actually a series of sub-sub-elements. In other words,
+                            // the same composite with sub-elements concept, but pushed down another level.
+                            currentToken.setType(Token.TokenType.SUB_SUB_ELEMENT);
+                            state = State.IN_COMPOSITE_LEVEL_2;
+                        } else {
                             // We hit something that marks the end of a series of sub-elements
                             state = State.IN_SEGMENT;
                             currentToken.setLast(true);
+                        }
+                        break;
+                    case IN_COMPOSITE_LEVEL_2:
+                        currentToken.setType(Token.TokenType.SUB_SUB_ELEMENT);
+                        currentToken.setValue(cChar);
+                        currentToken.incrementSubSubElementIndex();
+                        characterClass = scanData();
+                        if (characterClass == CharacterClass.DELIMITER) {
+                            state = State.IN_SEGMENT;
+                        } else if (characterClass == CharacterClass.SUB_DELIMITER) {
+                            state = State.IN_COMPOSITE;
                         }
                         break;
                     default:
@@ -671,7 +709,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             case TERMINATOR:
                 switch (state) {
                     case IN_COMPOSITE:
-                        // return an empty subelement token, marked as last,
+                        // return an empty sub-element token, marked as last,
                         // before returning the segment terminator token.
                         currentToken.incrementSubElementIndex();
                         currentToken.setLast(true);
@@ -687,13 +725,14 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         state = State.EXPECTING_SEGMENT;
                         scanTerminatorSuffix();
                         currentToken.resetSubElementIndex();
+                        currentToken.resetSubSubElementIndex();
                 }
                 break;
 
             case DELIMITER:
                 switch (state) {
                     case IN_COMPOSITE:
-                        // return an empty subelement token, marked as last,
+                        // return an empty sub-element token, marked as last,
                         // before returning the delimiter token.
                         currentToken.incrementSubElementIndex();
                         currentToken.setType(Token.TokenType.SUB_EMPTY);
@@ -720,16 +759,37 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         break;
                     case IN_COMPOSITE:
                         currentToken.incrementSubElementIndex();
+                        break;
+                    case IN_COMPOSITE_LEVEL_2:
+                        state = State.IN_COMPOSITE;
+                        currentToken.incrementSubElementIndex();
+                        break;
                 }
                 currentToken.setLast(false);
                 currentToken.setType(Token.TokenType.SUB_EMPTY);
                 currentToken.resetValue();
                 break;
 
+            case SUB_SUB_DELIMITER:
+                switch (state) {
+                    case IN_SEGMENT:
+                        currentToken.incrementIndex();
+                        break;
+                    case IN_COMPOSITE:
+                        currentToken.incrementSubElementIndex();
+                        currentToken.setType(Token.TokenType.SUB_SUB_EMPTY);
+                        state = State.IN_COMPOSITE_LEVEL_2;
+                        break;
+                    case IN_COMPOSITE_LEVEL_2:
+                        currentToken.incrementSubSubElementIndex();
+                        break;
+                }
+                break;
+
             case REPEAT_DELIMITER:
                 switch (state) {
                     case IN_COMPOSITE:
-                        // return an empty subelement token, marked as last
+                        // return an empty sub-element token, marked as last
                         currentToken.incrementSubElementIndex();
                         currentToken.setLast(true);
                         currentToken.setType(Token.TokenType.SUB_EMPTY);

@@ -26,6 +26,8 @@ import org.xml.sax.Attributes;
 import java.io.IOException;
 import java.io.Writer;
 
+import static com.berryworks.edireader.XMLTags.MESSAGE_VERSION;
+
 /**
  * A delegate for generating an interchange containing control messages
  * acknowledging the transaction parsed by EdifactReader.
@@ -66,11 +68,11 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
         for (int i = 0; i < attributes.getLength(); i++) {
             String name = attributes.getLocalName(i);
             String value = attributes.getValue(i);
-            if (standardReader.getXMLTags().getControl().equals(name))
+            if (XMLTags.CONTROL.equals(name))
                 interchangeControlNumber = value;
-            else if (standardReader.getXMLTags().getSyntaxIdentifier().equals(name))
+            else if (XMLTags.SYNTAX_IDENTIFIER.equals(name))
                 syntaxIdentifier = value;
-            else if (standardReader.getXMLTags().getSyntaxVersion().equals(name))
+            else if (XMLTags.SYNTAX_VERSION.equals(name))
                 versionNumber = value;
         }
     }
@@ -81,9 +83,9 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
         for (int i = 0; i < attributes.getLength(); i++) {
             String name = attributes.getLocalName(i);
             String value = attributes.getValue(i);
-            if (standardReader.getXMLTags().getIdAttribute().equals(name))
+            if (XMLTags.ID.equals(name))
                 interchangeSender = value;
-            else if (standardReader.getXMLTags().getQualifierAttribute().equals(name))
+            else if (XMLTags.QUALIFIER.equals(name))
                 interchangeSenderQualifier = value;
         }
     }
@@ -95,9 +97,9 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
         for (int i = 0; i < attributes.getLength(); i++) {
             String name = attributes.getLocalName(i);
             String value = attributes.getValue(i);
-            if (standardReader.getXMLTags().getIdAttribute().equals(name))
+            if (XMLTags.ID.equals(name))
                 interchangeRecipient = value;
-            else if (standardReader.getXMLTags().getQualifierAttribute().equals(name))
+            else if (XMLTags.QUALIFIER.equals(name))
                 interchangeRecipientQualifier = value;
         }
     }
@@ -117,7 +119,7 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
         if (ackStream == null) {
             return;
         }
-        XMLTags xmlTags = standardReader.getXMLTags();
+
         if (!generated) {
             generated = true;
 
@@ -159,11 +161,11 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
             for (int i = 0; i < attributes.getLength(); i++) {
                 String name = attributes.getLocalName(i);
                 String value = attributes.getValue(i);
-                if (xmlTags.getMessageVersion().equals(name))
+                if (MESSAGE_VERSION.equals(name))
                     messageVersionNumber = value;
-                else if (xmlTags.getMessageRelease().equals(name))
+                else if (XMLTags.MESSAGE_RELEASE.equals(name))
                     messageReleaseNumber = value;
-                else if (xmlTags.getAgency().equals(name))
+                else if (XMLTags.AGENCY.equals(name))
                     controllingAgency = value;
             }
 
@@ -190,22 +192,22 @@ public class EdifactCONTRLGenerator extends ReplyGenerator {
         boolean includeUCM = false;
         if (includeUCM) {
             String messageReference, messageType, mvn, release, agency, association;
-            messageReference = attributes.getValue(xmlTags.getControl());
+            messageReference = attributes.getValue(XMLTags.CONTROL);
             if (messageReference != null) {
                 ackStream.write("UCM" + delimiter + messageReference);
-                messageType = attributes.getValue(xmlTags.getDocumentType());
+                messageType = attributes.getValue(XMLTags.DOCUMENT_TYPE);
                 if (messageType != null) {
                     ackStream.write(delimiter + messageType);
-                    mvn = attributes.getValue(xmlTags.getVersion());
+                    mvn = attributes.getValue(XMLTags.VERSION);
                     if (mvn != null) {
                         ackStream.write(subDelimiter + mvn);
-                        release = attributes.getValue(xmlTags.getRelease());
+                        release = attributes.getValue(XMLTags.RELEASE);
                         if (release != null) {
                             ackStream.write(subDelimiter + release);
-                            agency = attributes.getValue(xmlTags.getAgency());
+                            agency = attributes.getValue(XMLTags.AGENCY);
                             if (agency != null) {
                                 ackStream.write(subDelimiter + agency);
-                                association = attributes.getValue(xmlTags.getAssociation());
+                                association = attributes.getValue(XMLTags.ASSOCIATION);
                                 if (association != null) {
                                     ackStream.write(subDelimiter + association);
                                 }

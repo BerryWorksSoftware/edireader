@@ -152,9 +152,9 @@ public class EdiProber {
      */
     public String getRepetitionDelimiter() {
         if (tokenizer == null) return null;
-        int repetitionSeparator = tokenizer.getRepetitionSeparator();
-        if (repetitionSeparator < 0) return null;
-        return String.valueOf((char) repetitionSeparator);
+        char repetitionSeparator = tokenizer.getRepetitionSeparator();
+        if (repetitionSeparator == '\0') return null;
+        return String.valueOf(repetitionSeparator);
     }
 
     /**
@@ -162,9 +162,9 @@ public class EdiProber {
      */
     public String getReleaseCharacter() {
         if (tokenizer == null) return null;
-        int release = tokenizer.getRelease();
-        if (release < 0) return null;
-        return String.valueOf((char) release);
+        char release = tokenizer.getRelease();
+        if (release == '\0') return null;
+        return String.valueOf(release);
     }
 
     /**

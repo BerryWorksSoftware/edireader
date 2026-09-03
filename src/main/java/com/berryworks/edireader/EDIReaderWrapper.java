@@ -61,16 +61,6 @@ public class EDIReaderWrapper extends EDIReader {
     }
 
     @Override
-    public XMLTags getXMLTags() {
-        return wrappedEDIReader.getXMLTags();
-    }
-
-    @Override
-    public void setXMLTags(XMLTags tags) {
-        wrappedEDIReader.setXMLTags(tags);
-    }
-
-    @Override
     public char getTerminator() {
         return wrappedEDIReader.getTerminator();
     }
@@ -121,12 +111,12 @@ public class EDIReaderWrapper extends EDIReader {
     }
 
     @Override
-    public int getRelease() {
+    public char getRelease() {
         return wrappedEDIReader.getRelease();
     }
 
     @Override
-    public void setRelease(int release) {
+    public void setRelease(char release) {
         wrappedEDIReader.setRelease(release);
     }
 

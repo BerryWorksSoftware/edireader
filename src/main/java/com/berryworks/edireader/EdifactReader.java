@@ -104,7 +104,7 @@ public class EdifactReader extends StandardReader {
     protected Token parseInterchange(Token token) throws SAXException,
             IOException {
         getInterchangeAttributes().clear();
-        getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), EDIStandard.EDIFACT.getDisplayName());
+        getInterchangeAttributes().addCDATA(XMLTags.STANDARD, EDIStandard.EDIFACT.getDisplayName());
         setGroupCount(0);
         List<String> compositeList;
 
@@ -115,10 +115,10 @@ public class EdifactReader extends StandardReader {
         String syntaxIdentifier = getSubElement(compositeList, 0);
         String syntaxVersionNumber = getSubElement(compositeList, 1);
         if (!syntaxIdentifier.isEmpty()) {
-            getInterchangeAttributes().addCDATA(getXMLTags().getSyntaxIdentifier(),
+            getInterchangeAttributes().addCDATA(XMLTags.SYNTAX_IDENTIFIER,
                     syntaxIdentifier);
             if (!syntaxVersionNumber.isEmpty()) {
-                getInterchangeAttributes().addCDATA(getXMLTags().getSyntaxVersion(),
+                getInterchangeAttributes().addCDATA(XMLTags.SYNTAX_VERSION,
                         syntaxVersionNumber);
             }
         }
@@ -145,14 +145,14 @@ public class EdifactReader extends StandardReader {
         compositeList = getTokenizer().nextCompositeElement();
         String date = getSubElement(compositeList, 0);
         String time = getSubElement(compositeList, 1);
-        getInterchangeAttributes().addCDATA(getXMLTags().getDate(), date);
-        getInterchangeAttributes().addCDATA(getXMLTags().getTime(), time);
+        getInterchangeAttributes().addCDATA(XMLTags.DATE, date);
+        getInterchangeAttributes().addCDATA(XMLTags.TIME, time);
 
         /*
           Control number (UNB05)
          */
         setInterchangeControlNumber(getTokenizer().nextSimpleValue());
-        getInterchangeAttributes().addCDATA(getXMLTags().getControl(), getInterchangeControlNumber());
+        getInterchangeAttributes().addCDATA(XMLTags.CONTROL, getInterchangeControlNumber());
 
         remainderOfUNB();
 
@@ -165,7 +165,7 @@ public class EdifactReader extends StandardReader {
           for this purpose is "," (comma).
          */
         getInterchangeAttributes().addCDATA(
-                getXMLTags().getDecimal(),
+                XMLTags.DECIMAL,
                 String.valueOf(getDecimalMark()));
 
         startInterchange(getInterchangeAttributes());
@@ -208,12 +208,12 @@ public class EdifactReader extends StandardReader {
 
     protected void remainderOfUNB() throws IOException, EDISyntaxException {
 
-        if (hitEndOfSegment(getXMLTags().getRecipientReference())
-            || hitEndOfSegment(getXMLTags().getApplicationReference())
-            || hitEndOfSegment(getXMLTags().getProcessingPriority())
-            || hitEndOfSegment(getXMLTags().getAcknowledgementRequest())
-            || hitEndOfSegment(getXMLTags().getInterchangeAgreementIdentifier())
-            || hitEndOfSegment(getXMLTags().getTestIndicator()))
+        if (hitEndOfSegment(XMLTags.RECIPIENT_REFERENCE)
+            || hitEndOfSegment(XMLTags.APPLICATION_REFERENCE)
+            || hitEndOfSegment(XMLTags.PRIORITY)
+            || hitEndOfSegment(XMLTags.ACKNOWLEDGEMENT_REQUEST)
+            || hitEndOfSegment(XMLTags.INTERCHANGE_AGREEMENT_IDENTIFIER)
+            || hitEndOfSegment(XMLTags.TEST_INDICATOR))
             return;
 
         while (getTokenizer().nextToken().getType() != Token.TokenType.SEGMENT_END) {
@@ -258,36 +258,36 @@ public class EdifactReader extends StandardReader {
         // Application sender
         compositeList = getTokenizer().nextCompositeElement();
         String sender = getSubElement(compositeList, 0);
-        getGroupAttributes().addCDATA(getXMLTags().getApplSender(), sender);
+        getGroupAttributes().addCDATA(XMLTags.APPL_SENDER, sender);
         String senderQualifier = getSubElement(compositeList, 1);
         if (isPresent(senderQualifier)) {
-            getGroupAttributes().addCDATA(getXMLTags().getApplSenderQualifier(), senderQualifier);
+            getGroupAttributes().addCDATA(XMLTags.APPL_SENDER_QUALIFIER, senderQualifier);
         }
         // Application receiver
         compositeList = getTokenizer().nextCompositeElement();
         String receiver = getSubElement(compositeList, 0);
-        getGroupAttributes().addCDATA(getXMLTags().getApplReceiver(), receiver);
+        getGroupAttributes().addCDATA(XMLTags.APPL_RECEIVER, receiver);
         String receiverQualifier = getSubElement(compositeList, 1);
         if (isPresent(receiverQualifier)) {
-            getGroupAttributes().addCDATA(getXMLTags().getApplReceiverQualifier(), receiverQualifier);
+            getGroupAttributes().addCDATA(XMLTags.APPL_RECEIVER_QUALIFIER, receiverQualifier);
         }
         // Date and time
         compositeList = getTokenizer().nextCompositeElement();
         String date = getSubElement(compositeList, 0);
         String time = getSubElement(compositeList, 1);
-        getGroupAttributes().addCDATA(getXMLTags().getDate(), date);
-        getGroupAttributes().addCDATA(getXMLTags().getTime(), time);
+        getGroupAttributes().addCDATA(XMLTags.DATE, date);
+        getGroupAttributes().addCDATA(XMLTags.TIME, time);
         // Control number
         setGroupControlNumber(getTokenizer().nextSimpleValue());
-        getGroupAttributes().addCDATA(getXMLTags().getControl(), getGroupControlNumber());
+        getGroupAttributes().addCDATA(XMLTags.CONTROL, getGroupControlNumber());
         // Standard Code. For example: UN
         getGroupAttributes().addCDATA("StandardCode", getTokenizer().nextSimpleValue());
         // Standard Version. For example: D02B
         compositeList = getTokenizer().nextCompositeElement();
         String version = getSubElement(compositeList, 0);
         String release = getSubElement(compositeList, 1);
-        getGroupAttributes().addCDATA(getXMLTags().getStandardVersion(), version + release);
-        startElement(getXMLTags().getGroupTag(), getGroupAttributes());
+        getGroupAttributes().addCDATA(XMLTags.STANDARD_VERSION, version + release);
+        startElement(XMLTags.GROUP, getGroupAttributes());
         getTokenizer().skipSegment();
 
         label:
@@ -315,7 +315,7 @@ public class EdifactReader extends StandardReader {
 
         checkTransactionCount(docCount, getTokenizer().nextIntValue(), COUNT_UNE);
         checkGroupControlNumber(getGroupControlNumber(), getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNE);
-        endElement(getXMLTags().getGroupTag());
+        endElement(XMLTags.GROUP);
         return getTokenizer().skipSegment();
     }
 
@@ -330,7 +330,7 @@ public class EdifactReader extends StandardReader {
     protected Token impliedFunctionalGroup(Token token) throws SAXException,
             IOException {
         getGroupAttributes().clear();
-        startElement(getXMLTags().getGroupTag(), getGroupAttributes());
+        startElement(XMLTags.GROUP, getGroupAttributes());
         label:
         while (true) {
             if (token.getType() != Token.TokenType.SEGMENT_START) {
@@ -357,7 +357,7 @@ public class EdifactReader extends StandardReader {
             }
         }
 
-        endElement(getXMLTags().getGroupTag());
+        endElement(XMLTags.GROUP);
         return (token);
     }
 
@@ -378,7 +378,7 @@ public class EdifactReader extends StandardReader {
         int segCount = 2;
 
         getDocumentAttributes().clear();
-        getDocumentAttributes().addCDATA(getXMLTags().getControl(),
+        getDocumentAttributes().addCDATA(XMLTags.CONTROL,
                 control = getTokenizer().nextSimpleValue());
         List<String> v = getTokenizer().nextCompositeElement();
         if (v != null) {
@@ -387,46 +387,46 @@ public class EdifactReader extends StandardReader {
             if (s != null) {
                 messageType = s;
                 logger.debug("Parsing {} message", messageType);
-                getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(), messageType);
+                getDocumentAttributes().addCDATA(XMLTags.DOCUMENT_TYPE, messageType);
             }
             if (n > 1) {
                 s = v.get(1);
                 if (s != null) {
                     messageVersion = s;
-                    getDocumentAttributes().addCDATA(getXMLTags().getMessageVersion(), messageVersion);
+                    getDocumentAttributes().addCDATA(XMLTags.MESSAGE_VERSION, messageVersion);
                 }
             }
             if (n > 2) {
                 s = v.get(2);
                 if (s != null) {
                     messageRelease = s;
-                    getDocumentAttributes().addCDATA(getXMLTags().getMessageRelease(), messageRelease);
+                    getDocumentAttributes().addCDATA(XMLTags.MESSAGE_RELEASE, messageRelease);
                 }
             }
             if (n > 3) {
                 s = v.get(3);
                 if (s != null) {
-                    getDocumentAttributes().addCDATA(getXMLTags().getAgency(), s);
+                    getDocumentAttributes().addCDATA(XMLTags.AGENCY, s);
                 }
             }
             if (n > 4) {
                 s = v.get(4);
                 if (s != null) {
-                    getDocumentAttributes().addCDATA(getXMLTags().getAssociation(), s);
+                    getDocumentAttributes().addCDATA(XMLTags.ASSOCIATION, s);
                 }
             }
         }
 
         String accessReference = getTokenizer().nextSimpleValue(false, true);
         if (!emptyIfNull(accessReference).isEmpty()) {
-            getDocumentAttributes().addCDATA(getXMLTags().getAccessReference(), accessReference);
+            getDocumentAttributes().addCDATA(XMLTags.ACCESS_REFERENCE, accessReference);
         }
 
         PluginController pluginController =
                 getPluginControllerFactory().create(EDIStandard.EDIFACT.name(), messageType, messageVersion, messageRelease, getTokenizer());
 
         if (pluginController.isEnabled())
-            getDocumentAttributes().addCDATA(getXMLTags().getName(), pluginController.getDocumentName());
+            getDocumentAttributes().addCDATA(XMLTags.NAME, pluginController.getDocumentName());
 
         startMessage(getDocumentAttributes());
 
@@ -445,13 +445,13 @@ public class EdifactReader extends StandardReader {
 
         int toClose = pluginController.getNestingLevel();
         for (; toClose > 0; toClose--) {
-            endElement(getXMLTags().getLoopTag());
+            endElement(XMLTags.LOOP);
 
         }
 
         checkSegmentCount(segCount, getTokenizer().nextIntValue(), COUNT_UNT);
         checkTransactionControlNumber(control, getTokenizer().nextSimpleValue(), CONTROL_NUMBER_UNT);
-        endElement(getXMLTags().getDocumentTag());
+        endElement(XMLTags.DOCUMENT);
 
         /*
          * Skip over this UNT segment and return the SEGMENT_END token
@@ -515,10 +515,10 @@ public class EdifactReader extends StandardReader {
         }
 
         getDocumentAttributes().clear();
-        getDocumentAttributes().addCDATA(getXMLTags().getIdAttribute(), packageReference);
-        startElement(getXMLTags().getPackageTag(), getDocumentAttributes());
+        getDocumentAttributes().addCDATA(XMLTags.ID, packageReference);
+        startElement(XMLTags.PACKAGE, getDocumentAttributes());
         new ContentHandlerBase64Encoder().encode(dataObject, getContentHandler());
-        endElement(getXMLTags().getPackageTag());
+        endElement(XMLTags.PACKAGE);
     }
 
     /**
@@ -584,7 +584,7 @@ public class EdifactReader extends StandardReader {
 
             if (buf[6] == ' ') {
                 // no release processing
-                setRelease(-1);
+                setRelease('\0');
             } else {
                 setRelease(buf[6]);
             }

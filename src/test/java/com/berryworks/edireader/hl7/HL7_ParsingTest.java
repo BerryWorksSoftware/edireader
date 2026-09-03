@@ -24,11 +24,12 @@ public class HL7_ParsingTest {
         handler = new MyHandler();
     }
 
+//    @Ignore
     @Test
     public void canParse() throws IOException, SAXException {
         reader.setContentHandler(handler);
         source = new InputSource(new StringReader("""
-                MSH|^~\\\\&|MEDITECH^WA||||201905011242||ADT^A08|54920716|P|2.4|||AL|NE|
+                MSH|^~\\&|MEDITECH^WA||||201905011242||ADT^A08|54920716|P|2.4|||AL|NE|
                 EVN||201905011242||||201905091242|
                 PID|1||MN00708088^^^^MR^JHC~MN597007^^^^PI^JHC||HOWL^JOE^^^^^L~^^^^^^||19860522|F||RUSF|68 CHOOKS LINE^^BLOOMSBURY^QLD^4799||07 0134 5366^^^JOE.HOWL@anonemail.com||RUS|MAR|ORT|AN16311706|
                 """));
@@ -72,7 +73,6 @@ public class HL7_ParsingTest {
     @Test
     public void handlesCompositeConflict() throws IOException, SAXException {
         reader.setContentHandler(handler);
-//        reader.setPluginControllerFactory(new PluginControllerFactory_ClasspathESD());
         source = new InputSource(new StringReader("" +
                 "MSH|^~\\&|MEDITECH^WA||||201905011242||AXX^A08|54920716|P|2.4|||AL|NE|\n" +
                 "EVN||201905011242||||201905091242|\n" +

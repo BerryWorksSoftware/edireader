@@ -105,17 +105,17 @@ public class AnsiReader extends StandardReader {
         setGroupCount(0);
 
         getInterchangeAttributes().clear();
-        getInterchangeAttributes().addCDATA(getXMLTags().getStandard(), EDIStandard.ANSI.getDisplayName());
+        getInterchangeAttributes().addCDATA(XMLTags.STANDARD, EDIStandard.ANSI.getDisplayName());
 
         String authQual = checkFixedLength("ISA01", nextField(), 2);
         String authInfo = checkFixedLength("ISA02", nextField(), 10);
         String securityQual = checkFixedLength("ISA03", nextField(), 2);
         String securityInfo = checkFixedLength("ISA04", nextField(), 10);
 
-        getInterchangeAttributes().addCDATA(getXMLTags().getAuthorizationQual(), authQual);
-        getInterchangeAttributes().addCDATA(getXMLTags().getAuthorization(), authInfo);
-        getInterchangeAttributes().addCDATA(getXMLTags().getSecurityQual(), securityQual);
-        getInterchangeAttributes().addCDATA(getXMLTags().getSecurity(), securityInfo);
+        getInterchangeAttributes().addCDATA(XMLTags.AUTHORIZATION_QUALIFIER, authQual);
+        getInterchangeAttributes().addCDATA(XMLTags.AUTHORIZATION, authInfo);
+        getInterchangeAttributes().addCDATA(XMLTags.SECURITY_QUALIFIER, securityQual);
+        getInterchangeAttributes().addCDATA(XMLTags.SECURITY, securityInfo);
 
         String fromQual = checkFixedLength("ISA05", nextField(), 2);
         process("ISA05", fromQual);
@@ -130,43 +130,43 @@ public class AnsiReader extends StandardReader {
         process("ISA08", toId);
 
         String controlDate = checkFixedLength("ISA09", nextField(), 6);
-        getInterchangeAttributes().addCDATA(getXMLTags().getDate(), controlDate);
+        getInterchangeAttributes().addCDATA(XMLTags.DATE, controlDate);
 
         String controlTime = checkFixedLength("ISA10", nextField(), 4);
-        getInterchangeAttributes().addCDATA(getXMLTags().getTime(), controlTime);
+        getInterchangeAttributes().addCDATA(XMLTags.TIME, controlTime);
 
         // The standards id, typically "U", through version 4010
         // The repetition character, version 4020 and later
-        int separator = getTokenizer().getRepetitionSeparator();
-        if (separator == -1) {
+        char separator = getTokenizer().getRepetitionSeparator();
+        if (separator == '\0') {
             // No repetition char is in effect. It is therefore safe to interpret this next
             // element as the standardsId used through version 4010 of ANSI X12.
             String standardsId = checkFixedLength("ISA11", nextField(), 1);
-            getInterchangeAttributes().addCDATA(getXMLTags().getStandardsId(), standardsId);
+            getInterchangeAttributes().addCDATA(XMLTags.STANDARDS_ID, standardsId);
         } else {
             // A repetition char is in effect, presumably previewed from this ISA segment we
             // are now parsing. Therefore, we treat this field in accordance with version 4020
             // or later where it designates a repetition character instead of a standardsId.
             // Temporarily disable the repetition char so that we can parse over this element
             // as normal data.
-            getTokenizer().setRepetitionSeparator(-1);
+            getTokenizer().setRepetitionSeparator('\0');
             checkFixedLength("ISA11", nextField(), 1);
             getTokenizer().setRepetitionSeparator(separator);
         }
 
         String versionId = checkFixedLength("ISA12", nextField(), 5);
-        getInterchangeAttributes().addCDATA(getXMLTags().getVersion(), versionId);
+        getInterchangeAttributes().addCDATA(XMLTags.VERSION, versionId);
 
         String controlNumber = checkFixedLength("ISA13", nextField(), 9);
         process("ISA13", controlNumber);
         setInterchangeControlNumber(controlNumber);
-        getInterchangeAttributes().addCDATA(getXMLTags().getControl(), getInterchangeControlNumber());
+        getInterchangeAttributes().addCDATA(XMLTags.CONTROL, getInterchangeControlNumber());
 
         String ackRequest = checkFixedLength("ISA14", nextField(), 1);
-        getInterchangeAttributes().addCDATA(getXMLTags().getAcknowledgementRequest(), ackRequest);
+        getInterchangeAttributes().addCDATA(XMLTags.ACKNOWLEDGEMENT_REQUEST, ackRequest);
 
         String testIndicator = checkFixedLength("ISA15", nextField(), 1);
-        getInterchangeAttributes().addCDATA(getXMLTags().getTestIndicator(), testIndicator);
+        getInterchangeAttributes().addCDATA(XMLTags.TEST_INDICATOR, testIndicator);
 
         // We should have already noted ISA16, the sub-element delimiter, when we previewed this interchange.
         // If one was not established, then report it as a recoverable syntax error.
@@ -192,33 +192,33 @@ public class AnsiReader extends StandardReader {
             // Provide critical syntax characters as attributes
             final char repetitionSeparator = getRepetitionSeparator();
             if (repetitionSeparator > 0) {
-                getInterchangeAttributes().addCDATA(getXMLTags().getRepetitionSeparator(), String.valueOf(repetitionSeparator));
+                getInterchangeAttributes().addCDATA(XMLTags.REPETITION_SEPARATOR, String.valueOf(repetitionSeparator));
             }
-            getInterchangeAttributes().addCDATA(getXMLTags().getElementDelimiter(), String.valueOf(getDelimiter()));
-            getInterchangeAttributes().addCDATA(getXMLTags().getSubElementDelimiter(), String.valueOf(getSubDelimiter()));
-            getInterchangeAttributes().addCDATA(getXMLTags().getSegmentTerminator(), String.valueOf(getTerminator()));
+            getInterchangeAttributes().addCDATA(XMLTags.ELEMENT_DELIMITER, String.valueOf(getDelimiter()));
+            getInterchangeAttributes().addCDATA(XMLTags.SUB_ELEMENT_DELIMITER, String.valueOf(getSubDelimiter()));
+            getInterchangeAttributes().addCDATA(XMLTags.SEGMENT_TERMINATOR, String.valueOf(getTerminator()));
         }
 
         // Now make the callbacks to the ContentHandler
         startInterchange(getInterchangeAttributes());
 
         getInterchangeAttributes().clear();
-        startElement(getXMLTags().getSenderTag(), getInterchangeAttributes());
-        getInterchangeAttributes().addCDATA(getXMLTags().getIdAttribute(), fromId);
-        getInterchangeAttributes().addCDATA(getXMLTags().getQualifierAttribute(),
+        startElement(XMLTags.SENDER, getInterchangeAttributes());
+        getInterchangeAttributes().addCDATA(XMLTags.ID, fromId);
+        getInterchangeAttributes().addCDATA(XMLTags.QUALIFIER,
                 fromQual);
         startSenderAddress(getInterchangeAttributes());
-        endElement(getXMLTags().getAddressTag());
-        endElement(getXMLTags().getSenderTag());
+        endElement(XMLTags.ADDRESS);
+        endElement(XMLTags.SENDER);
 
         getInterchangeAttributes().clear();
-        startElement(getXMLTags().getReceiverTag(), getInterchangeAttributes());
-        getInterchangeAttributes().addCDATA(getXMLTags().getIdAttribute(), toId);
-        getInterchangeAttributes().addCDATA(getXMLTags().getQualifierAttribute(),
+        startElement(XMLTags.RECEIVER, getInterchangeAttributes());
+        getInterchangeAttributes().addCDATA(XMLTags.ID, toId);
+        getInterchangeAttributes().addCDATA(XMLTags.QUALIFIER,
                 toQual);
         startReceiverAddress(getInterchangeAttributes());
-        endElement(getXMLTags().getAddressTag());
-        endElement(getXMLTags().getReceiverTag());
+        endElement(XMLTags.ADDRESS);
+        endElement(XMLTags.RECEIVER);
 
         label:
         while (true) {
@@ -259,7 +259,7 @@ public class AnsiReader extends StandardReader {
         Token returnedToken = getTokenizer().skipSegment();
         if (getTransactionCallback() != null) {
             long size = getTokenizer().getCharCount() - charCountAtBeginning;
-            getTransactionCallback().end(getXMLTags().getInterchangeTag(), "X12", versionId, controlNumber, size);
+            getTransactionCallback().end(XMLTags.INTERCHANGE, "X12", versionId, controlNumber, size);
         }
 
         return returnedToken;
@@ -297,26 +297,26 @@ public class AnsiReader extends StandardReader {
         EDIAttributes attributes = new EDIAttributes();
 
         String acknowledgedControlNumber = getTokenizer().nextSimpleValue();
-        attributes.addCDATA(getXMLTags().getControl(), acknowledgedControlNumber);
+        attributes.addCDATA(XMLTags.CONTROL, acknowledgedControlNumber);
 
         String acknowledgedDate = getTokenizer().nextSimpleValue();
-        attributes.addCDATA(getXMLTags().getDate(), acknowledgedDate);
+        attributes.addCDATA(XMLTags.DATE, acknowledgedDate);
 
         String acknowledgedTime = getTokenizer().nextSimpleValue();
-        attributes.addCDATA(getXMLTags().getTime(), acknowledgedTime);
+        attributes.addCDATA(XMLTags.TIME, acknowledgedTime);
 
         String code = getTokenizer().nextSimpleValue();
-        attributes.addCDATA(getXMLTags().getAcknowledgementCode(), code);
+        attributes.addCDATA(XMLTags.ACKNOWLEDGEMENT_CODE, code);
 
         String note = nextField();
         if (note != null) {
             if (!note.isEmpty()) {
-                attributes.addCDATA(getXMLTags().getNotCode(), note);
+                attributes.addCDATA(XMLTags.NOTE_CODE, note);
             }
             getTokenizer().skipSegment();
         }
-        startElement(getXMLTags().getAcknowledgementTag(), attributes);
-        endElement(getXMLTags().getAcknowledgementTag());
+        startElement(XMLTags.ACKNOWLEDGEMENT, attributes);
+        endElement(XMLTags.ACKNOWLEDGEMENT);
     }
 
     /**
@@ -334,16 +334,16 @@ public class AnsiReader extends StandardReader {
         long charCountAtBeginning = getTokenizer().getCharCount() - 3; // "GS*" is included in the charCount.
 
         getGroupAttributes().clear();
-        getGroupAttributes().addCDATA(getXMLTags().getGroupType(),
+        getGroupAttributes().addCDATA(XMLTags.GROUP_TYPE,
                 groupFunctionCode = getTokenizer().nextSimpleValue(false));
         groupSender = getTokenizer().nextSimpleValue(false);
         process("GS02", groupSender);
         groupReceiver = getTokenizer().nextSimpleValue(false);
         process("GS03", groupReceiver);
         groupDate = getTokenizer().nextSimpleValue(false);
-        getGroupAttributes().addCDATA(getXMLTags().getApplSender(), groupSender);
-        getGroupAttributes().addCDATA(getXMLTags().getApplReceiver(), groupReceiver);
-        getGroupAttributes().addCDATA(getXMLTags().getDate(), groupDate);
+        getGroupAttributes().addCDATA(XMLTags.APPL_SENDER, groupSender);
+        getGroupAttributes().addCDATA(XMLTags.APPL_RECEIVER, groupReceiver);
+        getGroupAttributes().addCDATA(XMLTags.DATE, groupDate);
 
         String value = "";
         try {
@@ -364,13 +364,13 @@ public class AnsiReader extends StandardReader {
             }
 
         }
-        getGroupAttributes().addCDATA(getXMLTags().getTime(), value);
+        getGroupAttributes().addCDATA(XMLTags.TIME, value);
 
         String groupControlNumber = getTokenizer().nextSimpleValue(false);
         setGroupControlNumber(groupControlNumber);
         process("GS06", groupControlNumber);
-        getGroupAttributes().addCDATA(getXMLTags().getControl(), getGroupControlNumber());
-        getGroupAttributes().addCDATA(getXMLTags().getStandardCode(), getTokenizer().nextSimpleValue(false));
+        getGroupAttributes().addCDATA(XMLTags.CONTROL, getGroupControlNumber());
+        getGroupAttributes().addCDATA(XMLTags.STANDARD_CODE, getTokenizer().nextSimpleValue(false));
 
         // Handle the groupVersion at the end of the segment. This is a bit tricky since
         // the groupVersion may be omitted causing us to encounter the end of segment earlier
@@ -381,14 +381,14 @@ public class AnsiReader extends StandardReader {
         } else {
             groupVersion = t.getValue();
             if (isX12VersionBefore(groupVersion, 4020)) {
-                getTokenizer().setRepetitionSeparator(-1);
+                getTokenizer().setRepetitionSeparator('\0');
             }
-            getGroupAttributes().addCDATA(getXMLTags().getStandardVersion(), groupVersion);
+            getGroupAttributes().addCDATA(XMLTags.STANDARD_VERSION, groupVersion);
             process("GS08", groupVersion);
             getTokenizer().skipSegment();
         }
 
-        startElement(getXMLTags().getGroupTag(), getGroupAttributes());
+        startElement(XMLTags.GROUP, getGroupAttributes());
 
         int groupDateLength = versionSpecificGroupDateLength(groupVersion);
         getAckGenerator().generateAcknowledgmentHeader(getFirstSegment(),
@@ -429,14 +429,14 @@ public class AnsiReader extends StandardReader {
         }
         checkGroupControlNumber(getGroupControlNumber(), groupControlNumber, CONTROL_NUMBER_GE);
 
-        endElement(getXMLTags().getGroupTag());
+        endElement(XMLTags.GROUP);
         getAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
         getAlternateAckGenerator().generateGroupAcknowledgmentTrailer(docCount);
 
         Token returnedToken = getTokenizer().skipSegment();
         if (getTransactionCallback() != null) {
             long size = getTokenizer().getCharCount() - charCountAtBeginning;
-            getTransactionCallback().end(getXMLTags().getGroupTag(), groupFunctionCode, groupVersion, groupControlNumber, size);
+            getTransactionCallback().end(XMLTags.GROUP, groupFunctionCode, groupVersion, groupControlNumber, size);
         }
         return returnedToken;
     }
@@ -464,21 +464,21 @@ public class AnsiReader extends StandardReader {
             getTransactionCallback().startTransaction(token.getValue());
 
         getDocumentAttributes().clear();
-        getDocumentAttributes().addCDATA(getXMLTags().getDocumentType(),
+        getDocumentAttributes().addCDATA(XMLTags.DOCUMENT_TYPE,
                 documentType = getTokenizer().nextSimpleValue(false));
 
         logger.debug("Parsing {} transaction", documentType);
 
         String version = groupVersion;
         if (version.length() > 6) version = version.substring(0, 6);
-        String code = getGroupAttributes().getValue(getXMLTags().getStandardCode());
+        String code = getGroupAttributes().getValue(XMLTags.STANDARD_CODE);
 
         PluginController pluginController =
                 getPluginControllerFactory().create("ANSI", documentType, code, version, getTokenizer());
 
         boolean wrapped = wrapContentHandlerIfNeeded(pluginController);
         if (pluginController.isEnabled())
-            getDocumentAttributes().addCDATA(getXMLTags().getName(), pluginController.getDocumentName());
+            getDocumentAttributes().addCDATA(XMLTags.NAME, pluginController.getDocumentName());
 
         controlNumber = nextField();
         boolean hitSegmentEnd = false;
@@ -488,7 +488,7 @@ public class AnsiReader extends StandardReader {
             hitSegmentEnd = true;
             controlNumber = "";
         }
-        getDocumentAttributes().addCDATA(getXMLTags().getControl(), controlNumber);
+        getDocumentAttributes().addCDATA(XMLTags.CONTROL, controlNumber);
         process("ST02", controlNumber);
 
         String st03Version = null;
@@ -499,7 +499,7 @@ public class AnsiReader extends StandardReader {
                     break;
                 case SIMPLE:
                     st03Version = st03Token.getValue();
-                    getDocumentAttributes().addCDATA(getXMLTags().getMessageVersion(), st03Version);
+                    getDocumentAttributes().addCDATA(XMLTags.MESSAGE_VERSION, st03Version);
                 default:
                     getTokenizer().skipSegment();
             }
@@ -528,13 +528,13 @@ public class AnsiReader extends StandardReader {
 
         int toClose = pluginController.getNestingLevel();
         for (; toClose > 0; toClose--)
-            endElement(getXMLTags().getLoopTag());
+            endElement(XMLTags.LOOP);
 
         checkSegmentCount(segCount, getTokenizer().nextIntValue(true), COUNT_SE);
         checkTransactionControlNumber(controlNumber, nextField(), CONTROL_NUMBER_SE);
         getAckGenerator().generateTransactionAcknowledgment(documentType, controlNumber);
         getAlternateAckGenerator().generateTransactionAcknowledgment(documentType, controlNumber);
-        endElement(getXMLTags().getDocumentTag());
+        endElement(XMLTags.DOCUMENT);
 
         // Skip over this SE segment
         // return the SEGMENT_END token
@@ -543,7 +543,7 @@ public class AnsiReader extends StandardReader {
         if (getTransactionCallback() != null) {
             getTransactionCallback().endTransaction();
             long size = getTokenizer().getCharCount() - charCountAtBeginning;
-            getTransactionCallback().end(getXMLTags().getDocumentTag(), documentType, isPresent(st03Version) ? st03Version : groupVersion, controlNumber, size);
+            getTransactionCallback().end(XMLTags.DOCUMENT, documentType, isPresent(st03Version) ? st03Version : groupVersion, controlNumber, size);
         }
 
         return t;
@@ -608,9 +608,9 @@ public class AnsiReader extends StandardReader {
         getTokenizer().nextToken();
 
         getDocumentAttributes().clear();
-        startElement(getXMLTags().getPackageTag(), getDocumentAttributes());
+        startElement(XMLTags.PACKAGE, getDocumentAttributes());
         new ContentHandlerBase64Encoder().encode(dataObject, getContentHandler());
-        endElement(getXMLTags().getPackageTag());
+        endElement(XMLTags.PACKAGE);
     }
 
 
@@ -629,8 +629,9 @@ public class AnsiReader extends StandardReader {
             logger.warn(INTERNAL_ERROR_MULTIPLE_EOFS);
             throw new EDISyntaxException(INTERNAL_ERROR_MULTIPLE_EOFS);
         }
-        // No release character is supported for ANSI X.12
-        setRelease(-1);
+        // No release character or sub-sub-delimiter is supported for ANSI X.12
+        setRelease('\0');
+        setSubSubDelimiter('\0');
 
         char[] buf = getTokenizer().lookahead(PREVIEW_LENGTH);
         if ((buf == null) || (buf.length < PREVIEW_LENGTH)) {

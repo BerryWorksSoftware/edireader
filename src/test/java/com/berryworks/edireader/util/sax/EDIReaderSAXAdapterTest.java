@@ -1,6 +1,8 @@
 package com.berryworks.edireader.util.sax;
 
-import com.berryworks.edireader.*;
+import com.berryworks.edireader.EDIAttributes;
+import com.berryworks.edireader.EDIReader;
+import com.berryworks.edireader.EDIReaderFactory;
 import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -18,7 +20,6 @@ public class EDIReaderSAXAdapterTest {
 
     @Test
     public void basics() throws SAXException {
-        XMLTags xmlTags = new DefaultXMLTags();
         adapter = new MyAdapater();
 
         EDIAttributes attributes = new EDIAttributes();
@@ -47,7 +48,6 @@ public class EDIReaderSAXAdapterTest {
 
     @Test
     public void handlesNamespaceVariations() throws SAXException {
-        XMLTags xmlTags = new DefaultXMLTags();
         adapter = new MyAdapater();
 
         EDIAttributes attributes = new EDIAttributes();

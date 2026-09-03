@@ -88,7 +88,7 @@ public abstract class EDIAbstractReader implements XMLReader {
     private char decimalMark;
 
     /**
-     * Character marking the boundary between repeating fields
+     * Character marking the boundary between repeating fields. Or 0 if not applicable.
      */
     private char repetitionSeparator;
 
@@ -98,9 +98,9 @@ public abstract class EDIAbstractReader implements XMLReader {
     private char terminator;
 
     /**
-     * The byte value used as a release or escape character.
+     * The release or escape character. Or 0 if not applicable.
      */
-    private int release;
+    private char release;
 
     /**
      * Whitespace characters observed to follow the formal segment terminator.
@@ -254,7 +254,7 @@ public abstract class EDIAbstractReader implements XMLReader {
         this.terminator = terminator;
     }
 
-    public void setRelease(int release) {
+    public void setRelease(char release) {
         this.release = release;
     }
 
@@ -285,12 +285,11 @@ public abstract class EDIAbstractReader implements XMLReader {
      * Gets the character used in release/escape sequences.
      * Exactly how this character is used may differ between standards.
      * In ANSI, there is no release mechanism. When no release character
-     * is available, the int value -1 is returned, otherwise a char
-     * value is returned via the int.
+     * is available, 0 is returned.
      *
-     * @return The release char value or -1 if none
+     * @return The release char value or 0 if none
      */
-    public int getRelease() {
+    public char getRelease() {
         return release;
     }
 
@@ -299,7 +298,7 @@ public abstract class EDIAbstractReader implements XMLReader {
     }
 
     public boolean isReleaseCharacterDefined() {
-        return release != -1;
+        return release != 0;
     }
 
     /**

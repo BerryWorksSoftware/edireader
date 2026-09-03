@@ -22,6 +22,7 @@ package com.berryworks.edireader.util;
 
 import com.berryworks.edireader.EDIReader;
 import com.berryworks.edireader.EDIReaderFactory;
+import com.berryworks.edireader.XMLTags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -103,21 +104,21 @@ public class Splitter {
         public void startElement(String namespace, String localName,
                                  String qName, Attributes atts) throws SAXException {
             String indent;
-            if (localName.startsWith(parser.getXMLTags().getInterchangeTag())) {
+            if (localName.startsWith(XMLTags.INTERCHANGE)) {
                 indent = "   ";
-            } else if (localName.startsWith(parser.getXMLTags().getSenderTag())) {
+            } else if (localName.startsWith(XMLTags.SENDER)) {
                 logger.debug("  +Sender");
                 indent = "     ";
-            } else if (localName.startsWith(parser.getXMLTags().getReceiverTag())) {
+            } else if (localName.startsWith(XMLTags.RECEIVER)) {
                 logger.debug("  +Recipient");
                 indent = "     ";
-            } else if (localName.startsWith(parser.getXMLTags().getAddressTag())) {
+            } else if (localName.startsWith(XMLTags.ADDRESS)) {
                 logger.debug("    +Address");
                 indent = "       ";
-            } else if (localName.startsWith(parser.getXMLTags().getGroupTag())) {
+            } else if (localName.startsWith(XMLTags.GROUP)) {
                 logger.debug("  +Group");
                 indent = "     ";
-            } else if (localName.startsWith(parser.getXMLTags().getDocumentTag())) {
+            } else if (localName.startsWith(XMLTags.DOCUMENT)) {
                 logger.debug("    +Document");
                 indent = "       ";
             } else {

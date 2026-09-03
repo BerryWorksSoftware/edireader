@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2025 by BerryWorks Software. All rights reserved.
+ * Copyright 2005-2026 by BerryWorks Software. All rights reserved.
  */
 package com.berryworks.edireader.tokenizer;
 
@@ -483,6 +483,8 @@ public class EDITokenizerTest {
         assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
         assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
+        assertEquals(0, token.getSubSubIndex());
         assertEquals("abc", token.getValue());
         assertEquals(4, tokenizer.getCharCount());
         assertEquals(4, tokenizer.getSegmentCharCount());
@@ -494,6 +496,7 @@ public class EDITokenizerTest {
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals(0, token.getSubIndex());
+        assertEquals(0, token.getSubSubIndex());
         assertEquals("def", token.getValue());
         assertEquals("abc", token.getSegmentType());
         assertTrue(token.isFirst());
@@ -509,11 +512,40 @@ public class EDITokenizerTest {
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
         assertEquals(1, token.getSubIndex());
-        assertEquals("ghij", token.getValue());
+        assertEquals(0, token.getSubSubIndex());
+        assertEquals("g", token.getValue());
+        assertFalse(token.isFirst());
+        assertFalse(token.isLast());
+        assertEquals(10, tokenizer.getCharCount());
+        assertEquals(10, tokenizer.getSegmentCharCount());
+
+        // abc-def.g:hi:j..k-l.m! ...
+        //           ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_SUB_ELEMENT, token.getType());
+        assertEquals("abc01", token.getElementId());
+        assertEquals(1, token.getIndex());
+        assertEquals(1, token.getSubIndex());
+        assertEquals(1, token.getSubSubIndex());
+        assertEquals("hi", token.getValue());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
         assertEquals(13, tokenizer.getCharCount());
         assertEquals(13, tokenizer.getSegmentCharCount());
+
+        // abc-def.g:hi:j..k-l.m! ...
+        //              ^
+        token = tokenizer.nextToken();
+        assertEquals(SUB_SUB_ELEMENT, token.getType());
+        assertEquals("abc01", token.getElementId());
+        assertEquals(1, token.getIndex());
+        assertEquals(1, token.getSubIndex());
+        assertEquals(2, token.getSubSubIndex());
+        assertEquals("j", token.getValue());
+        assertFalse(token.isFirst());
+        assertFalse(token.isLast());
+        assertEquals(15, tokenizer.getCharCount());
+        assertEquals(15, tokenizer.getSegmentCharCount());
 
         // abc-def.g:hi:j..k-l.m! ...
         //                ^
@@ -521,10 +553,11 @@ public class EDITokenizerTest {
         assertEquals(SUB_EMPTY, token.getType());
         assertEquals(1, token.getIndex());
         assertEquals(2, token.getSubIndex());
+        assertEquals(2, token.getSubSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(14, tokenizer.getCharCount());
-        assertEquals(14, tokenizer.getSegmentCharCount());
+        assertEquals(16, tokenizer.getCharCount());
+        assertEquals(16, tokenizer.getSegmentCharCount());
 
         // abc-def.g:hi:j..k-l.m! ...
         //                 ^
@@ -535,9 +568,8 @@ public class EDITokenizerTest {
         assertEquals("k", token.getValue());
         assertFalse(token.isFirst());
         assertTrue(token.isLast());
-        assertEquals(3, token.getSubIndex());
-        assertEquals(16, tokenizer.getCharCount());
-        assertEquals(16, tokenizer.getSegmentCharCount());
+        assertEquals(18, tokenizer.getCharCount());
+        assertEquals(18, tokenizer.getSegmentCharCount());
 
         // abc-def.g:hi:j..k-l.m! ...
         //                   ^
@@ -549,8 +581,8 @@ public class EDITokenizerTest {
         assertTrue(token.isFirst());
         assertFalse(token.isLast());
         assertEquals(0, token.getSubIndex());
-        assertEquals(18, tokenizer.getCharCount());
-        assertEquals(18, tokenizer.getSegmentCharCount());
+        assertEquals(20, tokenizer.getCharCount());
+        assertEquals(20, tokenizer.getSegmentCharCount());
 
         // ... -l.m!abc-..n.o-p-q...-r...!
         //        ^
@@ -562,16 +594,16 @@ public class EDITokenizerTest {
         assertFalse(token.isFirst());
         assertTrue(token.isLast());
         assertEquals(1, token.getSubIndex());
-        assertEquals(19, tokenizer.getCharCount());
-        assertEquals(19, tokenizer.getSegmentCharCount());
+        assertEquals(21, tokenizer.getCharCount());
+        assertEquals(21, tokenizer.getSegmentCharCount());
 
         // ... -l.m!abc-..n.o-p-q...-r...!
         //         ^
         token = tokenizer.nextToken();
         assertEquals(SEGMENT_END, token.getType());
         assertEquals(2, token.getIndex());
-        assertEquals(20, tokenizer.getCharCount());
-        assertEquals(20, tokenizer.getSegmentCharCount());
+        assertEquals(22, tokenizer.getCharCount());
+        assertEquals(22, tokenizer.getSegmentCharCount());
 
         // ... -l.m!abc-..n.o-p-q...-r...!
         //          ^
@@ -580,7 +612,7 @@ public class EDITokenizerTest {
         assertEquals(0, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc", token.getValue());
-        assertEquals(24, tokenizer.getCharCount());
+        assertEquals(26, tokenizer.getCharCount());
         assertEquals(4, tokenizer.getSegmentCharCount());
 
         // ... -l.m!abc-..n.o-p-q...-r...!
@@ -591,7 +623,7 @@ public class EDITokenizerTest {
         assertEquals(0, token.getSubIndex());
         assertTrue(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(25, tokenizer.getCharCount());
+        assertEquals(27, tokenizer.getCharCount());
         assertEquals(5, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -602,7 +634,7 @@ public class EDITokenizerTest {
         assertEquals(1, token.getSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(26, tokenizer.getCharCount());
+        assertEquals(28, tokenizer.getCharCount());
         assertEquals(6, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -615,7 +647,7 @@ public class EDITokenizerTest {
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
         assertEquals(2, token.getSubIndex());
-        assertEquals(28, tokenizer.getCharCount());
+        assertEquals(30, tokenizer.getCharCount());
         assertEquals(8, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -628,7 +660,7 @@ public class EDITokenizerTest {
         assertFalse(token.isFirst());
         assertTrue(token.isLast());
         assertEquals(3, token.getSubIndex());
-        assertEquals(30, tokenizer.getCharCount());
+        assertEquals(32, tokenizer.getCharCount());
         assertEquals(10, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -638,7 +670,7 @@ public class EDITokenizerTest {
         assertEquals(2, token.getIndex());
         assertEquals(0, token.getSubIndex());
         assertEquals("p", token.getValue());
-        assertEquals(32, tokenizer.getCharCount());
+        assertEquals(34, tokenizer.getCharCount());
         assertEquals(12, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -651,7 +683,7 @@ public class EDITokenizerTest {
         assertTrue(token.isFirst());
         assertFalse(token.isLast());
         assertEquals(0, token.getSubIndex());
-        assertEquals(34, tokenizer.getCharCount());
+        assertEquals(36, tokenizer.getCharCount());
         assertEquals(14, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -662,7 +694,7 @@ public class EDITokenizerTest {
         assertEquals(1, token.getSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(35, tokenizer.getCharCount());
+        assertEquals(37, tokenizer.getCharCount());
         assertEquals(15, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -673,7 +705,7 @@ public class EDITokenizerTest {
         assertEquals(2, token.getSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(36, tokenizer.getCharCount());
+        assertEquals(38, tokenizer.getCharCount());
         assertEquals(16, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -684,7 +716,7 @@ public class EDITokenizerTest {
         assertEquals(3, token.getSubIndex());
         assertFalse(token.isFirst());
         assertTrue(token.isLast());
-        assertEquals(37, tokenizer.getCharCount());
+        assertEquals(39, tokenizer.getCharCount());
         assertEquals(17, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -697,7 +729,7 @@ public class EDITokenizerTest {
         assertTrue(token.isFirst());
         assertFalse(token.isLast());
         assertEquals(0, token.getSubIndex());
-        assertEquals(39, tokenizer.getCharCount());
+        assertEquals(41, tokenizer.getCharCount());
         assertEquals(19, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -708,7 +740,7 @@ public class EDITokenizerTest {
         assertEquals(1, token.getSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(40, tokenizer.getCharCount());
+        assertEquals(42, tokenizer.getCharCount());
         assertEquals(20, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -719,7 +751,7 @@ public class EDITokenizerTest {
         assertEquals(2, token.getSubIndex());
         assertFalse(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(41, tokenizer.getCharCount());
+        assertEquals(43, tokenizer.getCharCount());
         assertEquals(21, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
@@ -730,21 +762,21 @@ public class EDITokenizerTest {
         assertEquals(3, token.getSubIndex());
         assertFalse(token.isFirst());
         assertTrue(token.isLast());
-        assertEquals(41, tokenizer.getCharCount());
+        assertEquals(43, tokenizer.getCharCount());
         assertEquals(21, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
         //                          ^
         token = tokenizer.nextToken();
         assertEquals(SEGMENT_END, token.getType());
-        assertEquals(42, tokenizer.getCharCount());
+        assertEquals(44, tokenizer.getCharCount());
         assertEquals(22, tokenizer.getSegmentCharCount());
 
         // ... abc-..n.o-p-q...-r...!
         //                           ^
         token = tokenizer.nextToken();
         assertEquals(END_OF_DATA, token.getType());
-        assertEquals(43, tokenizer.getCharCount());
+        assertEquals(45, tokenizer.getCharCount());
     }
 
     @Test
@@ -763,7 +795,7 @@ public class EDITokenizerTest {
         assertNotNull(token = tokenizer.nextToken());
         assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
-        assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("abc", token.getValue());
         assertEquals(4, tokenizer.getCharCount());
         assertEquals(4, tokenizer.getSegmentCharCount());
@@ -779,7 +811,6 @@ public class EDITokenizerTest {
         assertEquals("abc", token.getSegmentType());
         assertTrue(token.isFirst());
         assertFalse(token.isLast());
-        assertEquals(0, token.getSubIndex());
         assertEquals(7, tokenizer.getCharCount());
         assertEquals(7, tokenizer.getSegmentCharCount());
 
@@ -824,6 +855,7 @@ public class EDITokenizerTest {
         assertNotNull(token = tokenizer.nextToken());
         assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("SEG", token.getValue());
 
         // SEG|S1||S2||S2a||S3a^S3b|S4$
@@ -903,7 +935,7 @@ public class EDITokenizerTest {
     public void testNextCompositeElements() throws Exception {
 
         tokenizer = new EDITokenizer(new StringReader(
-            "UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER ID:ZZ+970101:1050+00000000000916++ORDERS'"));
+                "UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER ID:ZZ+970101:1050+00000000000916++ORDERS'"));
         assertNotNull(tokenizer);
         tokenizer.setTerminator('\'');
         tokenizer.setDelimiter('+');
@@ -911,12 +943,12 @@ public class EDITokenizerTest {
         Token token;
         List<String> composite;
 
-        // UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER
-        // ID:ZZ+970101:1050+00000000000916++ORDERS'
+        // UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER ID:ZZ+970101:1050+00000000000916++ORDERS'
         // ^
         assertNotNull(token = tokenizer.nextToken());
         assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("UNB", token.getValue());
 
         // UNB+UNOB:1+003897733:01:MFGB-PO+PARTNER
@@ -1001,6 +1033,7 @@ public class EDITokenizerTest {
         assertNotNull(token = tokenizer.nextToken());
         assertEquals(SEGMENT_START, token.getType());
         assertEquals(0, token.getIndex());
+        assertEquals(0, token.getSubIndex());
         assertEquals("SEG", token.getValue());
         assertEquals("SEG00", token.getElementId());
         assertEquals("SEG", token.getSegmentType());
@@ -2026,7 +2059,7 @@ public class EDITokenizerTest {
                 "abc"));
 
         tokenizer.nextToken();
-        assertEquals("tokenizer state: segmentCount=1 charCount=4 segTokenCount=1 segCharCount=4 currentToken=Token type=SEGMENT_START value=abc index=0 segment=abc buffer.limit=0 buffer.position=0",
+        assertEquals("tokenizer state: segmentCount=1 charCount=4 segTokenCount=1 segCharCount=4 currentToken=Token type=SEGMENT_START 0.0.0 value=abc segment=abc buffer.limit=0 buffer.position=0",
                 tokenizer.toString());
     }
 
@@ -2143,6 +2176,93 @@ public class EDITokenizerTest {
             fail("");
         } catch (EDISyntaxException ignore) {
         }
+    }
+
+    @Test
+    public void testSegmentWith2Levels() throws EDISyntaxException, IOException {
+        tokenizer = new EDITokenizer(new StringReader("""
+                AIP|||MICHAEL^Bennett^Michael T.|
+                """));
+        tokenizer.setDelimiter('|');
+        tokenizer.setSubDelimiter('^');
+        tokenizer.setSubSubDelimiter('&');
+        tokenizer.setTerminator('\n');
+
+        Token token;
+        String report = "";
+        while (true) {
+            token = tokenizer.nextToken();
+            report += token.toString() + System.lineSeparator();
+            if (token.getType() == END_OF_DATA) break;
+        }
+        assertEquals("""
+                Token type=SEGMENT_START 0.0.0 value=AIP segment=AIP
+                Token type=EMPTY 1.0.0 value= segment=AIP
+                Token type=EMPTY 2.0.0 value= segment=AIP
+                Token type=SUB_ELEMENT 3.0.0 value=MICHAEL segment=AIP
+                Token type=SUB_ELEMENT 3.1.0 value=Bennett segment=AIP
+                Token type=SUB_ELEMENT 3.2.0 value=Michael T. segment=AIP
+                Token type=SEGMENT_END 3.0.0 value=Michael T. segment=AIP
+                Token type=END_OF_DATA 3.0.0 value=Michael T. segment=AIP
+                """, report);
+    }
+
+    @Test
+    public void testSegmentWith3Levels_A() throws EDISyntaxException, IOException {
+        tokenizer = new EDITokenizer(new StringReader("""
+                AIP|A||MICHAEL^Bennett^Michael T.^^a&b&c|D|
+                """)).setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
+
+        String report = "";
+        Token token;
+        while ((token = tokenizer.nextToken()).getType() != END_OF_DATA) {
+            report += token + System.lineSeparator();
+        }
+        assertEquals("""
+                Token type=SEGMENT_START 0.0.0 value=AIP segment=AIP
+                Token type=SIMPLE 1.0.0 value=A segment=AIP
+                Token type=EMPTY 2.0.0 value= segment=AIP
+                Token type=SUB_ELEMENT 3.0.0 value=MICHAEL segment=AIP
+                Token type=SUB_ELEMENT 3.1.0 value=Bennett segment=AIP
+                Token type=SUB_ELEMENT 3.2.0 value=Michael T. segment=AIP
+                Token type=SUB_EMPTY 3.3.0 value= segment=AIP
+                Token type=SUB_SUB_ELEMENT 3.4.0 value=a segment=AIP
+                Token type=SUB_SUB_ELEMENT 3.4.1 value=b segment=AIP
+                Token type=SUB_SUB_ELEMENT 3.4.2 value=c segment=AIP
+                Token type=SIMPLE 4.0.0 value=D segment=AIP
+                Token type=SEGMENT_END 4.0.0 value=D segment=AIP
+                """, report);
+    }
+
+
+    @Test
+    public void testSegmentWith3Levels() throws EDISyntaxException, IOException {
+        tokenizer = new EDITokenizer(new StringReader("""
+                AIP|||MICHAEL^Bennett^Michael T.^^^^^^&&NPI|
+                """)).setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
+
+        String report = "";
+        Token token;
+        while ((token = tokenizer.nextToken()).getType() != END_OF_DATA) {
+            report += token + System.lineSeparator();
+        }
+        assertEquals("""
+                Token type=SEGMENT_START 0.0.0 value=AIP segment=AIP
+                Token type=EMPTY 1.0.0 value= segment=AIP
+                Token type=EMPTY 2.0.0 value= segment=AIP
+                Token type=SUB_ELEMENT 3.0.0 value=MICHAEL segment=AIP
+                Token type=SUB_ELEMENT 3.1.0 value=Bennett segment=AIP
+                Token type=SUB_ELEMENT 3.2.0 value=Michael T. segment=AIP
+                Token type=SUB_EMPTY 3.3.0 value= segment=AIP
+                Token type=SUB_EMPTY 3.4.0 value= segment=AIP
+                Token type=SUB_EMPTY 3.5.0 value= segment=AIP
+                Token type=SUB_EMPTY 3.6.0 value= segment=AIP
+                Token type=SUB_EMPTY 3.7.0 value= segment=AIP
+                Token type=SUB_SUB_EMPTY 3.8.0 value= segment=AIP
+                Token type=SUB_SUB_EMPTY 3.8.1 value= segment=AIP
+                Token type=SUB_SUB_ELEMENT 3.8.2 value=NPI segment=AIP
+                Token type=SEGMENT_END 3.0.0 value=NPI segment=AIP
+                """, report);
     }
 
     @Test

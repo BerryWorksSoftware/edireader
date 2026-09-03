@@ -6,6 +6,7 @@ package com.berryworks.edireader.hl7;
 import com.berryworks.edireader.*;
 import com.berryworks.edireader.plugin.CompositeAwarePlugin;
 import com.berryworks.edireader.tokenizer.Token;
+import com.berryworks.edireader.util.ElementCoordinates;
 import com.berryworks.edireader.util.NameConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,8 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.util.List;
 
+import static com.berryworks.edireader.XMLTags.SUB_ELEMENT_SEQUENCE;
+import static com.berryworks.edireader.XMLTags.SUB_SUB_ELEMENT;
 import static com.berryworks.edireader.util.FixedLength.isPresent;
 
 /**
@@ -55,6 +58,7 @@ public class HL7Reader extends StandardReader {
     private static final Logger logger = LoggerFactory.getLogger(HL7Reader.class);
     private String messageType;
     private CompositeAwarePlugin compositeAwarePlugin;
+    private ElementCoordinates coordinates = new ElementCoordinates();
 
     // These next two items deal with the special case where the HL7 data has the form of a composite
     // but the plugin (and potentially an XSD) says it is not a composite according to the HL7 specifications.
@@ -83,7 +87,7 @@ public class HL7Reader extends StandardReader {
         getTokenizer().setTerminator(getTerminator());
 
         EDIAttributes attributes = new EDIAttributes();
-        attributes.addCDATA(getXMLTags().getStandard(), "HL7");
+        attributes.addCDATA(XMLTags.STANDARD, "HL7");
         startInterchange(attributes);
 
         char[] lookahead = getTokenizer().lookahead(1);
@@ -146,7 +150,7 @@ public class HL7Reader extends StandardReader {
         // case.
         List<String> list = getTokenizer().nextCompositeElement();
         String sendingApplication = !list.isEmpty() ? list.get(0) : "";
-        getInterchangeAttributes().addCDATA(getXMLTags().getApplSender(), sendingApplication);
+        getInterchangeAttributes().addCDATA(XMLTags.APPL_SENDER, sendingApplication);
 
         list = getTokenizer().nextCompositeElement();
         String sendingFacility = !list.isEmpty() ? list.get(0) : "";
@@ -156,7 +160,7 @@ public class HL7Reader extends StandardReader {
         list = getTokenizer().nextCompositeElement();
         if (!list.isEmpty()) {
             getInterchangeAttributes().addCDATA(
-                    getXMLTags().getApplReceiver(),
+                    XMLTags.APPL_RECEIVER,
                     list.get(0));
         }
 
@@ -173,7 +177,7 @@ public class HL7Reader extends StandardReader {
         // Security MSH field 8
         String security = getTokenizer().nextSimpleValue(false);
         if ((security != null) && (!security.isEmpty())) {
-            getInterchangeAttributes().addCDATA(getXMLTags().getSecurity(), security);
+            getInterchangeAttributes().addCDATA(XMLTags.SECURITY, security);
         }
 
         // Message type MSH field 9
@@ -182,14 +186,14 @@ public class HL7Reader extends StandardReader {
         String eventType = list.size() > 1 ? list.get(1) : null;
 
         if ((messageType != null) && (!messageType.isEmpty())) {
-            getInterchangeAttributes().addCDATA(getXMLTags().getMessageType(), messageType);
+            getInterchangeAttributes().addCDATA(XMLTags.MESSAGE_TYPE, messageType);
             String text = Table76.getText(messageType);
             if (text != null) {
                 getInterchangeAttributes().addCDATA("TypeDesc", text);
             }
         }
         if ((eventType != null) && (!eventType.isEmpty())) {
-            getInterchangeAttributes().addCDATA(getXMLTags().getEvent(), eventType);
+            getInterchangeAttributes().addCDATA(XMLTags.EVENT, eventType);
             String text = Table03.getText(eventType);
             if (text != null) {
                 getInterchangeAttributes().addCDATA("EventDesc", text);
@@ -201,7 +205,7 @@ public class HL7Reader extends StandardReader {
         if (getInterchangeControlNumber() == null)
             setInterchangeControlNumber("");
         if (!getInterchangeControlNumber().isEmpty()) {
-            getInterchangeAttributes().addCDATA(getXMLTags().getControl(), getInterchangeControlNumber());
+            getInterchangeAttributes().addCDATA(XMLTags.CONTROL, getInterchangeControlNumber());
         }
 
         // Processing ID MSH field 11
@@ -211,13 +215,13 @@ public class HL7Reader extends StandardReader {
         }
         String processingID = list.get(0);
         if ((processingID != null) && (!processingID.isEmpty())) {
-            getInterchangeAttributes().addCDATA(getXMLTags().getProcessingId(), processingID);
+            getInterchangeAttributes().addCDATA(XMLTags.PROCESSING_ID, processingID);
         }
 
         // Version ID MSH field 12
         String versionID = getTokenizer().nextSimpleValue();
         if ((versionID != null) && (!versionID.isEmpty())) {
-            getInterchangeAttributes().addCDATA(getXMLTags().getSyntaxVersion(), versionID);
+            getInterchangeAttributes().addCDATA(XMLTags.SYNTAX_VERSION, versionID);
         }
 
         // Look at the remaining (optional) fields in the MSH segment, starting with field 13
@@ -251,7 +255,7 @@ public class HL7Reader extends StandardReader {
                 case 15:
                     String ackType = token.getValue();
                     if (isPresent(ackType)) {
-                        getInterchangeAttributes().addCDATA(getXMLTags().getAcknowledgementRequest(), ackType);
+                        getInterchangeAttributes().addCDATA(XMLTags.ACKNOWLEDGEMENT_REQUEST, ackType);
                     }
                     break;
             }
@@ -259,7 +263,7 @@ public class HL7Reader extends StandardReader {
 
 
         getAckGenerator().generateAcknowledgmentHeader("", "", "", "", "", "", getInterchangeControlNumber());
-        startElement(getXMLTags().getGroupTag(), getInterchangeAttributes());
+        startElement(XMLTags.GROUP, getInterchangeAttributes());
 
         if (token.getType() != Token.TokenType.END_OF_DATA) {
             token = getTokenizer().nextToken();
@@ -272,7 +276,7 @@ public class HL7Reader extends StandardReader {
         }
 
         getAckGenerator().generateAcknowledgementWrapup();
-        endElement(getXMLTags().getGroupTag());
+        endElement(XMLTags.GROUP);
 
         return (token);
     }
@@ -280,9 +284,9 @@ public class HL7Reader extends StandardReader {
     private void processDateAndTime() throws SAXException, IOException {
         String dateAndTime = getTokenizer().nextSimpleValue();
         if (dateAndTime != null && dateAndTime.length() >= 8) {
-            getInterchangeAttributes().addCDATA(getXMLTags().getDate(), dateAndTime.substring(0, 8));
+            getInterchangeAttributes().addCDATA(XMLTags.DATE, dateAndTime.substring(0, 8));
             if (dateAndTime.length() >= 12) {
-                getInterchangeAttributes().addCDATA(getXMLTags().getTime(), dateAndTime.substring(8));
+                getInterchangeAttributes().addCDATA(XMLTags.TIME, dateAndTime.substring(8));
             }
         }
     }
@@ -301,9 +305,9 @@ public class HL7Reader extends StandardReader {
         getDocumentAttributes().clear();
         String groupType = getInterchangeAttributes().getValue("", "Type");
         String groupEvent = getInterchangeAttributes().getValue("", "Event");
-        String controlTag = getXMLTags().getControl();
+        String controlTag = XMLTags.CONTROL;
         String control = getInterchangeAttributes().getValue("", controlTag);
-        getDocumentAttributes().addCDATA(getXMLTags().getMessageType(), groupType);
+        getDocumentAttributes().addCDATA(XMLTags.MESSAGE_TYPE, groupType);
         getDocumentAttributes().addCDATA("Event", groupEvent);
         getDocumentAttributes().addCDATA(controlTag, control);
         startMessage(getDocumentAttributes());
@@ -342,22 +346,22 @@ public class HL7Reader extends StandardReader {
                 int toClose = pluginController.closedCount();
                 for (; toClose > 0; toClose--) {
                     // ... </loop>
-                    endElement(getXMLTags().getLoopTag());
+                    endElement(XMLTags.LOOP);
                 }
 
                 String s = pluginController.getLoopEntered();
                 if (!pluginController.isResumed()) {
                     getDocumentAttributes().clear();
-                    getDocumentAttributes().addCDATA(getXMLTags().getIdAttribute(), s);
+                    getDocumentAttributes().addCDATA(XMLTags.ID, s);
                     // <loop> ...
-                    startElement(getXMLTags().getLoopTag(), getDocumentAttributes());
+                    startElement(XMLTags.LOOP, getDocumentAttributes());
                 }
             }
 
             // <segment> ... </segment>
             getDocumentAttributes().clear();
-            getDocumentAttributes().addCDATA(getXMLTags().getIdAttribute(), segmentType);
-            startElement(getXMLTags().getSegTag(), getDocumentAttributes());
+            getDocumentAttributes().addCDATA(XMLTags.ID, segmentType);
+            startElement(XMLTags.SEGMENT, getDocumentAttributes());
 
             // Loop for each field in the HL7 segment, terminated by the segment
             // terminator. An end of data is also accepted in lieu of a segment terminator
@@ -368,14 +372,16 @@ public class HL7Reader extends StandardReader {
                 t = getTokenizer().nextToken();
                 switch (t.getType()) {
                     case END_OF_DATA:
+                        endSubElementIfNeeded();
                         // break outerLoop;
                     case SEGMENT_END:
+                        endSubElementIfNeeded();
                         break innerLoop;
                     default:
                         parseSegmentElement(t);
                 }
             }
-            endElement(getXMLTags().getSegTag());
+            endElement(XMLTags.SEGMENT);
             if (t.getType() != Token.TokenType.END_OF_DATA) {
                 t = getTokenizer().nextToken();
             }
@@ -385,13 +391,29 @@ public class HL7Reader extends StandardReader {
 
         for (; toClose > 0; toClose--) {
             // ... </loop>
-            endElement(getXMLTags().getLoopTag());
+            endElement(XMLTags.LOOP);
         }
 
         getAckGenerator().generateTransactionAcknowledgment(null, null);
-        endElement(getXMLTags().getDocumentTag());
+        endElement(XMLTags.DOCUMENT);
 
         return (t);
+    }
+
+    private void endSubElementIfNeeded() throws SAXException {
+        if (coordinates.isSubElementStarted()) {
+            if (!coordinates.isSubElementEnded()) {
+                endElement(XMLTags.SUB_ELEMENT);
+                coordinates.endSubElement();
+            }
+        }
+        if (coordinates.isElementStarted()) {
+            if (!coordinates.isElementEnded()) {
+                endElement(XMLTags.ELEMENT);
+                coordinates.endElement();
+            }
+        }
+
     }
 
     /**
@@ -406,6 +428,8 @@ public class HL7Reader extends StandardReader {
         EDIAttributes attributes;
 
         String elementId = t.getElementId();
+        coordinates.focus(t);
+        System.out.println(coordinates);
         switch (t.getType()) {
 
             case SIMPLE:
@@ -416,10 +440,14 @@ public class HL7Reader extends StandardReader {
 
                 attributes = getDocumentAttributes();
                 attributes.clear();
-                attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
-                startElement(getXMLTags().getElementTag(), attributes);
+                attributes.addCDATA(XMLTags.ID, elementId);
+
+                coordinates.startElement();
+                startElement(XMLTags.ELEMENT, attributes);
                 getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
-                endElement(getXMLTags().getElementTag());
+                endElement(XMLTags.ELEMENT);
+                coordinates.endElement();
+
                 if (segmentPluginController != null)
                     segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
                 break;
@@ -428,9 +456,13 @@ public class HL7Reader extends StandardReader {
                 if (isKeepEmptyElements()) {
                     attributes = getDocumentAttributes();
                     attributes.clear();
-                    attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
-                    startElement(getXMLTags().getElementTag(), attributes);
-                    endElement(getXMLTags().getElementTag());
+                    attributes.addCDATA(XMLTags.ID, elementId);
+
+                    coordinates.startElement();
+                    startElement(XMLTags.ELEMENT, attributes);
+                    endElement(XMLTags.ELEMENT);
+                    coordinates.endElement();
+
                     if (segmentPluginController != null)
                         segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
                 }
@@ -443,9 +475,11 @@ public class HL7Reader extends StandardReader {
                     nonCompositeAccordingToPlugin = isNonCompositeAccordingToPlugin(elementId);
                     if (!nonCompositeAccordingToPlugin) {
                         // Normal case
-                        attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
-                        attributes.addCDATA(getXMLTags().getCompositeIndicator(), "yes");
-                        startElement(getXMLTags().getElementTag(), attributes);
+                        attributes.addCDATA(XMLTags.ID, elementId);
+                        attributes.addCDATA(XMLTags.COMPOSITE, "yes");
+
+                        coordinates.startElement();
+                        startElement(XMLTags.ELEMENT, attributes);
                     }
                 }
 
@@ -455,11 +489,14 @@ public class HL7Reader extends StandardReader {
                 } else {
                     // Normal case
                     attributes.clear();
-                    attributes.addAttribute("", getXMLTags().getSubElementSequence(),
-                            getXMLTags().getSubElementSequence(), "CDATA", String.valueOf(1 + t.getSubIndex()));
-                    startElement(getXMLTags().getSubElementTag(), attributes);
+                    attributes.addAttribute("", SUB_ELEMENT_SEQUENCE,
+                            SUB_ELEMENT_SEQUENCE, "CDATA", String.valueOf(1 + t.getSubIndex()));
+
+                    coordinates.startSubElement();
+                    startElement(XMLTags.SUB_ELEMENT, attributes);
                     getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
-                    endElement(getXMLTags().getSubElementTag());
+                    endElement(XMLTags.SUB_ELEMENT);
+                    coordinates.endSubElement();
                 }
 
                 if (t.isLast()) {
@@ -468,15 +505,21 @@ public class HL7Reader extends StandardReader {
                         String data = fauxComposite.toString();
                         // Mimic what we do for a normal simple element
                         attributes.clear();
-                        attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
-                        startElement(getXMLTags().getElementTag(), attributes);
+                        attributes.addCDATA(XMLTags.ID, elementId);
+
+                        coordinates.startElement();
+                        startElement(XMLTags.ELEMENT, attributes);
                         getContentHandler().characters(data.toCharArray(), 0, data.length());
-                        endElement(getXMLTags().getElementTag());
+                        endElement(XMLTags.ELEMENT);
+                        coordinates.endElement();
+
                         if (segmentPluginController != null)
                             segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
                         fauxComposite.setLength(0);
                     } else {
-                        endElement(getXMLTags().getElementTag());
+                        endElement(XMLTags.ELEMENT);
+                        coordinates.endElement();
+
                         nonCompositeAccordingToPlugin = false;
                     }
                 }
@@ -489,9 +532,11 @@ public class HL7Reader extends StandardReader {
                     if (!nonCompositeAccordingToPlugin) {
                         // Normal case
                         attributes.clear();
-                        attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
-                        attributes.addCDATA(getXMLTags().getCompositeIndicator(), "yes");
-                        startElement(getXMLTags().getElementTag(), attributes);
+                        attributes.addCDATA(XMLTags.ID, elementId);
+                        attributes.addCDATA(XMLTags.COMPOSITE, "yes");
+
+                        coordinates.startElement();
+                        startElement(XMLTags.ELEMENT, attributes);
                     }
                 }
 
@@ -502,8 +547,11 @@ public class HL7Reader extends StandardReader {
                     if (nonCompositeAccordingToPlugin) {
                         // Mimic what we do for a normal simple element
                         attributes.clear();
-                        attributes.addCDATA(getXMLTags().getIdAttribute(), elementId);
-                        startElement(getXMLTags().getElementTag(), attributes);
+                        attributes.addCDATA(XMLTags.ID, elementId);
+
+                        coordinates.startElement();
+                        startElement(XMLTags.ELEMENT, attributes);
+
                         // Remove trailing ^s
                         while (true) {
                             if (fauxComposite.isEmpty()) break;
@@ -516,17 +564,51 @@ public class HL7Reader extends StandardReader {
                         }
                         String data = fauxComposite.toString();
                         getContentHandler().characters(data.toCharArray(), 0, data.length());
-                        endElement(getXMLTags().getElementTag());
+
+                        endElement(XMLTags.ELEMENT);
+                        coordinates.endElement();
+
                         if (segmentPluginController != null)
                             segmentPluginController.noteElement(getContentHandler(), elementId, t.getValueChars(), 0, t.getValueLength());
                         fauxComposite.setLength(0);
 
                     } else {
                         // Normal case
-                        endElement(getXMLTags().getElementTag());
+                        endElement(XMLTags.ELEMENT);
+                        // coordinates.endElement();
+
                         nonCompositeAccordingToPlugin = false;
                     }
                 }
+                break;
+            case SUB_SUB_EMPTY:
+                System.out.println("... sub-sub-empty");
+                break;
+            case SUB_SUB_ELEMENT:
+                attributes = getDocumentAttributes();
+                attributes.clear();
+
+                if (!coordinates.isSubElementStarted()) {
+                    // If we see sub-sub-elements without having started a sub-element, do it now.
+                    // But we need to be careful about exactly when this sub-element gets ended!
+                    coordinates.startSubElement();
+                    // The sequence is origin 1, while the index is origin 0
+                    int sequence = coordinates.getSubIndex() + 1;
+                    attributes.addCDATA(SUB_ELEMENT_SEQUENCE, String.valueOf(sequence));
+                    attributes.addCDATA(XMLTags.COMPOSITE, "yes");
+                    startElement(XMLTags.SUB_ELEMENT, attributes);
+                    attributes.clear();
+                }
+
+                int sequence = coordinates.getSubSubIndex() + 1;
+                attributes.addCDATA(SUB_ELEMENT_SEQUENCE, String.valueOf(sequence));
+
+                coordinates.startSubSubElement();
+                startElement(SUB_SUB_ELEMENT, attributes);
+                getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
+                endElement(SUB_SUB_ELEMENT);
+                coordinates.endSubSubElement();
+
                 break;
         }
     }
