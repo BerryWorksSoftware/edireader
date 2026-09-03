@@ -51,7 +51,7 @@ public class EDITokenizer extends AbstractTokenizer {
 
         if (preRead.length > charBuffer.capacity())
             throw new RuntimeException("Attempt to create EDITokenizer with " + preRead.length +
-                                       " pre-read chars, which is greater than the internal buffer size of " + charBuffer.capacity());
+                    " pre-read chars, which is greater than the internal buffer size of " + charBuffer.capacity());
         ((Buffer) charBuffer).clear();
         charBuffer.put(preRead);
         ((Buffer) charBuffer).flip();
@@ -138,7 +138,7 @@ public class EDITokenizer extends AbstractTokenizer {
 
     /**
      * Gets the remaining chars that have been read into the buffer
-     * and not returned by getChars(n) or equivalant. Chars previewed
+     * and not returned by getChars(n) or equivalent. Chars previewed
      * by lookahead(n) are not considered to have been used and therefore
      * are included among the chars returned by getBuffered.
      * <p>
@@ -183,26 +183,35 @@ public class EDITokenizer extends AbstractTokenizer {
      */
     public char[] lookahead(int n) throws IOException {
         if (n > BUFFER_SIZE) {
-            throw new IllegalArgumentException("Attempt to lookahead(" + n + ") which exceeds the buffer size of " + BUFFER_SIZE);
+            throw new IllegalArgumentException(
+                    "Attempt to lookahead(" + n +
+                            ") which exceeds the buffer size of " + BUFFER_SIZE);
         }
+        if (n <= 0) {
+            throw new IllegalArgumentException("lookahead() requires n > 0");
+        }
+
         char[] rval = new char[n];
 
-        // The 1st char is grabbed using the tokenizer's built-in getChar() / ungetChar() mechanism.
-        // This allows things to work properly whether or not the next char has already been gotten.
+        // The first character is obtained through the tokenizer's
+        // getChar()/ungetChar() mechanism so that lookahead works
+        // whether or not the next character has already been gotten.
         getChar();
         rval[0] = cChar;
         ungetChar();
 
-        // The minus 1 is because we have already filled the first char of the return value, so we only need n-1 more
+        // We already have the first character, so ensure the buffer contains the remaining n - 1 characters.
         if (charBuffer.remaining() < n - 1) {
-//            logger.debug("Buffering more data to satisfy lookahead({}})", n);
             readUntilBufferProvidesAtLeast(n - 1);
         }
 
-        // Move chars from the buffer into the return value
+        // Read from a duplicate so that lookahead does not change the position of the actual buffer.
+        CharBuffer duplicate = charBuffer.duplicate();
+
         int j = 1;
-        for (int i = charBuffer.position(); i < charBuffer.limit() && j < n; i++)
-            rval[j++] = charBuffer.get(i);
+        int count = Math.min(n - 1, duplicate.remaining());
+        duplicate.get(rval, j, count);
+        j += count;
 
         // If more lookahead chars were requested than were satisfied for any reason,
         // then fill the return value with '?' to the requested length.
