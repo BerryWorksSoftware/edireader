@@ -33,6 +33,15 @@ public class HL7ReaderTest {
     }
 
     @Test
+    public void canParse3LevelsWithRepetition() throws EDISyntaxException, IOException, TransformerException {
+        StringReader stringReader = new StringReader(HL7_3_LEVELS_WITH_REPETITION);
+        StringWriter xmlOutput = new StringWriter();
+        Conversion.ediToXml(stringReader, xmlOutput, new HL7Reader());
+        String actual = xmlOutput.toString();
+        assertEqualsDisregardingSpacesAndLineSeparators(HL7_XML_3_LEVELS_WITH_REPETITION, actual);
+    }
+
+    @Test
     public void tinySample() throws TransformerException {
         StringWriter xmlOutput = new StringWriter();
         Conversion.ediToXml(new StringReader("""
