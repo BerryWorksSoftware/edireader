@@ -1,7 +1,12 @@
 # Release Notes
 
-### 6.0.1 - August ??, 2026
+### 6.0.1 - September ??, 2026
 
+* Maintenance: Simplify `XMLTags` to provide the SAX/XML tag and attribute names as constants.
+  The `DefaultXmlTags` mechanism to provide customized names is removed.
+* Feature: Generalize the simple element and composite element support used in X12 and EDIFACT
+  to also handle the additional level of composition used in HL7. In addition of elements and sub-elements,
+  we now have sub-sub-elements as well.
 * Maintenance: When parsing HL7, ignore empty elements by default. 
 
 ### 6.0.0 - August, 2026
