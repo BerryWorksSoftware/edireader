@@ -186,11 +186,11 @@ public class EDIReaderSAXAdapter extends DefaultHandler implements SourcePositio
         } else if (localName.startsWith(XMLTags.SUB_ELEMENT)) {
             endSegmentSubElement(elementString);
             elementString = null;
-        } else if (localName.startsWith(XMLTags.LOOP)) {
-            endSegmentGroup();
         } else if (localName.startsWith(XMLTags.SUB_SUB_ELEMENT)) {
             endSegmentSubSubElement(elementString);
             elementString = null;
+        } else if (localName.startsWith(XMLTags.LOOP)) {
+            endSegmentGroup();
         }
     }
 
