@@ -44,6 +44,11 @@ public class EDIReaderSAXAdapterTest {
         adapter.characters("def".toCharArray(), 0, 3);
         adapter.endElement("", "subelement", "subelement");
         assertEquals("Interchange.Group.Transaction.FirstSegment.Element.e:abc.SubElement.s:def.", adapter.getTrace());
+
+        adapter.startElement("", "subsubelement", "subsubelement", attributes);
+        adapter.characters("ghi".toCharArray(), 0, 3);
+        adapter.endElement("", "subsubelement", "subsubelement");
+        assertEquals("Interchange.Group.Transaction.FirstSegment.Element.e:abc.SubElement.s:def.SubSubElement.ss:ghi.", adapter.getTrace());
     }
 
     @Test
@@ -225,6 +230,17 @@ public class EDIReaderSAXAdapterTest {
         protected void endSegmentSubElement(String subElementString) {
             if (showElements) builder.append("s:").append(subElementString).append('.');
         }
+
+        @Override
+        protected void beginSegmentSubSubElement(Attributes atts) {
+            if (showElements) builder.append("SubSubElement.");
+        }
+
+        @Override
+        protected void endSegmentSubSubElement(String subElementString) {
+            if (showElements) builder.append("ss:").append(subElementString).append('.');
+        }
+
 
 //        @Override
 //        public void characters(char[] ch, int start, int length) throws SAXException {
