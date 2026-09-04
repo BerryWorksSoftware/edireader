@@ -14,8 +14,15 @@ EDIReader Core rather than requiring the EDIReader Framework.
 
 [ReleaseNotes.md](ReleaseNotes.md)
 
-Looking for an on-premise REST API engine built on EDIReader?
-Check out [BerryWave EDI API](https://github.com/RBMayberry/BerryWave-EDI-API) 
+### BerryWave EDI Interfaces
+
+EDIReader is the core EDI parsing engine used by BerryWave's integration products:
+
+* Looking for an on-premise REST API for EDI processing?
+  Check out the [BerryWave EDI API](https://github.com/RBMayberry/BerryWave-EDI-API).
+* Developing in Python?
+  Check out the [BerryWave Python SDK](https://github.com/canabrook/berrywave-python),
+  which provides Python access to BerryWave EDI processing capabilities.
 
 ### Quick Start
 
