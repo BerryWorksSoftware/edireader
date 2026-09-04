@@ -1,6 +1,6 @@
 # Release Notes
 
-### 6.0.1 - September ??, 2026
+### 6.0.1 - September 3, 2026
 
 * Maintenance: Simplify `XMLTags` to provide the SAX/XML tag and attribute names as constants.
   The `DefaultXmlTags` mechanism to provide customized names is removed.
