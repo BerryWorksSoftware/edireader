@@ -574,7 +574,7 @@ public class HL7Reader extends StandardReader {
                     } else {
                         // Normal case
                         endElement(XMLTags.ELEMENT);
-                        // coordinates.endElement();
+                        coordinates.endElement();
 
                         nonCompositeAccordingToPlugin = false;
                     }
