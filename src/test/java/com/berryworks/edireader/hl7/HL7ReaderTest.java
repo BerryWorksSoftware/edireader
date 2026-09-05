@@ -260,6 +260,43 @@ public class HL7ReaderTest {
                 </ediroot>""", actual);
     }
 
+    // ZXX|A~B^C&D^E&F~G^H&I&J|
+
+    @Test
+    public void canParsePathologicalCase6() throws EDISyntaxException, IOException, TransformerException {
+        StringReader stringReader = new StringReader("""
+                MSH|^~\\&|REGISTRATION|GENERAL_HOSPITAL|EHR|GENERAL_HOSPITAL|20260905083000||ADT^A01^ADT_A01|MSG00001|P|2.7
+                ZXX|A~B^C&D^E^~G|
+                """);
+        StringWriter xmlOutput = new StringWriter();
+        Conversion.ediToXml(stringReader, xmlOutput, new HL7Reader());
+        String actual = xmlOutput.toString();
+        assertEqualsDisregardingSpacesAndLineSeparators("""
+                <?xml version="1.0" encoding="UTF-8"?>
+                <ediroot>
+                    <interchange Standard="HL7">
+                        <group ApplSender="REGISTRATION" SendingFacility="GENERAL_HOSPITAL" ApplReceiver="EHR"
+                               ReceivingFacility="GENERAL_HOSPITAL" Date="20260905" Time="083000" Type="ADT" TypeDesc="ADT message"
+                               Event="A01" EventDesc="Admit / visit notification" Control="MSG00001" ProcessingId="P"
+                               SyntaxVersion="2.7">
+                            <transaction Type="ADT" Event="A01" Control="MSG00001">
+                                <segment Id="ZXX">
+                                    <element Id="ZXX01">A</element>
+                                    <element Id="ZXX01" Composite="yes">
+                                        <subelement Sequence="1">B</subelement>
+                                        <subelement Sequence="2" Composite="yes">
+                                            <subsubelement Sequence="1">C</subsubelement>
+                                            <subsubelement Sequence="2">D</subsubelement>
+                                        </subelement>
+                                        <subelement Sequence="3">E</subelement>
+                                    </element>
+                                    <element Id="ZXX01">G</element>
+                                </segment>
+                            </transaction>
+                        </group>
+                    </interchange>
+                </ediroot>""", actual);
+    }
 
     class MyHandler extends DefaultHandler {
 

@@ -400,22 +400,6 @@ public class HL7Reader extends StandardReader {
         return (t);
     }
 
-    private void endSubElementIfNeeded() throws SAXException {
-        if (coordinates.isSubElementStarted()) {
-            if (!coordinates.isSubElementEnded()) {
-                endElement(XMLTags.SUB_ELEMENT);
-                coordinates.endSubElement();
-            }
-        }
-        if (coordinates.isElementStarted()) {
-            if (!coordinates.isElementEnded()) {
-                endElement(XMLTags.ELEMENT);
-                coordinates.endElement();
-            }
-        }
-
-    }
-
     /**
      * Issue SAX calls on behalf of an EDI element. The token passed as an
      * argument is first token of a field.
@@ -468,6 +452,7 @@ public class HL7Reader extends StandardReader {
                 break;
 
             case SUB_ELEMENT:
+                endSubElementIfNeeded();
                 attributes = getDocumentAttributes();
                 attributes.clear();
                 if (t.isFirst()) {
@@ -607,8 +592,28 @@ public class HL7Reader extends StandardReader {
                 endElement(SUB_SUB_ELEMENT);
                 coordinates.endSubSubElement();
 
+                if (t.isLast()) {
+                    System.out.println("... last sub-sub-element within a sub-element");
+                }
+
                 break;
         }
+    }
+
+    private void endSubElementIfNeeded() throws SAXException {
+        if (coordinates.isSubElementStarted()) {
+            if (!coordinates.isSubElementEnded()) {
+                endElement(XMLTags.SUB_ELEMENT);
+                coordinates.endSubElement();
+            }
+        }
+        if (coordinates.isElementStarted()) {
+            if (!coordinates.isElementEnded()) {
+                endElement(XMLTags.ELEMENT);
+                coordinates.endElement();
+            }
+        }
+
     }
 
     private boolean isNonCompositeAccordingToPlugin(String elementId) {
