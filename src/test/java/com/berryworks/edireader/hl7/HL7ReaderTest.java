@@ -107,7 +107,7 @@ public class HL7ReaderTest {
     // ZXX|A~B^C&D^E&F~G^H&I&J|
 
     @Test
-    public void canParsePathologicalCaseA() throws EDISyntaxException, IOException, TransformerException {
+    public void canParsePathologicalCase1() throws EDISyntaxException, IOException, TransformerException {
         StringReader stringReader = new StringReader("""
                 MSH|^~\\&|REGISTRATION|GENERAL_HOSPITAL|EHR|GENERAL_HOSPITAL|20260905083000||ADT^A01^ADT_A01|MSG00001|P|2.7
                 ZXX|A|
@@ -135,7 +135,7 @@ public class HL7ReaderTest {
     }
 
     @Test
-    public void canParsePathologicalCaseB() throws EDISyntaxException, IOException, TransformerException {
+    public void canParsePathologicalCase2() throws EDISyntaxException, IOException, TransformerException {
         StringReader stringReader = new StringReader("""
                 MSH|^~\\&|REGISTRATION|GENERAL_HOSPITAL|EHR|GENERAL_HOSPITAL|20260905083000||ADT^A01^ADT_A01|MSG00001|P|2.7
                 ZXX|A~B~G|
@@ -155,6 +155,39 @@ public class HL7ReaderTest {
                                 <segment Id="ZXX">
                                     <element Id="ZXX01">A</element>
                                     <element Id="ZXX01">B</element>
+                                    <element Id="ZXX01">G</element>
+                                </segment>
+                            </transaction>
+                        </group>
+                    </interchange>
+                </ediroot>""", actual);
+    }
+
+    @Test
+    public void canParsePathologicalCase3() throws EDISyntaxException, IOException, TransformerException {
+        StringReader stringReader = new StringReader("""
+                MSH|^~\\&|REGISTRATION|GENERAL_HOSPITAL|EHR|GENERAL_HOSPITAL|20260905083000||ADT^A01^ADT_A01|MSG00001|P|2.7
+                ZXX|A~B^C^E~G|
+                """);
+        StringWriter xmlOutput = new StringWriter();
+        Conversion.ediToXml(stringReader, xmlOutput, new HL7Reader());
+        String actual = xmlOutput.toString();
+        assertEqualsDisregardingSpacesAndLineSeparators("""
+                <?xml version="1.0" encoding="UTF-8"?>
+                <ediroot>
+                    <interchange Standard="HL7">
+                        <group ApplSender="REGISTRATION" SendingFacility="GENERAL_HOSPITAL" ApplReceiver="EHR"
+                               ReceivingFacility="GENERAL_HOSPITAL" Date="20260905" Time="083000" Type="ADT" TypeDesc="ADT message"
+                               Event="A01" EventDesc="Admit / visit notification" Control="MSG00001" ProcessingId="P"
+                               SyntaxVersion="2.7">
+                            <transaction Type="ADT" Event="A01" Control="MSG00001">
+                                <segment Id="ZXX">
+                                    <element Id="ZXX01">A</element>
+                                    <element Id="ZXX01" Composite="yes">
+                                        <subelement Sequence="1">B</subelement>
+                                        <subelement Sequence="2">C</subelement>
+                                        <subelement Sequence="3">E</subelement>
+                                    </element>
                                     <element Id="ZXX01">G</element>
                                 </segment>
                             </transaction>
