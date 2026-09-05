@@ -4,6 +4,7 @@
 
 * Fix: Let `EDIReaderSAXAdapter` react to the new subsubelement used by HL7Reader so that 
   an adapter -- such as the JsonAdapter in the EDIReader Framework -- can handle sub-sub-elements as intended.
+* Fix: When parsing HL7 with `<subsubelement>`, the </subelement> was sometimes missing. 
 
 ### 6.0.1 - September 3, 2026
 
