@@ -36,6 +36,11 @@ public class ElementCoordinates {
             // Same element and sub-element, but a different sub-sub-element
             subSubIndex = token.getSubSubIndex();
             subSubElementStarted = subSubElementEnded = false;
+        } else {
+            // This appears to be a repetition of an element.
+            elementStarted = elementEnded = false;
+            subElementStarted = subElementEnded = false;
+            subSubElementStarted = subSubElementEnded = false;
         }
     }
 
