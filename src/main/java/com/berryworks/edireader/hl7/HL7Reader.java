@@ -58,7 +58,7 @@ public class HL7Reader extends StandardReader {
     private static final Logger logger = LoggerFactory.getLogger(HL7Reader.class);
     private String messageType;
     private CompositeAwarePlugin compositeAwarePlugin;
-    private ElementCoordinates coordinates = new ElementCoordinates();
+    private ElementCoordinates coordinates = new ElementCoordinates(this);
 
     // These next two items deal with the special case where the HL7 data has the form of a composite
     // but the plugin (and potentially an XSD) says it is not a composite according to the HL7 specifications.
@@ -452,7 +452,6 @@ public class HL7Reader extends StandardReader {
                 break;
 
             case SUB_ELEMENT:
-                endSubElementIfNeeded();
                 attributes = getDocumentAttributes();
                 attributes.clear();
                 if (t.isFirst()) {
@@ -591,10 +590,6 @@ public class HL7Reader extends StandardReader {
                 getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
                 endElement(SUB_SUB_ELEMENT);
                 coordinates.endSubSubElement();
-
-                if (t.isLast()) {
-                    System.out.println("... last sub-sub-element within a sub-element");
-                }
 
                 break;
         }

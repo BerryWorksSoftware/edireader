@@ -129,6 +129,15 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
         this.pluginControllerFactory = pluginControllerFactory;
     }
 
+    public void startElement(String tag, Attributes attributes)
+            throws SAXException {
+        getContentHandler().startElement("", tag, tag, attributes);
+    }
+
+    public void endElement(String tag) throws SAXException {
+        getContentHandler().endElement("", tag, tag);
+    }
+
     protected void startXMLDocument() throws SAXException {
         AttributesImpl attrList = new AttributesImpl();
         attrList.clear();
@@ -148,14 +157,5 @@ public class EDIReader extends EDIAbstractReader implements ErrorMessages {
     protected void endXMLDocument() throws SAXException {
         endElement(ROOT);
         getContentHandler().endDocument();
-    }
-
-    protected void startElement(String tag, Attributes attributes)
-            throws SAXException {
-        getContentHandler().startElement("", tag, tag, attributes);
-    }
-
-    protected void endElement(String tag) throws SAXException {
-        getContentHandler().endElement("", tag, tag);
     }
 }

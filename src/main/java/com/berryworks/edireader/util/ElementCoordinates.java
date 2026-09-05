@@ -1,15 +1,23 @@
 package com.berryworks.edireader.util;
 
+import com.berryworks.edireader.EDIReader;
+import com.berryworks.edireader.XMLTags;
 import com.berryworks.edireader.tokenizer.Token;
+import org.xml.sax.SAXException;
 
 public class ElementCoordinates {
+    private EDIReader ediReader;
     private int index, subIndex, subSubIndex;
     private boolean elementStarted, elementEnded;
     private boolean subElementStarted, subElementEnded;
     private boolean subSubElementStarted, subSubElementEnded;
     private String segmentType;
 
-    public void focus(Token token) {
+    public ElementCoordinates(EDIReader ediReader) {
+        this.ediReader = ediReader;
+    }
+
+    public void focus(Token token) throws SAXException {
         if (token == null) throw new IllegalArgumentException("token is null");
 
         segmentType = token.getSegmentType();
@@ -26,6 +34,7 @@ public class ElementCoordinates {
 
         } else if (token.getSubIndex() != subIndex) {
             // Same element, but a different sub-element
+            endSubElementIfNeeded();
             subIndex = token.getSubIndex();
             subElementStarted = subElementEnded = false;
 
@@ -41,6 +50,12 @@ public class ElementCoordinates {
             elementStarted = elementEnded = false;
             subElementStarted = subElementEnded = false;
             subSubElementStarted = subSubElementEnded = false;
+        }
+    }
+
+    private void endSubElementIfNeeded() throws SAXException {
+        if (isSubElementStarted() && !isSubElementEnded()) {
+            ediReader.endElement(XMLTags.SUB_ELEMENT);
         }
     }
 
@@ -125,6 +140,6 @@ public class ElementCoordinates {
         return segmentType + " " + index + "." + subIndex + "." + subSubIndex +
                 ", " + elementStarted + "," + elementEnded +
                 ", " + subElementStarted + "," + subElementEnded +
-                ", " + subSubElementStarted +   "," + subSubElementEnded;
+                ", " + subSubElementStarted + "," + subSubElementEnded;
     }
 }

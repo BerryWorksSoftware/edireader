@@ -1,10 +1,14 @@
 package com.berryworks.edireader.util;
 
+import com.berryworks.edireader.EDIReader;
+import com.berryworks.edireader.EDIReaderFactory;
 import com.berryworks.edireader.EDISyntaxException;
 import com.berryworks.edireader.tokenizer.EDITokenizer;
 import com.berryworks.edireader.tokenizer.Token;
 import com.berryworks.edireader.tokenizer.Tokenizer;
+import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -13,10 +17,20 @@ import static org.junit.Assert.*;
 
 public class ElementCoordinatesTest {
 
-    private ElementCoordinates coordinates = new ElementCoordinates();
+    private EDIReader ediReader;
+    private ElementCoordinates coordinates;
+
+    @Before
+    public void setUp() throws EDISyntaxException, IOException {
+        ediReader = EDIReaderFactory.createEDIReader(new StringReader("""
+                MSH|^~\\&|REGISTRATION|GENERAL_HOSPITAL|EHR|GENERAL_HOSPITAL|20260905083000||ADT^A01^ADT_A01|MSG00001|P|2.7
+                ZXX|A~B^C&D^E^~G|
+                """));
+        coordinates = new ElementCoordinates(ediReader);
+    }
 
     @Test
-    public void basics() throws EDISyntaxException, IOException {
+    public void basics() throws SAXException, IOException {
         Tokenizer tokenizer = new EDITokenizer(new StringReader("""
                 AIP||B|MICHAEL^Bennett^Michael T.^^^^^^&&NPI|
                 """))
@@ -86,14 +100,14 @@ public class ElementCoordinatesTest {
     }
 
     @Test
-    public void pidSegment() throws EDISyntaxException, IOException {
+    public void pidSegment() throws SAXException, IOException {
         Tokenizer tokenizer = new EDITokenizer(new StringReader("""
                 PID|||20084571^^^^PT~76432^^^^PI~20084571^^^^MR~20084571^^^^AN|76432|Martinez^Robert^^^Mr.||19620417|M||White|4217 N Maplewood^^Chicago^IL^60618||(773) 555-0147^PRN^PH|^WPN^PH|English|U||20084571||||Not Hispanic or Latino||||||||N||||||||||Home|
                 """))
                 .setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
 
         Token token;
-        ElementCoordinates coordinates = new ElementCoordinates();
+        ElementCoordinates coordinates = new ElementCoordinates(ediReader);
 
         while ((token = tokenizer.nextToken()).getType() != Token.TokenType.END_OF_DATA) {
             coordinates.focus(token);
@@ -104,7 +118,7 @@ public class ElementCoordinatesTest {
 
 
     @Test
-    public void cannotEndWithoutStart() throws EDISyntaxException, IOException {
+    public void cannotEndWithoutStart() throws SAXException, IOException {
         Tokenizer tokenizer = new EDITokenizer(new StringReader("SEG|one|twoA^twoB||^fourB|five"))
                 .setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
 
@@ -192,7 +206,7 @@ public class ElementCoordinatesTest {
     }
 
     @Test
-    public void cannotStartTwice() throws EDISyntaxException, IOException {
+    public void cannotStartTwice() throws SAXException, IOException {
         Tokenizer tokenizer = new EDITokenizer(new StringReader("SEG|one|twoA^twoB||^fourB|five"))
                 .setDelimiter('|').setSubDelimiter('^').setSubSubDelimiter('&').setTerminator('\n');
 
