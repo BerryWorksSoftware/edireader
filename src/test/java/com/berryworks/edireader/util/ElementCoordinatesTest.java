@@ -1,5 +1,6 @@
 package com.berryworks.edireader.util;
 
+import com.berryworks.edireader.EDIAttributes;
 import com.berryworks.edireader.EDIReader;
 import com.berryworks.edireader.EDIReaderFactory;
 import com.berryworks.edireader.EDISyntaxException;
@@ -86,7 +87,7 @@ public class ElementCoordinatesTest {
         assertFalse(coordinates.isSubElementStarted());
         assertFalse(coordinates.isSubElementEnded());
 
-        coordinates.startSubElement();
+        coordinates.startSubElement(new EDIAttributes());
         assertTrue(coordinates.isSubElementStarted());
         assertFalse(coordinates.isSubElementEnded());
 
@@ -232,9 +233,9 @@ public class ElementCoordinatesTest {
         assertEquals("twoA", token.getValue());
         coordinates.focus(token);
         coordinates.startElement();
-        coordinates.startSubElement();
+        coordinates.startSubElement(new EDIAttributes());
         try {
-            coordinates.startSubElement();
+            coordinates.startSubElement(new EDIAttributes());
             fail();
         } catch (Exception e) {
             assertEquals("Sub-element started twice", e.getMessage());

@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.berryworks.edireader.XMLTags.SUB_ELEMENT_SEQUENCE;
-import static com.berryworks.edireader.XMLTags.SUB_SUB_ELEMENT;
 import static com.berryworks.edireader.util.FixedLength.isPresent;
 
 /**
@@ -473,8 +472,7 @@ public class HL7Reader extends StandardReader {
                     attributes.addAttribute("", SUB_ELEMENT_SEQUENCE,
                             SUB_ELEMENT_SEQUENCE, "CDATA", String.valueOf(1 + t.getSubIndex()));
 
-                    coordinates.startSubElement();
-                    startElement(XMLTags.SUB_ELEMENT, attributes);
+                    coordinates.startSubElement(attributes);
                     getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
                     coordinates.endSubElement();
                 }
@@ -562,20 +560,18 @@ public class HL7Reader extends StandardReader {
                 if (!coordinates.isSubElementStarted()) {
                     // If we see sub-sub-elements without having started a sub-element, do it now.
                     // But we need to be careful about exactly when this sub-element gets ended!
-                    coordinates.startSubElement();
                     // The sequence is origin 1, while the index is origin 0
                     int sequence = coordinates.getSubIndex() + 1;
                     attributes.addCDATA(SUB_ELEMENT_SEQUENCE, String.valueOf(sequence));
                     attributes.addCDATA(XMLTags.COMPOSITE, "yes");
-                    startElement(XMLTags.SUB_ELEMENT, attributes);
+                    coordinates.startSubElement(attributes);
                     attributes.clear();
                 }
 
                 int sequence = coordinates.getSubSubIndex() + 1;
                 attributes.addCDATA(SUB_ELEMENT_SEQUENCE, String.valueOf(sequence));
 
-                coordinates.startSubSubElement();
-                startElement(SUB_SUB_ELEMENT, attributes);
+                coordinates.startSubSubElement(attributes);
                 getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
                 coordinates.endSubSubElement();
 

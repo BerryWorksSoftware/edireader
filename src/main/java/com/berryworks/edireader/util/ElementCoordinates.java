@@ -1,5 +1,6 @@
 package com.berryworks.edireader.util;
 
+import com.berryworks.edireader.EDIAttributes;
 import com.berryworks.edireader.EDIReader;
 import com.berryworks.edireader.XMLTags;
 import com.berryworks.edireader.tokenizer.Token;
@@ -94,8 +95,9 @@ public class ElementCoordinates {
         subSubElementStarted = subSubElementEnded = false;
     }
 
-    public void startSubElement() {
+    public void startSubElement(EDIAttributes attributes) throws SAXException {
         if (subElementStarted) throw new IllegalStateException("Sub-element started twice");
+        ediReader.startElement(XMLTags.SUB_ELEMENT, attributes);
         subElementStarted = true;
     }
 
@@ -105,8 +107,9 @@ public class ElementCoordinates {
         subElementEnded = true;
     }
 
-    public void startSubSubElement() {
+    public void startSubSubElement(EDIAttributes attributes) throws SAXException {
         if (subSubElementStarted) throw new IllegalStateException("Sub-sub-element started twice");
+        ediReader.startElement(SUB_SUB_ELEMENT, attributes);
         subSubElementStarted = true;
     }
 
