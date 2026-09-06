@@ -10,6 +10,7 @@ import com.berryworks.edireader.tokenizer.Tokenizer;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,6 +28,7 @@ public class ElementCoordinatesTest {
                 MSH|^~\\&|REGISTRATION|GENERAL_HOSPITAL|EHR|GENERAL_HOSPITAL|20260905083000||ADT^A01^ADT_A01|MSG00001|P|2.7
                 ZXX|A~B^C&D^E^~G|
                 """));
+        ediReader.setContentHandler(new DefaultHandler());
         coordinates = new ElementCoordinates(ediReader);
     }
 
