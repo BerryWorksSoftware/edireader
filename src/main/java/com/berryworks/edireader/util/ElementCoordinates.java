@@ -5,6 +5,8 @@ import com.berryworks.edireader.XMLTags;
 import com.berryworks.edireader.tokenizer.Token;
 import org.xml.sax.SAXException;
 
+import static com.berryworks.edireader.XMLTags.SUB_SUB_ELEMENT;
+
 public class ElementCoordinates {
     private EDIReader ediReader;
     private int index, subIndex, subSubIndex;
@@ -83,9 +85,10 @@ public class ElementCoordinates {
         elementStarted = true;
     }
 
-    public void endElement() {
+    public void endElement() throws SAXException {
         if (!elementStarted) throw new IllegalStateException("Element not started");
         if (subElementStarted && !subElementEnded) throw new IllegalStateException("Sub-element started but not ended");
+        ediReader.endElement(XMLTags.ELEMENT);
         elementEnded = true;
         subElementStarted = subElementEnded = false;
         subSubElementStarted = subSubElementEnded = false;
@@ -96,8 +99,9 @@ public class ElementCoordinates {
         subElementStarted = true;
     }
 
-    public void endSubElement() {
+    public void endSubElement() throws SAXException {
         if (!subElementStarted) throw new IllegalStateException("Sub-element not started");
+        ediReader.endElement(XMLTags.SUB_ELEMENT);
         subElementEnded = true;
     }
 
@@ -106,8 +110,9 @@ public class ElementCoordinates {
         subSubElementStarted = true;
     }
 
-    public void endSubSubElement() {
+    public void endSubSubElement() throws SAXException {
         if (!subSubElementStarted) throw new IllegalStateException("Sub-sub-element not started");
+        ediReader.endElement(SUB_SUB_ELEMENT);
         subSubElementEnded = true;
     }
 
