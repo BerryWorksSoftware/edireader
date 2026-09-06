@@ -9,7 +9,7 @@ import org.xml.sax.SAXException;
 import static com.berryworks.edireader.XMLTags.SUB_SUB_ELEMENT;
 
 public class ElementCoordinates {
-    private EDIReader ediReader;
+    private final EDIReader ediReader;
     private int index, subIndex, subSubIndex;
     private boolean elementStarted, elementEnded;
     private boolean subElementStarted, subElementEnded;
@@ -74,7 +74,7 @@ public class ElementCoordinates {
         return subSubIndex;
     }
 
-    public void startElement() {
+    public void startElement(EDIAttributes attributes) throws SAXException {
         if (elementStarted) {
             if (elementEnded) {
                 // If the element is both started and ended, we will consider this to be a repetition of the element.
@@ -83,6 +83,7 @@ public class ElementCoordinates {
                 throw new IllegalStateException("Element started twice");
             }
         }
+        ediReader.startElement(XMLTags.ELEMENT, attributes);
         elementStarted = true;
     }
 

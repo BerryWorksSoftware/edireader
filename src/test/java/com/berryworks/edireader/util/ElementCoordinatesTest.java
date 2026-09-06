@@ -61,7 +61,8 @@ public class ElementCoordinatesTest {
         assertFalse(coordinates.isElementStarted());
         assertFalse(coordinates.isElementEnded());
 
-        coordinates.startElement();
+        EDIAttributes attributes = new EDIAttributes();
+        coordinates.startElement(attributes);
         assertTrue(coordinates.isElementStarted());
         assertFalse(coordinates.isElementEnded());
 
@@ -81,13 +82,13 @@ public class ElementCoordinatesTest {
         assertFalse(coordinates.isSubElementStarted());
         assertFalse(coordinates.isSubElementEnded());
 
-        coordinates.startElement();
+        coordinates.startElement(attributes);
         assertTrue(coordinates.isElementStarted());
         assertFalse(coordinates.isElementEnded());
         assertFalse(coordinates.isSubElementStarted());
         assertFalse(coordinates.isSubElementEnded());
 
-        coordinates.startSubElement(new EDIAttributes());
+        coordinates.startSubElement(attributes);
         assertTrue(coordinates.isSubElementStarted());
         assertFalse(coordinates.isSubElementEnded());
 
@@ -137,7 +138,8 @@ public class ElementCoordinatesTest {
         } catch (Exception e) {
             assertEquals("Element not started", e.getMessage());
         }
-        coordinates.startElement();
+        EDIAttributes attributes = new EDIAttributes();
+        coordinates.startElement(attributes);
         coordinates.endElement();
 
         // twoA
@@ -150,7 +152,7 @@ public class ElementCoordinatesTest {
         } catch (Exception e) {
             assertEquals("Sub-element not started", e.getMessage());
         }
-        coordinates.startElement();
+        coordinates.startElement(attributes);
         coordinates.endElement();
 
         // twoB
@@ -174,7 +176,7 @@ public class ElementCoordinatesTest {
         } catch (Exception e) {
             assertEquals("Element not started", e.getMessage());
         }
-        coordinates.startElement();
+        coordinates.startElement(attributes);
         coordinates.endElement();
 
         // fourB (with no fourA)
@@ -189,7 +191,7 @@ public class ElementCoordinatesTest {
         } catch (Exception e) {
             assertEquals("Sub-element not started", e.getMessage());
         }
-        coordinates.startElement();
+        coordinates.startElement(attributes);
         coordinates.endElement();
 
         token = tokenizer.nextToken();
@@ -219,9 +221,10 @@ public class ElementCoordinatesTest {
         token = tokenizer.nextToken();
         assertEquals("one", token.getValue());
         coordinates.focus(token);
-        coordinates.startElement();
+        EDIAttributes attributes = new EDIAttributes();
+        coordinates.startElement(attributes);
         try {
-            coordinates.startElement();
+            coordinates.startElement(attributes);
             fail();
         } catch (Exception e) {
             assertEquals("Element started twice", e.getMessage());
@@ -232,10 +235,10 @@ public class ElementCoordinatesTest {
         token = tokenizer.nextToken();
         assertEquals("twoA", token.getValue());
         coordinates.focus(token);
-        coordinates.startElement();
-        coordinates.startSubElement(new EDIAttributes());
+        coordinates.startElement(attributes);
+        coordinates.startSubElement(attributes);
         try {
-            coordinates.startSubElement(new EDIAttributes());
+            coordinates.startSubElement(attributes);
             fail();
         } catch (Exception e) {
             assertEquals("Sub-element started twice", e.getMessage());

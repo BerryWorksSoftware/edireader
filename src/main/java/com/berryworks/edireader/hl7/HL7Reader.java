@@ -57,7 +57,7 @@ public class HL7Reader extends StandardReader {
     private static final Logger logger = LoggerFactory.getLogger(HL7Reader.class);
     private String messageType;
     private CompositeAwarePlugin compositeAwarePlugin;
-    private ElementCoordinates coordinates = new ElementCoordinates(this);
+    private final ElementCoordinates coordinates = new ElementCoordinates(this);
 
     // These next two items deal with the special case where the HL7 data has the form of a composite
     // but the plugin (and potentially an XSD) says it is not a composite according to the HL7 specifications.
@@ -424,8 +424,7 @@ public class HL7Reader extends StandardReader {
                 attributes.clear();
                 attributes.addCDATA(XMLTags.ID, elementId);
 
-                coordinates.startElement();
-                startElement(XMLTags.ELEMENT, attributes);
+                coordinates.startElement(attributes);
                 getContentHandler().characters(t.getValueChars(), 0, t.getValueLength());
                 coordinates.endElement();
 
@@ -439,8 +438,7 @@ public class HL7Reader extends StandardReader {
                     attributes.clear();
                     attributes.addCDATA(XMLTags.ID, elementId);
 
-                    coordinates.startElement();
-                    startElement(XMLTags.ELEMENT, attributes);
+                    coordinates.startElement(attributes);
                     coordinates.endElement();
 
                     if (segmentPluginController != null)
@@ -458,8 +456,7 @@ public class HL7Reader extends StandardReader {
                         attributes.addCDATA(XMLTags.ID, elementId);
                         attributes.addCDATA(XMLTags.COMPOSITE, "yes");
 
-                        coordinates.startElement();
-                        startElement(XMLTags.ELEMENT, attributes);
+                        coordinates.startElement(attributes);
                     }
                 }
 
@@ -485,8 +482,7 @@ public class HL7Reader extends StandardReader {
                         attributes.clear();
                         attributes.addCDATA(XMLTags.ID, elementId);
 
-                        coordinates.startElement();
-                        startElement(XMLTags.ELEMENT, attributes);
+                        coordinates.startElement(attributes);
                         getContentHandler().characters(data.toCharArray(), 0, data.length());
                         coordinates.endElement();
 
@@ -510,8 +506,7 @@ public class HL7Reader extends StandardReader {
                         attributes.addCDATA(XMLTags.ID, elementId);
                         attributes.addCDATA(XMLTags.COMPOSITE, "yes");
 
-                        coordinates.startElement();
-                        startElement(XMLTags.ELEMENT, attributes);
+                        coordinates.startElement(attributes);
                     }
                 }
 
@@ -523,9 +518,7 @@ public class HL7Reader extends StandardReader {
                         // Mimic what we do for a normal simple element
                         attributes.clear();
                         attributes.addCDATA(XMLTags.ID, elementId);
-
-                        coordinates.startElement();
-                        startElement(XMLTags.ELEMENT, attributes);
+                        coordinates.startElement(attributes);
 
                         // Remove trailing ^s
                         while (true) {
