@@ -663,6 +663,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         segTokenCount++;
                         currentToken.setType(Token.TokenType.SUB_ELEMENT);
                         currentToken.incrementSubElementIndex();
+                        currentToken.resetSubSubElementIndex();
                         currentToken.setValue(cChar);
                         CharacterClass characterClass = scanData();
                         if (characterClass == CharacterClass.SUB_DELIMITER) {

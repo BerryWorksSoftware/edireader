@@ -325,14 +325,16 @@ public class HL7ReaderTest {
                                             <subsubelement Sequence="2">D</subsubelement>
                                         </subelement>
                                         <subelement Sequence="3" Composite="yes">
-                                            <subsubelement Sequence="2">E</subsubelement>
-                                            <subsubelement Sequence="3">F</subsubelement>
-                                            <subsubelement Sequence="4">G</subsubelement>
+                                            <subsubelement Sequence="1">E</subsubelement>
+                                            <subsubelement Sequence="2">F</subsubelement>
                                         </subelement>
-                                        <subelement Sequence="4" Composite="yes">
-                                            <subsubelement Sequence="4">H</subsubelement>
-                                            <subsubelement Sequence="5">I</subsubelement>
-                                            <subsubelement Sequence="6">J</subsubelement>
+                                    </element>
+                                    <element Id="ZXX01" Composite="yes">
+                                        <subelement Sequence="1">G</subelement>
+                                        <subelement Sequence="2" Composite="yes">
+                                            <subsubelement Sequence="1">H</subsubelement>
+                                            <subsubelement Sequence="2">I</subsubelement>
+                                            <subsubelement Sequence="3">J</subsubelement>
                                         </subelement>
                                     </element>
                                 </segment>
