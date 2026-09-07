@@ -37,6 +37,7 @@ public class ElementCoordinates {
 
         } else if (token.getSubIndex() != subIndex) {
             // Same element, but a different sub-element
+            // TODO: This might really be a repetition of the element, not just another sub-element of the same element!
             endSubElementIfNeeded();
             subIndex = token.getSubIndex();
             subElementStarted = subElementEnded = false;
@@ -50,9 +51,17 @@ public class ElementCoordinates {
             subSubElementStarted = subSubElementEnded = false;
         } else {
             // This appears to be a repetition of an element.
+            endElementIfNeeded();
             elementStarted = elementEnded = false;
             subElementStarted = subElementEnded = false;
             subSubElementStarted = subSubElementEnded = false;
+        }
+    }
+
+    private void endElementIfNeeded() throws SAXException {
+        endSubElementIfNeeded();
+        if (isElementStarted() && !isElementEnded()) {
+            ediReader.endElement(XMLTags.ELEMENT);
         }
     }
 
