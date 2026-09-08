@@ -73,9 +73,7 @@ public class ElementCoordinates {
 
     private boolean newRepetition(Token token) {
         // is this a new repetition of the same element ?
-        boolean b = token.getElementRepetition() != repetition;
-        System.out.println("... newRepetition ? " + b);
-        return b;
+        return token.getElementRepetition() != repetition;
     }
 
     private void endElementIfNeeded() throws SAXException {
