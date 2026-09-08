@@ -10,11 +10,16 @@ import static com.berryworks.edireader.XMLTags.SUB_SUB_ELEMENT;
 
 public class ElementCoordinates {
     private final EDIReader ediReader;
+
+    // State items that specifically reflect the previous token and are therefore set for every call to focus()
+    private String segmentType;
     private int index, repetition, subIndex, subSubIndex;
+
+    // State items of the object reflecting more than simply the last token. In particular, the start/end status
+    // of current element, sub-element, and sub-sub-element.
     private boolean elementStarted, elementEnded;
     private boolean subElementStarted, subElementEnded;
     private boolean subSubElementStarted, subSubElementEnded;
-    private String segmentType;
 
     public ElementCoordinates(EDIReader ediReader) {
         this.ediReader = ediReader;
@@ -23,17 +28,10 @@ public class ElementCoordinates {
     public void focus(Token token) throws SAXException {
         if (token == null) throw new IllegalArgumentException("token is null");
 
-        segmentType = token.getSegmentType();
         if (newElement(token)) {
             // Focussing on a new element
-            index = token.getIndex();
             elementStarted = elementEnded = false;
-
-            repetition = token.getElementRepetition();
-            subIndex = token.getSubIndex();
             subElementStarted = subElementEnded = false;
-
-            subSubIndex = token.getSubSubIndex();
             subSubElementStarted = subSubElementEnded = false;
 
         } else if (newRepetition(token)) {
@@ -47,16 +45,14 @@ public class ElementCoordinates {
             // Same element, but a different sub-element
             // TODO: This might really be a repetition of the element, not just another sub-element of the same element!
             endSubElementIfNeeded();
-            subIndex = token.getSubIndex();
             subElementStarted = subElementEnded = false;
-
             subSubIndex = token.getSubSubIndex();
             subSubElementStarted = subSubElementEnded = false;
 
         } else if (token.getSubSubIndex() != subSubIndex) {
             // Same element and sub-element, but a different sub-sub-element
-            subSubIndex = token.getSubSubIndex();
             subSubElementStarted = subSubElementEnded = false;
+
         } else {
             // This appears to be a repetition of an element.
             endElementIfNeeded();
@@ -64,6 +60,12 @@ public class ElementCoordinates {
             subElementStarted = subElementEnded = false;
             subSubElementStarted = subSubElementEnded = false;
         }
+
+        segmentType = token.getSegmentType();
+        index = token.getIndex();
+        repetition = token.getElementRepetition();
+        subIndex = token.getSubIndex();
+        subSubIndex = token.getSubSubIndex();
     }
 
     private boolean newElement(Token token) {
