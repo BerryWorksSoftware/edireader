@@ -153,10 +153,23 @@ public class TokenImpl implements Token {
 
     @Override
     public String toString() {
-        return "Token type=" + getType() + " " +
-                getIndex() + '.' + getSubIndex() + '.' + getSubSubIndex() +
-                " value=" + getValue() +
-                " segment=" + getSegmentType();
+        return getType() + "  " +
+                getIndex() + (getElementRepetition() == 0 ? "" : "(" + getElementRepetition() + ")") +
+                " . " + getSubIndex() +
+                subSubElementRDisplay() +
+                "   value " + getValue() +
+                "   segment " + getSegmentType();
+    }
+
+    private String subSubElementRDisplay() {
+        if (getSubSubIndex() > 0) return " . " + getSubSubIndex();
+        switch (getType()) {
+            case SUB_SUB_ELEMENT:
+            case SUB_SUB_EMPTY:
+                return " . " + getSubSubIndex();
+            default:
+                return "";
+        }
     }
 
     /**

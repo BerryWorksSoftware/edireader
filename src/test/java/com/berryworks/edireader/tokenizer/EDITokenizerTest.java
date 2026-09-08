@@ -2068,7 +2068,7 @@ public class EDITokenizerTest {
                 "abc"));
 
         tokenizer.nextToken();
-        assertEquals("tokenizer state: segmentCount=1 charCount=4 segTokenCount=1 segCharCount=4 currentToken=Token type=SEGMENT_START 0.0.0 value=abc segment=abc buffer.limit=0 buffer.position=0",
+        assertEquals("tokenizer state: segmentCount=1 charCount=4 segTokenCount=1 segCharCount=4 currentToken=SEGMENT_START  0 . 0   value abc   segment abc buffer.limit=0 buffer.position=0",
                 tokenizer.toString());
     }
 
@@ -2205,14 +2205,14 @@ public class EDITokenizerTest {
             if (token.getType() == END_OF_DATA) break;
         }
         assertEquals("""
-                Token type=SEGMENT_START 0.0.0 value=AIP segment=AIP
-                Token type=EMPTY 1.0.0 value= segment=AIP
-                Token type=EMPTY 2.0.0 value= segment=AIP
-                Token type=SUB_ELEMENT 3.0.0 value=MICHAEL segment=AIP
-                Token type=SUB_ELEMENT 3.1.0 value=Bennett segment=AIP
-                Token type=SUB_ELEMENT 3.2.0 value=Michael T. segment=AIP
-                Token type=SEGMENT_END 3.0.0 value=Michael T. segment=AIP
-                Token type=END_OF_DATA 3.0.0 value=Michael T. segment=AIP
+                SEGMENT_START  0 . 0   value AIP   segment AIP
+                EMPTY  1 . 0   value    segment AIP
+                EMPTY  2 . 0   value    segment AIP
+                SUB_ELEMENT  3 . 0   value MICHAEL   segment AIP
+                SUB_ELEMENT  3 . 1   value Bennett   segment AIP
+                SUB_ELEMENT  3 . 2   value Michael T.   segment AIP
+                SEGMENT_END  3 . 0   value Michael T.   segment AIP
+                END_OF_DATA  3 . 0   value Michael T.   segment AIP
                 """, report);
     }
 
@@ -2228,18 +2228,18 @@ public class EDITokenizerTest {
             report += token + System.lineSeparator();
         }
         assertEquals("""
-                Token type=SEGMENT_START 0.0.0 value=AIP segment=AIP
-                Token type=SIMPLE 1.0.0 value=A segment=AIP
-                Token type=EMPTY 2.0.0 value= segment=AIP
-                Token type=SUB_ELEMENT 3.0.0 value=MICHAEL segment=AIP
-                Token type=SUB_ELEMENT 3.1.0 value=Bennett segment=AIP
-                Token type=SUB_ELEMENT 3.2.0 value=Michael T. segment=AIP
-                Token type=SUB_EMPTY 3.3.0 value= segment=AIP
-                Token type=SUB_SUB_ELEMENT 3.4.0 value=a segment=AIP
-                Token type=SUB_SUB_ELEMENT 3.4.1 value=b segment=AIP
-                Token type=SUB_SUB_ELEMENT 3.4.2 value=c segment=AIP
-                Token type=SIMPLE 4.0.0 value=D segment=AIP
-                Token type=SEGMENT_END 4.0.0 value=D segment=AIP
+                SEGMENT_START  0 . 0   value AIP   segment AIP
+                SIMPLE  1 . 0   value A   segment AIP
+                EMPTY  2 . 0   value    segment AIP
+                SUB_ELEMENT  3 . 0   value MICHAEL   segment AIP
+                SUB_ELEMENT  3 . 1   value Bennett   segment AIP
+                SUB_ELEMENT  3 . 2   value Michael T.   segment AIP
+                SUB_EMPTY  3 . 3   value    segment AIP
+                SUB_SUB_ELEMENT  3 . 4 . 0   value a   segment AIP
+                SUB_SUB_ELEMENT  3 . 4 . 1   value b   segment AIP
+                SUB_SUB_ELEMENT  3 . 4 . 2   value c   segment AIP
+                SIMPLE  4 . 0   value D   segment AIP
+                SEGMENT_END  4 . 0   value D   segment AIP
                 """, report);
     }
 
@@ -2256,21 +2256,21 @@ public class EDITokenizerTest {
             report += token + System.lineSeparator();
         }
         assertEquals("""
-                Token type=SEGMENT_START 0.0.0 value=AIP segment=AIP
-                Token type=EMPTY 1.0.0 value= segment=AIP
-                Token type=EMPTY 2.0.0 value= segment=AIP
-                Token type=SUB_ELEMENT 3.0.0 value=MICHAEL segment=AIP
-                Token type=SUB_ELEMENT 3.1.0 value=Bennett segment=AIP
-                Token type=SUB_ELEMENT 3.2.0 value=Michael T. segment=AIP
-                Token type=SUB_EMPTY 3.3.0 value= segment=AIP
-                Token type=SUB_EMPTY 3.4.0 value= segment=AIP
-                Token type=SUB_EMPTY 3.5.0 value= segment=AIP
-                Token type=SUB_EMPTY 3.6.0 value= segment=AIP
-                Token type=SUB_EMPTY 3.7.0 value= segment=AIP
-                Token type=SUB_SUB_EMPTY 3.8.0 value= segment=AIP
-                Token type=SUB_SUB_EMPTY 3.8.1 value= segment=AIP
-                Token type=SUB_SUB_ELEMENT 3.8.2 value=NPI segment=AIP
-                Token type=SEGMENT_END 3.0.0 value=NPI segment=AIP
+                SEGMENT_START  0 . 0   value AIP   segment AIP
+                EMPTY  1 . 0   value    segment AIP
+                EMPTY  2 . 0   value    segment AIP
+                SUB_ELEMENT  3 . 0   value MICHAEL   segment AIP
+                SUB_ELEMENT  3 . 1   value Bennett   segment AIP
+                SUB_ELEMENT  3 . 2   value Michael T.   segment AIP
+                SUB_EMPTY  3 . 3   value    segment AIP
+                SUB_EMPTY  3 . 4   value    segment AIP
+                SUB_EMPTY  3 . 5   value    segment AIP
+                SUB_EMPTY  3 . 6   value    segment AIP
+                SUB_EMPTY  3 . 7   value    segment AIP
+                SUB_SUB_EMPTY  3 . 8 . 0   value    segment AIP
+                SUB_SUB_EMPTY  3 . 8 . 1   value    segment AIP
+                SUB_SUB_ELEMENT  3 . 8 . 2   value NPI   segment AIP
+                SEGMENT_END  3 . 0   value NPI   segment AIP
                 """, report);
     }
 
