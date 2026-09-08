@@ -10,7 +10,7 @@ import static com.berryworks.edireader.XMLTags.SUB_SUB_ELEMENT;
 
 public class ElementCoordinates {
     private final EDIReader ediReader;
-    private int index, subIndex, subSubIndex;
+    private int index, repetition, subIndex, subSubIndex;
     private boolean elementStarted, elementEnded;
     private boolean subElementStarted, subElementEnded;
     private boolean subSubElementStarted, subSubElementEnded;
@@ -24,15 +24,23 @@ public class ElementCoordinates {
         if (token == null) throw new IllegalArgumentException("token is null");
 
         segmentType = token.getSegmentType();
-        if (token.getIndex() != index) {
+        if (newElement(token)) {
             // Focussing on a new element
             index = token.getIndex();
             elementStarted = elementEnded = false;
 
+            repetition = token.getElementRepetition();
             subIndex = token.getSubIndex();
             subElementStarted = subElementEnded = false;
 
             subSubIndex = token.getSubSubIndex();
+            subSubElementStarted = subSubElementEnded = false;
+
+        } else if (newRepetition(token)) {
+            // Focussing on a new repetition of the same element
+            endElementIfNeeded();
+            elementStarted = elementEnded = false;
+            subElementStarted = subElementEnded = false;
             subSubElementStarted = subSubElementEnded = false;
 
         } else if (token.getSubIndex() != subIndex) {
@@ -56,6 +64,17 @@ public class ElementCoordinates {
             subElementStarted = subElementEnded = false;
             subSubElementStarted = subSubElementEnded = false;
         }
+    }
+
+    private boolean newElement(Token token) {
+        return token.getIndex() != index;
+    }
+
+    private boolean newRepetition(Token token) {
+        // is this a new repetition of the same element ?
+        System.out.println("... newRepetition ?");
+        return false;
+//        return token.getElementRepetition() != repetition;
     }
 
     private void endElementIfNeeded() throws SAXException {
