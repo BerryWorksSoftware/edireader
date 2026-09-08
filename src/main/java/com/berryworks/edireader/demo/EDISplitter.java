@@ -105,7 +105,7 @@ public class EDISplitter {
             e.printStackTrace(System.out);
             throw new RuntimeException(e.getMessage());
         }
-        String s = System.getProperty("line.separator");
+        String s = System.lineSeparator();
         System.out.print(s + "EDI input parsed into " + count + " XML output files" + s);
     }
 

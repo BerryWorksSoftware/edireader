@@ -693,8 +693,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         currentToken.incrementSubSubElementIndex();
                         characterClass = scanData();
                         switch (characterClass) {
-                            case DELIMITER -> state = State.IN_SEGMENT;
-                            case REPEAT_DELIMITER -> state = State.IN_SEGMENT;
+                            case DELIMITER, REPEAT_DELIMITER -> state = State.IN_SEGMENT;
                             case SUB_DELIMITER -> state = State.IN_COMPOSITE;
                             case null, default -> {
                             }

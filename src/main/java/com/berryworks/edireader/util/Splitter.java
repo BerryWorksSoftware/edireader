@@ -98,7 +98,7 @@ public class Splitter {
         return count;
     }
 
-    private class ScanningHandler extends DefaultHandler {
+    private static class ScanningHandler extends DefaultHandler {
 
         @Override
         public void startElement(String namespace, String localName,

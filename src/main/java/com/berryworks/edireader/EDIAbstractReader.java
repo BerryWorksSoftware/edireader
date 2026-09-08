@@ -660,7 +660,7 @@ public abstract class EDIAbstractReader implements XMLReader {
 
     @Override
     public String toString() {
-        String lineBreak = System.getProperty("line.separator");
+        String lineBreak = System.lineSeparator();
         return lineBreak + "EDIReader summary:" + lineBreak +
                " class: " + getClass().getName() + lineBreak +
                " delimiter: " + getDelimiter() + lineBreak +

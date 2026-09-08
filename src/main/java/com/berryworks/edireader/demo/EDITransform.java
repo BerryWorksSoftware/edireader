@@ -185,7 +185,7 @@ public class EDITransform {
         EDITransform theObject = new EDITransform(inputFileName,
                 stylesheetFileName, outputFileName);
         theObject.run();
-        String s = System.getProperty("line.separator");
+        String s = System.lineSeparator();
         System.out.print(s + "Transformation complete" + s);
     }
 

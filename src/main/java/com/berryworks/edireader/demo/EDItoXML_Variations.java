@@ -218,7 +218,7 @@ public class EDItoXML_Variations {
         theObject.setRecover(recover);
         theObject.setIndent(indent);
         theObject.run();
-        String s = System.getProperty("line.separator");
+        String s = System.lineSeparator();
         System.out.print(s + "Transformation complete" + s);
     }
 

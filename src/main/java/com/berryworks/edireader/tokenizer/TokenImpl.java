@@ -163,13 +163,10 @@ public class TokenImpl implements Token {
 
     private String subSubElementRDisplay() {
         if (getSubSubIndex() > 0) return " . " + getSubSubIndex();
-        switch (getType()) {
-            case SUB_SUB_ELEMENT:
-            case SUB_SUB_EMPTY:
-                return " . " + getSubSubIndex();
-            default:
-                return "";
-        }
+        return switch (getType()) {
+            case SUB_SUB_ELEMENT, SUB_SUB_EMPTY -> " . " + getSubSubIndex();
+            default -> "";
+        };
     }
 
     /**

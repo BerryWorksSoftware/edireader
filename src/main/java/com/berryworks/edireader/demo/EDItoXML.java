@@ -47,7 +47,7 @@ import java.nio.charset.StandardCharsets;
  * not specified, then `System.out` is used.
  */
 public class EDItoXML {
-    public final static String NEW_LINE = System.getProperty("line.separator");
+    public final static String NEW_LINE = System.lineSeparator();
 
     private Writer generatedOutput;
     private Writer acknowledgmentWriter;

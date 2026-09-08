@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 public class XmlFormatter extends FilterWriter {
-    private final static String SEPARATOR = System.getProperty("line.separator");
+    private final static String SEPARATOR = System.lineSeparator();
 
     private final static String INDENT = "    ";
     private char mostRecentCharOfInterest;
