@@ -1,10 +1,11 @@
 # Release Notes
 
-### 6.0.2 - September ??, 2026
+### 6.0.2 - September 8 2026
 
-* Fix: Let `EDIReaderSAXAdapter` react to the new subsubelement used by HL7Reader so that 
+* Fix: Let `EDIReaderSAXAdapter` react to the new sub-sub-element used by HL7Reader so that 
   an adapter -- such as the JsonAdapter in the EDIReader Framework -- can handle sub-sub-elements as intended.
-* Fix: When parsing HL7 with `<subsubelement>`, the </subelement> was sometimes missing. 
+* Fix: When parsing HL7 with `<subsubelement>`, the </subelement> was sometimes missing.
+  Fix this and a few other issues with HL7 edge cases, especially involving sub-sub-elements and repetition.
 
 ### 6.0.1 - September 3, 2026
 
