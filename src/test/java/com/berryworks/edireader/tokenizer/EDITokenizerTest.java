@@ -1321,6 +1321,7 @@ public class EDITokenizerTest {
         assertNotNull(token);
         assertEquals(SIMPLE, token.getType());
         assertEquals(2, token.getIndex());
+        assertEquals(1, token.getElementRepetition());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc02", token.getElementId());
         assertEquals("j2", token.getValue());
@@ -1332,6 +1333,7 @@ public class EDITokenizerTest {
         assertNotNull(token);
         assertEquals(SIMPLE, token.getType());
         assertEquals(2, token.getIndex());
+        assertEquals(2, token.getElementRepetition());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc02", token.getElementId());
         assertEquals("j3", token.getValue());
@@ -1344,6 +1346,7 @@ public class EDITokenizerTest {
         assertEquals(SIMPLE, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(0, token.getElementRepetition());
         assertEquals(0, token.getSubIndex());
         assertEquals("k", token.getValue());
         assertEquals("abc", token.getSegmentType());
@@ -1355,6 +1358,7 @@ public class EDITokenizerTest {
         assertEquals(SIMPLE, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(1, token.getElementRepetition());
         assertEquals(0, token.getSubIndex());
         assertEquals("l", token.getValue());
         assertEquals("abc", token.getSegmentType());
@@ -1366,6 +1370,7 @@ public class EDITokenizerTest {
         assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(2, token.getElementRepetition());
         assertEquals(0, token.getSubIndex());
         assertEquals("m1", token.getValue());
         assertEquals("abc", token.getSegmentType());
@@ -1377,6 +1382,7 @@ public class EDITokenizerTest {
         assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(2, token.getElementRepetition());
         assertEquals(1, token.getSubIndex());
         assertEquals("m2", token.getValue());
         assertEquals("abc", token.getSegmentType());
@@ -1388,6 +1394,7 @@ public class EDITokenizerTest {
         assertEquals(SUB_EMPTY, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(2, token.getElementRepetition());
         assertEquals(0, token.getSubIndex());
         assertEquals("", token.getValue());
         assertEquals("abc", token.getSegmentType());
@@ -1399,6 +1406,8 @@ public class EDITokenizerTest {
         assertEquals(SUB_ELEMENT, token.getType());
         assertEquals("abc03", token.getElementId());
         assertEquals(3, token.getIndex());
+        assertEquals(2, token.getElementRepetition());
+
         assertEquals(1, token.getSubIndex());
         assertEquals("n2", token.getValue());
         assertEquals("abc", token.getSegmentType());
