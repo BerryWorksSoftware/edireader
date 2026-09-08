@@ -53,6 +53,8 @@ public interface Token {
 
     void incrementRepetition();
 
+    void resetRepetition();
+
     void resetSubElementIndex();
 
     void resetSubSubElementIndex();

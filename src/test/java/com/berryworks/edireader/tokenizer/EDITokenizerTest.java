@@ -1309,6 +1309,7 @@ public class EDITokenizerTest {
         assertNotNull(token);
         assertEquals(SIMPLE, token.getType());
         assertEquals(2, token.getIndex());
+        assertEquals(0, token.getElementRepetition());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc02", token.getElementId());
         assertEquals("j", token.getValue());

@@ -652,6 +652,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                             currentToken.incrementRepetition();
                         } else {
                             currentToken.incrementIndex();
+                            currentToken.resetRepetition();
                         }
                         currentToken.resetSubElementIndex();
                         currentToken.resetSubSubElementIndex();

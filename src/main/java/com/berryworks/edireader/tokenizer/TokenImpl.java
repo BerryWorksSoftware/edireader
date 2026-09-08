@@ -199,6 +199,11 @@ public class TokenImpl implements Token {
         elementRepetition++;
     }
 
+    @Override
+    public void resetRepetition() {
+        elementRepetition = 0;
+    }
+
 
     @Override
     public void incrementSubElementIndex() {
