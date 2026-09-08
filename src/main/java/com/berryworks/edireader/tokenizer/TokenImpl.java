@@ -18,6 +18,7 @@ public class TokenImpl implements Token {
     private CharBuffer valueBuffer = CharBuffer.wrap(new char[10]);
     private TokenType type = TokenType.UNKNOWN;
     private int index, subElementIndex, subSubElementIndex;
+    private int elementRepetition;
     private boolean lastSubElement;
     private boolean containsNonSpace;
     private String segmentType = "";
@@ -26,6 +27,7 @@ public class TokenImpl implements Token {
         this.tokenizer = tokenizer;
     }
 
+    @Override
     public TokenType getType() {
         return type;
     }
@@ -35,6 +37,7 @@ public class TokenImpl implements Token {
      *
      * @return The first value
      */
+    @Override
     public boolean isFirst() {
         return (subElementIndex == 0);
     }
@@ -44,6 +47,7 @@ public class TokenImpl implements Token {
      *
      * @return The last value
      */
+    @Override
     public boolean isLast() {
         return lastSubElement;
     }
@@ -57,6 +61,7 @@ public class TokenImpl implements Token {
      * Gets the 0-origin sequential position of this token within the
      * segment.
      */
+    @Override
     public int getIndex() {
         return index;
     }
@@ -65,6 +70,7 @@ public class TokenImpl implements Token {
      * Gets the 0-origin sequential position of a subelement within a series
      * of subelements.
      */
+    @Override
     public int getSubIndex() {
         return subElementIndex;
     }
@@ -72,8 +78,20 @@ public class TokenImpl implements Token {
     /**
      * Gets the index, origin 0, of a sub-sub-element within a series within a sub-element.
      */
+    @Override
     public int getSubSubIndex() {
         return subSubElementIndex;
+    }
+
+    /**
+     * Gets the repetition count for the element referenced by getIndex(),
+     * If the instance of the element within the segment is the first one, which is the common case,
+     * 0 is returned indicating that it is not a repetition. If it is repeated, the first repetition
+     * (which is the 2nd instance in the sequence) will get 1, the 2nd repetition will get 2, etc.
+     */
+    @Override
+    public int getElementRepetition() {
+        return elementRepetition;
     }
 
     @Override
@@ -102,6 +120,7 @@ public class TokenImpl implements Token {
     /**
      * Gets the data value of the token as a String.
      */
+    @Override
     public String getValue() {
         ((Buffer) valueBuffer).flip();
         String s = valueBuffer.toString();
@@ -145,6 +164,7 @@ public class TokenImpl implements Token {
      *
      * @return The elementId value
      */
+    @Override
     public String getElementId() {
         String result = getSegmentType();
         int n = getIndex();
@@ -156,7 +176,7 @@ public class TokenImpl implements Token {
 
     @Override
     public void resetIndexes() {
-        index = subElementIndex = subSubElementIndex = 0;
+        index = subElementIndex = subSubElementIndex = elementRepetition = 0;
     }
 
     @Override
@@ -173,6 +193,12 @@ public class TokenImpl implements Token {
     public void incrementIndex() {
         index++;
     }
+
+    @Override
+    public void incrementRepetition() {
+        elementRepetition++;
+    }
+
 
     @Override
     public void incrementSubElementIndex() {
@@ -210,6 +236,4 @@ public class TokenImpl implements Token {
         ((Buffer) valueBuffer).clear();
         containsNonSpace = false;
     }
-
-
 }

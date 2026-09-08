@@ -648,11 +648,15 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         segTokenCount++;
                         currentToken.setType(Token.TokenType.SIMPLE);
                         currentToken.setValue(cChar);
-                        if (!repetition)
+                        if (repetition) {
+                            currentToken.incrementRepetition();
+                        } else {
                             currentToken.incrementIndex();
+                        }
                         currentToken.resetSubElementIndex();
                         currentToken.resetSubSubElementIndex();
-                        if (scanData() == CharacterClass.SUB_DELIMITER) {
+                        CharacterClass cc = scanData();
+                        if (cc == CharacterClass.SUB_DELIMITER) {
                             // We have a composite token instead of a simple one
                             currentToken.setType(Token.TokenType.SUB_ELEMENT);
                             currentToken.setLast(false);
@@ -689,7 +693,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         characterClass = scanData();
                         switch (characterClass) {
                             case DELIMITER -> state = State.IN_SEGMENT;
-                            case REPEAT_DELIMITER ->  state = State.IN_SEGMENT;
+                            case REPEAT_DELIMITER -> state = State.IN_SEGMENT;
                             case SUB_DELIMITER -> state = State.IN_COMPOSITE;
                             case null, default -> {
                             }

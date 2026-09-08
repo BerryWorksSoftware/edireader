@@ -45,11 +45,16 @@ public interface Token {
 
     void setLast(boolean value);
 
+    int getElementRepetition();
+
     void setValue(char c);
 
     void incrementIndex();
 
+    void incrementRepetition();
+
     void resetSubElementIndex();
+
     void resetSubSubElementIndex();
 
     void resetIndexes();

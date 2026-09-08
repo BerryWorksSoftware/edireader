@@ -1264,11 +1264,7 @@ public class EDITokenizerTest {
 
         tokenizer = new EDITokenizer(new StringReader("abc-def*ghi-j*j2*j3-k*l*m1:m2*:n2*:o2-p:*q**r1:r2-s!"));
         assertNotNull(tokenizer);
-        tokenizer.setTerminator('!');
-        tokenizer.setRelease('=');
-        tokenizer.setRepetitionSeparator('*');
-        tokenizer.setDelimiter('-');
-        tokenizer.setSubDelimiter(':');
+        tokenizer.setTerminator('!').setRelease('=').setRepetitionSeparator('*').setDelimiter('-').setSubDelimiter(':');
         Token token;
 
         // abc-def*ghi-j*j2*j3-k*l*m1:m2*:n2*:o2!
@@ -1278,6 +1274,7 @@ public class EDITokenizerTest {
         assertEquals(SEGMENT_START, token.getType());
         assertEquals("abc00", token.getElementId());
         assertEquals(0, token.getIndex());
+        assertEquals(0, token.getElementRepetition());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc", token.getValue());
         assertEquals("abc", token.getSegmentType());
@@ -1289,6 +1286,7 @@ public class EDITokenizerTest {
         assertEquals(SIMPLE, token.getType());
         assertEquals("abc01", token.getElementId());
         assertEquals(1, token.getIndex());
+        assertEquals(0, token.getElementRepetition());
         assertEquals(0, token.getSubIndex());
         assertEquals("def", token.getValue());
         assertEquals("abc", token.getSegmentType());
@@ -1299,6 +1297,7 @@ public class EDITokenizerTest {
         assertNotNull(token);
         assertEquals(SIMPLE, token.getType());
         assertEquals(1, token.getIndex());
+        assertEquals(1, token.getElementRepetition());
         assertEquals(0, token.getSubIndex());
         assertEquals("abc01", token.getElementId());
         assertEquals("ghi", token.getValue());
