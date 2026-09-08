@@ -34,27 +34,26 @@ public class ElementCoordinates {
             subElementStarted = subElementEnded = false;
             subSubElementStarted = subSubElementEnded = false;
 
-        } else if (newRepetition(token)) {
-            // Focussing on a new repetition of the same element
-            endElementIfNeeded();
-            elementStarted = elementEnded = false;
-            subElementStarted = subElementEnded = false;
-            subSubElementStarted = subSubElementEnded = false;
-
         } else if (token.getSubIndex() != subIndex) {
-            // Same element, but a different sub-element
-            // TODO: This might really be a repetition of the element, not just another sub-element of the same element!
-            endSubElementIfNeeded();
-            subElementStarted = subElementEnded = false;
-            subSubIndex = token.getSubSubIndex();
-            subSubElementStarted = subSubElementEnded = false;
+            // Same element (or repetition of the same element), but a different sub-element
+            if (newRepetition(token)) {
+                endElementIfNeeded();
+                elementStarted = elementEnded = false;
+                subElementStarted = subElementEnded = false;
+                subSubElementStarted = subSubElementEnded = false;
+            } else {
+                endSubElementIfNeeded();
+                subElementStarted = subElementEnded = false;
+                subSubIndex = token.getSubSubIndex();
+                subSubElementStarted = subSubElementEnded = false;
+            }
 
         } else if (token.getSubSubIndex() != subSubIndex) {
             // Same element and sub-element, but a different sub-sub-element
             subSubElementStarted = subSubElementEnded = false;
 
         } else {
-            // This appears to be a repetition of an element.
+            // This appears to be a repetition of an element, that wasn't noticed above
             endElementIfNeeded();
             elementStarted = elementEnded = false;
             subElementStarted = subElementEnded = false;
@@ -74,9 +73,9 @@ public class ElementCoordinates {
 
     private boolean newRepetition(Token token) {
         // is this a new repetition of the same element ?
-        System.out.println("... newRepetition ?");
-        return false;
-//        return token.getElementRepetition() != repetition;
+        boolean b = token.getElementRepetition() != repetition;
+        System.out.println("... newRepetition ? " + b);
+        return b;
     }
 
     private void endElementIfNeeded() throws SAXException {
