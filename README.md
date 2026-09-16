@@ -1,22 +1,26 @@
-## EDIReader Community Edition
+## EDIReader
 
-EDIReader is a flexible and lightweight EDI parser, written in pure Java using the SAX API
-allowing for many integration options. Released as open source (GPL3) in 2004 and enhanced steadily since then,
+EDIReader is a flexible and lightweight open-source EDI parser, written in pure Java using the SAX API
+and distributed under the GPLv3 license. First released in 2004 and enhanced steadily since then,
 it has handled millions of transactions in a wide variety of products, services, industries, platforms,
-and custom integrations.
+and custom integrations. Its streaming parser is the foundation of the broader EDIReader technology stack.
 
-**HL7 support is now included in the EDIReader Community Edition.**  
+**HL7 support is included in EDIReader.**  
 Beginning with version 6.0.0, HL7 parsing is available directly in the open-source
-EDIReader Core rather than requiring the EDIReader Framework.
+EDIReader parser rather than requiring the EDIReader Framework.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Java Version](https://img.shields.io/badge/Java-21%2B-orange.svg)](pom.xml)
 
 [ReleaseNotes.md](ReleaseNotes.md)
 
-### BerryWave EDI Interfaces
+### EDIReader Ecosystem
 
-EDIReader is the core EDI parsing engine used by BerryWave's integration products:
+EDIReader is the open-source streaming parser at the foundation of BerryWorks' EDI technology stack:
+
+* Looking for EDI-to-JSON processing?
+  Check out the **EDIReader Framework Community Edition**, the freely available
+  EDI-to-JSON distribution of the EDIReader Framework.
 
 * Looking for an on-premise REST API for EDI processing?
   Check out the [BerryWave EDI API](https://github.com/RBMayberry/BerryWave-EDI-API).
@@ -92,7 +96,7 @@ The EDI parser supports:
 
 #### Technical Notes
 
-* Pure Java: Zero third-party library dependencies (except SLF4J), avoiding dependency conflicts and licensing baggage. Compatible with standard JVMs and Android.
+* Pure Java: SLF4J is the only required third-party library, minimizing dependency conflicts and licensing baggage. Compatible with standard JVMs and Android.
 * Logging: Uses Simple Logging Facade for Java (SLF4J) for lightweight deployment-time binding (Logback, Log4j2, java.util.logging).
 * Thread-Safe: Designed for concurrent execution in high-throughput enterprise applications.
 
@@ -105,9 +109,9 @@ The EDI parser supports:
 
 #### The EDIReader Framework
 
-The EDIReader Framework is a set of Java modules built on top of the Community Edition.
-Unlike the Community Edition, it is not released as open source but may be licensed from BerryWorks Software.
-It adds many additional EDI features such as:
+The EDIReader Framework is a broader set of Java modules built on top of the open-source EDIReader parser.
+The **EDIReader Framework Community Edition** is its freely available EDI-to-JSON distribution.
+Additional Framework modules are commercially licensed from BerryWorks Software and provide features such as:
 
 * EDIWriter, producing EDI output
 * EDI Annotations, augmenting the parsed content from EDIReader with
@@ -124,5 +128,4 @@ It adds many additional EDI features such as:
 * JSON support
     - EDI to JSON
     - JSON to EDI
-
 
