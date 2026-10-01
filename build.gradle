@@ -1,0 +1,34 @@
+allprojects  {
+  apply plugin: 'maven'
+
+  group = 'com.berryworks'
+  version = '5.4.6'
+}
+
+subprojects {
+  apply plugin: 'java'
+  sourceCompatibility = 1.7
+  targetCompatibility = 1.7
+
+  task packageSources(type: Jar) {
+classifier = 'sources'
+from sourceSets.main.allSource
+
+}
+artifacts.archives packageSources
+  repositories {
+    mavenLocal()
+    
+    maven { url "http://repo.maven.apache.org/maven2" }
+  }
+
+  
+  dependencies {
+    compile group: 'com.berryworks', name: 'jquantify', version:'4.1.3'
+    testCompile group: 'junit', name: 'junit', version:'4.12'
+    testCompile group: 'junit-addons', name: 'junit-addons', version:'1.4'
+    testCompile group: 'xmlunit', name: 'xmlunit', version:'1.6'
+}
+
+  
+}
