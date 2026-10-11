@@ -55,6 +55,12 @@ public interface Tokenizer extends SourcePosition {
 
     Tokenizer setRelease(char c);
 
+    /** Enable paired HL7 escape sequences instead of single-character release semantics. */
+    default Tokenizer setHl7Escaping(boolean enabled) {
+        if (enabled) throw new UnsupportedOperationException("HL7 escaping is not supported by this tokenizer");
+        return this;
+    }
+
     boolean hasMoreTokens() throws IOException, EDISyntaxException;
 
     Token nextToken() throws IOException, EDISyntaxException;

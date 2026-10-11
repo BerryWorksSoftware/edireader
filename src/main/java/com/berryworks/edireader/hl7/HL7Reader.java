@@ -138,9 +138,12 @@ public class HL7Reader extends StandardReader {
         // and twice for the delimiters. Remember that the repetitionSeparator
         // appearing with the delimiters cause it to be two repeating fields
         // instead of a single field.
+        // MSH-2 declares the escape character; it is not an escaped value.
+        getTokenizer().setHl7Escaping(false);
         getTokenizer().nextToken();
         getTokenizer().nextToken();
         getTokenizer().nextToken();
+        getTokenizer().setHl7Escaping(true);
 
         // Sending application and facility MSH fields 3 and 4
         // These fields may be simple tokens, and they may be a composite

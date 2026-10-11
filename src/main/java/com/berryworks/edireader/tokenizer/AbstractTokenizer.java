@@ -64,6 +64,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
     protected char subDelimiter = ':';
     protected char subSubDelimiter;
     protected char release;
+    private boolean hl7Escaping;
     protected char repetitionSeparator;
 
     protected char terminator = '.';
@@ -472,6 +473,40 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
         return t;
     }
 
+    @Override
+    public Tokenizer setHl7Escaping(boolean enabled) {
+        hl7Escaping = enabled;
+        return this;
+    }
+
+    private String readHl7Escape() throws IOException, EDISyntaxException {
+        StringBuilder code = new StringBuilder();
+        while (true) {
+            getChar();
+            if (cClass == CharacterClass.EOF || cClass == CharacterClass.TERMINATOR) {
+                if (cClass == CharacterClass.TERMINATOR) ungetChar();
+                throw new EDISyntaxException("Unterminated HL7 escape sequence", this);
+            }
+            if (cChar == release) break;
+            code.append(cChar);
+        }
+        return switch (code.toString()) {
+            case "F" -> String.valueOf(delimiter);
+            case "S" -> String.valueOf(subDelimiter);
+            case "R" -> String.valueOf(repetitionSeparator);
+            case "T" -> String.valueOf(subSubDelimiter);
+            case "E" -> String.valueOf(release);
+            // Preserve formatting, hexadecimal, charset and local sequences losslessly.
+            default -> release + code.toString() + release;
+        };
+    }
+
+    private void startDataValue(String escaped) {
+        currentToken.resetValue();
+        if (escaped == null) currentToken.append(cChar);
+        else for (int i = 0; i < escaped.length(); i++) currentToken.append(escaped.charAt(i));
+    }
+
     /**
      * Scans a series of data characters up to the first character other than a
      * data character.
@@ -493,6 +528,14 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
             getChar();
             switch (cClass) {
                 case RELEASE:
+                    if (hl7Escaping) {
+                        String decoded = readHl7Escape();
+                        for (int i = 0; i < decoded.length(); i++) {
+                            if (--limit == 0) throw new EDISyntaxException(ELEMENT_TOO_LONG, this);
+                            currentToken.append(decoded.charAt(i));
+                        }
+                        break;
+                    }
                     // Ignore this release character, but get the next
                     // character and treat it as data (by falling in
                     // to the following case) without regard to the class
@@ -633,6 +676,11 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
     protected void advance() throws IOException, EDISyntaxException {
         getChar();
         tokenReady = true;
+        String escaped = null;
+        if (cClass == CharacterClass.RELEASE && hl7Escaping) {
+            escaped = readHl7Escape();
+            cClass = CharacterClass.DATA;
+        }
         switch (cClass) {
 
             case RELEASE:
@@ -647,7 +695,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                     case IN_SEGMENT:
                         segTokenCount++;
                         currentToken.setType(Token.TokenType.SIMPLE);
-                        currentToken.setValue(cChar);
+                        startDataValue(escaped);
                         if (repetition) {
                             currentToken.incrementRepetition();
                         } else {
@@ -669,7 +717,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         currentToken.setType(Token.TokenType.SUB_ELEMENT);
                         currentToken.incrementSubElementIndex();
                         currentToken.resetSubSubElementIndex();
-                        currentToken.setValue(cChar);
+                        startDataValue(escaped);
                         CharacterClass characterClass = scanData();
                         if (characterClass == CharacterClass.SUB_DELIMITER) {
                             // We hit a sub-element delimiter while within a composite.
@@ -689,7 +737,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         break;
                     case IN_COMPOSITE_LEVEL_2:
                         currentToken.setType(Token.TokenType.SUB_SUB_ELEMENT);
-                        currentToken.setValue(cChar);
+                        startDataValue(escaped);
                         currentToken.incrementSubSubElementIndex();
                         characterClass = scanData();
                         switch (characterClass) {
@@ -705,7 +753,7 @@ public abstract class AbstractTokenizer implements Tokenizer, ErrorMessages {
                         segTokenCount = 1;
                         segCharCount = 1;
                         currentToken.setType(Token.TokenType.SEGMENT_START);
-                        currentToken.setValue(cChar);
+                        startDataValue(escaped);
                         currentToken.resetIndexes();
                         scanData(10);
                         currentToken.setSegmentType(currentToken.getValue());
