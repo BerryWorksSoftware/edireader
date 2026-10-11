@@ -9,10 +9,12 @@
     <packaging>jar</packaging>
     <name>EDIReader Core EDI Parser</name>
     <description>
-        EDIReader is a flexible and lightweight EDI parser, written in pure Java with many integration options.
-        It has handled millions of transactions in a wide variety of products, services, industries, platforms,
-        and custom integrations. This EDI parser serves as the underlying core for the
-        EDIReader Framework providing EDIWriter and other added-value modules.
+        EDIReader is a lightweight, flexible EDI parser written in pure Java,
+        supporting X12, EDIFACT, and HL7. It has processed millions of transactions
+        across diverse industries, platforms, products, and custom integrations.
+        EDIReader also provides the parsing core for the EDIReader Framework,
+        which adds EDIWriter, model-driven validation, support for TRADACOMS,
+        and other integration capabilities.
     </description>
     <url>https://github.com/BerryWorksSoftware/edireader</url>
 
@@ -28,7 +30,7 @@
             <name>R. Scott Mayberry</name>
             <email>scott@canabrook.org</email>
             <organization>BerryWorks Software</organization>
-            <organizationUrl>http://berryworkssoftware.net</organizationUrl>
+            <organizationUrl>https://berryworkssoftware.com/</organizationUrl>
         </developer>
     </developers>
 
