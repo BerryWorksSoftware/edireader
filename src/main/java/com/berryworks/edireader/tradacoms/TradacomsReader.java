@@ -187,13 +187,13 @@ public class TradacomsReader extends StandardReader {
      * Parse a TRADACOMS document. For example, an MHD/MTR ORDHDR pair,
      * followed by one or more MHD/MTR ORDERS pairs, followed by a closing
      * MHD/MTR ORDTLR pair are considered to be a single document, represented
-     * in the XML with a <transaction> ... </transaction>. Each MHD/MTR structure
-     * (a TRADACOMS message) is then reflected in the XML with a <loop> ... </loop>
+     * in the XML with a transaction. Each MHD/MTR structure
+     * (a TRADACOMS message) is then reflected in the XML with a loop
      * with an Id attribute of ORDHDR, ORDERS, or ORDTLR as appropriate.
-     * <p/>
-     * Note that <loop> elements are usually handled with the help of a plugin,
-     * but for TRADACOMS <loop>s are created natively in the parser based on
-     * knowledge of the MHD and MTR. This does not preclude other <loop>s within
+     * <p>
+     * Note that loop elements are usually handled with the help of a plugin,
+     * but for TRADACOMS loops are created natively in the parser based on
+     * knowledge of the MHD and MTR. This does not preclude other loops within
      * a message from being handled with a plugin.
      *
      * @param token starting token
