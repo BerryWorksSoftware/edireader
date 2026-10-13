@@ -16,7 +16,7 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.util.List;
 
-import static com.berryworks.edireader.XMLTags.SUB_ELEMENT_SEQUENCE;
+import static com.berryworks.edireader.XMLTags.*;
 import static com.berryworks.edireader.util.FixedLength.isPresent;
 
 /**
@@ -188,14 +188,14 @@ public class HL7Reader extends StandardReader {
         String eventType = list.size() > 1 ? list.get(1) : null;
 
         if ((messageType != null) && (!messageType.isEmpty())) {
-            getInterchangeAttributes().addCDATA(XMLTags.MESSAGE_TYPE, messageType);
+            getInterchangeAttributes().addCDATA(MESSAGE_TYPE, messageType);
             String text = Table76.getText(messageType);
             if (text != null) {
                 getInterchangeAttributes().addCDATA("TypeDesc", text);
             }
         }
         if ((eventType != null) && (!eventType.isEmpty())) {
-            getInterchangeAttributes().addCDATA(XMLTags.EVENT, eventType);
+            getInterchangeAttributes().addCDATA(EVENT, eventType);
             String text = Table03.getText(eventType);
             if (text != null) {
                 getInterchangeAttributes().addCDATA("EventDesc", text);
@@ -207,7 +207,7 @@ public class HL7Reader extends StandardReader {
         if (getInterchangeControlNumber() == null)
             setInterchangeControlNumber("");
         if (!getInterchangeControlNumber().isEmpty()) {
-            getInterchangeAttributes().addCDATA(XMLTags.CONTROL, getInterchangeControlNumber());
+            getInterchangeAttributes().addCDATA(CONTROL, getInterchangeControlNumber());
         }
 
         // Processing ID MSH field 11
@@ -305,16 +305,18 @@ public class HL7Reader extends StandardReader {
             IOException {
 
         getDocumentAttributes().clear();
-        String groupType = getInterchangeAttributes().getValue("", "Type");
-        String groupEvent = getInterchangeAttributes().getValue("", "Event");
-        String controlTag = XMLTags.CONTROL;
-        String control = getInterchangeAttributes().getValue("", controlTag);
-        getDocumentAttributes().addCDATA(XMLTags.MESSAGE_TYPE, groupType);
-        getDocumentAttributes().addCDATA("Event", groupEvent);
+        EDIAttributes interchangeAttributes = getInterchangeAttributes();
+        String groupType = interchangeAttributes.getValue("", MESSAGE_TYPE);
+        String event = interchangeAttributes.getValue("", EVENT);
+        String controlTag = CONTROL;
+        String control = interchangeAttributes.getValue("", controlTag);
+        String syntaxVersion = interchangeAttributes.getValue("", SYNTAX_VERSION);
+        getDocumentAttributes().addCDATA(MESSAGE_TYPE, groupType);
+        getDocumentAttributes().addCDATA("Event", event);
         getDocumentAttributes().addCDATA(controlTag, control);
         startMessage(getDocumentAttributes());
 
-        PluginController pluginController = getPluginControllerFactory().create("HL7", messageType, getTokenizer());
+        PluginController pluginController = getPluginControllerFactory().create("HL7", messageType + "_" + event, syntaxVersion, null, getTokenizer());
         if (pluginController.isEnabled()) {
             getDocumentAttributes().addCDATA("Name", pluginController.getDocumentName());
             Plugin plugin = pluginController.getPlugin();
