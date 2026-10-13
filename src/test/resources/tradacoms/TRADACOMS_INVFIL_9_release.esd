@@ -1,0 +1,55 @@
+ESD*1.0*TRADACOMA_INVFIL_9_release
+
+transaction:
+type=INVFIL
+standard=TRADACOMS
+name=INVOIC MESSAGE
+version=9TR
+
+loops:
+TYP -> current(0)
+SDT -> current(0)
+CDT -> current(0)
+DNA -> current(0)
+FIL -> current(0)
+FDT -> current(0)
+ACD -> current(0)
+CLO -> current(0)
+IRF -> current(0)
+PYT -> current(0)
+DNA -> current(0)
+ODD(/ODD) -> ODD(1)
+ODD -> ODD(1)
+ILD(/ODD/ILD) -> ILD(2)
+ILD(/ODD) -> ILD(2)
+DNC(/ODD/ILD) -> current(2)
+STL -> current(0)
+TLR -> current(0)
+VRS -> current(0)
+TOT -> current(0)
+
+composites:
+CDT-1
+CDT-3
+CDT-4
+CLO-1
+CLO-3
+DIN-3
+DIN-4
+DNA-2
+DNA-3
+DNA-4
+DNB-3
+DNB-4
+DNB-5
+OLD-2
+OLD-4
+OLD-5
+OLD-6
+OLD-7
+OLD-10
+OLD-11
+ORD-1
+ORD-4
+SDT-1
+SDT-4

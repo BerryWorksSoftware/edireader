@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ediroot>
+    <interchange Standard="TRADACOMS" SyntaxId="ANA" SyntaxVersion="1" Date="070315" Time="130233" Control="000007" RecipientRef="PASSW" ApplRef="ORDHDR" Priority="B">
+        <sender>
+            <address Id="5000000000000" Qual="SOME STORES LTD"/>
+        </sender>
+        <receiver>
+            <address Id="5010000000000" Qual="SUPPLIER UK LTD"/>
+        </receiver>
+        <group>
+            <transaction DocType="ORDHDR" Version="9">
+                <loop Id="ORDHDR">
+                    <segment Id="TYP">
+                        <element Id="TYP01">0430</element>
+                        <element Id="TYP02">NEW-ORDERS</element>
+                    </segment>
+                    <segment Id="SDT">
+                        <element Id="SDT01" Composite="yes">
+                            <subelement Sequence="1">5010000000000</subelement>
+                            <subelement Sequence="2">000030034</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="CDT">
+                        <element Id="CDT01">5000000000000</element>
+                    </segment>
+                    <segment Id="DNA">
+                        <element Id="DNA01">1</element>
+                        <element Id="DNA02" Composite="yes">
+                            <subelement Sequence="1">206</subelement>
+                            <subelement Sequence="2">T02</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="DNA">
+                        <element Id="DNA01">2</element>
+                        <element Id="DNA02" Composite="yes">
+                            <subelement Sequence="1">207</subelement>
+                            <subelement Sequence="2">005</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="FIL">
+                        <element Id="FIL01">1630</element>
+                        <element Id="FIL02">1</element>
+                        <element Id="FIL03">070315</element>
+                    </segment>
+                </loop>
+                <loop Id="ORDERS">
+                    <segment Id="CLO">
+                        <element Id="CLO01" Composite="yes">
+                            <subelement Sequence="1">5000000000283</subelement>
+                            <subelement Sequence="2">89828</subelement>
+                        </element>
+                        <element Id="CLO02">EAST SOMEWHERE DEPOT</element>
+                    </segment>
+                    <segment Id="ORD">
+                        <element Id="ORD01" Composite="yes">
+                            <subelement Sequence="1">70970</subelement>
+                            <subelement Sequence="3">070315</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="DIN">
+                        <element Id="DIN01">070321</element>
+                        <element Id="DIN03">0000</element>
+                    </segment>
+                    <segment Id="DNA">
+                        <element Id="DNA01">1</element>
+                        <element Id="DNA02" Composite="yes">
+                            <subelement Sequence="1">206</subelement>
+                            <subelement Sequence="2">T02</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="DNA">
+                        <element Id="DNA01">2</element>
+                        <element Id="DNA02" Composite="yes">
+                            <subelement Sequence="1">207</subelement>
+                            <subelement Sequence="2">005</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="OLD">
+                        <element Id="OLD01">1</element>
+                        <element Id="OLD02">5010210000000</element>
+                        <element Id="OLD04" Composite="yes">
+                            <subelement Sequence="2">00893592</subelement>
+                        </element>
+                        <element Id="OLD05">12</element>
+                        <element Id="OLD06">60</element>
+                        <element Id="OLD10" Composite="yes">
+                            <subelement Sequence="1">CRUSTY ROLLS</subelement>
+                            <subelement Sequence="2">4 PACK</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="OLD">
+                        <element Id="OLD01">1</element>
+                        <element Id="OLD02">5010210000000</element>
+                        <element Id="OLD04" Composite="yes">
+                            <subelement Sequence="2">00893592</subelement>
+                        </element>
+                        <element Id="OLD05">12</element>
+                        <element Id="OLD06">60</element>
+                        <element Id="OLD10" Composite="yes">
+                            <subelement Sequence="1">CRUSTY ROLLS</subelement>
+                            <subelement Sequence="2">4 PACK</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="DNB">
+                        <element Id="DNB01">1</element>
+                        <element Id="DNB02" Composite="yes">
+                            <subelement Sequence="1">206</subelement>
+                            <subelement Sequence="2">T02</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="OLD">
+                        <element Id="OLD01">1</element>
+                        <element Id="OLD02">5010210000000</element>
+                        <element Id="OLD04" Composite="yes">
+                            <subelement Sequence="2">00893592</subelement>
+                        </element>
+                        <element Id="OLD05">12</element>
+                        <element Id="OLD06">60</element>
+                        <element Id="OLD10" Composite="yes">
+                            <subelement Sequence="1">CRUSTY ROLLS</subelement>
+                            <subelement Sequence="2">4 PACK</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="DNB">
+                        <element Id="DNB01">1</element>
+                        <element Id="DNB02" Composite="yes">
+                            <subelement Sequence="1">206</subelement>
+                            <subelement Sequence="2">T02</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="DNB">
+                        <element Id="DNB01">2</element>
+                        <element Id="DNB02" Composite="yes">
+                            <subelement Sequence="1">207</subelement>
+                            <subelement Sequence="2">005</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="OTR">
+                        <element Id="OTR01">1</element>
+                    </segment>
+                </loop>
+                <loop Id="ORDTLR">
+                    <segment Id="OFT">
+                        <element Id="OFT01">1</element>
+                    </segment>
+                </loop>
+            </transaction>
+        </group>
+    </interchange>
+</ediroot>

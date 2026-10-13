@@ -1,0 +1,44 @@
+ESD*1.0*EDIFACT_INSDES_D_00B
+
+transaction:
+type=ORDHDR
+standard=TRADACOMS
+name=ORDERS MESSAGE
+version=9
+
+loops:
+CDT -> current(0)
+DNA -> current(0)
+FIL -> current(0)
+OLD -> OLD(1)
+DNB(/OLD) -> current(1)
+SDT -> current(0)
+TYP -> current(0)
+OTR -> current(0)
+RSG -> current(0)
+
+composites:
+CDT-1
+CDT-3
+CDT-4
+CLO-1
+CLO-3
+DIN-3
+DIN-4
+DNA-2
+DNA-3
+DNA-4
+DNB-3
+DNB-4
+DNB-5
+OLD-2
+OLD-4
+OLD-5
+OLD-6
+OLD-7
+OLD-10
+OLD-11
+ORD-1
+ORD-4
+SDT-1
+SDT-4

@@ -1,0 +1,51 @@
+ESD*1.0*TRADACOMA_ACKHDR_4_release
+
+transaction:
+type=ACKHDR
+standard=TRADACOMS
+name=ACKNOWLEDGEMENT MESSAGE
+version=4
+
+loops:
+TYP -> current(0)
+SDT -> current(0)
+CDT -> current(0)
+DNA -> current(0)
+FIL -> current(0)
+CLO -> current(0)
+AOR -> current(0)
+DNA -> current(0)
+ALD -> ALD(1)
+AGD(/ALD) -> current(1)
+AQD(/ALD) -> current(1)
+DNB(/ALD) -> current(1)
+KTR -> current(0)
+KFT -> current(0)
+RSG -> current(0)
+
+composites:
+AOR-1
+AGD-3
+AGD-4
+ALD-2
+ALD-4
+ALD-5
+ALD-6
+ALD-7
+ALD-8
+ALD-9
+ALD-10
+CDT-1
+CDT-3
+CDT-4
+CLO-1
+CLO-3
+DNA-2
+DNA-3
+DNA-4
+DNB-3
+DNB-4
+DNB-5
+SDT-1
+SDT-3
+SDT-4

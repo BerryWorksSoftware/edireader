@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ediroot>
+    <interchange Standard="TRADACOMS" SyntaxId="ANA" SyntaxVersion="1" Date="911007" Time="200500" Control="1" ApplRef="PPRHDR">
+        <sender>
+            <address Id="5017416000006"/>
+        </sender>
+        <receiver>
+            <address Id="1112223334445"/>
+        </receiver>
+        <group>
+            <transaction DocType="PPRHDR" Version="2">
+                <loop Id="PPRHDR">
+                    <segment Id="TYP">
+                        <element Id="TYP01">2300</element>
+                        <element Id="TYP02">ACTUALDET</element>
+                    </segment>
+                    <segment Id="SDT">
+                        <element Id="SDT01" Composite="yes">
+                            <subelement Sequence="2">123456</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="CDT">
+                        <element Id="CDT01">5017416000006</element>
+                    </segment>
+                    <segment Id="FIL">
+                        <element Id="FIL01">1</element>
+                        <element Id="FIL02">1</element>
+                        <element Id="FIL03">910503</element>
+                    </segment>
+                </loop>
+                <loop Id="PPRDET">
+                    <segment Id="SFR">
+                        <element Id="SFR01" Composite="yes">
+                            <subelement Sequence="1">911006</subelement>
+                            <subelement Sequence="2">W</subelement>
+                            <subelement Sequence="3">2</subelement>
+                        </element>
+                        <element Id="SFR02">A</element>
+                    </segment>
+                    <segment Id="PDN">
+                        <element Id="PDN01">1</element>
+                        <element Id="PDN02" Composite="yes">
+                            <subelement Sequence="2">UNKNOWN</subelement>
+                        </element>
+                        <element Id="PDN03" Composite="yes">
+                            <subelement Sequence="2">ABC</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="PLO">
+                        <element Id="PLO01">1</element>
+                        <element Id="PLO02">1</element>
+                        <element Id="PLO03" Composite="yes">
+                            <subelement Sequence="2">LL1</subelement>
+                        </element>
+                        <element Id="PLO05" Composite="yes">
+                            <subelement Sequence="5">CH7 6UR</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="SFP">
+                        <element Id="SFP01">1</element>
+                        <element Id="SFP02">1</element>
+                        <element Id="SFP03">1</element>
+                        <element Id="SFP04">T</element>
+                    </segment>
+                    <segment Id="SFS">
+                        <element Id="SFS01">1</element>
+                        <element Id="SFS02">1</element>
+                        <element Id="SFS03">1</element>
+                        <element Id="SFS04">1</element>
+                        <element Id="SFS05">SAL</element>
+                        <element Id="SFS06">11</element>
+                    </segment>
+                    <segment Id="SFS">
+                        <element Id="SFS01">1</element>
+                        <element Id="SFS02">1</element>
+                        <element Id="SFS03">1</element>
+                        <element Id="SFS04">2</element>
+                        <element Id="SFS05">STK</element>
+                        <element Id="SFS06">15</element>
+                    </segment>
+                    <segment Id="PLO">
+                        <element Id="PLO01">1</element>
+                        <element Id="PLO02">2</element>
+                        <element Id="PLO03" Composite="yes">
+                            <subelement Sequence="2">LL2</subelement>
+                        </element>
+                        <element Id="PLO05" Composite="yes">
+                            <subelement Sequence="5">HP132 5EN</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="SFP">
+                        <element Id="SFP01">1</element>
+                        <element Id="SFP02">2</element>
+                        <element Id="SFP03">1</element>
+                        <element Id="SFP04">T</element>
+                    </segment>
+                    <segment Id="SFS">
+                        <element Id="SFS01">1</element>
+                        <element Id="SFS02">2</element>
+                        <element Id="SFS03">1</element>
+                        <element Id="SFS04">1</element>
+                        <element Id="SFS05">STK</element>
+                        <element Id="SFS06">7</element>
+                    </segment>
+                    <segment Id="SFC">
+                        <element Id="SFC01">1</element>
+                        <element Id="SFC02">1</element>
+                        <element Id="SFC03">T</element>
+                    </segment>
+                    <segment Id="SFX">
+                        <element Id="SFX01">1</element>
+                        <element Id="SFX02">1</element>
+                        <element Id="SFX03">1</element>
+                        <element Id="SFX04">SAL</element>
+                        <element Id="SFX05">11</element>
+                    </segment>
+                    <segment Id="SFX">
+                        <element Id="SFX01">1</element>
+                        <element Id="SFX02">1</element>
+                        <element Id="SFX03">2</element>
+                        <element Id="SFX04">STK</element>
+                        <element Id="SFX05">22</element>
+                    </segment>
+                    <segment Id="PDN">
+                        <element Id="PDN01">2</element>
+                        <element Id="PDN02" Composite="yes">
+                            <subelement Sequence="2">UNKNOWN</subelement>
+                        </element>
+                        <element Id="PDN03" Composite="yes">
+                            <subelement Sequence="2">DEF</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="PLO">
+                        <element Id="PLO01">2</element>
+                        <element Id="PLO02">1</element>
+                        <element Id="PLO03" Composite="yes">
+                            <subelement Sequence="2">LL1</subelement>
+                        </element>
+                        <element Id="PLO05" Composite="yes">
+                            <subelement Sequence="5">CH7 6UR</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="SFP">
+                        <element Id="SFP01">2</element>
+                        <element Id="SFP02">1</element>
+                        <element Id="SFP03">1</element>
+                        <element Id="SFP04">T</element>
+                    </segment>
+                    <segment Id="SFS">
+                        <element Id="SFS01">2</element>
+                        <element Id="SFS02">1</element>
+                        <element Id="SFS03">1</element>
+                        <element Id="SFS04">1</element>
+                        <element Id="SFS05">SAL</element>
+                        <element Id="SFS06">2</element>
+                    </segment>
+                    <segment Id="SFS">
+                        <element Id="SFS01">2</element>
+                        <element Id="SFS02">1</element>
+                        <element Id="SFS03">1</element>
+                        <element Id="SFS04">2</element>
+                        <element Id="SFS05">STK</element>
+                        <element Id="SFS06">1</element>
+                    </segment>
+                    <segment Id="PLO">
+                        <element Id="PLO01">2</element>
+                        <element Id="PLO02">2</element>
+                        <element Id="PLO03" Composite="yes">
+                            <subelement Sequence="2">LL2</subelement>
+                        </element>
+                        <element Id="PLO05" Composite="yes">
+                            <subelement Sequence="5">HP13 5EN</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="SFP">
+                        <element Id="SFP01">2</element>
+                        <element Id="SFP02">2</element>
+                        <element Id="SFP03">1</element>
+                        <element Id="SFP04">T</element>
+                    </segment>
+                    <segment Id="SFS">
+                        <element Id="SFS01">2</element>
+                        <element Id="SFS02">2</element>
+                        <element Id="SFS03">1</element>
+                        <element Id="SFS04">1</element>
+                        <element Id="SFS05">SAL</element>
+                        <element Id="SFS06">4</element>
+                    </segment>
+                    <segment Id="SFS">
+                        <element Id="SFS01">2</element>
+                        <element Id="SFS02">2</element>
+                        <element Id="SFS03">1</element>
+                        <element Id="SFS04">2</element>
+                        <element Id="SFS05">STK</element>
+                        <element Id="SFS06">3</element>
+                    </segment>
+                    <segment Id="SFC">
+                        <element Id="SFC01">2</element>
+                        <element Id="SFC02">1</element>
+                        <element Id="SFC03">T</element>
+                    </segment>
+                    <segment Id="SFX">
+                        <element Id="SFX01">2</element>
+                        <element Id="SFX02">1</element>
+                        <element Id="SFX03">1</element>
+                        <element Id="SFX04">SAL</element>
+                        <element Id="SFX05">6</element>
+                    </segment>
+                    <segment Id="SFX">
+                        <element Id="SFX01">2</element>
+                        <element Id="SFX02">1</element>
+                        <element Id="SFX03">2</element>
+                        <element Id="SFX04">STK</element>
+                        <element Id="SFX05">4</element>
+                    </segment>
+                    <segment Id="SFL">
+                        <element Id="SFL03">2</element>
+                    </segment>
+                </loop>
+                <loop Id="PPRTLR">
+                    <segment Id="PPT">
+                        <element Id="PPT01">1</element>
+                    </segment>
+                </loop>
+            </transaction>
+        </group>
+    </interchange>
+</ediroot>

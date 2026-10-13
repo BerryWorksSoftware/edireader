@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ediroot>
+    <interchange Standard="TRADACOMS" SyntaxId="ANAA" SyntaxVersion="1" Date="110405" Time="1605" Control="100052" RecipientRef="ACKHDR">
+        <sender>
+            <address Id="5030670019458" Qual="TM Distribution"/>
+        </sender>
+        <receiver>
+            <address Id="5030670123456" Qual=""/>
+        </receiver>
+        <group>
+            <transaction DocType="ACKHDR" Version="4">
+                <loop Id="ACKHDR" Name="ACKNOWLEDGEMENT MESSAGE">
+                    <segment Id="TYP">
+                        <element Id="TYP01">3120</element>
+                    </segment>
+                    <segment Id="SDT">
+                        <element Id="SDT01">5030670019458</element>
+                    </segment>
+                    <segment Id="CDT">
+                        <element Id="CDT01" Composite="yes">
+                            <subelement Sequence="1">5030670123456</subelement>
+                            <subelement Sequence="2">012345X</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="DNA">
+                        <element Id="DNA01">1</element>
+                        <element Id="DNA02" Composite="yes">
+                            <subelement Sequence="1">206</subelement>
+                            <subelement Sequence="2">T02</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="DNA">
+                        <element Id="DNA01">2</element>
+                        <element Id="DNA02" Composite="yes">
+                            <subelement Sequence="1">207</subelement>
+                            <subelement Sequence="2">006</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="FIL">
+                        <element Id="FIL01">1</element>
+                        <element Id="FIL02">1</element>
+                        <element Id="FIL03">110405</element>
+                    </segment>
+                </loop>
+                <loop Id="ACKMNT" Name="ACKNOWLEDGEMENT MESSAGE">
+                    <segment Id="CLO">
+                        <element Id="CLO01" Composite="yes">
+                            <subelement Sequence="1">5030670123456</subelement>
+                            <subelement Sequence="3">012345X</subelement>
+                        </element>
+                    </segment>
+                    <segment Id="AOR">
+                        <element Id="AOR01" Composite="yes">
+                            <subelement Sequence="1">ABC987</subelement>
+                            <subelement Sequence="2">186182</subelement>
+                            <subelement Sequence="3">110405</subelement>
+                        </element>
+                    </segment>
+                    <loop Id="ALD">
+                        <segment Id="ALD">
+                            <element Id="ALD01">1</element>
+                            <element Id="ALD02">9780006275190</element>
+                            <element Id="ALD05">1</element>
+                            <element Id="ALD06">500</element>
+                        </segment>
+                        <segment Id="AGD">
+                            <element Id="AGD01">1</element>
+                            <element Id="AGD02">1</element>
+                            <element Id="AGD03">500</element>
+                        </segment>
+                        <segment Id="DNB">
+                            <element Id="DNB01">1</element>
+                            <element Id="DNB02">2</element>
+                            <element Id="DNB04" Composite="yes">
+                                <subelement Sequence="1">082</subelement>
+                                <subelement Sequence="2">13258846</subelement>
+                            </element>
+                        </segment>
+                        <segment Id="DNB">
+                            <element Id="DNB01">1</element>
+                            <element Id="DNB02">2</element>
+                            <element Id="DNB03" Composite="yes">
+                                <subelement Sequence="1">55</subelement>
+                                <subelement Sequence="2">01</subelement>
+                            </element>
+                        </segment>
+                        <segment Id="DNB">
+                            <element Id="DNB01">1</element>
+                            <element Id="DNB02">3</element>
+                            <element Id="DNB03" Composite="yes">
+                                <subelement Sequence="1">54</subelement>
+                                <subelement Sequence="2">IP</subelement>
+                            </element>
+                        </segment>
+                        <segment Id="DNB">
+                            <element Id="DNB01">1</element>
+                            <element Id="DNB02">4</element>
+                            <element Id="DNB04" Composite="yes">
+                                <subelement Sequence="1">095</subelement>
+                                <subelement Sequence="2">47500</subelement>
+                                <subelement Sequence="3">074</subelement>
+                                <subelement Sequence="4">999</subelement>
+                            </element>
+                        </segment>
+                    </loop>
+                    <loop Id="ALD">
+                        <segment Id="ALD">
+                            <element Id="ALD01">2</element>
+                            <element Id="ALD02">9780006275190</element>
+                            <element Id="ALD05">1</element>
+                            <element Id="ALD06">1</element>
+                        </segment>
+                        <segment Id="AGD">
+                            <element Id="AGD01">2</element>
+                            <element Id="AGD02">1</element>
+                            <element Id="AGD03">0</element>
+                        </segment>
+                        <segment Id="DNB">
+                            <element Id="DNB01">2</element>
+                            <element Id="DNB02">2</element>
+                            <element Id="DNB04" Composite="yes">
+                                <subelement Sequence="1">082</subelement>
+                                <subelement Sequence="2">13270004</subelement>
+                            </element>
+                        </segment>
+                        <segment Id="DNB">
+                            <element Id="DNB01">2</element>
+                            <element Id="DNB02">2</element>
+                            <element Id="DNB03" Composite="yes">
+                                <subelement Sequence="1">55</subelement>
+                                <subelement Sequence="2">02</subelement>
+                            </element>
+                        </segment>
+                        <segment Id="DNB">
+                            <element Id="DNB01">2</element>
+                            <element Id="DNB02">3</element>
+                            <element Id="DNB03" Composite="yes">
+                                <subelement Sequence="1">54</subelement>
+                                <subelement Sequence="2">TU</subelement>
+                            </element>
+                        </segment>
+                        <segment Id="DNB">
+                            <element Id="DNB01">2</element>
+                            <element Id="DNB02">4</element>
+                            <element Id="DNB04" Composite="yes">
+                                <subelement Sequence="1">095</subelement>
+                                <subelement Sequence="2">47500</subelement>
+                                <subelement Sequence="3">074</subelement>
+                                <subelement Sequence="4">999</subelement>
+                            </element>
+                        </segment>
+                    </loop>
+                    <segment Id="KTR">
+                        <element Id="KTR01">2</element>
+                    </segment>
+                </loop>
+                <loop Id="ACKTLR" Name="ACKNOWLEDGEMENT MESSAGE">
+                    <segment Id="KFT">
+                        <element Id="KFT01">1</element>
+                    </segment>
+                </loop>
+                <loop Id="RSGRSG" Name="ACKNOWLEDGEMENT MESSAGE">
+                    <segment Id="RSG">
+                        <element Id="RSG01">100052</element>
+                        <element Id="RSG02">5030670123456</element>
+                    </segment>
+                </loop>
+            </transaction>
+        </group>
+    </interchange>
+</ediroot>
