@@ -1,17 +1,14 @@
 # Release Notes
 
-### 6.0.3 - Unreleased
+### 6.0.3 - October 14, 2026
 
 * Fix: Decode HL7 delimiter escape sequences (F, S, R, T and E) using the
   message-specific syntax characters. Escaped characters remain data, including
   within composite components and subcomponents. MSH encoding characters are
   treated as a syntax declaration rather than an escaped value.
-* Preserve other complete HL7 escape sequences verbatim, including formatting,
-  hexadecimal, character-set and locally defined sequences. An escape sequence
-  missing its closing character before the segment terminator or end of input
-  raises a syntax error. EDIFACT single-character release behavior is unchanged.
+* Fix: Add TRADACOMS parser.
 
-### 6.0.2 - September 8 2026
+### 6.0.2 - September 8, 2026
 
 * Fix: Let `EDIReaderSAXAdapter` react to the new sub-sub-element used by HL7Reader so that 
   an adapter -- such as the JsonAdapter in the EDIReader Framework -- can handle sub-sub-elements as intended.
