@@ -1,6 +1,6 @@
 # Release Notes
 
-### 6.0.3 - October 14, 2026
+### 6.0.4 - October 14, 2026
 
 * Fix: Decode HL7 delimiter escape sequences (F, S, R, T and E) using the
   message-specific syntax characters. Escaped characters remain data, including
